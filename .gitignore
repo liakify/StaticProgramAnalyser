@@ -412,3 +412,4 @@ healthchecksdb
 MigrationBackup/
 
 # End of https://www.gitignore.io/api/c++,windows,visualstudio
+/Team00/Code00/SPA/AST_structure.h
