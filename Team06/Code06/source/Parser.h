@@ -1,3 +1,9 @@
-#pragma once
+#ifndef PARSER_H
+#define PARSER_H
+
+#include <string>
 using namespace std;
-int Parse();
+
+int analyse(string& src);
+
+#endif // !1
