@@ -1,4 +1,5 @@
 #include <fstream>
+#include <stdexcept>
 
 #include "TestWrapper.h"
 #include "Parser.h"
@@ -23,7 +24,13 @@ void TestWrapper::parse(std::string filename) {
 	// call your parser to do the parsing
     std::ifstream ifs(filename);
     std::string program((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());;
-    analyse(program);
+    try {
+        Parser::analyse(program);
+        cout << "Parse successful.\n";
+    }
+    catch (std::invalid_argument& e) {
+        cout << e.what();
+    }
   // ...rest of your code...
     
 }
