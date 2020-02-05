@@ -1,0 +1,33 @@
+procedure SIMPLE {
+	p = 4;
+	a = p & 2;
+	if (c == k) then {
+		pattern = p * a * a + p * ifs + p * w;
+		while (w > 0) {
+			call AST;
+			w = w - 1;
+		ifs = ifs -1;}
+	else {
+		call PQL;}}
+procedure AST {
+	read c;
+	print c;}
+procedure PQL {
+	call AST;}
+
+stmt s; variable v;
+Select s such that Uses (s, v) and Modifies (s, v)
+3, 5, 6, 7, 8, 9, 12
+5000
+stmts; assign a;
+Select s such that Follows* (s, 7) pattern a(_, _"p * w"_)
+6
+5000
+variable v;
+Select v such that Uses ("SIMPLE", v) and Uses (6, v) and Uses (9, v)
+c
+5000
+assign a; variable v;
+Select a such that Modifies (a, v) pattern a (_, _"w"_)
+4, 7
+5000
