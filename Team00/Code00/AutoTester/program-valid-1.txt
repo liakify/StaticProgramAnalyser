@@ -1,0 +1,66 @@
+procedure Bumblebee {
+	read x;
+	y = 2 * z;
+	call Megatron;
+	z = p - y;
+	if (q!=1) then {
+		z = x + 24;
+		call Ironhide;}
+	else {
+		while (z>0) {
+			y = x * q - 5;
+			z = z - 1;}
+		y = x + y * z + p * q;
+		call Ironhide;}
+	i = x + j + z;
+	call Barricade;}
+
+procedure Megatron {
+	p = x * 10;
+	q = y + y * 10;
+	while (t==0) {
+		a = 5 * p - 5;
+		print y;}
+	q = p * 5;}
+
+procedure Ironhide {
+	i = x * 10;
+	j = x + y * 10;
+	if (i>j) then {
+		read x;
+		call Barricade;}
+	else {
+		y = i + x + y * z;}}
+
+procedure Barricade {
+	q = i * x * j + y + p * q;
+	print q; }
+
+assign a;
+Select a pattern a ("q", _"x * j + y"_)
+none
+5000
+assign a, a1;
+Select a1 pattern a ("y", _"i+x"_)
+2, 4, 6, 9, 10, 11, 13, 15, 16, 18, 20, 21, 22, 26, 27
+5000
+assign a; constant c;
+Select a with c.value = a.stmt# pattern a ("x", _"j"_)
+none
+5000
+prog_line n;
+Select n such that Follows* (8, n)
+11, 12
+5000
+variable v; while w; assign a;
+Select v such that Follows (w, a) and Uses (w, v) such that Modifies (a, v)
+none
+5000
+stmt s;
+Select s.stmt# such that Affects (s, 10)
+4, 10
+5000
+if ifs; while w;
+Select <ifs, w> such that Affects* (2, 11)
+5 8, 5 17, 23 8, 23 17
+5000
