@@ -1,15 +1,18 @@
 procedure A1x { 
-print
-read
+print x;
+read variable;
 }
 
-procedure A1agax { 
-while
-}
+procedure A1agax {while if
+assign	
+}procedure asdf{print optat;}
 
 procedure  ppeeepoo{ 
-read
-print
+read y;
+print		f		
+
+;
+		
 while
 while
 }

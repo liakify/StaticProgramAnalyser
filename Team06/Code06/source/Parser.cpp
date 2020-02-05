@@ -31,12 +31,13 @@ namespace Parser{
 	void Parser::procedure() {
 		consume(regex("[[:space:]]*procedure[[:space:]]+"));
 		proc_name();
-		consume(regex("[[:space:]]*[{]"));
+		consume(regex("[[:space:]]*[{][[:space:]]*"));
 		stmtLst();
-		consume(regex("[[:space:]]*[}]"));
+		consume(regex("[[:space:]]*[}][[:space:]]*"));
 	}
 
 	void Parser::proc_name() {
+		cout << "PROC: ";
 		name();
 	}
 
@@ -58,31 +59,75 @@ namespace Parser{
 	void Parser::stmt() {
 		int currentPos = pos;
 		try {
-			readStmt();
+			read_stmt();
 			return;
 		} catch (invalid_argument & e) {
 			pos = currentPos;
 		}
 		try {
-			printStmt();
+			print_stmt();
 			return;
 		}
 		catch (invalid_argument & e) {
 			pos = currentPos;
 		}
-		whileStmt();
+		try {
+			call_stmt();
+			return;
+		}
+		catch (invalid_argument & e) {
+			pos = currentPos;
+		}
+		try {
+			while_stmt();
+			return;
+		}
+		catch (invalid_argument & e) {
+			pos = currentPos;
+		}
+		try {
+			if_stmt();
+			return;
+		}
+		catch (invalid_argument & e) {
+			pos = currentPos;
+		}
+		assign_stmt();
 	}
 
-	void Parser::readStmt() {
+	void Parser::read_stmt() {
 		consume(regex("[[:space:]]*read[[:space:]]+"));
+		var_name();
+		consume(regex("[[:space:]]*;[[:space:]]*"));
 	}
 
-	void Parser::printStmt() {
+	void Parser::print_stmt() {
 		consume(regex("[[:space:]]*print[[:space:]]+"));
+		var_name();
+		consume(regex("[[:space:]]*;[[:space:]]*"));
 	}
 
-	void Parser::whileStmt() {
+	void Parser::call_stmt() {
+		consume(regex("[[:space:]]*call[[:space:]]+"));
+		proc_name();
+		consume(regex("[[:space:]]*;[[:space:]]*"));
+	}
+
+	void Parser::while_stmt() {
 		consume(regex("[[:space:]]*while[[:space:]]+"));
+	}
+
+	void Parser::if_stmt() {
+		consume(regex("[[:space:]]*if[[:space:]]+"));
+	}
+
+	void Parser::assign_stmt() {
+		consume(regex("[[:space:]]*assign[[:space:]]+"));
+	}
+
+	void Parser::var_name() {
+		cout << "VAR: ";
+		name();
 	}
 
 	int analyse(string& src) {

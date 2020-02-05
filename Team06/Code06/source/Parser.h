@@ -25,9 +25,13 @@ namespace Parser {
 		void name();
 		void stmtLst();
 		void stmt();
-		void readStmt();
-		void printStmt();
-		void whileStmt();
+		void read_stmt();
+		void print_stmt();
+		void call_stmt();
+		void while_stmt();
+		void if_stmt();
+		void assign_stmt();
+		void var_name();
 	};
 	int analyse(string& src);
 }
