@@ -23,6 +23,11 @@ namespace Parser {
 		void procedure();
 		void proc_name();
 		void name();
+		void stmtLst();
+		void stmt();
+		void readStmt();
+		void printStmt();
+		void whileStmt();
 	};
 	int analyse(string& src);
 }

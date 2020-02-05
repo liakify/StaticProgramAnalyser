@@ -1,1 +1,15 @@
-procedure A1x
+procedure A1x { 
+print
+read
+}
+
+procedure A1agax { 
+while
+}
+
+procedure  ppeeepoo{ 
+read
+print
+while
+while
+}
