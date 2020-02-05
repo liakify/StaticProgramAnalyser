@@ -3,6 +3,7 @@
 
 #include <string>
 #include <stdexcept>
+#include <regex>
 
 using namespace std;
 
@@ -16,11 +17,12 @@ namespace Parser {
 		string src;
 		size_t pos;
 
-		void expect(string s);
+		string consume(regex rgx);
 
 		void program();
 		void procedure();
-
+		void proc_name();
+		void name();
 	};
 	int analyse(string& src);
 }
