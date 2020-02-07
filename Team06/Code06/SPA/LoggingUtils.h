@@ -4,7 +4,7 @@
 
 namespace SPA {
 	namespace LoggingUtils {
-		enum Level {
+		enum class Level {
 			DEBUG, ERROR
 		};
 

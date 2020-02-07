@@ -4,7 +4,7 @@
 namespace SPA {
 	namespace LoggingUtils {
 
-		void Log(LoggingUtils::Level severityLevel, std::string &format, std::va_list &params) {
+		void Log(LoggingUtils::Level severityLevel, std::string format, std::va_list params) {
 			va_start(params, format);
 			
 			switch (severityLevel) {
