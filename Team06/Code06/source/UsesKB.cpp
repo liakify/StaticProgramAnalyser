@@ -9,7 +9,7 @@ UsesKB::UsesKB(int numProgStmts)
 
 void UsesKB::addStmtUses(int stmtId, int varId)
 {
-	stmtUsesTable[stmtId][varId] = true
+	stmtUsesTable[stmtId][varId] = true;
 }
 
 void UsesKB::addProcUses(int procId, int varId)
