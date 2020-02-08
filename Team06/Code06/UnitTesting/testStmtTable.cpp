@@ -25,7 +25,7 @@ namespace UnitTesting
 			try {
 				stmtTable.get(STMT_ID_A);
 			}
-			catch (out_of_range & e) {
+			catch (out_of_range &) {
 				isExceptionThrown = true;
 			}
 			Assert::IsTrue(isExceptionThrown);

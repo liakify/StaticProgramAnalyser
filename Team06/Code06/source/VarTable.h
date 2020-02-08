@@ -5,11 +5,9 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include "Types.h"
 
 using namespace std;
-
-typedef string VarName;
-typedef int VarId;
 
 class VarTable {
   unordered_map<VarName, VarId> nameIdTable;
@@ -45,7 +43,7 @@ public:
     try {
       return nameIdTable.at(varName);
     }
-    catch (const out_of_range & e) {
+    catch (const out_of_range &) {
       return -1;
     }
   }

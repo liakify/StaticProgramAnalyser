@@ -5,20 +5,15 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include "Types.h"
 
 using namespace std;
-typedef int ProcId;
-typedef string ProcName;
-
 
 class Procedure {
 public:
   ProcName procName;
   Procedure(ProcName procName) {
     this->procName = procName;
-  }
-  std::wstring ToString(const Procedure& p) {
-    return L"adsfasd";
   }
 
   bool operator== (const Procedure& p) {
@@ -65,8 +60,7 @@ public:
     try {
       return nameIdTable.at(procName);
     }
-    catch (const out_of_range & e) {
-      cout << e.what();
+    catch (const out_of_range &) {
       return -1;
     }
   }
@@ -75,5 +69,4 @@ public:
   int size() {
     return nameIdTable.size();
   }
-
 };

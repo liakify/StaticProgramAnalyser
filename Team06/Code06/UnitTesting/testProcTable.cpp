@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
-#include "PKB.h"
+#include "ProcTable.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -23,7 +23,7 @@ namespace UnitTesting
 			try {
 				procTable.get(PROC_ID_A);
 			}
-			catch (out_of_range & e) {
+			catch (out_of_range &) {
 				isExceptionThrown = true;
 			}
 			Assert::IsTrue(isExceptionThrown);

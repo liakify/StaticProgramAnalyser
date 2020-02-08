@@ -3,12 +3,9 @@
 #include<stdio.h>
 #include <string>
 #include <unordered_map>
+#include "Types.h"
 
 using namespace std;
-
-typedef int StmtId;
-typedef int StmtListId;
-typedef string StmtType;
 
 class StatementList {
 public:
@@ -22,7 +19,7 @@ class StmtListTable
   unordered_map<StmtListId, StatementList> idStmtListTable;
   StmtListId stmtListIdGenerator;
 
-public: 
+public:
   //Inserts stmtLst into the StmtLstTable. Returns the ID of the statement list in the StmtLstTable.
   StmtListId insertStmtLst(StatementList stmtLst) {
     StmtListId thisId = stmtListIdGenerator;

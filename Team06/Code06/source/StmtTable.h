@@ -3,11 +3,9 @@
 #include <vector>
 #include <iostream>
 #include <unordered_map>
+#include "Types.h"
 
 using namespace std;
-
-typedef int StmtId;
-typedef string StmtType;
 
 class Statement {
 public:
@@ -59,7 +57,7 @@ public:
     try {
       return typeIdsTable.at(stmtType);
     }
-    catch (const std::out_of_range& e) {
+    catch (const std::out_of_range&) {
       return {};
     }
   }
