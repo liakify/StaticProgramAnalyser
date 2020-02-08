@@ -11,7 +11,12 @@ namespace SIMPLE {
 
 	};
 
-	using StatementList = std::vector<Statement>;
+	class StatementList {
+	public:
+		StatementList(std::vector<Statement>& statements);
+	private:
+		std::vector<Statement> statements;
+	};
 
 	class Procedure {
 	public:
