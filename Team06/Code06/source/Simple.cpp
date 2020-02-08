@@ -15,19 +15,22 @@ namespace SIMPLE {
 		this->left = &left;
 		this->right = &right;
 		this->op = op;
+		this->str = getStr();
 	}
 
-	Operand::Operand() {
+	Operand::Operand(std::string name) {
 		this->left = nullptr;
 		this->right = nullptr;
 		this->op = '\0';
+		this->str = name;
 	}
 
-	Variable::Variable(VarName varName) {
-		this->varName = varName;
-	}
-
-	Constant::Constant(ConstValue value) {
-		this->value = value;
+	std::string Operand::getStr() {
+		if (this->str != "") {
+			return this->str;
+		}
+		else {
+			return this->left->getStr() + std::string(1, this->op) + this->right->getStr();
+		}
 	}
 }

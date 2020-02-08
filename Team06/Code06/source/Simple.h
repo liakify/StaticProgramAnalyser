@@ -25,25 +25,13 @@ namespace SIMPLE {
 	class Operand {
 	public:
 		Operand(Operand left, Operand right, char op);
-		Operand();
+		Operand(std::string name);
+		std::string getStr();
 	private:
 		Operand* left;
 		Operand* right;
 		char op;
-	};
-
-	class Variable : public Operand {
-	public:
-		Variable(VarName varName);
-	private:
-		VarName varName;
-	};
-
-	class Constant : public Operand {
-	public:
-		Constant(ConstValue value);
-	private:
-		ConstValue value;
+		std::string str;
 	};
 
 	/*class RelFactor {

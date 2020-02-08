@@ -271,18 +271,17 @@ namespace Parser{
 
 	Operand Parser::expr() { // Need to redo, recursive descent infinite recursion
 		int currentPos = this->pos;
-		Operand token;
 		char op;
 		std::stack<Operand> operands;
 		std::stack<char> operators;
 		consume(regex("[[:space:]]*"));
-		token = factor();
+		Operand token = factor();
 		operands.push(token);
 		while (true) {
 			try {
 				consume(regex("[[:space:]]*"));
 				op = consume(regex("[+%\*\-\/][[:space:]]*"))[0];
-				if (!operators.empty() && !compare_op(operators.top(), op) == 1) {
+				if (!operators.empty() && compare_op(operators.top(), op) != -1) {
 					Operand right = operands.top();
 					operands.pop();
 					Operand left = operands.top();
@@ -316,20 +315,19 @@ namespace Parser{
 	Operand Parser::factor() {
 		int currentPos = this->pos;
 		try {
-			return Variable(var_name());
+			return Operand(var_name());
 		}
 		catch (invalid_argument & e) {
 			this->pos = currentPos;
 		}
 		try {
-			return Constant(const_value());
+			return Operand(const_value());
 		}
 		catch (invalid_argument & e) {
 			this->pos = currentPos;
 		}
-		Operand opr;
 		consume(regex("[[:space:]]*[(][[:space:]]*"));
-		opr = expr();
+		Operand opr = expr();
 		consume(regex("[[:space:]]*[)][[:space:]]*"));
 		return opr;
 	}
