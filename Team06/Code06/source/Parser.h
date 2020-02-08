@@ -5,7 +5,8 @@
 #include <stdexcept>
 #include <regex>
 
-using namespace std;
+using std::regex;
+using std::string;
 
 namespace Parser {
 
@@ -19,10 +20,11 @@ namespace Parser {
 
 		string consume(regex rgx);
 
+		void name();
+		void integer();
+
 		void program();
 		void procedure();
-		void proc_name();
-		void name();
 		void stmtLst();
 		void stmt();
 		void read_stmt();
@@ -31,7 +33,18 @@ namespace Parser {
 		void while_stmt();
 		void if_stmt();
 		void assign_stmt();
+
+		void cond_expr();
+		void rel_expr();
+		void rel_factor();
+
+		void expr();
+		void term();
+		void factor();
+
 		void var_name();
+		void proc_name();
+		void const_value();
 	};
 	int analyse(string& src);
 }

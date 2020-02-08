@@ -26,10 +26,10 @@ void TestWrapper::parse(std::string filename) {
     std::string program((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());;
     try {
         Parser::analyse(program);
-        cout << "Parse successful.\n";
+        std::cout << "Parse successful.\n";
     }
     catch (std::invalid_argument& e) {
-        cout << e.what();
+        std::cout << e.what();
     }
   // ...rest of your code...
     
