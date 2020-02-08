@@ -1,5 +1,7 @@
 #include<stdio.h>
 #include <string>
+#include <vector>
+#include <iostream>
 #include <unordered_map>
 
 using namespace std;
@@ -9,15 +11,19 @@ typedef string StmtType;
 
 class Statement {
 public:
-  StmtType type;
 
+  StmtType stmtType;
+
+  Statement(StmtType stmtType) {
+    this->stmtType = stmtType;
+  }
 };
 
 
 class StmtTable
 {
   unordered_map<StmtId, Statement> idStmtTable;
-  unordered_map<StmtType, list<StmtId>> typeIdTable;
+  unordered_map<StmtType, list<StmtId>> typeIdsTable;
   StmtId stmtIdGenerator;
 
 public:
@@ -29,12 +35,13 @@ public:
   // Inserts stmt into the StmtTable. Returns the ID of the statement in the StmtTable.
   StmtId insertStmt(Statement stmt) {
     idStmtTable.insert(make_pair(stmtIdGenerator, stmt));
-    StmtType thisType = stmt.type;
+    StmtType thisType = stmt.stmtType;
     StmtId thisId = stmtIdGenerator;
     stmtIdGenerator++;
 
-    if (!typeIdTable.try_emplace(thisType, thisId).second) {
-      typeIdTable.at(thisType).push_back(thisId);
+    list<StmtId> newList{ thisId };
+    if (!typeIdsTable.try_emplace(thisType, newList).second) {
+      typeIdsTable.at(thisType).push_back(thisId);
     }
 
     return thisId;
@@ -46,14 +53,19 @@ public:
     return idStmtTable.at(stmtId); // throws out_of_range exception
   }
 
-  // Returns a list of statement IDs that match the specified statement type. An empty list is returned if no such statements exist.
+  // Returns a list of statement IDs that match the specified statement type. 
+  // An empty list is returned if no such statements exist.
   list<StmtId> getStmtsByType(StmtType stmtType) {
-    return typeIdTable.at(stmtType);
+    try {
+      return typeIdsTable.at(stmtType);
+    }
+    catch (const std::out_of_range& e) {
+      return {};
+    }
   }
 
   // Returns the number of statements in the StmtTable.
   int size() {
     return idStmtTable.size();
   }
-
 };

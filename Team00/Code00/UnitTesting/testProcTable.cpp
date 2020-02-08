@@ -40,7 +40,7 @@ namespace UnitTesting
 
 			ProcId a = procTable.getProcId(PROC_NAME_A);
 			Assert::AreNotEqual(a, -1);
-			Assert::IsTrue(procTable.get(a).equals(PROC_A));
+			Assert::IsTrue(procTable.get(a) == PROC_A);
 		}
 	};
 }

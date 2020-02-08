@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include "StmtListTable.h"
+#include "StmtTable.h"
 
 using namespace std;
 typedef short PROC;
@@ -23,8 +25,7 @@ public:
     return L"adsfasd";
   }
 
-  // a way to get around unit testing AreEquals errors for object checking
-  bool equals(const Procedure& p) {
+  bool operator== (const Procedure& p) {
     return procName == p.procName;
   }
 };
