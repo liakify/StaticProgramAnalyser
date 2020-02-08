@@ -1,21 +1,23 @@
 #include <cstdarg>
+#include <iostream>
 #include "LoggingUtils.h"
 
 namespace SPA {
 	namespace LoggingUtils {
 
 		void Log(LoggingUtils::Level severityLevel, std::string format, std::va_list params) {
-			va_start(params, format);
+			
+			char buffer[1000];
+			std::vsnprintf(buffer, 1000, format.c_str(), params);
 			
 			switch (severityLevel) {
 			case LoggingUtils::Level::DEBUG:
-				std::printf("[DEBUG] ");
+				std::cout << "[DEBUG] " << buffer << std::endl;
 				break;
 			case LoggingUtils::Level::ERROR:
-				std::printf("[ERROR] ");
+				std::cout << "[ERROR] " << buffer << std::endl;
+				break;
 			}
-			
-			std::vprintf(format.c_str(), params);
 		}
 
 		void LogDebugMessage(std::string format, ...) {

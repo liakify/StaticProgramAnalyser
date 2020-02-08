@@ -20,8 +20,7 @@ namespace SIMPLE {
 	}
 
 	Operand::Operand(std::string name)
-		: left(nullptr), right(nullptr), op('\0') {
-		this->str = name;
+		: left(nullptr), right(nullptr), op('\0'), str(name) {
 	}
 
 	std::string Operand::getStr() {

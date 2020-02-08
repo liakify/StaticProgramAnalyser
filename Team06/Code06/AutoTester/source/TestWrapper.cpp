@@ -3,6 +3,7 @@
 
 #include "TestWrapper.h"
 #include "Parser.h"
+#include "LoggingUtils.h"
 
 // implementation code of WrapperFactory - do NOT modify the next 5 lines
 AbstractWrapper* WrapperFactory::wrapper = 0;
@@ -26,10 +27,9 @@ void TestWrapper::parse(std::string filename) {
     std::string program((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());;
     try {
         Parser::analyse(program);
-        std::cout << "Parse successful.\n";
     }
     catch (std::invalid_argument& e) {
-        std::cout << e.what();
+        SPA::LoggingUtils::LogErrorMessage("%s", e.what());
     }
   // ...rest of your code...
     

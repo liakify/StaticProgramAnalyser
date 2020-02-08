@@ -1,5 +1,4 @@
-//#include "PKB.h"
-//#include "TNode.h"
+#include "PKB.h"
 #include "Parser.h"
 #include "LoggingUtils.h"
 #include <stack>
