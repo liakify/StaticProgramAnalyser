@@ -22,10 +22,14 @@ namespace SIMPLE {
 		StatementList statements;
 	};
 
-	class Operand {};
-
-	class Expression : public Operand {
-
+	class Operand {
+	public:
+		Operand(Operand left, Operand right, char op);
+		Operand();
+	private:
+		Operand* left;
+		Operand* right;
+		char op;
 	};
 
 	class Variable : public Operand {

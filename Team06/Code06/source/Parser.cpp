@@ -15,7 +15,6 @@ namespace Parser{
 	string Parser::consume(regex rgx) {
 		std::smatch match;
 		string str = src.substr(this->pos);
-		SPA::LoggingUtils::LogDebugMessage("%d", this->pos);
 		if (!regex_search(str, match, rgx, std::regex_constants::match_continuous)) {
 			throw invalid_argument("Syntax error in SIMPLE source.\n");
 		}
@@ -253,98 +252,86 @@ namespace Parser{
 		expr();
 	}
 
-	void Parser::expr() { // Need to redo, recursive descent infinite recursion
-		/*int currentPos = this->pos;
-		string tokenStr;
+	int Parser::get_op_rank(char op) {
+		if (op == '*' || op == '/' || op == '%') {
+			return 1;
+		}
+		else if (op == '+' || op == '-') {
+			return 0;
+		}
+		else {
+			throw invalid_argument("Unknown operator while parsing expression in SIMPLE.");
+		}
+	}
+
+	//-1 if op1 < op2, 0 if op1 == op2, 1 if op1 > op2
+	int Parser::compare_op(char op1, char op2) {
+		return get_op_rank(op1) - get_op_rank(op2);
+	}
+
+	Operand Parser::expr() { // Need to redo, recursive descent infinite recursion
+		int currentPos = this->pos;
 		Operand token;
+		char op;
 		std::stack<Operand> operands;
-		//std::stack<SIMPLE::Operator> operators;
+		std::stack<char> operators;
 		consume(regex("[[:space:]]*"));
-		try {
-			tokenStr = var_name();
-			token = Variable(tokenStr);
+		token = factor();
+		operands.push(token);
+		while (true) {
+			try {
+				consume(regex("[[:space:]]*"));
+				op = consume(regex("[+%\*\-\/][[:space:]]*"))[0];
+				if (!operators.empty() && !compare_op(operators.top(), op) == 1) {
+					Operand right = operands.top();
+					operands.pop();
+					Operand left = operands.top();
+					operands.pop();
+					operands.push(Operand(left, right, operators.top()));
+					operators.pop();
+				}
+				operators.push(op);
+				token = factor();
+				operands.push(token);
+			}
+			catch (invalid_argument & e) {
+				if (operands.size() - operators.size() != 1) {
+					throw e;
+				}
+				break;
+			}
 		}
-		catch (invalid_argument & e) {
-			this->pos = currentPos;
-			tokenStr = const_value();
-			token = Constant(tokenStr);
+		while (!operators.empty() && operands.size() > 1) {
+			Operand right = operands.top();
+			operands.pop();
+			Operand left = operands.top();
+			operands.pop();
+			operands.push(Operand(left, right, operators.top()));
+			operators.pop();
 		}
 		consume(regex("[[:space:]]*"));
-		
-		operands.push(token);*/
-
-		/*try {
-			expr();
-			consume(regex("[[:space:]]*[+][[:space:]]*"));
-			term();
-			return;
-		}
-		catch (invalid_argument & e) {
-			pos = currentPos;
-		}
-		try {
-			expr();
-			consume(regex("[[:space:]]*[-][[:space:]]*"));
-			term();
-			return;
-		}
-		catch (invalid_argument & e) {
-			pos = currentPos;
-		}
-		term();*/
+		return operands.top();
 	}
 
-	void Parser::term() { // Need to redo, recursive descent infinite recursion
-		/*int currentPos = pos;
-		try {
-			term();
-			consume(regex("[[:space:]]*[*][[:space:]]*"));
-			factor();
-			return;
-		}
-		catch (invalid_argument & e) {
-			pos = currentPos;
-		}
-		try {
-			term();
-			consume(regex("[[:space:]]*[/][[:space:]]*"));
-			factor();
-			return;
-		}
-		catch (invalid_argument & e) {
-			pos = currentPos;
-		}
-		try {
-			term();
-			consume(regex("[[:space:]]*[%][[:space:]]*"));
-			factor();
-			return;
-		}
-		catch (invalid_argument & e) {
-			pos = currentPos;
-		}
-		factor();*/
-	}
-
-	void Parser::factor() {
+	Operand Parser::factor() {
 		int currentPos = this->pos;
 		try {
-			var_name();
-			return;
+			return Variable(var_name());
 		}
 		catch (invalid_argument & e) {
 			this->pos = currentPos;
 		}
 		try {
-			const_value();
-			return;
+			return Constant(const_value());
 		}
 		catch (invalid_argument & e) {
 			this->pos = currentPos;
 		}
+		Operand opr;
 		consume(regex("[[:space:]]*[(][[:space:]]*"));
-		expr();
+		opr = expr();
 		consume(regex("[[:space:]]*[)][[:space:]]*"));
+		return opr;
 	}
 
 	VarName Parser::var_name() {

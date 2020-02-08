@@ -39,9 +39,10 @@ namespace Parser {
 		void rel_expr();
 		void rel_factor();
 
-		void expr();
-		void term();
-		void factor();
+		int get_op_rank(char op);
+		int compare_op(char op1, char op2);
+		Operand expr();
+		Operand factor();
 
 		VarName var_name();
 		ProcName proc_name();
