@@ -15,11 +15,13 @@
     <ClCompile Include="..\source\LoggingUtils.cpp" />
     <ClCompile Include="..\source\Parser.cpp" />
     <ClCompile Include="..\source\PKB.cpp" />
+    <ClCompile Include="..\source\Simple.cpp" />
     <ClCompile Include="..\source\TNode.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\LoggingUtils.h" />
     <ClInclude Include="..\source\PKB.h" />
+    <ClInclude Include="..\source\Simple.h" />
     <ClInclude Include="..\source\TNode.h" />
     <ClInclude Include="..\source\Types.h" />
   </ItemGroup>

@@ -1,12 +1,13 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-#include <string>
 #include <stdexcept>
 #include <regex>
+#include "Simple.h"
 
 using std::regex;
 using std::string;
+using namespace SIMPLE;
 
 namespace Parser {
 
@@ -20,13 +21,13 @@ namespace Parser {
 
 		string consume(regex rgx);
 
-		void name();
-		void integer();
+		string name();
+		string integer();
 
 		void program();
-		void procedure();
-		void stmtLst();
-		void stmt();
+		Procedure procedure();
+		StatementList stmtLst();
+		Statement stmt();
 		void read_stmt();
 		void print_stmt();
 		void call_stmt();
@@ -42,9 +43,9 @@ namespace Parser {
 		void term();
 		void factor();
 
-		void var_name();
-		void proc_name();
-		void const_value();
+		VarName var_name();
+		ProcName proc_name();
+		ConstValue const_value();
 	};
 	int analyse(string& src);
 }

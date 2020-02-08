@@ -1,36 +1,34 @@
-#include "PKB.h"
-#include "TNode.h"
+//#include "PKB.h"
+//#include "TNode.h"
 #include "Parser.h"
-#include <iostream>
+#include "LoggingUtils.h"
+#include <stack>
 
-using std::smatch;
 using std::invalid_argument;
-using std::cout;
-using std::endl;
 
 namespace Parser{
 	Parser::Parser(string source) {
-		Parser::src = source;
-		Parser::pos = 0;
+		this->src = source;
+		this->pos = 0;
 	}
 
 	string Parser::consume(regex rgx) {
-		smatch match;
-		string str = src.substr(pos);
-		cout << pos << endl;
+		std::smatch match;
+		string str = src.substr(this->pos);
+		SPA::LoggingUtils::LogDebugMessage("%d", this->pos);
 		if (!regex_search(str, match, rgx, std::regex_constants::match_continuous)) {
 			throw invalid_argument("Syntax error in SIMPLE source.\n");
 		}
-		pos += match.length();
+		this->pos += match.length();
 		return match.str();
 	}
 
-	void Parser::name() {
-		cout << consume(regex("[A-Z|a-z][A-Z|a-z|0-9]*"));
+	string Parser::name() {
+		return consume(regex("[A-Z|a-z][A-Z|a-z|0-9]*"));
 	}
 
-	void Parser::integer() {
-		cout << consume(regex("[0-9]+"));
+	string Parser::integer() {
+		return consume(regex("[0-9]+"));
 	}
 
 	void Parser::parse() {
@@ -38,67 +36,71 @@ namespace Parser{
 	}
 
 	void Parser::program() {
-		while (pos < src.length()) {
+		while (this->pos < src.length()) {
 			procedure();
 		}
 	}
 
-	void Parser::procedure() {
+	Procedure Parser::procedure() {
 		consume(regex("[[:space:]]*procedure[[:space:]]+"));
-		proc_name();
+		ProcName pn = proc_name();
 		consume(regex("[[:space:]]*[{][[:space:]]*"));
-		stmtLst();
+		StatementList sl = stmtLst();
 		consume(regex("[[:space:]]*[}][[:space:]]*"));
+		return Procedure(pn, sl);
 	}
 
-	void Parser::stmtLst() {
-		stmt();
+	StatementList Parser::stmtLst() {
+		std::vector<Statement> statements;
+		statements.push_back(stmt());
 		while (true) {
 			try {
-				stmt();
+				statements.push_back(stmt());
 			} catch (invalid_argument& e) {
 				break;
 			}
 		}
+		return StatementList(statements);
 	}
 
-	void Parser::stmt() {
-		int currentPos = pos;
+	Statement Parser::stmt() {
+		int currentPos = this->pos;
 		try {
 			read_stmt();
-			return;
+			return Statement();
 		} catch (invalid_argument & e) {
-			pos = currentPos;
+			this->pos = currentPos;
 		}
 		try {
 			print_stmt();
-			return;
+			return Statement();
 		}
 		catch (invalid_argument & e) {
-			pos = currentPos;
+			this->pos = currentPos;
 		}
 		try {
 			call_stmt();
-			return;
+			return Statement();
 		}
 		catch (invalid_argument & e) {
-			pos = currentPos;
+			this->pos = currentPos;
 		}
 		try {
 			while_stmt();
-			return;
+			return Statement();
 		}
 		catch (invalid_argument & e) {
-			pos = currentPos;
+			this->pos = currentPos;
 		}
 		try {
 			if_stmt();
-			return;
+			return Statement();
 		}
 		catch (invalid_argument & e) {
-			pos = currentPos;
+			this->pos = currentPos;
 		}
 		assign_stmt();
+		return Statement();
 	}
 
 	void Parser::read_stmt() {
@@ -145,13 +147,13 @@ namespace Parser{
 	}
 
 	void Parser::cond_expr() {
-		int currentPos = pos;
+		int currentPos = this->pos;
 		try {
 			rel_expr();
 			return;
 		}
 		catch (invalid_argument & e) {
-			pos = currentPos;
+			this->pos = currentPos;
 		}
 		try {
 			consume(regex("[[:space:]]*[!][[:space:]]*[(][[:space:]]*"));
@@ -160,7 +162,7 @@ namespace Parser{
 			return;
 		}
 		catch (invalid_argument & e) {
-			pos = currentPos;
+			this->pos = currentPos;
 		}
 		try {
 			consume(regex("[[:space:]]*[(][[:space:]]*"));
@@ -171,7 +173,7 @@ namespace Parser{
 			return;
 		}
 		catch (invalid_argument & e) {
-			pos = currentPos;
+			this->pos = currentPos;
 		}
 		consume(regex("[[:space:]]*[(][[:space:]]*"));
 		cond_expr();
@@ -181,7 +183,7 @@ namespace Parser{
 	}
 
 	void Parser::rel_expr() {
-		int currentPos = pos;
+		int currentPos = this->pos;
 		try {
 			rel_factor();
 			consume(regex("[[:space:]]*(>)[[:space:]]*"));
@@ -189,7 +191,7 @@ namespace Parser{
 			return;
 		}
 		catch (invalid_argument & e) {
-			pos = currentPos;
+			this->pos = currentPos;
 		}
 		try {
 			rel_factor();
@@ -198,7 +200,7 @@ namespace Parser{
 			return;
 		}
 		catch (invalid_argument & e) {
-			pos = currentPos;
+			this->pos = currentPos;
 		}
 		try {
 			rel_factor();
@@ -207,7 +209,7 @@ namespace Parser{
 			return;
 		}
 		catch (invalid_argument & e) {
-			pos = currentPos;
+			this->pos = currentPos;
 		}
 		try {
 			rel_factor();
@@ -216,7 +218,7 @@ namespace Parser{
 			return;
 		}
 		catch (invalid_argument & e) {
-			pos = currentPos;
+			this->pos = currentPos;
 		}
 		try {
 			rel_factor();
@@ -225,7 +227,7 @@ namespace Parser{
 			return;
 		}
 		catch (invalid_argument & e) {
-			pos = currentPos;
+			this->pos = currentPos;
 		}
 		rel_factor();
 		consume(regex("[[:space:]]*(!=)[[:space:]]*"));
@@ -233,27 +235,45 @@ namespace Parser{
 	}
 
 	void Parser::rel_factor() {
-		int currentPos = pos;
+		int currentPos = this->pos;
 		try {
 			var_name();
 			return;
 		}
 		catch (invalid_argument & e) {
-			pos = currentPos;
+			this->pos = currentPos;
 		}
 		try {
 			const_value();
 			return;
 		}
 		catch (invalid_argument & e) {
-			pos = currentPos;
+			this->pos = currentPos;
 		}
 		expr();
 	}
 
 	void Parser::expr() { // Need to redo, recursive descent infinite recursion
-		/*int currentPos = pos;
+		/*int currentPos = this->pos;
+		string tokenStr;
+		Operand token;
+		std::stack<Operand> operands;
+		//std::stack<SIMPLE::Operator> operators;
+		consume(regex("[[:space:]]*"));
 		try {
+			tokenStr = var_name();
+			token = Variable(tokenStr);
+		}
+		catch (invalid_argument & e) {
+			this->pos = currentPos;
+			tokenStr = const_value();
+			token = Constant(tokenStr);
+		}
+		consume(regex("[[:space:]]*"));
+		
+		operands.push(token);*/
+
+		/*try {
 			expr();
 			consume(regex("[[:space:]]*[+][[:space:]]*"));
 			term();
@@ -307,39 +327,36 @@ namespace Parser{
 	}
 
 	void Parser::factor() {
-		int currentPos = pos;
+		int currentPos = this->pos;
 		try {
 			var_name();
 			return;
 		}
 		catch (invalid_argument & e) {
-			pos = currentPos;
+			this->pos = currentPos;
 		}
 		try {
 			const_value();
 			return;
 		}
 		catch (invalid_argument & e) {
-			pos = currentPos;
+			this->pos = currentPos;
 		}
 		consume(regex("[[:space:]]*[(][[:space:]]*"));
 		expr();
 		consume(regex("[[:space:]]*[)][[:space:]]*"));
 	}
 
-	void Parser::var_name() {
-		name();
-		cout << " : VAR\n";
+	VarName Parser::var_name() {
+		return name();
 	}
 
-	void Parser::proc_name() {
-		name();
-		cout << " : PROC\n";
+	ProcName Parser::proc_name() {
+		return name();
 	}
 
-	void Parser::const_value() {
-		integer();
-		cout << " : CONST\n";
+	ConstValue Parser::const_value() {
+		return integer();
 	}
 
 	int analyse(string& src) {
