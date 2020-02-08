@@ -4,6 +4,6 @@ env:
         - MSBUILD_PATH="C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\MSBuild\15.0\Bin"
 script:
         - export PATH=$MSBUILD_PATH:$PATH
-        - $MSBUILD_PATH/MSBuild.exe Team06/Code06/StartupSPASolution.sln /p:Configuration=Release
+        - "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\MSBuild\MSBuild.exe" Team06/Code06/StartupSPASolution.sln /p:Configuration=Release
         - dir
-        - dir "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\MSBuild"
+        - dir "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\MSBuild\15.0"
