@@ -11,8 +11,8 @@ namespace UnitTesting
 	public:
 		StmtType STMT_TYPE_ASSIGN = "assign";
 		StmtType STMT_TYPE_WHILE = "while";
-		PKB::Statement STMT_A = Statement(STMT_TYPE_ASSIGN);
-		PKB::Statement STMT_B = Statement(STMT_TYPE_WHILE);
+		PKB::Statement STMT_A = PKB::Statement(STMT_TYPE_ASSIGN);
+		PKB::Statement STMT_B = PKB::Statement(STMT_TYPE_WHILE);
 		StmtId STMT_ID_A = 0;
 		StmtId STMT_ID_B = 1;
 		bool isExceptionThrown = false;
@@ -41,10 +41,6 @@ namespace UnitTesting
 			Assert::AreEqual(stmtTable.size(), 1);
 
 			list<StmtId> list = stmtTable.getStmtsByType(STMT_TYPE_ASSIGN);
-
-			for (auto v : list) {
-				std::cout << v << "\n";
-			}
 
 			Assert::IsFalse(list.empty());
 			Assert::AreEqual(list.front(), stmt_A_id);

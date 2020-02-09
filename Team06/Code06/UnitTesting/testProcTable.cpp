@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 #include "ProcTable.h"
+#include "ProcTable.cpp"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 

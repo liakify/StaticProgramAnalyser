@@ -9,8 +9,8 @@ namespace UnitTesting
 	TEST_CLASS(TestStmtListTable)
 	{
 	public:
-		PKB::StatementList STMTLST_A = StatementList();
-		PKB::StatementList STMTLST_B = StatementList();
+		PKB::StatementList STMTLST_A = PKB::StatementList();
+		PKB::StatementList STMTLST_B = PKB::StatementList();
 		StmtId STMTLST_ID_A = 0;
 		StmtId STMTLST_ID_B = 1;
 		bool isExceptionThrown = false;
@@ -23,7 +23,7 @@ namespace UnitTesting
 			try {
 				stmtListTable.get(STMTLST_ID_A);
 			}
-			catch (out_of_range & e) {
+			catch (out_of_range &) {
 				isExceptionThrown = true;
 			}
 			Assert::IsTrue(isExceptionThrown);

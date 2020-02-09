@@ -6,6 +6,10 @@ namespace PKB {
     return true;
   }
 
+  StmtListTable::StmtListTable() {
+    stmtListIdGenerator = 0;
+  }
+
   //Inserts stmtLst into the StmtLstTable. Returns the ID of the statement list in the StmtLstTable.
   StmtListId StmtListTable::insertStmtLst(StatementList stmtLst) {
     StmtListId thisId = stmtListIdGenerator;
