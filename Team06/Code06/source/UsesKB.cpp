@@ -1,28 +1,32 @@
 #include "UsesKB.h"
 
-UsesKB::UsesKB(int numProgStmts)
-	: numProgStmts(numProgStmts)
+/*
+	TODO: Exception handling for invalid inputs
+*/
+
+UsesKB::UsesKB()
 {
-	stmtUsesTable = std::vector<std::vector<bool>>(numProgStmts, std::vector<bool>(numProgStmts));
-	procUsesTable = std::vector<std::vector<bool>>(numProgStmts, std::vector<bool>(numProgStmts));
+
 }
 
-void UsesKB::addStmtUses(int stmtId, int varId)
+void UsesKB::addStmtUses(int stmtId, std::string var)
 {
-	stmtUsesTable[stmtId][varId] = true;
+	stmtVarTable[stmtId].insert(var);
+	varStmtTable[var].insert(stmtId);
 }
 
-void UsesKB::addProcUses(int procId, int varId)
+bool UsesKB::stmtUses(int stmtId, std::string var)
 {
-	procUsesTable[procId][varId] = true;
+	std::unordered_set<std::string> varSet = stmtVarTable[stmtId];
+	return varSet.find(var) != varSet.end();
 }
 
-bool UsesKB::stmtUses(int stmtId, int varId)
+std::unordered_set<std::string> UsesKB::getAllVarsUsedByStmt(int stmtId)
 {
-	return stmtUsesTable[stmtId][varId];
+	return stmtVarTable[stmtId];
 }
 
-bool UsesKB::procUses(int procId, int varId)
+std::unordered_set<int> UsesKB::getAllStmtsUsingVar(std::string var)
 {
-	return procUsesTable[procId][varId];
+	return varStmtTable[var];
 }

@@ -1,22 +1,27 @@
 #pragma once
 
 #include <vector>
+#include <unordered_map>
+#include <unordered_set>
+
+/*
+	TODO: Proc Tables/API
+*/
 
 class UsesKB
 {
 public:
-	UsesKB(int numProgStmts);
+	UsesKB();
 
-	void addStmtUses(int stmtId, int varId);
+	void addStmtUses(int stmtId, std::string var);
 
-	void addProcUses(int procId, int varId);
+	bool stmtUses(int stmtId, std::string var);
 
-	bool stmtUses(int stmtId, int varId);
+	std::unordered_set<std::string> getAllVarsUsedByStmt(int stmtId);
 
-	bool procUses(int procId, int varId);
+	std::unordered_set<int> getAllStmtsUsingVar(std::string var);
 
 private:
-	const int numProgStmts;
-	static std::vector<std::vector<bool>> stmtUsesTable;
-	static std::vector<std::vector<bool>> procUsesTable;
+	static std::unordered_map<int, std::unordered_set<std::string>> stmtVarTable;
+	static std::unordered_map<std::string, std::unordered_set<int>> varStmtTable;
 };
