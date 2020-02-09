@@ -66,35 +66,35 @@ namespace Parser{
 		try {
 			read_stmt();
 			return Statement("read");
-		} catch (invalid_argument & e) {
+		} catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		try {
 			print_stmt();
 			return Statement("print");
 		}
-		catch (invalid_argument & e) {
+		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		try {
 			call_stmt();
 			return Statement("call");
 		}
-		catch (invalid_argument & e) {
+		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		try {
 			while_stmt();
 			return Statement("while");
 		}
-		catch (invalid_argument & e) {
+		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		try {
 			if_stmt();
 			return Statement("if");
 		}
-		catch (invalid_argument & e) {
+		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		assign_stmt();
@@ -150,7 +150,7 @@ namespace Parser{
 			rel_expr();
 			return;
 		}
-		catch (invalid_argument & e) {
+		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		try {
@@ -159,7 +159,7 @@ namespace Parser{
 			consume(regex("[[:space:]]*[)][[:space:]]*"));
 			return;
 		}
-		catch (invalid_argument & e) {
+		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		try {
@@ -170,7 +170,7 @@ namespace Parser{
 			consume(regex("[[:space:]]*[)][[:space:]]*"));
 			return;
 		}
-		catch (invalid_argument & e) {
+		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		consume(regex("[[:space:]]*[(][[:space:]]*"));
@@ -188,7 +188,7 @@ namespace Parser{
 			rel_factor();
 			return;
 		}
-		catch (invalid_argument & e) {
+		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		try {
@@ -197,7 +197,7 @@ namespace Parser{
 			rel_factor();
 			return;
 		}
-		catch (invalid_argument & e) {
+		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		try {
@@ -206,7 +206,7 @@ namespace Parser{
 			rel_factor();
 			return;
 		}
-		catch (invalid_argument & e) {
+		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		try {
@@ -215,7 +215,7 @@ namespace Parser{
 			rel_factor();
 			return;
 		}
-		catch (invalid_argument & e) {
+		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		try {
@@ -224,7 +224,7 @@ namespace Parser{
 			rel_factor();
 			return;
 		}
-		catch (invalid_argument & e) {
+		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		rel_factor();
@@ -238,14 +238,14 @@ namespace Parser{
 			var_name();
 			return;
 		}
-		catch (invalid_argument & e) {
+		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		try {
 			const_value();
 			return;
 		}
-		catch (invalid_argument & e) {
+		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		expr();
@@ -292,7 +292,7 @@ namespace Parser{
 				token = factor();
 				operands.push(token);
 			}
-			catch (invalid_argument & e) {
+			catch (const invalid_argument & e) {
 				if (operands.size() - operators.size() != 1) {
 					throw e;
 				}
@@ -316,13 +316,13 @@ namespace Parser{
 		try {
 			return Operand(var_name());
 		}
-		catch (invalid_argument & e) {
+		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		try {
 			return Operand(const_value());
 		}
-		catch (invalid_argument & e) {
+		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		consume(regex("[[:space:]]*[(][[:space:]]*"));

@@ -1,7 +1,7 @@
 #ifndef STMTTABLE_H
 #define STMTTABLE_H
 
-#include <iostream>
+#include <stdexcept>
 #include <string>
 #include <vector>
 #include <unordered_map>

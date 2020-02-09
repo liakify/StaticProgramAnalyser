@@ -1,6 +1,6 @@
 #pragma once
 
-#include <iostream>
+#include <stdexcept>
 #include <string>
 #include <unordered_map>
 #include "Types.h"
