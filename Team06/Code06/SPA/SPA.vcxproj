@@ -24,6 +24,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\LoggingUtils.h" />
+    <ClInclude Include="..\source\Parser.h" />
     <ClInclude Include="..\source\PKB.h" />
     <ClInclude Include="..\source\ProcTable.h" />
     <ClInclude Include="..\source\StmtListTable.h" />

@@ -3,6 +3,7 @@
 
 #include <stdexcept>
 #include <regex>
+#include "PKB.h"
 #include "Simple.h"
 
 using std::regex;
@@ -13,10 +14,11 @@ namespace Parser {
 
 	class Parser {
 	public:
-		Parser(string source);
+		Parser(string source, PKB::PKB& pkb);
 		void parse();
 	private:
 		string src;
+		PKB::PKB pkb;
 		size_t pos;
 
 		string consume(regex rgx);

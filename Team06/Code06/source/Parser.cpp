@@ -1,4 +1,3 @@
-#include "PKB.h"
 #include "Parser.h"
 #include "LoggingUtils.h"
 #include <stack>
@@ -6,8 +5,8 @@
 using std::invalid_argument;
 
 namespace Parser{
-	Parser::Parser(string source) {
-		this->src = source;
+	Parser::Parser(string source, PKB::PKB& pkb)
+		: src(source), pkb(pkb) {
 		this->pos = 0;
 	}
 
@@ -45,7 +44,9 @@ namespace Parser{
 		consume(regex("[[:space:]]*[{][[:space:]]*"));
 		StatementList sl = stmtLst();
 		consume(regex("[[:space:]]*[}][[:space:]]*"));
-		return Procedure(pn, sl);
+		Procedure p = Procedure(pn, sl);
+		pkb.procTable.insertProc(p);
+		return p;
 	}
 
 	StatementList Parser::stmtLst() {
@@ -54,51 +55,65 @@ namespace Parser{
 		while (true) {
 			try {
 				statements.push_back(stmt());
-			} catch (invalid_argument& e) {
+			} catch (const invalid_argument&) {
 				break;
 			}
 		}
-		return StatementList(statements);
+		StatementList sl = StatementList(statements);
+		pkb.stmtListTable.insertStmtLst(sl);
+		return sl;
 	}
 
 	Statement Parser::stmt() {
 		int currentPos = this->pos;
 		try {
 			read_stmt();
-			return Statement("read");
+			Statement s = Statement("read");
+			pkb.stmtTable.insertStmt(s);
+			return s;
 		} catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		try {
 			print_stmt();
-			return Statement("print");
+			Statement s = Statement("print");
+			pkb.stmtTable.insertStmt(s);
+			return s;
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		try {
 			call_stmt();
-			return Statement("call");
+			Statement s = Statement("call");
+			pkb.stmtTable.insertStmt(s);
+			return s;
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		try {
 			while_stmt();
-			return Statement("while");
+			Statement s = Statement("while");
+			pkb.stmtTable.insertStmt(s);
+			return s;
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		try {
 			if_stmt();
-			return Statement("if");
+			Statement s = Statement("if");
+			pkb.stmtTable.insertStmt(s);
+			return s;
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		assign_stmt();
-		return Statement("assign");
+		Statement s = Statement("assign");
+		pkb.stmtTable.insertStmt(s);
+		return s;
 	}
 
 	void Parser::read_stmt() {
@@ -332,7 +347,9 @@ namespace Parser{
 	}
 
 	VarName Parser::var_name() {
-		return name();
+		VarName vn = name();
+		pkb.varTable.insertVar(vn);
+		return vn;
 	}
 
 	ProcName Parser::proc_name() {
@@ -344,7 +361,7 @@ namespace Parser{
 	}
 
 	int analyse(string& src) {
-		Parser p = Parser(src);
+		Parser p = Parser(src, PKB::PKB());
 		p.parse();
 		return 0;
 	}

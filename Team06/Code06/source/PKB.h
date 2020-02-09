@@ -11,9 +11,9 @@
 namespace PKB {
   class PKB {
   public:
-    static VarTable varTable;
-    static ProcTable procTable;
-    static StmtListTable stmtListTable;
-    static StmtTable stmtTable;
+    VarTable varTable;
+    ProcTable procTable;
+    StmtListTable stmtListTable;
+    StmtTable stmtTable;
   };
 }
