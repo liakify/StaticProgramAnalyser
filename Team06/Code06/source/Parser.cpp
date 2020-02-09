@@ -65,40 +65,40 @@ namespace Parser{
 		int currentPos = this->pos;
 		try {
 			read_stmt();
-			return Statement();
+			return Statement("read");
 		} catch (invalid_argument & e) {
 			this->pos = currentPos;
 		}
 		try {
 			print_stmt();
-			return Statement();
+			return Statement("print");
 		}
 		catch (invalid_argument & e) {
 			this->pos = currentPos;
 		}
 		try {
 			call_stmt();
-			return Statement();
+			return Statement("call");
 		}
 		catch (invalid_argument & e) {
 			this->pos = currentPos;
 		}
 		try {
 			while_stmt();
-			return Statement();
+			return Statement("while");
 		}
 		catch (invalid_argument & e) {
 			this->pos = currentPos;
 		}
 		try {
 			if_stmt();
-			return Statement();
+			return Statement("if");
 		}
 		catch (invalid_argument & e) {
 			this->pos = currentPos;
 		}
 		assign_stmt();
-		return Statement();
+		return Statement("assign");
 	}
 
 	void Parser::read_stmt() {

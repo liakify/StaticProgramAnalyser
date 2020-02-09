@@ -2,17 +2,13 @@
 
 namespace PKB {
 
-  Statement::Statement(StmtType stmtType) {
-    this->stmtType = stmtType;
-  }
-
   StmtTable::StmtTable() {
     stmtIdGenerator = 0;
   }
 
   // Inserts stmt into the StmtTable. Returns the ID of the statement in the StmtTable.
   StmtId StmtTable::insertStmt(Statement stmt) {
-    idStmtTable.insert(make_pair(stmtIdGenerator, stmt));
+    idStmtTable.insert(std::make_pair(stmtIdGenerator, stmt));
     StmtType thisType = stmt.stmtType;
     StmtId thisId = stmtIdGenerator;
     stmtIdGenerator++;
@@ -37,7 +33,7 @@ namespace PKB {
     try {
       return typeIdsTable.at(stmtType);
     }
-    catch (const std::out_of_range&) {
+    catch (const out_of_range&) {
       return {};
     }
   }

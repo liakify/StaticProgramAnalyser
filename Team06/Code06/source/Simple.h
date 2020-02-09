@@ -8,12 +8,15 @@
 namespace SIMPLE {
 
 	class Statement {
-
+	public:
+		StmtType stmtType;
+		Statement(StmtType stmtType);
 	};
 
 	class StatementList {
 	public:
 		StatementList(std::vector<Statement>& statements);
+		bool operator== (const StatementList& other);
 	private:
 		std::vector<Statement> statements;
 	};
@@ -22,6 +25,7 @@ namespace SIMPLE {
 	public:
 		Procedure(ProcName procName, StatementList statements);
 		bool operator== (const Procedure& p);
+		ProcName getName();
 	private:
 		ProcName procName;
 		StatementList statements;

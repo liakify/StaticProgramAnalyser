@@ -10,8 +10,6 @@
 #include "VarTable.h"
 #include "ProcTable.h"
 
-using namespace std;
-
 namespace PKB {
   class PKB {
   public:

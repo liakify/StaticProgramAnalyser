@@ -2,8 +2,16 @@
 #include "LoggingUtils.h"
 
 namespace SIMPLE {
+	Statement::Statement(StmtType stmtType) {
+		this->stmtType = stmtType;
+	}
+
 	StatementList::StatementList(std::vector<Statement>& statements) 
 		: statements(statements) {
+	}
+
+	bool StatementList::operator== (const StatementList& other) {
+		return true;
 	}
 
 	Procedure::Procedure(ProcName procName, StatementList statements)
@@ -12,6 +20,10 @@ namespace SIMPLE {
 
 	bool Procedure::operator== (const Procedure& p) {
 		return procName == p.procName;
+	}
+
+	ProcName Procedure::getName() {
+		return procName;
 	}
 
 	Operand::Operand(Operand left, Operand right, char op) 

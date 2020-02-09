@@ -1,18 +1,16 @@
 #pragma once
 
-#include<stdio.h>
+#include <iostream>
 #include <string>
 #include <unordered_map>
 #include "Types.h"
+#include "Simple.h"
 
-using namespace std;
+using std::out_of_range;
+using std::unordered_map;
+using SIMPLE::StatementList;
 
 namespace PKB {
-
-  class StatementList {
-  public:
-    bool operator== (const StatementList& other);
-  };
 
   class StmtListTable
   {

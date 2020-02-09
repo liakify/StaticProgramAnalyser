@@ -1,22 +1,19 @@
-#include<stdio.h>
+#ifndef STMTTABLE_H
+#define STMTTABLE_H
+
+#include <iostream>
 #include <string>
 #include <vector>
-#include <iostream>
 #include <unordered_map>
 #include "Types.h"
+#include "Simple.h"
 
-using namespace std;
+using std::out_of_range;
+using std::unordered_map;
+using std::list;
+using SIMPLE::Statement;
 
 namespace PKB {
-
-  class Statement {
-  public:
-    StmtType stmtType;
-
-    Statement(StmtType stmtType);
-  };
-
-
   class StmtTable
   {
     unordered_map<StmtId, Statement> idStmtTable;
@@ -32,3 +29,5 @@ namespace PKB {
     int size();
   };
 }
+
+#endif

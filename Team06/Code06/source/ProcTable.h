@@ -1,23 +1,16 @@
 #pragma once
-
-#include<stdio.h>
 #include <iostream>
 #include <string>
 #include <vector>
 #include <unordered_map>
 #include "Types.h"
+#include "Simple.h"
 
-using namespace std;
+using std::unordered_map;
+using std::out_of_range;
+using SIMPLE::Procedure;
 
 namespace PKB {
-
-  class Procedure {
-
-  public:
-    ProcName procName;
-    Procedure(ProcName procName);
-    bool operator== (const Procedure& p);
-  };
 
   class ProcTable {
 
