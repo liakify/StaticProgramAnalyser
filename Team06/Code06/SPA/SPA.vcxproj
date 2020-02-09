@@ -15,12 +15,20 @@
     <ClCompile Include="..\source\LoggingUtils.cpp" />
     <ClCompile Include="..\source\Parser.cpp" />
     <ClCompile Include="..\source\PKB.cpp" />
+    <ClCompile Include="..\source\ProcTable.cpp" />
+    <ClCompile Include="..\source\StmtListTable.cpp" />
+    <ClCompile Include="..\source\StmtTable.cpp" />
     <ClCompile Include="..\source\TNode.cpp" />
+    <ClCompile Include="..\source\VarTable.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\LoggingUtils.h" />
     <ClInclude Include="..\source\PKB.h" />
+    <ClInclude Include="..\source\ProcTable.h" />
+    <ClInclude Include="..\source\StmtListTable.h" />
+    <ClInclude Include="..\source\StmtTable.h" />
     <ClInclude Include="..\source\TNode.h" />
+    <ClInclude Include="..\source\VarTable.h" />
     <ClInclude Include="..\source\Types.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
