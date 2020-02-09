@@ -12,7 +12,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\source\DesignExtractor.cpp" />
+    <ClCompile Include="..\source\FollowsKB.cpp" />
     <ClCompile Include="..\source\LoggingUtils.cpp" />
+    <ClCompile Include="..\source\ParentKB.cpp" />
     <ClCompile Include="..\source\Parser.cpp" />
     <ClCompile Include="..\source\PKB.cpp" />
     <ClCompile Include="..\source\ProcTable.cpp" />
@@ -21,10 +23,15 @@
     <ClCompile Include="..\source\Simple.cpp" />
     <ClCompile Include="..\source\TNode.cpp" />
     <ClCompile Include="..\source\VarTable.cpp" />
+    <ClCompile Include="..\source\UsesKB.cpp" />
+    <ClCompile Include="..\source\ModifiesKB.cpp" />
+    <ClCompile Include="..\source\PatternKB.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\source\FollowsKB.h" />
     <ClInclude Include="..\source\LoggingUtils.h" />
     <ClInclude Include="..\source\Parser.h" />
+    <ClInclude Include="..\source\ParentKB.h" />
     <ClInclude Include="..\source\PKB.h" />
     <ClInclude Include="..\source\ProcTable.h" />
     <ClInclude Include="..\source\StmtListTable.h" />
@@ -33,6 +40,12 @@
     <ClInclude Include="..\source\TNode.h" />
     <ClInclude Include="..\source\VarTable.h" />
     <ClInclude Include="..\source\Types.h" />
+    <ClInclude Include="..\source\UsesKB.h" />
+    <ClInclude Include="..\source\ModifiesKB.h" />
+    <ClInclude Include="..\source\PatternKB.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{DC21A1EA-D2C6-4D14-A2B4-E025B64BDE81}</ProjectGuid>
