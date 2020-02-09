@@ -1,28 +1,32 @@
 #include "ModifiesKB.h"
 
-ModifiesKB::ModifiesKB(int numProgStmts)
-	: numProgStmts(numProgStmts)
+/*
+	TODO: Exception handling for invalid inputs
+*/
+
+ModifiesKB::ModifiesKB()
 {
-	stmtModifiesTable = std::vector<std::vector<bool>>(numProgStmts, std::vector<bool>(numProgStmts));
-	procModifiesTable = std::vector<std::vector<bool>>(numProgStmts, std::vector<bool>(numProgStmts));
+
 }
 
-void ModifiesKB::addStmtModifies(int stmtId, int varId)
+void ModifiesKB::addStmtModifies(int stmtId, std::string var)
 {
-	stmtModifiesTable[stmtId][varId] = true;
+	stmtVarTable[stmtId].insert(var);
+	varStmtTable[var].insert(stmtId);
 }
 
-void ModifiesKB::addProcModifies(int procId, int varId)
+bool ModifiesKB::stmtModifies(int stmtId, std::string var)
 {
-	procModifiesTable[procId][varId] = true;
+	std::unordered_set<std::string> varSet = stmtVarTable[stmtId];
+	return varSet.find(var) != varSet.end();
 }
 
-bool ModifiesKB::stmtModifies(int stmtId, int varId)
+std::unordered_set<std::string> ModifiesKB::getAllVarsModifiedByStmt(int stmtId)
 {
-	return stmtModifiesTable[stmtId][varId];
+	return stmtVarTable[stmtId];
 }
 
-bool ModifiesKB::procModifies(int procId, int varId)
+std::unordered_set<int> ModifiesKB::getAllStmtsModifyVar(std::string var)
 {
-	return procModifiesTable[procId][varId];
+	return varStmtTable[var];
 }
