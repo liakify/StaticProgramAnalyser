@@ -4,18 +4,20 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <unordered_map>
+#include "StmtListTable.h"
+#include "StmtTable.h"
+#include "VarTable.h"
+#include "ProcTable.h"
 
 using namespace std;
-typedef short PROC;
 
-class TNode;
-
-class VarTable;  // no need to #include "VarTable.h" as all I need is pointer
-
-class PKB {
-public:
-	static VarTable* varTable; 
-	static int setProcToAST(PROC p, TNode* r);
-	static TNode* getRootAST (PROC p);
-
-};
+namespace PKB {
+  class PKB {
+  public:
+    static VarTable varTable;
+    static ProcTable procTable;
+    static StmtListTable stmtListTable;
+    static StmtTable stmtTable;
+  };
+}
