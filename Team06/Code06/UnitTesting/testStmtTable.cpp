@@ -11,15 +11,15 @@ namespace UnitTesting
 	public:
 		StmtType STMT_TYPE_ASSIGN = "assign";
 		StmtType STMT_TYPE_WHILE = "while";
-		Statement STMT_A = Statement(STMT_TYPE_ASSIGN);
-		Statement STMT_B = Statement(STMT_TYPE_WHILE);
+		PKB::Statement STMT_A = Statement(STMT_TYPE_ASSIGN);
+		PKB::Statement STMT_B = Statement(STMT_TYPE_WHILE);
 		StmtId STMT_ID_A = 0;
 		StmtId STMT_ID_B = 1;
 		bool isExceptionThrown = false;
 
 		TEST_METHOD(InitializingStmtTable)
 		{
-			StmtTable stmtTable;
+			PKB::StmtTable stmtTable;
 
 			Assert::AreEqual(stmtTable.size(), 0);
 			try {
@@ -35,7 +35,7 @@ namespace UnitTesting
 
 		TEST_METHOD(StmtTableFunctions) {
 
-			StmtTable stmtTable;
+			PKB::StmtTable stmtTable;
 
 			StmtId stmt_A_id = stmtTable.insertStmt(STMT_A);
 			Assert::AreEqual(stmtTable.size(), 1);

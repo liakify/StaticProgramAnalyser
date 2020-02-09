@@ -11,13 +11,13 @@ namespace UnitTesting
 	public:
 		ProcName PROC_NAME_A = "p";
 		ProcName PROC_NAME_B = "X_WYS";
-		Procedure PROC_A = Procedure(PROC_NAME_A);
+		PKB::Procedure PROC_A = PKB::Procedure(PROC_NAME_A);
 		ProcId PROC_ID_A = 0;
 		ProcId PROC_ID_B = 1;
 		bool isExceptionThrown = false;
 		TEST_METHOD(InitializingProcTable)
 		{
-			ProcTable procTable;
+			PKB::ProcTable procTable;
 
 			Assert::AreEqual(procTable.size(), 0);
 			try {
@@ -33,7 +33,7 @@ namespace UnitTesting
 
 		TEST_METHOD(ProcTableFunctions) {
 
-			ProcTable procTable;
+			PKB::ProcTable procTable;
 
 			procTable.insertProc(PROC_A);
 			Assert::AreEqual(procTable.size(), 1);

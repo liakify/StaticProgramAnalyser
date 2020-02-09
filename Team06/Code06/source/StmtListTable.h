@@ -7,38 +7,23 @@
 
 using namespace std;
 
-class StatementList {
-public:
-  bool operator== (const StatementList& other) {
-    return true;
-  }
-};
+namespace PKB {
 
-class StmtListTable
-{
-  unordered_map<StmtListId, StatementList> idStmtListTable;
-  StmtListId stmtListIdGenerator;
+  class StatementList {
+  public:
+    bool operator== (const StatementList& other);
+  };
 
-public:
-  //Inserts stmtLst into the StmtLstTable. Returns the ID of the statement list in the StmtLstTable.
-  StmtListId insertStmtLst(StatementList stmtLst) {
-    StmtListId thisId = stmtListIdGenerator;
-    stmtListIdGenerator++;
-    idStmtListTable.insert(make_pair(thisId, stmtLst));
-    return thisId;
-  }
+  class StmtListTable
+  {
+    unordered_map<StmtListId, StatementList> idStmtListTable;
+    StmtListId stmtListIdGenerator;
 
-  // Returns the statement list object at the given ID in the StmtLstTable. 
-  // Throws an exception if the ID is not found in the table.
-  StatementList get(StmtListId stmtListId) {
-    return idStmtListTable.at(stmtListId);
-  }
+  public:
 
-
-  //Returns the number of statements in the StmtTable.
-  int size() {
-    return idStmtListTable.size();
-  }
-
-};
-
+    StmtListTable();
+    StmtListId insertStmtLst(StatementList stmtLst);
+    StatementList get(StmtListId stmtListId);
+    int size();
+  };
+}

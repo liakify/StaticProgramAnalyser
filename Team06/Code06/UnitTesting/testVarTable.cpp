@@ -16,7 +16,7 @@ namespace UnitTesting
 		bool isExceptionThrown = false;
 		TEST_METHOD(InitializingVarTable)
 		{
-			VarTable varTable;
+			PKB::VarTable varTable;
 			
 			Assert::AreEqual(varTable.size(), 0);
 			try {
@@ -32,7 +32,7 @@ namespace UnitTesting
 
 		TEST_METHOD(VarTableFunctions) {
 
-			VarTable varTable;
+			PKB::VarTable varTable;
 
 			varTable.insertVar(VAR_NAME_A);
 			Assert::AreEqual(varTable.size(), 1);

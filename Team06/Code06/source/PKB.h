@@ -12,11 +12,12 @@
 
 using namespace std;
 
-class PKB {
-public:
-  static VarTable varTable;
-  static ProcTable procTable;
-  static StmtListTable stmtListTable;
-  static StmtTable stmtTable;
-
-};
+namespace PKB {
+  class PKB {
+  public:
+    static VarTable varTable;
+    static ProcTable procTable;
+    static StmtListTable stmtListTable;
+    static StmtTable stmtTable;
+  };
+}
