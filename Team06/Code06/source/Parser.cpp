@@ -67,16 +67,14 @@ namespace Parser{
 	Statement Parser::stmt() {
 		int currentPos = this->pos;
 		try {
-			read_stmt();
-			Statement s = Statement("read");
+			ReadStmt s = read_stmt();
 			pkb.stmtTable.insertStmt(s);
 			return s;
 		} catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		try {
-			print_stmt();
-			Statement s = Statement("print");
+			PrintStmt s = print_stmt();
 			pkb.stmtTable.insertStmt(s);
 			return s;
 		}
@@ -84,8 +82,7 @@ namespace Parser{
 			this->pos = currentPos;
 		}
 		try {
-			call_stmt();
-			Statement s = Statement("call");
+			CallStmt s = call_stmt();
 			pkb.stmtTable.insertStmt(s);
 			return s;
 		}
@@ -93,8 +90,7 @@ namespace Parser{
 			this->pos = currentPos;
 		}
 		try {
-			while_stmt();
-			Statement s = Statement("while");
+			Statement s = while_stmt();
 			pkb.stmtTable.insertStmt(s);
 			return s;
 		}
@@ -102,61 +98,65 @@ namespace Parser{
 			this->pos = currentPos;
 		}
 		try {
-			if_stmt();
-			Statement s = Statement("if");
+			Statement s = if_stmt();
 			pkb.stmtTable.insertStmt(s);
 			return s;
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
-		assign_stmt();
-		Statement s = Statement("assign");
+		Statement s = assign_stmt();
 		pkb.stmtTable.insertStmt(s);
 		return s;
 	}
 
-	void Parser::read_stmt() {
+	ReadStmt Parser::read_stmt() {
 		consume(regex("[[:space:]]*read[[:space:]]+"));
-		var_name();
+		VarName v = var_name();
 		consume(regex("[[:space:]]*[;][[:space:]]*"));
+		return ReadStmt(v);
 	}
 
-	void Parser::print_stmt() {
+	PrintStmt Parser::print_stmt() {
 		consume(regex("[[:space:]]*print[[:space:]]+"));
-		var_name();
+		VarName v = var_name();
 		consume(regex("[[:space:]]*[;][[:space:]]*"));
+		return PrintStmt(v);
 	}
 
-	void Parser::call_stmt() {
+	CallStmt Parser::call_stmt() {
 		consume(regex("[[:space:]]*call[[:space:]]+"));
-		proc_name();
+		ProcName p = proc_name();
 		consume(regex("[[:space:]]*[;][[:space:]]*"));
+		return CallStmt(p);
 	}
 
-	void Parser::while_stmt() {
+	WhileStmt Parser::while_stmt() {
 		consume(regex("[[:space:]]*while[[:space:]]*[(][[:space:]]*"));
 		cond_expr();
 		consume(regex("[[:space:]]*[)][[:space:]]*[{][[:space:]]*"));
-		stmtLst();
+		StatementList sl = stmtLst();
 		consume(regex("[[:space:]]*[}][[:space:]]*"));
+		return WhileStmt(sl);
 	}
 
-	void Parser::if_stmt() {
+	IfStmt Parser::if_stmt() {
 		consume(regex("[[:space:]]*if[[:space:]]*[(][[:space:]]*"));
 		cond_expr();
 		consume(regex("[[:space:]]*[)][[:space:]]*then[[:space:]]*[{][[:space:]]*"));
-		stmtLst();
+		StatementList thenStmtLst = stmtLst();
 		consume(regex("[[:space:]]*[}][[:space:]]*else[[:space:]]*[{][[:space:]]*"));
-		stmtLst();
+		StatementList elseStmtLst = stmtLst();
 		consume(regex("[[:space:]]*[}][[:space:]]*"));
+		return IfStmt(thenStmtLst, elseStmtLst);
 	}
 
-	void Parser::assign_stmt() {
-		var_name();
+	AssignStmt Parser::assign_stmt() {
+		VarName v = var_name();
 		consume(regex("[[:space:]]*[=][[:space:]]*"));
-		expr();
+		Operand exp = expr();
 		consume(regex("[[:space:]]*[;][[:space:]]*"));
+		return AssignStmt(v, exp);
 	}
 
 	void Parser::cond_expr() {
@@ -283,7 +283,7 @@ namespace Parser{
 		return get_op_rank(op1) - get_op_rank(op2);
 	}
 
-	Operand Parser::expr() { // Need to redo, recursive descent infinite recursion
+	Operand Parser::expr() {
 		int currentPos = this->pos;
 		char op;
 		std::stack<Operand> operands;

@@ -9,8 +9,10 @@ namespace SIMPLE {
 
 	class Statement {
 	public:
+		StmtType getType();
+	protected:
+		Statement();
 		StmtType stmtType;
-		Statement(StmtType stmtType);
 	};
 
 	class StatementList {
@@ -56,41 +58,61 @@ namespace SIMPLE {
 
 	class CondExpr {
 
-	};
+	};*/
 
 	class PrintStmt : public Statement {
+	public:
+		PrintStmt(VarName var);
+		VarName getVar();
 	private:
-		Variable var;
+		VarName var;
 	};
 
 	class ReadStmt : public Statement {
+	public:
+		ReadStmt(VarName var);
+		VarName getVar();
 	private:
-		Variable var;
+		VarName var;
 	};
 
 	class IfStmt : public Statement {
+	public:
+		IfStmt(StatementList thenStmtLst, StatementList elseStmtLst);
+		StatementList getThenStmtLst();
+		StatementList getElseStmtLst();
 	private:
-		CondExpr cond;
-		StmtList thenStmtList;
-		StmtList ElseStmtList;
+		//CondExpr cond;
+		StatementList thenStmtLst;
+		StatementList elseStmtLst;
 	};
 
 	class WhileStmt : public Statement {
 	public:
-		CondExpr cond;
-		StmtList stmtList;
+		WhileStmt(StatementList stmtLst);
+		StatementList getStmtLst();
+	public:
+		//CondExpr cond;
+		StatementList stmtLst;
 	};
 
 	class CallStmt : public Statement {
 	public:
-		Procedure procedure;
+		CallStmt(ProcName procName);
+		ProcName getProc();
+	public:
+		ProcName procName;
 	};
 
 	class AssignStmt : public Statement {
 	public:
-		Expression expr;
-		Variable var;
-	};*/
+		AssignStmt(VarName var, Operand expr);
+		VarName getVar();
+		Operand getExpr();
+	public:
+		Operand expr;
+		VarName var;
+	};
 }
 
 #endif

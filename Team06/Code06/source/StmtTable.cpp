@@ -9,7 +9,7 @@ namespace PKB {
   // Inserts stmt into the StmtTable. Returns the ID of the statement in the StmtTable.
   StmtId StmtTable::insertStmt(Statement stmt) {
     idStmtTable.insert(std::make_pair(stmtIdGenerator, stmt));
-    StmtType thisType = stmt.stmtType;
+    StmtType thisType = stmt.getType();
     StmtId thisId = stmtIdGenerator;
     stmtIdGenerator++;
 

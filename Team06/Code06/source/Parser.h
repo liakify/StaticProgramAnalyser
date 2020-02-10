@@ -30,12 +30,12 @@ namespace Parser {
 		Procedure procedure();
 		StatementList stmtLst();
 		Statement stmt();
-		void read_stmt();
-		void print_stmt();
-		void call_stmt();
-		void while_stmt();
-		void if_stmt();
-		void assign_stmt();
+		ReadStmt read_stmt();
+		PrintStmt print_stmt();
+		CallStmt call_stmt();
+		WhileStmt while_stmt();
+		IfStmt if_stmt();
+		AssignStmt assign_stmt();
 
 		void cond_expr();
 		void rel_expr();
