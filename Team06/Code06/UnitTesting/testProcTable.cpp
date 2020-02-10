@@ -2,8 +2,6 @@
 #include "CppUnitTest.h"
 #include "ProcTable.h"
 #include "ProcTable.cpp"
-#include "Simple.h"
-#include <vector>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -12,10 +10,10 @@ namespace UnitTesting
 	TEST_CLASS(TestProcTable)
 	{
 	public:
-		SIMPLE::StatementList sl = SIMPLE::StatementList(std::vector<SIMPLE::Statement>());
 		ProcName PROC_NAME_A = "p";
 		ProcName PROC_NAME_B = "X_WYS";
-		Procedure PROC_A = Procedure(PROC_NAME_A, sl);
+		StmtListId STMTLST_ID = 2;
+		Procedure PROC_A = Procedure(PROC_NAME_A, STMTLST_ID);
 		ProcId PROC_ID_A = 0;
 		ProcId PROC_ID_B = 1;
 		bool isExceptionThrown = false;

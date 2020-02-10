@@ -26,25 +26,25 @@ namespace SIMPLE {
 		return this->var;
 	}
 
-	IfStmt::IfStmt(StatementList thenStmtLst, StatementList elseStmtLst) 
+	IfStmt::IfStmt(StmtListId thenStmtLst, StmtListId elseStmtLst)
 		: thenStmtLst(thenStmtLst), elseStmtLst(elseStmtLst) {
 		this->stmtType = IF;
 	}
 
-	StatementList IfStmt::getThenStmtLst() {
+	StmtListId IfStmt::getThenStmtLstId() {
 		return this->thenStmtLst;
 	}
 
-	StatementList IfStmt::getElseStmtLst() {
+	StmtListId IfStmt::getElseStmtLstId() {
 		return this->elseStmtLst;
 	}
 
-	WhileStmt::WhileStmt(StatementList stmtLst)
+	WhileStmt::WhileStmt(StmtListId stmtLst)
 		: stmtLst(stmtLst) {
 		this->stmtType = WHILE;
 	}
 
-	StatementList WhileStmt::getStmtLst() {
+	StmtListId WhileStmt::getStmtLstId() {
 		return this->stmtLst;
 	}
 
@@ -70,7 +70,7 @@ namespace SIMPLE {
 		return this->expr;
 	}
 
-	StatementList::StatementList(std::vector<Statement>& statements) 
+	StatementList::StatementList(std::vector<StmtId>& statements) 
 		: statements(statements) {
 	}
 
@@ -78,8 +78,12 @@ namespace SIMPLE {
 		return true;
 	}
 
-	Procedure::Procedure(ProcName procName, StatementList statements)
-		: statements(statements), procName(procName) {
+	std::vector<StmtId> StatementList::getStmtIds() {
+		return this->statements;
+	}
+
+	Procedure::Procedure(ProcName procName, StmtListId stmtLstId)
+		: procName(procName), stmtLstId(stmtLstId) {
 	}
 
 	bool Procedure::operator== (const Procedure& p) {
@@ -87,7 +91,11 @@ namespace SIMPLE {
 	}
 
 	ProcName Procedure::getName() {
-		return procName;
+		return this->procName;
+	}
+
+	StmtListId Procedure::getStmtLstId() {
+		return this->stmtLstId;
 	}
 
 	Operand::Operand(Operand left, Operand right, char op) 

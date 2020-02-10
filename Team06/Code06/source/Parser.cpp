@@ -38,19 +38,18 @@ namespace Parser{
 		}
 	}
 
-	Procedure Parser::procedure() {
+	ProcId Parser::procedure() {
 		consume(regex("[[:space:]]*procedure[[:space:]]+"));
 		ProcName pn = proc_name();
 		consume(regex("[[:space:]]*[{][[:space:]]*"));
-		StatementList sl = stmtLst();
+		StmtListId sl = stmtLst();
 		consume(regex("[[:space:]]*[}][[:space:]]*"));
 		Procedure p = Procedure(pn, sl);
-		pkb.procTable.insertProc(p);
-		return p;
+		return pkb.procTable.insertProc(p);
 	}
 
-	StatementList Parser::stmtLst() {
-		std::vector<Statement> statements;
+	StmtListId Parser::stmtLst() {
+		std::vector<StmtId> statements;
 		statements.push_back(stmt());
 		while (true) {
 			try {
@@ -60,54 +59,41 @@ namespace Parser{
 			}
 		}
 		StatementList sl = StatementList(statements);
-		pkb.stmtListTable.insertStmtLst(sl);
-		return sl;
+		return pkb.stmtListTable.insertStmtLst(sl);
 	}
 
-	Statement Parser::stmt() {
+	StmtId Parser::stmt() {
 		int currentPos = this->pos;
 		try {
-			ReadStmt s = read_stmt();
-			pkb.stmtTable.insertStmt(s);
-			return s;
+			return pkb.stmtTable.insertStmt(read_stmt());
 		} catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		try {
-			PrintStmt s = print_stmt();
-			pkb.stmtTable.insertStmt(s);
-			return s;
+			return pkb.stmtTable.insertStmt(print_stmt());
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		try {
-			CallStmt s = call_stmt();
-			pkb.stmtTable.insertStmt(s);
-			return s;
+			return pkb.stmtTable.insertStmt(call_stmt());
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		try {
-			Statement s = while_stmt();
-			pkb.stmtTable.insertStmt(s);
-			return s;
+			return pkb.stmtTable.insertStmt(while_stmt());
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		try {
-			Statement s = if_stmt();
-			pkb.stmtTable.insertStmt(s);
-			return s;
+			return pkb.stmtTable.insertStmt(if_stmt());
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
-		Statement s = assign_stmt();
-		pkb.stmtTable.insertStmt(s);
-		return s;
+		return pkb.stmtTable.insertStmt(assign_stmt());
 	}
 
 	ReadStmt Parser::read_stmt() {
@@ -135,7 +121,7 @@ namespace Parser{
 		consume(regex("[[:space:]]*while[[:space:]]*[(][[:space:]]*"));
 		cond_expr();
 		consume(regex("[[:space:]]*[)][[:space:]]*[{][[:space:]]*"));
-		StatementList sl = stmtLst();
+		StmtListId sl = stmtLst();
 		consume(regex("[[:space:]]*[}][[:space:]]*"));
 		return WhileStmt(sl);
 	}
@@ -144,9 +130,9 @@ namespace Parser{
 		consume(regex("[[:space:]]*if[[:space:]]*[(][[:space:]]*"));
 		cond_expr();
 		consume(regex("[[:space:]]*[)][[:space:]]*then[[:space:]]*[{][[:space:]]*"));
-		StatementList thenStmtLst = stmtLst();
+		StmtListId thenStmtLst = stmtLst();
 		consume(regex("[[:space:]]*[}][[:space:]]*else[[:space:]]*[{][[:space:]]*"));
-		StatementList elseStmtLst = stmtLst();
+		StmtListId elseStmtLst = stmtLst();
 		consume(regex("[[:space:]]*[}][[:space:]]*"));
 		return IfStmt(thenStmtLst, elseStmtLst);
 	}

@@ -17,20 +17,22 @@ namespace SIMPLE {
 
 	class StatementList {
 	public:
-		StatementList(std::vector<Statement>& statements);
+		StatementList(std::vector<StmtId>& statements);
 		bool operator== (const StatementList& other);
+		std::vector<StmtId> getStmtIds();
 	private:
-		std::vector<Statement> statements;
+		std::vector<StmtId> statements;
 	};
 
 	class Procedure {
 	public:
-		Procedure(ProcName procName, StatementList statements);
+		Procedure(ProcName procName, StmtListId stmtLstId);
 		bool operator== (const Procedure& p);
 		ProcName getName();
+		StmtListId getStmtLstId();
 	private:
 		ProcName procName;
-		StatementList statements;
+		StmtListId stmtLstId;
 	};
 
 	class Operand {
@@ -78,22 +80,22 @@ namespace SIMPLE {
 
 	class IfStmt : public Statement {
 	public:
-		IfStmt(StatementList thenStmtLst, StatementList elseStmtLst);
-		StatementList getThenStmtLst();
-		StatementList getElseStmtLst();
+		IfStmt(StmtListId thenStmtLst, StmtListId elseStmtLst);
+		StmtListId getThenStmtLstId();
+		StmtListId getElseStmtLstId();
 	private:
 		//CondExpr cond;
-		StatementList thenStmtLst;
-		StatementList elseStmtLst;
+		StmtListId thenStmtLst;
+		StmtListId elseStmtLst;
 	};
 
 	class WhileStmt : public Statement {
 	public:
-		WhileStmt(StatementList stmtLst);
-		StatementList getStmtLst();
+		WhileStmt(StmtListId stmtLst);
+		StmtListId getStmtLstId();
 	public:
 		//CondExpr cond;
-		StatementList stmtLst;
+		StmtListId stmtLst;
 	};
 
 	class CallStmt : public Statement {

@@ -1,18 +1,21 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
-#include "StmtTable.h"
-#include "SimpleEntities.h"
+#include "PKB.h"
+#include "Simple.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
-using namespace SimpleEntities;
+using namespace SIMPLE;
 
 namespace UnitTesting
 {
 	TEST_CLASS(TestStmtTable)
 	{
 	public:
-		Statement STMT_A = ASSIGN_STMT;
-		Statement STMT_B = WHILE_STMT;
+		VarName VAR_NAME = "abc";
+		PrintStmt PRINT_STMT = PrintStmt(VAR_NAME);
+		ReadStmt READ_STMT = ReadStmt(VAR_NAME);
+		Statement STMT_A = PRINT_STMT;
+		Statement STMT_B = READ_STMT;
 		StmtId STMT_ID_A = 0;
 		StmtId STMT_ID_B = 1;
 		bool isExceptionThrown = false;
@@ -30,7 +33,7 @@ namespace UnitTesting
 			}
 			Assert::IsTrue(isExceptionThrown);
 			isExceptionThrown = false;
-			Assert::IsTrue(stmtTable.getStmtsByType(ASSIGN).empty());
+			Assert::IsTrue(stmtTable.getStmtsByType(PRINT).empty());
 		}
 
 		TEST_METHOD(StmtTableFunctions) {
@@ -40,7 +43,7 @@ namespace UnitTesting
 			StmtId stmt_A_id = stmtTable.insertStmt(STMT_A);
 			Assert::AreEqual(stmtTable.size(), 1);
 
-			list<StmtId> list = stmtTable.getStmtsByType(ASSIGN);
+			list<StmtId> list = stmtTable.getStmtsByType(PRINT);
 
 			Assert::IsFalse(list.empty());
 			Assert::AreEqual(list.front(), stmt_A_id);

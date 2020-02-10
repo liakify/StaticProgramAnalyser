@@ -1,23 +1,20 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 #include "StmtListTable.h"
-#include "Simple.h"
-#include <vector>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
-
-using std::vector;
-using SIMPLE::Statement;
 
 namespace UnitTesting
 {
 	TEST_CLASS(TestStmtListTable)
 	{
 	public:
-		StatementList STMTLST_A = StatementList(vector<Statement>());;
-		StatementList STMTLST_B = StatementList(vector<Statement>());
-		StmtId STMTLST_ID_A = 0;
-		StmtId STMTLST_ID_B = 1;
+		StmtId STMT_ID = 1;
+		std::vector<StmtId> stmt_vector = std::vector<StmtId>(1, STMT_ID);
+		StatementList STMTLST_A = StatementList(stmt_vector);
+		StatementList STMTLST_B = StatementList(stmt_vector);
+		StmtListId STMTLST_ID_A = 0;
+		StmtListId STMTLST_ID_B = 1;
 		bool isExceptionThrown = false;
 
 		TEST_METHOD(InitializingStmtListTable)

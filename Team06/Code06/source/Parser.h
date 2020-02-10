@@ -27,9 +27,9 @@ namespace Parser {
 		string integer();
 
 		void program();
-		Procedure procedure();
-		StatementList stmtLst();
-		Statement stmt();
+		ProcId procedure();
+		StmtListId stmtLst();
+		StmtId stmt();
 		ReadStmt read_stmt();
 		PrintStmt print_stmt();
 		CallStmt call_stmt();
