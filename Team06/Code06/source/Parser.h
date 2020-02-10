@@ -25,7 +25,7 @@ namespace Parser {
 		
 		/**
 		Parses source and populates pkb accordingly.
-		Throws std::invalid_argument if the SIMPLE source has syntax errors.
+		@throws	std::invalid_argument if the SIMPLE source has syntax errors.
 		*/
 		void parse();
 	private:
