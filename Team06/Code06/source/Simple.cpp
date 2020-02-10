@@ -1,7 +1,32 @@
 #include "Simple.h"
-#include "LoggingUtils.h"
 
 namespace SIMPLE {
+	Operand::Operand(Operand left, Operand right, char op)
+		: left(&left), right(&right), op(op) {
+		this->str = getStr();
+	}
+
+	Operand::Operand(std::string name)
+		: left(nullptr), right(nullptr), op('\0'), str(name) {
+	}
+
+	std::string Operand::getStr() {
+		if (this->str != "") {
+			return this->str;
+		}
+		else {
+			return "(" + this->left->getStr() + this->op + this->right->getStr() + ")";
+		}
+	}
+
+	CondExpr::CondExpr(CondExpr left, CondExpr right)
+		: leftCond(&left), rightCond(&right), leftFactor(nullptr), rightFactor(nullptr) {
+	}
+
+	CondExpr::CondExpr(Operand left, Operand right)
+		: leftCond(nullptr), rightCond(nullptr), leftFactor(&left), rightFactor(&right) {
+	}
+
 	Statement::Statement() {}
 
 	StmtType Statement::getType() {
@@ -26,9 +51,13 @@ namespace SIMPLE {
 		return this->var;
 	}
 
-	IfStmt::IfStmt(StmtListId thenStmtLst, StmtListId elseStmtLst)
-		: thenStmtLst(thenStmtLst), elseStmtLst(elseStmtLst) {
+	IfStmt::IfStmt(CondExpr cond, StmtListId thenStmtLst, StmtListId elseStmtLst)
+		: condExpr(cond), thenStmtLst(thenStmtLst), elseStmtLst(elseStmtLst) {
 		this->stmtType = IF;
+	}
+
+	CondExpr IfStmt::getCondExpr() {
+		return this->condExpr;
 	}
 
 	StmtListId IfStmt::getThenStmtLstId() {
@@ -39,9 +68,13 @@ namespace SIMPLE {
 		return this->elseStmtLst;
 	}
 
-	WhileStmt::WhileStmt(StmtListId stmtLst)
-		: stmtLst(stmtLst) {
+	WhileStmt::WhileStmt(CondExpr cond, StmtListId stmtLst)
+		: condExpr(cond), stmtLst(stmtLst) {
 		this->stmtType = WHILE;
+	}
+
+	CondExpr WhileStmt::getCondExpr() {
+		return this->condExpr;
 	}
 
 	StmtListId WhileStmt::getStmtLstId() {
@@ -96,23 +129,5 @@ namespace SIMPLE {
 
 	StmtListId Procedure::getStmtLstId() {
 		return this->stmtLstId;
-	}
-
-	Operand::Operand(Operand left, Operand right, char op) 
-		: left(&left), right(&right), op(op) {
-		this->str = getStr();
-	}
-
-	Operand::Operand(std::string name)
-		: left(nullptr), right(nullptr), op('\0'), str(name) {
-	}
-
-	std::string Operand::getStr() {
-		if (this->str != "") {
-			return this->str;
-		}
-		else {
-			return "(" + this->left->getStr() + std::string(1, this->op) + this->right->getStr() + ")";
-		}
 	}
 }

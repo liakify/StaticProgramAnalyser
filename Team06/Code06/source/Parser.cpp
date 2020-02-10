@@ -1,5 +1,4 @@
 #include "Parser.h"
-#include "LoggingUtils.h"
 #include <stack>
 
 using std::invalid_argument;
@@ -119,22 +118,22 @@ namespace Parser{
 
 	WhileStmt Parser::while_stmt() {
 		consume(regex("[[:space:]]*while[[:space:]]*[(][[:space:]]*"));
-		cond_expr();
+		CondExpr cond = cond_expr();
 		consume(regex("[[:space:]]*[)][[:space:]]*[{][[:space:]]*"));
 		StmtListId sl = stmtLst();
 		consume(regex("[[:space:]]*[}][[:space:]]*"));
-		return WhileStmt(sl);
+		return WhileStmt(cond, sl);
 	}
 
 	IfStmt Parser::if_stmt() {
 		consume(regex("[[:space:]]*if[[:space:]]*[(][[:space:]]*"));
-		cond_expr();
+		CondExpr cond = cond_expr();
 		consume(regex("[[:space:]]*[)][[:space:]]*then[[:space:]]*[{][[:space:]]*"));
 		StmtListId thenStmtLst = stmtLst();
 		consume(regex("[[:space:]]*[}][[:space:]]*else[[:space:]]*[{][[:space:]]*"));
 		StmtListId elseStmtLst = stmtLst();
 		consume(regex("[[:space:]]*[}][[:space:]]*"));
-		return IfStmt(thenStmtLst, elseStmtLst);
+		return IfStmt(cond, thenStmtLst, elseStmtLst);
 	}
 
 	AssignStmt Parser::assign_stmt() {
@@ -145,111 +144,110 @@ namespace Parser{
 		return AssignStmt(v, exp);
 	}
 
-	void Parser::cond_expr() {
+	CondExpr Parser::cond_expr() {
 		int currentPos = this->pos;
 		try {
-			rel_expr();
-			return;
+			return rel_expr();
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		try {
 			consume(regex("[[:space:]]*[!][[:space:]]*[(][[:space:]]*"));
-			cond_expr();
+			CondExpr negated = cond_expr();
 			consume(regex("[[:space:]]*[)][[:space:]]*"));
-			return;
+			return negated;
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		try {
 			consume(regex("[[:space:]]*[(][[:space:]]*"));
-			cond_expr();
+			CondExpr left = cond_expr();
 			consume(regex("[[:space:]]*[)][[:space:]]*(&&)[[:space:]]*[(][[:space:]]*"));
-			cond_expr();
+			CondExpr right = cond_expr();
 			consume(regex("[[:space:]]*[)][[:space:]]*"));
-			return;
+			return CondExpr(left, right);
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		consume(regex("[[:space:]]*[(][[:space:]]*"));
-		cond_expr();
+		CondExpr left = cond_expr();
 		consume(regex("[[:space:]]*[)][[:space:]]*(||)[[:space:]]*[(][[:space:]]*"));
-		cond_expr();
+		CondExpr right = cond_expr();
 		consume(regex("[[:space:]]*[)][[:space:]]*"));
+		return CondExpr(left, right);
 	}
 
-	void Parser::rel_expr() {
+	CondExpr Parser::rel_expr() {
 		int currentPos = this->pos;
 		try {
-			rel_factor();
+			Operand left = rel_factor();
 			consume(regex("[[:space:]]*(>)[[:space:]]*"));
-			rel_factor();
-			return;
+			Operand right = rel_factor();
+			return CondExpr(left, right);
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		try {
-			rel_factor();
+			Operand left = rel_factor();
 			consume(regex("[[:space:]]*(>=)[[:space:]]*"));
-			rel_factor();
-			return;
+			Operand right = rel_factor();
+			return CondExpr(left, right);
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		try {
-			rel_factor();
+			Operand left = rel_factor();
 			consume(regex("[[:space:]]*(<)[[:space:]]*"));
-			rel_factor();
-			return;
+			Operand right = rel_factor();
+			return CondExpr(left, right);
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		try {
-			rel_factor();
+			Operand left = rel_factor();
 			consume(regex("[[:space:]]*(<=)[[:space:]]*"));
-			rel_factor();
-			return;
+			Operand right = rel_factor();
+			return CondExpr(left, right);
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		try {
-			rel_factor();
+			Operand left = rel_factor();
 			consume(regex("[[:space:]]*(==)[[:space:]]*"));
-			rel_factor();
-			return;
+			Operand right = rel_factor();
+			return CondExpr(left, right);
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
-		rel_factor();
+		Operand left = rel_factor();
 		consume(regex("[[:space:]]*(!=)[[:space:]]*"));
-		rel_factor();
+		Operand right = rel_factor();
+		return CondExpr(left, right);
 	}
 
-	void Parser::rel_factor() {
+	Operand Parser::rel_factor() {
 		int currentPos = this->pos;
 		try {
-			var_name();
-			return;
+			return Operand(var_name());
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		try {
-			const_value();
-			return;
+			return Operand(const_value());
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
-		expr();
+		return expr();
 	}
 
 	int Parser::get_op_rank(char op) {

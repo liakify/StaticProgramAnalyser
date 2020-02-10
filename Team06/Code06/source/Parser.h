@@ -37,9 +37,9 @@ namespace Parser {
 		IfStmt if_stmt();
 		AssignStmt assign_stmt();
 
-		void cond_expr();
-		void rel_expr();
-		void rel_factor();
+		CondExpr cond_expr();
+		CondExpr rel_expr();
+		Operand rel_factor();
 
 		int get_op_rank(char op);
 		int compare_op(char op1, char op2);
