@@ -9,6 +9,16 @@ namespace Parser{
 		this->pos = 0;
 	}
 
+	void Parser::parse() {
+		program();
+	}
+
+	int analyse(string& src) {
+		Parser p = Parser(src, PKB::PKB());
+		p.parse();
+		return 0;
+	}
+
 	string Parser::consume(regex rgx) {
 		std::smatch match;
 		string str = src.substr(this->pos);
@@ -25,10 +35,6 @@ namespace Parser{
 
 	string Parser::integer() {
 		return consume(regex("[0-9]+"));
-	}
-
-	void Parser::parse() {
-		program();
 	}
 
 	void Parser::program() {
@@ -342,11 +348,5 @@ namespace Parser{
 
 	ConstValue Parser::const_value() {
 		return integer();
-	}
-
-	int analyse(string& src) {
-		Parser p = Parser(src, PKB::PKB());
-		p.parse();
-		return 0;
 	}
 }

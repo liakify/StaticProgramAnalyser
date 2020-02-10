@@ -11,10 +11,22 @@ using std::string;
 using namespace SIMPLE;
 
 namespace Parser {
-
+	/**
+	The Parser class is used for parsing SIMPLE source code.
+	*/
 	class Parser {
 	public:
+		/**
+		Parser constructor.
+		@param	source	SIMPLE program string for parsing
+		@param	pkb		PKB reference for use when parsing
+		*/
 		Parser(string source, PKB::PKB& pkb);
+		
+		/**
+		Parses source and populates pkb accordingly.
+		Throws std::invalid_argument if the SIMPLE source has syntax errors.
+		*/
 		void parse();
 	private:
 		string src;
