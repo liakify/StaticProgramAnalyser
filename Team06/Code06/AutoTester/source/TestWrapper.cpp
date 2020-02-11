@@ -27,6 +27,8 @@ void TestWrapper::parse(std::string filename) {
     std::string program((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());;
     try {
         Parser::analyse(program);
+        //Parser::Parser expParser = Parser::Parser();
+        //Expression e = expParser.parseExpression(program);
     }
     catch (std::invalid_argument& e) {
         SPA::LoggingUtils::LogErrorMessage("%s", e.what());

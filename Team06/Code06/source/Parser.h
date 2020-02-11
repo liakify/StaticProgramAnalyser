@@ -18,7 +18,7 @@ namespace Parser {
 	class Parser {
 	public:
 		/**
-		* Parser constructor.
+		* Parser constructor for full SIMPLE programs. 
 		* 
 		* @param	source	SIMPLE program string for parsing
 		* @param	pkb		PKB reference for use when parsing
@@ -26,15 +26,28 @@ namespace Parser {
 		Parser(string source, PKB::PKB& pkb);
 		
 		/**
-		* Parses source and populates pkb accordingly.
+		* Empty Parser constructor for SIMPLE expressions.
+		*/
+		Parser();
+
+		/**
+		* Parses full SIMPLE source and populates pkb accordingly.
 		* 
 		* @throws	std::invalid_argument if the SIMPLE source has syntax errors.
 		*/
 		void parse();
+
+		/**
+		* Parses standalone SIMPLE expressions. PKB remains unmodified.
+		* 
+		* @throws	std::invalid_argument if the SIMPLE source has syntax errors.
+		*/
+		Expression parseExpression(string exp);
 	private:
 		string src;
 		PKB::PKB pkb;
 		size_t pos;
+		bool isExpression;
 
 		string consume(regex rgx);
 

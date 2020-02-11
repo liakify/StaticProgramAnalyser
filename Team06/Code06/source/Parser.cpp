@@ -4,12 +4,36 @@ using std::invalid_argument;
 
 namespace Parser{
 	Parser::Parser(string source, PKB::PKB& pkb)
-		: src(source), pkb(pkb) {
-		this->pos = 0;
+		: src(source), pkb(pkb), isExpression(false) {
+	}
+
+	Parser::Parser() 
+		: isExpression(true) {
 	}
 
 	void Parser::parse() {
-		program();
+		if (!isExpression) {
+			this->pos = 0;
+			program();
+		}
+		else {
+			throw std::logic_error(
+				"Parser object created as an Expression parser instead of a full SIMPLE parser."
+			);
+		}
+	}
+
+	Expression Parser::parseExpression(string exp) {
+		if (isExpression) {
+			this->src = exp;
+			this->pos = 0;
+			return expr();
+		}
+		else {
+			throw std::logic_error(
+				"Parser object created as a full SIMPLE parser instead of an Expression parser."
+			);
+		}
 	}
 
 	int analyse(string& src) {
@@ -325,9 +349,15 @@ namespace Parser{
 	Expression Parser::factor() {
 		int currentPos = this->pos;
 		try {
-			VarId id = var_name();
-			VarName name = pkb.varTable.get(id);
-			return Expression(name, id);
+			if (isExpression) {
+				// Sentinel VarId value
+				return Expression(name(), -1);
+			}
+			else {
+				VarId id = var_name();
+				VarName name = pkb.varTable.get(id);
+				return Expression(name, id);
+			}
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
