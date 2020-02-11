@@ -54,7 +54,6 @@ namespace Parser {
 
 		CondExpr cond_expr();
 		CondExpr rel_expr();
-		Expression rel_factor();
 
 		int get_op_rank(char op);
 		int compare_op(char op1, char op2); 
@@ -67,6 +66,7 @@ namespace Parser {
 		ConstValue const_value();
 
 		void populateParentKB(StmtId stmtId, StmtListId stmtLstId);
+		void populateUsesKB(StmtId stmtId, std::set<VarId> varSet);
 	};
 	int analyse(string& src);
 }

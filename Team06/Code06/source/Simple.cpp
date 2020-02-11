@@ -39,10 +39,28 @@ namespace SIMPLE {
 
 	CondExpr::CondExpr(CondExpr left, CondExpr right)
 		: leftCond(&left), rightCond(&right), leftFactor(nullptr), rightFactor(nullptr) {
+		this->varSet = std::set<VarId>(left.varSet);
+		this->varSet.insert(right.varSet.begin(), right.varSet.end());
+		this->constSet = std::set<ConstValue>(left.constSet);
+		this->constSet.insert(right.constSet.begin(), right.constSet.end());
 	}
 
 	CondExpr::CondExpr(Expression left, Expression right)
 		: leftCond(nullptr), rightCond(nullptr), leftFactor(&left), rightFactor(&right) {
+		this->varSet = std::set<VarId>(left.getVarIds());
+		std::set<VarId> temp = std::set<VarId>(right.getVarIds());
+		this->varSet.insert(temp.begin(), temp.end());
+		this->constSet = std::set<ConstValue>(left.getConstValues());
+		std::set<ConstValue> temp2 = std::set<ConstValue>(right.getConstValues());
+		this->constSet.insert(temp2.begin(), temp2.end());
+	}
+
+	std::set<VarId> CondExpr::getVarIds() {
+		return this->varSet;
+	}
+
+	std::set<ConstValue> CondExpr::getConstValues() {
+		return this->constSet;
 	}
 
 	Statement::Statement() {}

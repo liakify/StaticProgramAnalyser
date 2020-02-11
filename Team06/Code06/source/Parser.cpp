@@ -99,6 +99,7 @@ namespace Parser{
 			StmtId stmtId = pkb.stmtTable.insertStmt(whileStmt);
 			StmtListId stmtLstId = whileStmt.getStmtLstId();
 			populateParentKB(stmtId, stmtLstId);
+			populateUsesKB(stmtId, whileStmt.getCondExpr().getVarIds());
 			return stmtId;
 		}
 		catch (const invalid_argument&) {
@@ -111,6 +112,7 @@ namespace Parser{
 			StmtListId stmtLstId2 = ifStmt.getElseStmtLstId();
 			populateParentKB(stmtId, stmtLstId1);
 			populateParentKB(stmtId, stmtLstId2);
+			populateUsesKB(stmtId, ifStmt.getCondExpr().getVarIds());
 			return stmtId;
 		}
 		catch (const invalid_argument&) {
@@ -211,73 +213,54 @@ namespace Parser{
 	CondExpr Parser::rel_expr() {
 		int currentPos = this->pos;
 		try {
-			Expression left = rel_factor();
+			Expression left = expr();
 			consume(regex("[[:space:]]*(>)[[:space:]]*"));
-			Expression right = rel_factor();
+			Expression right = expr();
 			return CondExpr(left, right);
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		try {
-			Expression left = rel_factor();
+			Expression left = expr();
 			consume(regex("[[:space:]]*(>=)[[:space:]]*"));
-			Expression right = rel_factor();
+			Expression right = expr();
 			return CondExpr(left, right);
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		try {
-			Expression left = rel_factor();
+			Expression left = expr();
 			consume(regex("[[:space:]]*(<)[[:space:]]*"));
-			Expression right = rel_factor();
+			Expression right = expr();
 			return CondExpr(left, right);
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		try {
-			Expression left = rel_factor();
+			Expression left = expr();
 			consume(regex("[[:space:]]*(<=)[[:space:]]*"));
-			Expression right = rel_factor();
+			Expression right = expr();
 			return CondExpr(left, right);
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		try {
-			Expression left = rel_factor();
+			Expression left = expr();
 			consume(regex("[[:space:]]*(==)[[:space:]]*"));
-			Expression right = rel_factor();
+			Expression right = expr();
 			return CondExpr(left, right);
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
-		Expression left = rel_factor();
+		Expression left = expr();
 		consume(regex("[[:space:]]*(!=)[[:space:]]*"));
-		Expression right = rel_factor();
+		Expression right = expr();
 		return CondExpr(left, right);
-	}
-
-	Expression Parser::rel_factor() {
-		int currentPos = this->pos;
-		try {
-			VarId id = var_name();
-			VarName name = pkb.varTable.get(id);
-			return Expression(name, id);
-		}
-		catch (const invalid_argument&) {
-			this->pos = currentPos;
-		}
-		try {
-			return Expression(const_value());
-		}
-		catch (const invalid_argument&) {
-			this->pos = currentPos;
-		}
-		return expr();
 	}
 
 	int Parser::get_op_rank(char op) {
@@ -378,6 +361,13 @@ namespace Parser{
 		std::vector<StmtId> idList = sl.getStmtIds();
 		for (size_t i = 0; i < idList.size(); i++) {
 			//pkb.parentKB.addParent(stmtId, idList[i]);
+		}
+	}
+
+	void Parser::populateUsesKB(StmtId stmtId, std::set<VarId> varSet) {
+		std::set<VarId>::iterator it;
+		for (it = varSet.begin(); it != varSet.end(); it++) {
+			//pkb.usesKB.addStmtUses(stmtId, *it);
 		}
 	}
 }

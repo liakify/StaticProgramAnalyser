@@ -64,16 +64,22 @@ namespace SIMPLE {
 	* The CondExpr class is used to represent conditional expressions in SIMPLE.
 	* A CondExpr combines either 2 CondExprs or 2 Expressions but not both.
 	* When combining 2 CondExprs, the Expressions will be nullptr and vice versa.
+	* Internally, it maintains one VarId set and one ConstValue set representing
+	* the variables and constants present in the expression.
 	*/
 	class CondExpr {
 	public:
 		CondExpr(CondExpr left, CondExpr right);
 		CondExpr(Expression left, Expression right);
+		std::set<VarId> getVarIds();
+		std::set<ConstValue> getConstValues();
 	private:
 		CondExpr* leftCond;
 		CondExpr* rightCond;
 		Expression* leftFactor;
 		Expression* rightFactor;
+		std::set<VarId> varSet;
+		std::set<ConstValue> constSet;
 	};
 
 	class Statement {
