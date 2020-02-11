@@ -144,7 +144,7 @@ namespace SIMPLE {
 	}
 
 	bool StatementList::operator== (const StatementList& other) {
-		return true;
+		return this->statements == other.statements;
 	}
 
 	std::vector<StmtId> StatementList::getStmtIds() {

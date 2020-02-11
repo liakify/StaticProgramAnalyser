@@ -7,7 +7,8 @@ using namespace SIMPLE;
 namespace UnitTesting {
 	TEST_CLASS(TestSimple) {
 	public:
-		ProcName PROC_NAME = "pRoCc";
+		ProcName PROC_NAME_1 = "pRoCc";
+		ProcName PROC_NAME_2 = "proCc";
 		StmtListId STMTLIST_ID_1 = 2;
 		StmtListId STMTLIST_ID_2 = 5;
 		StmtId STMT_ID_1 = 0;
@@ -82,9 +83,9 @@ namespace UnitTesting {
 			Assert::IsTrue(READ == READ_STMT.getType());
 			Assert::AreEqual(VAR_ID_2, READ_STMT.getVar());
 
-			CallStmt CALL_STMT = CallStmt(PROC_NAME);
+			CallStmt CALL_STMT = CallStmt(PROC_NAME_1);
 			Assert::IsTrue(CALL == CALL_STMT.getType());
-			Assert::AreEqual(PROC_NAME, CALL_STMT.getProc());
+			Assert::AreEqual(PROC_NAME_1, CALL_STMT.getProc());
 
 			IfStmt IF_STMT = IfStmt(cond2, STMTLIST_ID_1, STMTLIST_ID_2);
 			Assert::IsTrue(IF == IF_STMT.getType());
@@ -107,6 +108,29 @@ namespace UnitTesting {
 			Assert::IsTrue(exp2.getConstValues() == ASSIGN_STMT.getExpr().getConstValues());
 		}
 
-		
+		TEST_METHOD(TestStmtLst) {
+			std::vector<StmtId> sid1, sid2;
+			sid1.push_back(STMT_ID_1);
+			sid1.push_back(STMT_ID_2);
+			sid2.push_back(STMT_ID_2);
+			sid2.push_back(STMT_ID_1);
+			StatementList STATEMENT_LIST_1 = StatementList(sid1);
+			StatementList STATEMENT_LIST_2 = StatementList(sid1);
+			Assert::IsTrue(sid1 == STATEMENT_LIST_1.getStmtIds());
+			Assert::IsTrue(STATEMENT_LIST_1 == STATEMENT_LIST_2);
+			STATEMENT_LIST_2 = StatementList(sid2);
+			Assert::IsFalse(STATEMENT_LIST_1 == STATEMENT_LIST_2);
+		}
+
+		TEST_METHOD(TestProcedure) {
+			Procedure PROC_1 = Procedure(PROC_NAME_1, STMTLIST_ID_1);
+			Procedure PROC_2 = Procedure(PROC_NAME_1, STMTLIST_ID_2);
+			Assert::AreEqual(PROC_NAME_1, PROC_1.getName());
+			Assert::AreEqual(STMTLIST_ID_2, PROC_2.getStmtLstId());
+			Assert::IsTrue(PROC_1 == PROC_2);
+
+			PROC_2 = Procedure(PROC_NAME_2, STMTLIST_ID_1);
+			Assert::IsFalse(PROC_1 == PROC_2);
+		}
 	};
 }
