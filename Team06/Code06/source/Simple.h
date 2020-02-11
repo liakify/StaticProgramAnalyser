@@ -3,21 +3,21 @@
 
 #include <string>
 #include <vector>
-#include <set>
+#include <unordered_set>
 #include "Types.h"
 
 namespace SIMPLE {
 	/**
 	* The Expression class is used to represent expressions in SIMPLE. 
 	* An Expression is either a literal, or combines 2 other Expressions via an operator.
-	* Internally, it maintains one VarId set and one ConstValue set representing
+	* Internally, it maintains one VarId unordered_set and one ConstValue unordered_set representing
 	* the variables and constants present in the expression.
 	*/
 	class Expression {
 	public:
 		/**
-		* Constructor for a non-literal Expression. The sets of the sub-expressions
-		* will be unioned to form the VarId and ConstValue sets of the expression.
+		* Constructor for a non-literal Expression. The unordered_sets of the sub-expressions
+		* will be unioned to form the VarId and ConstValue unordered_sets of the expression.
 		* 
 		* @param	left	Left operand
 		* @param	right	Right operand
@@ -49,37 +49,37 @@ namespace SIMPLE {
 		* @return	the string representation
 		*/
 		std::string getStr();
-		std::set<VarId> getVarIds();
-		std::set<ConstValue> getConstValues();
+		std::unordered_set<VarId> getVarIds();
+		std::unordered_set<ConstValue> getConstValues();
 	private:
 		Expression* left;
 		Expression* right;
 		char op;
 		std::string str;
-		std::set<VarId> varSet;
-		std::set<ConstValue> constSet;
+		std::unordered_set<VarId> varSet;
+		std::unordered_set<ConstValue> constSet;
 	};
 
 	/**
 	* The CondExpr class is used to represent conditional expressions in SIMPLE.
 	* A CondExpr combines either 2 CondExprs or 2 Expressions but not both.
 	* When combining 2 CondExprs, the Expressions will be nullptr and vice versa.
-	* Internally, it maintains one VarId set and one ConstValue set representing
+	* Internally, it maintains one VarId unordered_set and one ConstValue unordered_set representing
 	* the variables and constants present in the expression.
 	*/
 	class CondExpr {
 	public:
 		CondExpr(CondExpr left, CondExpr right);
 		CondExpr(Expression left, Expression right);
-		std::set<VarId> getVarIds();
-		std::set<ConstValue> getConstValues();
+		std::unordered_set<VarId> getVarIds();
+		std::unordered_set<ConstValue> getConstValues();
 	private:
 		CondExpr* leftCond;
 		CondExpr* rightCond;
 		Expression* leftFactor;
 		Expression* rightFactor;
-		std::set<VarId> varSet;
-		std::set<ConstValue> constSet;
+		std::unordered_set<VarId> varSet;
+		std::unordered_set<ConstValue> constSet;
 	};
 
 	class Statement {

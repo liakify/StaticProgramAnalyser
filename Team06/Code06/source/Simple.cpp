@@ -4,9 +4,9 @@ namespace SIMPLE {
 	Expression::Expression(Expression left, Expression right, char op)
 		: left(&left), right(&right), op(op) {
 		this->str = getStr();
-		this->varSet = std::set<VarId>(left.varSet);
+		this->varSet = std::unordered_set<VarId>(left.varSet);
 		this->varSet.insert(right.varSet.begin(), right.varSet.end());
-		this->constSet = std::set<ConstValue>(left.constSet);
+		this->constSet = std::unordered_set<ConstValue>(left.constSet);
 		this->constSet.insert(right.constSet.begin(), right.constSet.end());
 	}
 
@@ -20,11 +20,11 @@ namespace SIMPLE {
 		constSet.insert(name);
 	}
 
-	std::set<VarId> Expression::getVarIds() {
+	std::unordered_set<VarId> Expression::getVarIds() {
 		return this->varSet;
 	}
 	
-	std::set<ConstValue> Expression::getConstValues() {
+	std::unordered_set<ConstValue> Expression::getConstValues() {
 		return this->constSet;
 	}
 
@@ -39,27 +39,27 @@ namespace SIMPLE {
 
 	CondExpr::CondExpr(CondExpr left, CondExpr right)
 		: leftCond(&left), rightCond(&right), leftFactor(nullptr), rightFactor(nullptr) {
-		this->varSet = std::set<VarId>(left.varSet);
+		this->varSet = std::unordered_set<VarId>(left.varSet);
 		this->varSet.insert(right.varSet.begin(), right.varSet.end());
-		this->constSet = std::set<ConstValue>(left.constSet);
+		this->constSet = std::unordered_set<ConstValue>(left.constSet);
 		this->constSet.insert(right.constSet.begin(), right.constSet.end());
 	}
 
 	CondExpr::CondExpr(Expression left, Expression right)
 		: leftCond(nullptr), rightCond(nullptr), leftFactor(&left), rightFactor(&right) {
-		this->varSet = std::set<VarId>(left.getVarIds());
-		std::set<VarId> temp = std::set<VarId>(right.getVarIds());
+		this->varSet = std::unordered_set<VarId>(left.getVarIds());
+		std::unordered_set<VarId> temp = std::unordered_set<VarId>(right.getVarIds());
 		this->varSet.insert(temp.begin(), temp.end());
-		this->constSet = std::set<ConstValue>(left.getConstValues());
-		std::set<ConstValue> temp2 = std::set<ConstValue>(right.getConstValues());
+		this->constSet = std::unordered_set<ConstValue>(left.getConstValues());
+		std::unordered_set<ConstValue> temp2 = std::unordered_set<ConstValue>(right.getConstValues());
 		this->constSet.insert(temp2.begin(), temp2.end());
 	}
 
-	std::set<VarId> CondExpr::getVarIds() {
+	std::unordered_set<VarId> CondExpr::getVarIds() {
 		return this->varSet;
 	}
 
-	std::set<ConstValue> CondExpr::getConstValues() {
+	std::unordered_set<ConstValue> CondExpr::getConstValues() {
 		return this->constSet;
 	}
 

@@ -364,8 +364,8 @@ namespace Parser{
 		}
 	}
 
-	void Parser::populateUsesKB(StmtId stmtId, std::set<VarId> varSet) {
-		std::set<VarId>::iterator it;
+	void Parser::populateUsesKB(StmtId stmtId, std::unordered_set<VarId> varSet) {
+		std::unordered_set<VarId>::iterator it;
 		for (it = varSet.begin(); it != varSet.end(); it++) {
 			//pkb.usesKB.addStmtUses(stmtId, *it);
 		}

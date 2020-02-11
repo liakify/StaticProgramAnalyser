@@ -66,7 +66,7 @@ namespace Parser {
 		ConstValue const_value();
 
 		void populateParentKB(StmtId stmtId, StmtListId stmtLstId);
-		void populateUsesKB(StmtId stmtId, std::set<VarId> varSet);
+		void populateUsesKB(StmtId stmtId, std::unordered_set<VarId> varSet);
 	};
 	int analyse(string& src);
 }
