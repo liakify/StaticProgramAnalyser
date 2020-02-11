@@ -7,6 +7,11 @@ using namespace SIMPLE;
 namespace UnitTesting {
 	TEST_CLASS(TestSimple) {
 	public:
+		ProcName PROC_NAME = "pRoCc";
+		StmtListId STMTLIST_ID_1 = 2;
+		StmtListId STMTLIST_ID_2 = 5;
+		StmtId STMT_ID_1 = 0;
+		StmtId STMT_ID_2 = 1;
 		VarName VAR_NAME_1 = "qwerty";
 		VarName VAR_NAME_2 = "asdf";
 		char op = '%';
@@ -67,5 +72,41 @@ namespace UnitTesting {
 			Assert::IsTrue(cond3.getVarIds() == varSet);
 			Assert::IsTrue(cond3.getConstValues() == constSet);
 		}
+
+		TEST_METHOD(TestStatements) {
+			PrintStmt PRINT_STMT = PrintStmt(VAR_ID_1);
+			Assert::IsTrue(PRINT == PRINT_STMT.getType());
+			Assert::AreEqual(VAR_ID_1, PRINT_STMT.getVar());
+
+			ReadStmt READ_STMT = ReadStmt(VAR_ID_2);
+			Assert::IsTrue(READ == READ_STMT.getType());
+			Assert::AreEqual(VAR_ID_2, READ_STMT.getVar());
+
+			CallStmt CALL_STMT = CallStmt(PROC_NAME);
+			Assert::IsTrue(CALL == CALL_STMT.getType());
+			Assert::AreEqual(PROC_NAME, CALL_STMT.getProc());
+
+			IfStmt IF_STMT = IfStmt(cond2, STMTLIST_ID_1, STMTLIST_ID_2);
+			Assert::IsTrue(IF == IF_STMT.getType());
+			Assert::AreEqual(STMTLIST_ID_1, IF_STMT.getThenStmtLstId());
+			Assert::AreEqual(STMTLIST_ID_2, IF_STMT.getElseStmtLstId());
+			Assert::IsTrue(cond2.getVarIds() == IF_STMT.getCondExpr().getVarIds());
+			Assert::IsTrue(cond2.getConstValues() == IF_STMT.getCondExpr().getConstValues());
+
+			WhileStmt WHILE_STMT = WhileStmt(cond2, STMTLIST_ID_1);
+			Assert::IsTrue(WHILE == WHILE_STMT.getType());
+			Assert::AreEqual(STMTLIST_ID_1, WHILE_STMT.getStmtLstId());
+			Assert::IsTrue(cond2.getVarIds() == WHILE_STMT.getCondExpr().getVarIds());
+			Assert::IsTrue(cond2.getConstValues() == WHILE_STMT.getCondExpr().getConstValues());
+
+			AssignStmt ASSIGN_STMT = AssignStmt(VAR_ID_2, exp2);
+			Assert::IsTrue(ASSIGN == ASSIGN_STMT.getType());
+			Assert::AreEqual(VAR_ID_2, ASSIGN_STMT.getVar());
+			Assert::AreEqual(exp2.getStr(), ASSIGN_STMT.getExpr().getStr());
+			Assert::IsTrue(exp2.getVarIds() == ASSIGN_STMT.getExpr().getVarIds());
+			Assert::IsTrue(exp2.getConstValues() == ASSIGN_STMT.getExpr().getConstValues());
+		}
+
+		
 	};
 }
