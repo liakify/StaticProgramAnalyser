@@ -7,29 +7,29 @@
 
 namespace SIMPLE {
 	/**
-	The Operand class is used to represent expressions in SIMPLE. 
-	An Operand is either a literal, or combines 2 other Operands via an operator.
+	* The Operand class is used to represent expressions in SIMPLE. 
+	* An Operand is either a literal, or combines 2 other Operands via an operator.
 	*/
 	class Operand {
 	public:
 		/**
-		Constructor for a non-literal Operand.
-		@param	left	Left operand
-		@param	right	Right operand
-		@param	op		Operator
+		* Constructor for a non-literal Operand.
+		* @param	left	Left operand
+		* @param	right	Right operand
+		* @param	op		Operator
 		*/
 		Operand(Operand left, Operand right, char op);
 
 		/**
-		Constructor for a literal Operand.
-		Left, right and op will be initialised with null values.
-		@param	string	String representation of the literal
+		* Constructor for a literal Operand.
+		* Left, right and op will be initialised with null values.
+		* @param	string	String representation of the literal
 		*/
 		Operand(std::string name);
 
 		/**
-		Recursively constructs the string representation of an Operand.
-		Parentheses are added to avoid ambiguity in reading the order of operations.
+		* Recursively constructs the string representation of an Operand.
+		* Parentheses are added to avoid ambiguity in reading the order of operations.
 		@return	the string representation
 		*/
 		std::string getStr();
@@ -41,9 +41,9 @@ namespace SIMPLE {
 	};
 
 	/**
-	The CondExpr class is used to represent conditional expressions in SIMPLE.
-	A CondExpr combines either 2 CondExprs or 2 Operands but not both.
-	When combining 2 CondExprs, the Operands will be nullptr and vice versa.
+	* The CondExpr class is used to represent conditional expressions in SIMPLE.
+	* A CondExpr combines either 2 CondExprs or 2 Operands but not both.
+	* When combining 2 CondExprs, the Operands will be nullptr and vice versa.
 	*/
 	class CondExpr {
 	public:

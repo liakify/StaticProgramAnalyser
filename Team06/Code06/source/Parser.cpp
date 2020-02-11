@@ -63,6 +63,9 @@ namespace Parser{
 				break;
 			}
 		}
+		for (int i = 0; i < statements.size() - 1; i++) {
+			//pkb.followsKB.addFollows(statements[i], statements[i + 1]);
+		}
 		StatementList sl = StatementList(statements);
 		return pkb.stmtListTable.insertStmtLst(sl);
 	}
@@ -87,13 +90,23 @@ namespace Parser{
 			this->pos = currentPos;
 		}
 		try {
-			return pkb.stmtTable.insertStmt(while_stmt());
+			WhileStmt whileStmt = while_stmt();
+			StmtId stmtId = pkb.stmtTable.insertStmt(whileStmt);
+			StmtListId stmtLstId = whileStmt.getStmtLstId();
+			populateParentKB(stmtId, stmtLstId);
+			return stmtId;
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		try {
-			return pkb.stmtTable.insertStmt(if_stmt());
+			IfStmt ifStmt = if_stmt();
+			StmtId stmtId = pkb.stmtTable.insertStmt(ifStmt);
+			StmtListId stmtLstId1 = ifStmt.getThenStmtLstId();
+			StmtListId stmtLstId2 = ifStmt.getElseStmtLstId();
+			populateParentKB(stmtId, stmtLstId1);
+			populateParentKB(stmtId, stmtLstId2);
+			return stmtId;
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
@@ -348,5 +361,13 @@ namespace Parser{
 
 	ConstValue Parser::const_value() {
 		return integer();
+	}
+
+	void Parser::populateParentKB(StmtId stmtId, StmtListId stmtLstId) {
+		StatementList sl = pkb.stmtListTable.get(stmtLstId);
+		std::vector<StmtId> idList = sl.getStmtIds();
+		for (int i = 0; i < idList.size(); i++) {
+			//pkb.parentKB.addParent(stmtId, idList[i]);
+		}
 	}
 }
