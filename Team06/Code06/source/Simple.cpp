@@ -1,16 +1,35 @@
 #include "Simple.h"
+#include <algorithm>
 
 namespace SIMPLE {
-	Operand::Operand(Operand left, Operand right, char op)
+	Expression::Expression(Expression left, Expression right, char op)
 		: left(&left), right(&right), op(op) {
 		this->str = getStr();
+		this->varSet = std::set<VarId>(left.varSet);
+		this->varSet.insert(right.varSet.begin(), right.varSet.end());
+		this->constSet = std::set<ConstValue>(left.constSet);
+		this->constSet.insert(right.constSet.begin(), right.constSet.end());
 	}
 
-	Operand::Operand(std::string name)
+	Expression::Expression(VarName name, VarId id)
 		: left(nullptr), right(nullptr), op('\0'), str(name) {
+		varSet.insert(id);
 	}
 
-	std::string Operand::getStr() {
+	Expression::Expression(ConstValue name)
+		: left(nullptr), right(nullptr), op('\0'), str(name) {
+		constSet.insert(name);
+	}
+
+	std::set<VarId> Expression::getVarIds() {
+		return this->varSet;
+	}
+	
+	std::set<ConstValue> Expression::getConstValues() {
+		return this->constSet;
+	}
+
+	std::string Expression::getStr() {
 		if (this->str != "") {
 			return this->str;
 		}
@@ -23,7 +42,7 @@ namespace SIMPLE {
 		: leftCond(&left), rightCond(&right), leftFactor(nullptr), rightFactor(nullptr) {
 	}
 
-	CondExpr::CondExpr(Operand left, Operand right)
+	CondExpr::CondExpr(Expression left, Expression right)
 		: leftCond(nullptr), rightCond(nullptr), leftFactor(&left), rightFactor(&right) {
 	}
 
@@ -33,21 +52,21 @@ namespace SIMPLE {
 		return this->stmtType;
 	}
 
-	PrintStmt::PrintStmt(VarName var)
+	PrintStmt::PrintStmt(VarId var)
 		: var(var) {
 		this->stmtType = PRINT;
 	}
 
-	VarName PrintStmt::getVar() {
+	VarId PrintStmt::getVar() {
 		return this->var;
 	}
 
-	ReadStmt::ReadStmt(VarName var)
+	ReadStmt::ReadStmt(VarId var)
 		: var(var) {
 		this->stmtType = READ;
 	}
 	
-	VarName ReadStmt::getVar() {
+	VarId ReadStmt::getVar() {
 		return this->var;
 	}
 
@@ -90,16 +109,16 @@ namespace SIMPLE {
 		return this->procName;
 	}
 
-	AssignStmt::AssignStmt(VarName var, Operand expr)
+	AssignStmt::AssignStmt(VarId var, Expression expr)
 		: var(var), expr(expr) {
 		this->stmtType = ASSIGN;
 	}
 
-	VarName AssignStmt::getVar() {
+	VarId AssignStmt::getVar() {
 		return this->var;
 	}
 
-	Operand AssignStmt::getExpr() {
+	Expression AssignStmt::getExpr() {
 		return this->expr;
 	}
 

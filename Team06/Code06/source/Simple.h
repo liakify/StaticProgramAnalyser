@@ -3,57 +3,73 @@
 
 #include <string>
 #include <vector>
+#include <set>
 #include "Types.h"
 
 namespace SIMPLE {
 	/**
-	* The Operand class is used to represent expressions in SIMPLE. 
-	* An Operand is either a literal, or combines 2 other Operands via an operator.
+	* The Expression class is used to represent expressions in SIMPLE. 
+	* An Expression is either a literal, or combines 2 other Expressions via an operator.
+	* Internally, it maintains one VarId set and one ConstValue set representing
+	* the variables and constants present in the expression.
 	*/
-	class Operand {
+	class Expression {
 	public:
 		/**
-		* Constructor for a non-literal Operand.
+		* Constructor for a non-literal Expression. The sets of the sub-expressions
+		* will be unioned to form the VarId and ConstValue sets of the expression.
 		* @param	left	Left operand
 		* @param	right	Right operand
 		* @param	op		Operator
 		*/
-		Operand(Operand left, Operand right, char op);
+		Expression(Expression left, Expression right, char op);
 
 		/**
-		* Constructor for a literal Operand.
+		* Constructor for a variable Expression.
 		* Left, right and op will be initialised with null values.
-		* @param	string	String representation of the literal
+		* @param	name	Name of the variable
+		* @param	id		ID of the variable as stored in the PKB
 		*/
-		Operand(std::string name);
+		Expression(VarName name, VarId id);
 
 		/**
-		* Recursively constructs the string representation of an Operand.
+		* Constructor for a constant value Expression.
+		* Left, right and op will be initialised with null values.
+		* @param	ConstValue	String representation of the constant
+		*/
+		Expression(ConstValue name);
+
+		/**
+		* Recursively constructs the string representation of an Expression.
 		* Parentheses are added to avoid ambiguity in reading the order of operations.
-		@return	the string representation
+		* @return	the string representation
 		*/
 		std::string getStr();
+		std::set<VarId> getVarIds();
+		std::set<ConstValue> getConstValues();
 	private:
-		Operand* left;
-		Operand* right;
+		Expression* left;
+		Expression* right;
 		char op;
 		std::string str;
+		std::set<VarId> varSet;
+		std::set<ConstValue> constSet;
 	};
 
 	/**
 	* The CondExpr class is used to represent conditional expressions in SIMPLE.
-	* A CondExpr combines either 2 CondExprs or 2 Operands but not both.
-	* When combining 2 CondExprs, the Operands will be nullptr and vice versa.
+	* A CondExpr combines either 2 CondExprs or 2 Expressions but not both.
+	* When combining 2 CondExprs, the Expressions will be nullptr and vice versa.
 	*/
 	class CondExpr {
 	public:
 		CondExpr(CondExpr left, CondExpr right);
-		CondExpr(Operand left, Operand right);
+		CondExpr(Expression left, Expression right);
 	private:
 		CondExpr* leftCond;
 		CondExpr* rightCond;
-		Operand* leftFactor;
-		Operand* rightFactor;
+		Expression* leftFactor;
+		Expression* rightFactor;
 	};
 
 	class Statement {
@@ -66,18 +82,18 @@ namespace SIMPLE {
 
 	class PrintStmt : public Statement {
 	public:
-		PrintStmt(VarName var);
-		VarName getVar();
+		PrintStmt(VarId var);
+		VarId getVar();
 	private:
-		VarName var;
+		VarId var;
 	};
 
 	class ReadStmt : public Statement {
 	public:
-		ReadStmt(VarName var);
-		VarName getVar();
+		ReadStmt(VarId var);
+		VarId getVar();
 	private:
-		VarName var;
+		VarId var;
 	};
 
 	class IfStmt : public Statement {
@@ -112,12 +128,12 @@ namespace SIMPLE {
 
 	class AssignStmt : public Statement {
 	public:
-		AssignStmt(VarName var, Operand expr);
-		VarName getVar();
-		Operand getExpr();
+		AssignStmt(VarId var, Expression expr);
+		VarId getVar();
+		Expression getExpr();
 	public:
-		Operand expr;
-		VarName var;
+		Expression expr;
+		VarId var;
 	};
 
 	class StatementList {

@@ -63,7 +63,7 @@ namespace Parser{
 				break;
 			}
 		}
-		for (int i = 0; i < statements.size() - 1; i++) {
+		for (size_t i = 0; i < statements.size() - 1; i++) {
 			//pkb.followsKB.addFollows(statements[i], statements[i + 1]);
 		}
 		StatementList sl = StatementList(statements);
@@ -73,12 +73,18 @@ namespace Parser{
 	StmtId Parser::stmt() {
 		int currentPos = this->pos;
 		try {
-			return pkb.stmtTable.insertStmt(read_stmt());
+			ReadStmt readStmt = read_stmt();
+			StmtId stmtId = pkb.stmtTable.insertStmt(readStmt);
+			//pkb.modifiesKB.addStmtModifies(stmtId, readStmt.getVar());
+			return stmtId;
 		} catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		try {
-			return pkb.stmtTable.insertStmt(print_stmt());
+			PrintStmt printStmt = print_stmt();
+			StmtId stmtId = pkb.stmtTable.insertStmt(printStmt);
+			//pkb.usesKB.addStmtUses(stmtId, printStmt.getVar());
+			return stmtId;
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
@@ -111,19 +117,22 @@ namespace Parser{
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
-		return pkb.stmtTable.insertStmt(assign_stmt());
+		AssignStmt assignStmt = assign_stmt();
+		StmtId stmtId = pkb.stmtTable.insertStmt(assignStmt);
+		//pkb.modifiesKB.addStmtModifies(stmtId, assignStmt.getVar());
+		return stmtId;
 	}
 
 	ReadStmt Parser::read_stmt() {
 		consume(regex("[[:space:]]*read[[:space:]]+"));
-		VarName v = var_name();
+		VarId v = var_name();
 		consume(regex("[[:space:]]*[;][[:space:]]*"));
 		return ReadStmt(v);
 	}
 
 	PrintStmt Parser::print_stmt() {
 		consume(regex("[[:space:]]*print[[:space:]]+"));
-		VarName v = var_name();
+		VarId v = var_name();
 		consume(regex("[[:space:]]*[;][[:space:]]*"));
 		return PrintStmt(v);
 	}
@@ -156,9 +165,9 @@ namespace Parser{
 	}
 
 	AssignStmt Parser::assign_stmt() {
-		VarName v = var_name();
+		VarId v = var_name();
 		consume(regex("[[:space:]]*[=][[:space:]]*"));
-		Operand exp = expr();
+		Expression exp = expr();
 		consume(regex("[[:space:]]*[;][[:space:]]*"));
 		return AssignStmt(v, exp);
 	}
@@ -202,66 +211,68 @@ namespace Parser{
 	CondExpr Parser::rel_expr() {
 		int currentPos = this->pos;
 		try {
-			Operand left = rel_factor();
+			Expression left = rel_factor();
 			consume(regex("[[:space:]]*(>)[[:space:]]*"));
-			Operand right = rel_factor();
+			Expression right = rel_factor();
 			return CondExpr(left, right);
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		try {
-			Operand left = rel_factor();
+			Expression left = rel_factor();
 			consume(regex("[[:space:]]*(>=)[[:space:]]*"));
-			Operand right = rel_factor();
+			Expression right = rel_factor();
 			return CondExpr(left, right);
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		try {
-			Operand left = rel_factor();
+			Expression left = rel_factor();
 			consume(regex("[[:space:]]*(<)[[:space:]]*"));
-			Operand right = rel_factor();
+			Expression right = rel_factor();
 			return CondExpr(left, right);
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		try {
-			Operand left = rel_factor();
+			Expression left = rel_factor();
 			consume(regex("[[:space:]]*(<=)[[:space:]]*"));
-			Operand right = rel_factor();
+			Expression right = rel_factor();
 			return CondExpr(left, right);
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		try {
-			Operand left = rel_factor();
+			Expression left = rel_factor();
 			consume(regex("[[:space:]]*(==)[[:space:]]*"));
-			Operand right = rel_factor();
+			Expression right = rel_factor();
 			return CondExpr(left, right);
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
-		Operand left = rel_factor();
+		Expression left = rel_factor();
 		consume(regex("[[:space:]]*(!=)[[:space:]]*"));
-		Operand right = rel_factor();
+		Expression right = rel_factor();
 		return CondExpr(left, right);
 	}
 
-	Operand Parser::rel_factor() {
+	Expression Parser::rel_factor() {
 		int currentPos = this->pos;
 		try {
-			return Operand(var_name());
+			VarId id = var_name();
+			VarName name = pkb.varTable.get(id);
+			return Expression(name, id);
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		try {
-			return Operand(const_value());
+			return Expression(const_value());
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
@@ -286,24 +297,24 @@ namespace Parser{
 		return get_op_rank(op1) - get_op_rank(op2);
 	}
 
-	Operand Parser::expr() {
+	Expression Parser::expr() {
 		int currentPos = this->pos;
 		char op;
-		std::stack<Operand> operands;
+		std::stack<Expression> operands;
 		std::stack<char> operators;
 		consume(regex("[[:space:]]*"));
-		Operand token = factor();
+		Expression token = factor();
 		operands.push(token);
 		while (true) {
 			try {
 				consume(regex("[[:space:]]*"));
 				op = consume(regex("[+%\*\-\/][[:space:]]*"))[0];
 				if (!operators.empty() && compare_op(operators.top(), op) != -1) {
-					Operand right = operands.top();
+					Expression right = operands.top();
 					operands.pop();
-					Operand left = operands.top();
+					Expression left = operands.top();
 					operands.pop();
-					operands.push(Operand(left, right, operators.top()));
+					operands.push(Expression(left, right, operators.top()));
 					operators.pop();
 				}
 				operators.push(op);
@@ -318,41 +329,41 @@ namespace Parser{
 			}
 		}
 		while (!operators.empty() && operands.size() > 1) {
-			Operand right = operands.top();
+			Expression right = operands.top();
 			operands.pop();
-			Operand left = operands.top();
+			Expression left = operands.top();
 			operands.pop();
-			operands.push(Operand(left, right, operators.top()));
+			operands.push(Expression(left, right, operators.top()));
 			operators.pop();
 		}
 		consume(regex("[[:space:]]*"));
 		return operands.top();
 	}
 
-	Operand Parser::factor() {
+	Expression Parser::factor() {
 		int currentPos = this->pos;
 		try {
-			return Operand(var_name());
+			VarId id = var_name();
+			VarName name = pkb.varTable.get(id);
+			return Expression(name, id);
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		try {
-			return Operand(const_value());
+			return Expression(const_value());
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		consume(regex("[[:space:]]*[(][[:space:]]*"));
-		Operand opr = expr();
+		Expression opr = expr();
 		consume(regex("[[:space:]]*[)][[:space:]]*"));
 		return opr;
 	}
 
-	VarName Parser::var_name() {
-		VarName vn = name();
-		pkb.varTable.insertVar(vn);
-		return vn;
+	VarId Parser::var_name() {
+		return pkb.varTable.insertVar(name());
 	}
 
 	ProcName Parser::proc_name() {
@@ -366,7 +377,7 @@ namespace Parser{
 	void Parser::populateParentKB(StmtId stmtId, StmtListId stmtLstId) {
 		StatementList sl = pkb.stmtListTable.get(stmtLstId);
 		std::vector<StmtId> idList = sl.getStmtIds();
-		for (int i = 0; i < idList.size(); i++) {
+		for (size_t i = 0; i < idList.size(); i++) {
 			//pkb.parentKB.addParent(stmtId, idList[i]);
 		}
 	}

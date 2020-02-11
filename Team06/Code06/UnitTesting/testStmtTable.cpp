@@ -11,9 +11,9 @@ namespace UnitTesting
 	TEST_CLASS(TestStmtTable)
 	{
 	public:
-		VarName VAR_NAME = "abc";
-		PrintStmt PRINT_STMT = PrintStmt(VAR_NAME);
-		ReadStmt READ_STMT = ReadStmt(VAR_NAME);
+		VarId VAR_ID = 1;
+		PrintStmt PRINT_STMT = PrintStmt(VAR_ID);
+		ReadStmt READ_STMT = ReadStmt(VAR_ID);
 		Statement STMT_A = PRINT_STMT;
 		Statement STMT_B = READ_STMT;
 		StmtId STMT_ID_A = 0;

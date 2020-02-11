@@ -51,14 +51,14 @@ namespace Parser {
 
 		CondExpr cond_expr();
 		CondExpr rel_expr();
-		Operand rel_factor();
+		Expression rel_factor();
 
 		int get_op_rank(char op);
 		int compare_op(char op1, char op2);
-		Operand expr();
-		Operand factor();
+		Expression expr();
+		Expression factor();
 
-		VarName var_name();
+		VarId var_name();
 		ProcName proc_name();
 		ConstValue const_value();
 
