@@ -33,14 +33,16 @@ namespace Parser {
 		/**
 		* Parses full SIMPLE source and populates pkb accordingly.
 		* 
-		* @throws	std::invalid_argument if the SIMPLE source has syntax errors.
+		* @throws	std::invalid_argument	if the SIMPLE source has syntax errors.
+		* @throws	std::logic_error		if the Parser was created as an Expression Parser.
 		*/
 		void parse();
 
 		/**
 		* Parses standalone SIMPLE expressions. PKB remains unmodified.
 		* 
-		* @throws	std::invalid_argument if the SIMPLE source has syntax errors.
+		* @throws	std::invalid_argument	if the SIMPLE source has syntax errors.
+		* @throws	std::logic_error		if the Parser was created as a full SIMPLE Parser.
 		*/
 		Expression parseExpression(string exp);
 	private:
