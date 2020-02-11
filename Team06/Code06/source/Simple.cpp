@@ -1,5 +1,4 @@
 #include "Simple.h"
-#include <algorithm>
 
 namespace SIMPLE {
 	Expression::Expression(Expression left, Expression right, char op)

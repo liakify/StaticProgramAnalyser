@@ -3,6 +3,7 @@
 
 #include <stdexcept>
 #include <regex>
+#include <stack>
 #include "PKB.h"
 #include "Simple.h"
 
@@ -18,6 +19,7 @@ namespace Parser {
 	public:
 		/**
 		* Parser constructor.
+		* 
 		* @param	source	SIMPLE program string for parsing
 		* @param	pkb		PKB reference for use when parsing
 		*/
@@ -25,6 +27,7 @@ namespace Parser {
 		
 		/**
 		* Parses source and populates pkb accordingly.
+		* 
 		* @throws	std::invalid_argument if the SIMPLE source has syntax errors.
 		*/
 		void parse();
@@ -54,7 +57,8 @@ namespace Parser {
 		Expression rel_factor();
 
 		int get_op_rank(char op);
-		int compare_op(char op1, char op2);
+		int compare_op(char op1, char op2); 
+		void combine_op(std::stack<Expression>& operands, std::stack<char>& operators);
 		Expression expr();
 		Expression factor();
 

@@ -18,6 +18,7 @@ namespace SIMPLE {
 		/**
 		* Constructor for a non-literal Expression. The sets of the sub-expressions
 		* will be unioned to form the VarId and ConstValue sets of the expression.
+		* 
 		* @param	left	Left operand
 		* @param	right	Right operand
 		* @param	op		Operator
@@ -27,6 +28,7 @@ namespace SIMPLE {
 		/**
 		* Constructor for a variable Expression.
 		* Left, right and op will be initialised with null values.
+		* 
 		* @param	name	Name of the variable
 		* @param	id		ID of the variable as stored in the PKB
 		*/
@@ -35,6 +37,7 @@ namespace SIMPLE {
 		/**
 		* Constructor for a constant value Expression.
 		* Left, right and op will be initialised with null values.
+		* 
 		* @param	ConstValue	String representation of the constant
 		*/
 		Expression(ConstValue name);
@@ -42,6 +45,7 @@ namespace SIMPLE {
 		/**
 		* Recursively constructs the string representation of an Expression.
 		* Parentheses are added to avoid ambiguity in reading the order of operations.
+		* 
 		* @return	the string representation
 		*/
 		std::string getStr();

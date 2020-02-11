@@ -1,5 +1,4 @@
 #include "Parser.h"
-#include <stack>
 
 using std::invalid_argument;
 
@@ -120,6 +119,7 @@ namespace Parser{
 		AssignStmt assignStmt = assign_stmt();
 		StmtId stmtId = pkb.stmtTable.insertStmt(assignStmt);
 		//pkb.modifiesKB.addStmtModifies(stmtId, assignStmt.getVar());
+		//pkb.usesKB.addStmtUses(stmtId, assignStmt.getExpr().getVarIds());
 		return stmtId;
 	}
 
@@ -297,6 +297,15 @@ namespace Parser{
 		return get_op_rank(op1) - get_op_rank(op2);
 	}
 
+	void Parser::combine_op(std::stack<Expression>& operands, std::stack<char>& operators) {
+		Expression right = operands.top();
+		operands.pop();
+		Expression left = operands.top();
+		operands.pop();
+		operands.push(Expression(left, right, operators.top()));
+		operators.pop();
+	}
+
 	Expression Parser::expr() {
 		int currentPos = this->pos;
 		char op;
@@ -310,12 +319,7 @@ namespace Parser{
 				consume(regex("[[:space:]]*"));
 				op = consume(regex("[+%\*\-\/][[:space:]]*"))[0];
 				if (!operators.empty() && compare_op(operators.top(), op) != -1) {
-					Expression right = operands.top();
-					operands.pop();
-					Expression left = operands.top();
-					operands.pop();
-					operands.push(Expression(left, right, operators.top()));
-					operators.pop();
+					combine_op(operands, operators);
 				}
 				operators.push(op);
 				token = factor();
@@ -329,12 +333,7 @@ namespace Parser{
 			}
 		}
 		while (!operators.empty() && operands.size() > 1) {
-			Expression right = operands.top();
-			operands.pop();
-			Expression left = operands.top();
-			operands.pop();
-			operands.push(Expression(left, right, operators.top()));
-			operators.pop();
+			combine_op(operands, operators);
 		}
 		consume(regex("[[:space:]]*"));
 		return operands.top();
