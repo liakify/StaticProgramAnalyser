@@ -108,10 +108,74 @@ namespace PQL {
     }
 
     bool QueryParser::parseDeclarations(Query& query, vector<string> statements) {
+        unordered_map<string, DesignEntity> synonymTable;
+
+        // Parse first N - 1 statements, i.e. exclude query body
+        for (unsigned int i = 0; i < statements.size() - 1; i++) {
+            string stmt = statements.at(i);
+
+            // Each declaration is a string of form "<entity-name> <synonym>(, <synonym>)*"s
+            int spaceIndex = stmt.find_first_of(" ");
+            string entityName = stmt.substr(0, spaceIndex);
+            string synonymString = stmt.substr(spaceIndex + 1, string::npos);
+
+            vector<string> synonyms = ParserUtils::splitString(synonymString, ',');
+
+            for (unsigned int j = 0; j < synonyms.size(); j++) {
+                string synonym = synonyms.at(j);
+
+                auto mapping = ENTITY_MAP.find(entityName);
+                if (mapping != ENTITY_MAP.end()) {
+                    synonymTable[synonym] = mapping->second;
+                }
+                else {
+                    // Unrecognised design entity
+                    query.status = "syntax error: unrecognised design entity in declaration";
+                    return false;
+                }
+            }
+        }
+
+        // Each statement except the query body contributes at least 1 synonym mapping
+        assert(synonymTable.size() >= statements.size() - 1);
+        query.synonymTable = synonymTable;
+
         return true;
     }
 
     bool QueryParser::parseQueryTarget(Query& query, string queryBody) {
+        vector<string> targets;
+
+        regex SINGLE_TARGET("Select [A-Za-z][A-Za-z0-9]*");
+        regex TUPLE_TARGET("Select <[A-Za-z][A-Za-z0-9]*(,\\s[A-Za-z][A-Za-z0-9]*)+>");
+        smatch tmatch;
+
+        // Attempt to match a single return type, otherwise match a tuple return type
+        if (regex_search(queryBody, tmatch, SINGLE_TARGET)) {
+            string targetEntity = tmatch.str().erase(0, 7);
+            targets.push_back(targetEntity);
+        }
+        else if (regex_search(queryBody, tmatch, TUPLE_TARGET)) {
+            // Retrieve first match - a string of form "Select <x1, x2, ...>"
+            string tupleString = tmatch.str().erase(0, 8);
+            tupleString.pop_back();
+
+            // Extract all target entities in the tuple string "x1, x2, ..."
+            targets = ParserUtils::splitString(tupleString, ',');
+        }
+        else {
+            query.status = "syntax error: failed to parse target entity";
+            return false;
+        }
+
+        // Query must have at least one return target
+        if (targets.size() < 0) {
+            query.status = "syntax error: missing query target";
+        }
+        else {
+            query.targetEntities = targets;
+        }
+
         return true;
     }
 
