@@ -74,6 +74,20 @@ namespace PQL {
 
     vector<string> QueryParser::splitStatements(string queryString) {
         vector<string> statements;
+
+        regex DECLARATION("[A-Za-z0-9,\\s]+;");
+        smatch stmatch;
+
+        while (regex_search(queryString, stmatch, DECLARATION)) {
+            for (auto token : stmatch) {
+                string stmt = token.str();
+                statements.push_back(ParserUtils::leftTrim(stmt));
+            }
+            queryString = stmatch.suffix().str();
+        }
+
+        // Last statement is the query body
+        statements.push_back(ParserUtils::leftTrim(queryString));
         return statements;
     }
 
@@ -82,7 +96,14 @@ namespace PQL {
     // C++ regex does not support negative lookbehind, (?<!(x))y - match y only if not preceded by x
     // Returns an array of clauses
     pair<vector<string>, vector<string>> QueryParser::splitConstraints(string queryBody) {
-        vector<string> relationClauses, patternClauses;
+        string RELATION_COMPOUND_CLAUSE = "such that [A-Za-z*]+ \\([A-Za-z_,\\s]*\\)(?: and [A-Za-z*]+ \\([A-Za-z_,\\s]*\\))*";
+        string PATTERN_COMPOUND_CLAUSE = "pattern [A-Za-z*]+ \\([A-Za-z_\",\\s]*\\)(?: and [A-Za-z*]+ \\([A-Za-z_\",\\s]*\\))*";
+        string RELATION_CLAUSE = "[A-Za-z*]+ \\([A-Za-z_,\\s]*\\)";
+        string PATTERN_CLAUSE = "[A-Za-z*]+ \\([A-Za-z_\",\\s]*\\)";
+
+        vector<string> relationClauses = ParserUtils::dualMatch(queryBody, RELATION_COMPOUND_CLAUSE, RELATION_CLAUSE);
+        vector<string> patternClauses = ParserUtils::dualMatch(queryBody, PATTERN_COMPOUND_CLAUSE, PATTERN_CLAUSE);
+
         return make_pair(relationClauses, patternClauses);
     }
 
