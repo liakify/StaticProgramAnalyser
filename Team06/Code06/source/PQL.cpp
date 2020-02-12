@@ -63,6 +63,8 @@ namespace PQL {
         return query;
     }
 
+    // Perform basic validation of overall PQL query syntax
+    // Additional validation is performed during parsing of declarations, statements and clauses
     bool QueryParser::validateQuerySyntax(string queryString) {
         // Validate each declaration is of form <design-entity> <synonym>(, <synonym>)*;
         return true;
@@ -114,12 +116,12 @@ namespace PQL {
         for (unsigned int i = 0; i < statements.size() - 1; i++) {
             string stmt = statements.at(i);
 
-            // Each declaration is a string of form "<entity-name> <synonym>(, <synonym>)*"s
-            int spaceIndex = stmt.find_first_of(" ");
-            string entityName = stmt.substr(0, spaceIndex);
-            string synonymString = stmt.substr(spaceIndex + 1, string::npos);
+            // Each declaration is a string of form "<entity-name> <synonym>(, <synonym>)*"
+            pair<string, string> splitPair = ParserUtils::splitString(stmt, ' ');
+            string entityName = splitPair.first;
+            string synonymString = splitPair.second;
 
-            vector<string> synonyms = ParserUtils::splitString(synonymString, ',');
+            vector<string> synonyms = ParserUtils::tokeniseString(synonymString, ',');
 
             for (unsigned int j = 0; j < synonyms.size(); j++) {
                 string synonym = synonyms.at(j);
@@ -167,7 +169,7 @@ namespace PQL {
             tupleString.pop_back();
 
             // Extract all target entities in the tuple string "x1, x2, ..."
-            targets = ParserUtils::splitString(tupleString, ',');
+            targets = ParserUtils::tokeniseString(tupleString, ',');
         }
         else {
             query.status = "syntax error: target entity not correctly specified";
@@ -199,6 +201,7 @@ namespace PQL {
 
     /**
      *  Returns the input string stripped of leading spaces and newline characters.
+     *
      *  @param  input   input string to strip.
      *  @return left-trimmed copy of the input string.
      */
@@ -207,13 +210,27 @@ namespace PQL {
     }
 
     /**
+     *  Splits a string with a given delimiter once, returning a pair of prefix and
+     *  suffix.
+     *
+     *  @param  input   input string to split.
+     *  @param  delim   delimiting character.
+     *  @return left-trimmed copy of the input string.
+     */
+    pair<string, string> ParserUtils::splitString(string input, char delim) {
+        int pos = input.find_first_of(delim);
+        return make_pair(input.substr(0, pos), input.substr(pos + 1, string::npos));
+    }
+
+    /**
      *  Splits a given input string with a given character as delimiter into trimmed
      *  substrings.
+     *
      *  @param  input   input string to split.
-     *  @param  delim   delimiting character
-     *  @return a vect<string> containing all trimmed split substrings
+     *  @param  delim   delimiting character.
+     *  @return a vect<string> containing all trimmed split substrings.
      */
-    vector<string> ParserUtils::splitString(string input, char delim) {
+    vector<string> ParserUtils::tokeniseString(string input, char delim) {
         vector<string> substrings;
         string substr;
 
@@ -233,9 +250,10 @@ namespace PQL {
      *  Performs two levels of regex matching on an input string with two separate
      *  regex patterns. Returns a vector of strings that match the second regex in
      *  strings that match the first regex.
+     *
      *  @param  input   input string to perform dual regex matching.
-     *  @param  first   first (outer) regex pattern, e.g structure of compound clauses
-     *  @param  second  second (inner) regex pattern, e.g. structure of atomic clauses
+     *  @param  first   first (outer) regex pattern, e.g structure of compound clauses.
+     *  @param  second  second (inner) regex pattern, e.g. structure of atomic clauses.
      */
     vector<string> ParserUtils::dualMatch(string input, string first, string second) {
         vector<string> clauses;

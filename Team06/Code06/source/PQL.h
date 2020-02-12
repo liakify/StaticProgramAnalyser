@@ -96,7 +96,8 @@ namespace PQL {
     class ParserUtils {
     public:
         static string leftTrim(string input);
-        static vector<string> splitString(string input, char delim);
+        static pair<string, string> splitString(string input, char delim);
+        static vector<string> tokeniseString(string input, char delim);
         static vector<string> dualMatch(string input, string first, string second);
     };
 }
