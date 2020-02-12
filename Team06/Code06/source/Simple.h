@@ -51,13 +51,16 @@ namespace SIMPLE {
 		std::string getStr();
 		std::unordered_set<VarId> getVarIds();
 		std::unordered_set<ConstValue> getConstValues();
+		std::unordered_set<std::string> getPatterns();
+		char getOp();
 	private:
-		Expression* left;
-		Expression* right;
+		Expression& left;
+		Expression& right;
 		char op;
 		std::string str;
 		std::unordered_set<VarId> varSet;
 		std::unordered_set<ConstValue> constSet;
+		std::unordered_set<std::string> patterns;
 	};
 
 	/**

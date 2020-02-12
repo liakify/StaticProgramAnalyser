@@ -1,23 +1,29 @@
 #include "Simple.h"
+#include <stdexcept>
 
 namespace SIMPLE {
 	Expression::Expression(Expression left, Expression right, char op)
-		: left(&left), right(&right), op(op) {
+		: left(left), right(right), op(op) {
 		this->str = getStr();
 		this->varSet = std::unordered_set<VarId>(left.varSet);
 		this->varSet.insert(right.varSet.begin(), right.varSet.end());
 		this->constSet = std::unordered_set<ConstValue>(left.constSet);
 		this->constSet.insert(right.constSet.begin(), right.constSet.end());
+		this->patterns = std::unordered_set<ConstValue>(left.patterns);
+		this->patterns.insert(right.patterns.begin(), right.patterns.end());
+		this->patterns.insert("_" + this->str + "_");
 	}
 
 	Expression::Expression(VarName name, VarId id)
-		: left(nullptr), right(nullptr), op('\0'), str(name) {
-		varSet.insert(id);
+		: left(*this), right(*this), op('\0'), str(name) {
+		this->varSet.insert(id);
+		this->patterns.insert("_" + this->str + "_");
 	}
 
 	Expression::Expression(ConstValue name)
-		: left(nullptr), right(nullptr), op('\0'), str(name) {
+		: left(*this), right(*this), op('\0'), str(name) {
 		constSet.insert(name);
+		this->patterns.insert("_" + this->str + "_");
 	}
 
 	std::unordered_set<VarId> Expression::getVarIds() {
@@ -28,13 +34,21 @@ namespace SIMPLE {
 		return this->constSet;
 	}
 
+	char Expression::getOp() {
+		return this->op;
+	}
+
 	std::string Expression::getStr() {
 		if (this->str != "") {
 			return this->str;
 		}
 		else {
-			return "(" + this->left->getStr() + this->op + this->right->getStr() + ")";
+			return "(" + this->left.getStr() + this->op + this->right.getStr() + ")";
 		}
+	}
+
+	std::unordered_set<std::string> Expression::getPatterns() {
+		return patterns;
 	}
 
 	CondExpr::CondExpr(CondExpr left, CondExpr right)

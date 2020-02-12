@@ -82,6 +82,7 @@ namespace Parser {
 
 		void populateParentKB(StmtId stmtId, StmtListId stmtLstId);
 		void populateUsesKB(StmtId stmtId, std::unordered_set<VarId> varSet);
+		void populatePatternKB(StmtId stmtId, Expression exp);
 	};
 	int analyse(string& src);
 }

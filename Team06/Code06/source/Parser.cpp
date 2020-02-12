@@ -143,9 +143,11 @@ namespace Parser{
 			this->pos = currentPos;
 		}
 		AssignStmt assignStmt = assign_stmt();
+		Expression exp = assignStmt.getExpr();
 		StmtId stmtId = pkb.stmtTable.insertStmt(assignStmt);
 		//pkb.modifiesKB.addStmtModifies(stmtId, assignStmt.getVar());
-		//pkb.usesKB.addStmtUses(stmtId, assignStmt.getExpr().getVarIds());
+		populateUsesKB(stmtId, exp.getVarIds());
+		populatePatternKB(stmtId, exp);
 		return stmtId;
 	}
 
@@ -329,8 +331,7 @@ namespace Parser{
 					combine_op(operands, operators);
 				}
 				operators.push(op);
-				token = factor();
-				operands.push(token);
+				operands.push(factor());
 			}
 			catch (const invalid_argument & e) {
 				if (operands.size() - operators.size() != 1) {
@@ -398,6 +399,15 @@ namespace Parser{
 		std::unordered_set<VarId>::iterator it;
 		for (it = varSet.begin(); it != varSet.end(); it++) {
 			//pkb.usesKB.addStmtUses(stmtId, *it);
+		}
+	}
+
+	void Parser::populatePatternKB(StmtId stmtId, Expression exp) {
+		//pkb.patternKB.addRHSPattern(exp.getStr(), stmtId);
+		std::unordered_set<std::string> patterns = exp.getPatterns();
+		std::unordered_set<std::string>::iterator it;
+		for (it = patterns.begin(); it != patterns.end(); it++) {
+			//pkb.patternKB.addRHSPattern(*it, stmtId);
 		}
 	}
 }

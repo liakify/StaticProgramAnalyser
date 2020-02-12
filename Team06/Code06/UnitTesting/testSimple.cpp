@@ -19,6 +19,9 @@ namespace UnitTesting {
 		VarId VAR_ID_1 = 1;
 		VarId VAR_ID_2 = 3;
 		ConstValue CONST_VALUE = "999";
+		std::string PATTERN_1 = "_" + VAR_NAME_1 + "_";
+		std::string PATTERN_2 = "_" + VAR_NAME_2 + "_";
+		std::string PATTERN_3 = "_" + CONST_VALUE + "_";
 
 		Expression varExp = Expression(VAR_NAME_1, VAR_ID_1);
 		Expression varExp2 = Expression(VAR_NAME_2, VAR_ID_2);
@@ -33,27 +36,40 @@ namespace UnitTesting {
 		TEST_METHOD(TestExpression) {
 			std::unordered_set<VarId> varSet;
 			std::unordered_set<ConstValue> constSet;
+			std::unordered_set<std::string> patterns;
 
-			Assert::AreEqual(varExp.getStr(), VAR_NAME_1);
+			Assert::AreEqual(VAR_NAME_1, varExp.getStr());
 			Assert::IsTrue(varExp.getConstValues() == std::unordered_set<ConstValue>());
 			varSet.insert(VAR_ID_1);
 			Assert::IsTrue(varExp.getVarIds() == varSet);
+			patterns.insert(PATTERN_1);
+			Assert::IsTrue(varExp.getPatterns() == patterns);
 
-			Assert::AreEqual(constExp.getStr(), CONST_VALUE);
+			Assert::AreEqual(CONST_VALUE, constExp.getStr());
 			Assert::IsTrue(constExp.getVarIds() == std::unordered_set<VarId>());
 			constSet.insert(CONST_VALUE);
 			Assert::IsTrue(constExp.getConstValues() == constSet);
+			patterns = std::unordered_set<std::string>();
+			patterns.insert(PATTERN_3);
+			Assert::IsTrue(constExp.getPatterns() == patterns);
 
 			std::string expStr = "(" + CONST_VALUE + op + VAR_NAME_1 + ")";
 			Assert::AreEqual(expStr, exp.getStr());
+			Assert::AreEqual(op, exp.getOp());
 			Assert::IsTrue(exp.getVarIds() == varSet);
 			Assert::IsTrue(exp.getConstValues() == constSet);
+			patterns.insert(PATTERN_1);
+			patterns.insert("_" + expStr + "_");
+			Assert::IsTrue(exp.getPatterns() == patterns);
 
 			std::string exp2Str =
 				"(" + VAR_NAME_2 + op + "(" + CONST_VALUE + op + VAR_NAME_1 + "))";
 			varSet.insert(VAR_ID_2);
 			Assert::IsTrue(exp2.getVarIds() == varSet);
 			Assert::IsTrue(exp2.getConstValues() == constSet);
+			patterns.insert(PATTERN_2);
+			patterns.insert("_" + exp2Str + "_");
+			Assert::IsTrue(exp2.getPatterns() == patterns);
 		}
 
 		TEST_METHOD(TestCondExpr) {
