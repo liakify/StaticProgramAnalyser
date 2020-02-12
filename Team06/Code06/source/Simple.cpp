@@ -34,6 +34,10 @@ namespace SIMPLE {
 		return this->constSet;
 	}
 
+	std::unordered_set<std::string> Expression::getPatterns() {
+		return patterns;
+	}
+
 	char Expression::getOp() {
 		return this->op;
 	}
@@ -45,10 +49,6 @@ namespace SIMPLE {
 		else {
 			return "(" + this->left.getStr() + this->op + this->right.getStr() + ")";
 		}
-	}
-
-	std::unordered_set<std::string> Expression::getPatterns() {
-		return patterns;
 	}
 
 	CondExpr::CondExpr(CondExpr left, CondExpr right)
