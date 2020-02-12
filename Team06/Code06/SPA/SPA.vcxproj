@@ -15,6 +15,7 @@
     <ClCompile Include="..\source\LoggingUtils.cpp" />
     <ClCompile Include="..\source\Parser.cpp" />
     <ClCompile Include="..\source\PKB.cpp" />
+    <ClCompile Include="..\source\PQL.cpp" />
     <ClCompile Include="..\source\ProcTable.cpp" />
     <ClCompile Include="..\source\StmtListTable.cpp" />
     <ClCompile Include="..\source\StmtTable.cpp" />
@@ -24,6 +25,7 @@
   <ItemGroup>
     <ClInclude Include="..\source\LoggingUtils.h" />
     <ClInclude Include="..\source\PKB.h" />
+    <ClInclude Include="..\source\PQL.h" />
     <ClInclude Include="..\source\ProcTable.h" />
     <ClInclude Include="..\source\StmtListTable.h" />
     <ClInclude Include="..\source\StmtTable.h" />
