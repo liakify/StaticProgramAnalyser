@@ -124,15 +124,21 @@ namespace PQL {
             for (unsigned int j = 0; j < synonyms.size(); j++) {
                 string synonym = synonyms.at(j);
 
-                auto mapping = ENTITY_MAP.find(entityName);
-                if (mapping != ENTITY_MAP.end()) {
-                    synonymTable[synonym] = mapping->second;
-                }
-                else {
-                    // Unrecognised design entity
+                auto entityMapping = ENTITY_MAP.find(entityName);
+                if (entityMapping == ENTITY_MAP.end()) {
+                    // SYNTAX ERROR: unknown design entity
                     query.status = "syntax error: unrecognised design entity in declaration";
                     return false;
                 }
+
+                auto synonymMapping = synonymTable.find(synonym);
+                if (synonymMapping != ENTITY_MAP.end()) {
+                    // SEMANTIC ERROR: current synonym has already been declared
+                    query.status = "semantic error: conflicting synonym declaration";
+                    return false;
+                }
+
+                synonymTable[synonym] = entityMapping->second;
             }
         }
 
@@ -164,7 +170,7 @@ namespace PQL {
             targets = ParserUtils::splitString(tupleString, ',');
         }
         else {
-            query.status = "syntax error: failed to parse target entity";
+            query.status = "syntax error: target entity not correctly specified";
             return false;
         }
 
