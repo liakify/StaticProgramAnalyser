@@ -1,7 +1,8 @@
 # CS3203 SWE Project (AY19/20 Sem 2 Team 6)
 
-Team 6's implementation of a Static Program Analyzer (SPA) for the SIMPLE programming language and PQL query language.
+[![Build Status](https://travis-ci.com/nus-cs3203/team06-win-spa-19s2.svg?token=FcixrHMuWDoA999fe1eo&branch=master)](https://travis-ci.com/nus-cs3203/team06-win-spa-19s2)
 
+Team 6's implementation of a Static Program Analyzer (SPA) for the SIMPLE programming language and PQL query language.
 
 ## Getting Started
 
