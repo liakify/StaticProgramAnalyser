@@ -71,8 +71,9 @@ namespace PQL {
         return true;
     }
 
-    // Validates synonyms correspond to an existing design entity in the synonym table
+    // Validates entity arguments correspond to an existing design entity in the synonym table
     // Validates allowed entity types as arguments to clauses
+    // Validate query targets correspond to existing design entities in synonym table
     bool QueryParser::validateQuerySemantics(Query& query) {
         return true;
     }
@@ -163,6 +164,7 @@ namespace PQL {
 
         // Attempt to match a single return type, otherwise match a tuple return type
         if (regex_search(queryBody, tmatch, SINGLE_TARGET)) {
+            // Strip leading "Select "
             string targetEntity = tmatch.str().erase(0, 7);
             targets.push_back(targetEntity);
         }
@@ -175,12 +177,13 @@ namespace PQL {
             targets = ParserUtils::tokeniseString(tupleString, ',');
         }
         else {
+            // SYNTAX ERROR: unable to parse select target to entities
             query.status = "syntax error: target entity not correctly specified";
             return false;
         }
 
-        // Query must have at least one return target
         if (targets.size() < 0) {
+            // SYNTAX ERROR: Query must have at least one return target
             query.status = "syntax error: missing query target";
         }
         else {
@@ -217,14 +220,11 @@ namespace PQL {
             DesignEntity entityType = synonymMapping->second;
             string referenceString = args.at(0);
 
-            // If first argument directly references a variable entity, validate it
-            if (referenceString != "_" && referenceString.find('\"') != string::npos) {
-                // String contains a " - interpret literally as variable name
-                if (!ParserUtils::validateEntityRef(referenceString)) {
-                    // SYNTAX ERROR: invalid entity reference
-                    query.status = "syntax error: pattern has invalid entity reference";
-                    return false;
-                }
+            // First argument is always an entity reference, validate it
+            if (!ParserUtils::isValidEntityRef(referenceString)) {
+                // SYNTAX ERROR: invalid entity reference
+                query.status = "syntax error: pattern has invalid entity reference";
+                return false;
             }
 
             PatternClause pattern;
@@ -235,7 +235,7 @@ namespace PQL {
                     // SYNTAX ERROR: incorrect number of arguments
                     query.status = "syntax error: assign pattern does not have 2 arguments";
                 }
-                else if (!ParserUtils::validatePattern(args.at(1))) {
+                else if (!ParserUtils::isValidPattern(args.at(1))) {
                     // SYNTAX ERROR: invalid pattern string
                     query.status = "syntax error: assign pattern has invalid pattern string";
                 }
@@ -291,30 +291,74 @@ namespace PQL {
     }
 
     /**
-     *  Validates an input string as a direct entity reference.
+     *  Validates an input string as a valid integer.
+     *
+     *  @param  input   candidate integer string
+     *  @return boolean describing if the string is an integer.
+     */
+    bool ParserUtils::isInteger(string input) {
+        regex VALID_INTEGER("[0-9]+");
+        smatch imatch;
+
+        return regex_search(input, imatch, VALID_INTEGER);
+    }
+    /**
+     *  Validates an input string as a valid identifier or synonym.
+     *
+     *  @param  input   candidate identifier
+     *  @return boolean describing if the string is a valid identifier.
+     */
+    bool ParserUtils::isValidIdentifier(string input) {
+        regex VALID_IDENTIFIER("[A-Za-z][A-Za-z0-9]*");
+        smatch imatch;
+
+        return regex_search(input, imatch, VALID_IDENTIFIER);
+    }
+
+    /**
+     *  Validates if an input string is a valid statement reference argument.
      *
      *  @param  input   candidate entity reference string
      *  @return boolean describing if the string correctly references an entity.
      */
-    bool ParserUtils::validateEntityRef(string input) {
-        regex VALID_ENTITY_REFERENCE("^\"[A-Za-z][A-Za-z0-9]*\"$");
-        smatch ematch;
-
-        if (!regex_search(input, ematch, VALID_ENTITY_REFERENCE)) {
-            // Entity reference is not a string of form "<identifier>"
-            return false;
+    bool ParserUtils::isValidStmtRef(string input) {
+        if (input == "_") {
+            return true;
         }
 
-        return true;
+        // Input string can either be an integer (referencing statement line number) or
+        // an identifier (a synonym)
+        return ParserUtils::isInteger(input) || ParserUtils::isValidIdentifier(input);
     }
 
     /**
-     *  Validates an input string as a pattern, returning true if it is a valid pattern.
+     *  Validates if an input string is a valid entity reference argument.
+     *
+     *  @param  input   candidate entity reference string
+     *  @return boolean describing if the string correctly references an entity.
+     */
+    bool ParserUtils::isValidEntityRef(string input) {
+        if (input.find('\"') != string::npos) {
+            // String contains a " - interpret literally as variable name
+            regex VALID_ENTITY_REFERENCE("^\"[A-Za-z][A-Za-z0-9]*\"$");
+            smatch ematch;
+
+            // Entity reference is not a string of form "<identifier>"
+            return regex_search(input, ematch, VALID_ENTITY_REFERENCE);
+        }
+        else {
+            // String is either '_' or just "<synonym>" - validate identifier
+            return input == "_" || ParserUtils::isValidIdentifier(input);
+        }
+    }
+
+    /**
+     *  Validates if an input string is a valid pattern.
      *
      *  @param  input   candidate pattern string
      *  @return boolean describing if the string forms a valid pattern.
      */
-    bool ParserUtils::validatePattern(string input) {
+    bool ParserUtils::isValidPattern(string input) {
         if (input == "_") {
             return true;
         }

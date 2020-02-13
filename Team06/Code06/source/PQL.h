@@ -29,13 +29,22 @@ namespace PQL {
         {"procedure", PROCEDURE}
     };
 
+    const unordered_map<string, RelationType> RELATION_MAP{
+        {"Follows", FOLLOWS},
+        {"Follows*", FOLLOWST},
+        {"Parent", PARENT},
+        {"Parent*", PARENTT},
+        {"Uses", USESS},
+        {"Modifies", MODIFIESS}
+    };
+
     struct RelationClause {
         string clause;
         RelationType type;
-        StatementRef statementArg;
-        StatementTypeRef typeArg;
-        EntityRef firstArg;
-        EntityRef secondArg;
+        StatementRef firstStmt;
+        StatementRef secondStmt;
+        EntityRef firstEnt;
+        EntityRef secondEnt;
     };
 
     struct PatternClause {
@@ -93,8 +102,11 @@ namespace PQL {
     
     class ParserUtils {
     public:
-        static bool validateEntityRef(string input);
-        static bool validatePattern(string input);
+        static bool isInteger(string input);
+        static bool isValidIdentifier(string input);
+        static bool isValidStmtRef(string input);
+        static bool isValidEntityRef(string input);
+        static bool isValidPattern(string input);
         static string leftTrim(string input);
         static pair<string, string> splitString(string input, char delim);
         static vector<string> tokeniseString(string input, char delim);
