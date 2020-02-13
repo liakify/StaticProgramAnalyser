@@ -31,6 +31,7 @@ namespace PQL {
 
     Query QueryParser::parseQuery(string queryString) {
         Query query;
+        query.status = "ok";
         query.queryString = queryString;
         queryCount += 1;
 
@@ -70,6 +71,8 @@ namespace PQL {
         return true;
     }
 
+    // Validates synonyms correspond to an existing design entity in the synonym table
+    // Validates allowed entity types as arguments to clauses
     bool QueryParser::validateQuerySemantics(Query& query) {
         return true;
     }
@@ -99,9 +102,9 @@ namespace PQL {
     // Returns an array of clauses
     pair<vector<string>, vector<string>> QueryParser::splitConstraints(string queryBody) {
         string RELATION_COMPOUND_CLAUSE = "such that [A-Za-z*]+ \\([A-Za-z_,\\s]*\\)(?: and [A-Za-z*]+ \\([A-Za-z_,\\s]*\\))*";
-        string PATTERN_COMPOUND_CLAUSE = "pattern [A-Za-z*]+ \\([A-Za-z_\",\\s]*\\)(?: and [A-Za-z*]+ \\([A-Za-z_\",\\s]*\\))*";
+        string PATTERN_COMPOUND_CLAUSE = "pattern [A-Za-z][A-Za-z0-9]* \\([A-Za-z_,\"\\+\\-\\*\\/\\%\\s]*\\)(?: and [A-Za-z][A-Za-z0-9]* \\([A-Za-z_,\"\\+\\-\\*\\/\\%\\s]*\\))*";
         string RELATION_CLAUSE = "[A-Za-z*]+ \\([A-Za-z_,\\s]*\\)";
-        string PATTERN_CLAUSE = "[A-Za-z*]+ \\([A-Za-z_\",\\s]*\\)";
+        string PATTERN_CLAUSE = "[A-Za-z][A-Za-z0-9]* \\([A-Za-z_,\"\\+\\-\\*\\/\\%\\s]*\\)";
 
         vector<string> relationClauses = ParserUtils::dualMatch(queryBody, RELATION_COMPOUND_CLAUSE, RELATION_CLAUSE);
         vector<string> patternClauses = ParserUtils::dualMatch(queryBody, PATTERN_COMPOUND_CLAUSE, PATTERN_CLAUSE);
@@ -191,12 +194,152 @@ namespace PQL {
         return true;
     }
 
+    // Receives a vector of pattern clause strings and constructs pattern clause objects
     bool QueryParser::parsePatternCluases(Query& query, vector<string> patternClauses) {
+        vector<PatternClause> patterns;
+
+        for (auto clause : patternClauses) {
+            // Each candidate pattern clause is of form <synonym> (arg1, arg2, [arg3 if while])
+
+            pair<string, string> splitPair = ParserUtils::splitString(clause, ' ');
+            string synonym = splitPair.first;
+            string argString = splitPair.second.erase(0, 1);
+            argString.pop_back();
+            vector<string> args = ParserUtils::tokeniseString(argString, ',');
+
+            auto synonymMapping = query.synonymTable.find(synonym);
+            if (synonymMapping == query.synonymTable.end()) {
+                // SEMANTIC ERROR: unknown synonym
+                query.status = "semantic error: undeclared synonym in pattern clause";
+                return false;
+            }
+
+            DesignEntity entityType = synonymMapping->second;
+            string referenceString = args.at(0);
+
+            // If first argument directly references a variable entity, validate it
+            if (referenceString != "_" && referenceString.find('\"') != string::npos) {
+                // String contains a " - interpret literally as variable name
+                if (!ParserUtils::validateEntityRef(referenceString)) {
+                    // SYNTAX ERROR: invalid entity reference
+                    query.status = "syntax error: pattern has invalid entity reference";
+                    return false;
+                }
+            }
+
+            PatternClause pattern;
+
+            switch (entityType) {
+            case ASSIGN:
+                if (args.size() != 2) {
+                    // SYNTAX ERROR: incorrect number of arguments
+                    query.status = "syntax error: assign pattern does not have 2 arguments";
+                }
+                else if (!ParserUtils::validatePattern(args.at(1))) {
+                    // SYNTAX ERROR: invalid pattern string
+                    query.status = "syntax error: assign pattern has invalid pattern string";
+                }
+                else {
+                    pattern = { clause, ASSIGN_PATTERN, referenceString, args.at(1) };
+                }
+                break;
+            case IF:
+                if (args.size() != 2) {
+                    // SYNTAX ERROR: incorrect number of arguments
+                    query.status = "syntax error: if pattern does not have 2 arguments";
+                }
+                else if (args.at(1) != "_") {
+                    // SYNTAX ERROR: unallowed argument for if pattern clause
+                    query.status = "syntax error: if pattern only supports '_' as second argument";
+                }
+                else {
+                    pattern = { clause, IF_PATTERN, referenceString, "_" };
+                }
+                break;
+            case WHILE:
+                if (args.size() != 3) {
+                    // SYNTAX ERROR: incorrect number of arguments
+                    query.status = "syntax error: while pattern does not have 3 arguments";
+                }
+                else if (args.at(1) != "_" || args.at(2) != "_") {
+                    // SYNTAX ERROR: unallowed argument for while pattern clause
+                    query.status = "syntax error: while pattern only supports '_' for last two arguments";
+                }
+                else {
+                    // Pattern struct only stores first two args since third arg is fixed as '_' anyway
+                    pattern = { clause, WHILE_PATTERN, referenceString, "_" };
+                }
+                break;
+            default:
+                // SYNTAX ERROR: unallowed design entity in pattern clauses
+                query.status = "syntax error: pattern clauses only defined for assign, if, while";
+            }
+
+            if (query.status != "ok") {
+                return false;
+            }
+            else {
+                // Pattern parsed successfully - add new pattern clause
+                patterns.push_back(pattern);
+            }
+        }
         return true;
     }
 
     QueryEvaluator::QueryEvaluator(PKB::PKB database) {
         this->database = database;
+    }
+
+    /**
+     *  Validates an input string as a direct entity reference.
+     *
+     *  @param  input   candidate entity reference string
+     *  @return boolean describing if the string correctly references an entity.
+     */
+    bool ParserUtils::validateEntityRef(string input) {
+        regex VALID_ENTITY_REFERENCE("^\"[A-Za-z][A-Za-z0-9]*\"$");
+        smatch ematch;
+
+        if (!regex_search(input, ematch, VALID_ENTITY_REFERENCE)) {
+            // Entity reference is not a string of form "<identifier>"
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     *  Validates an input string as a pattern, returning true if it is a valid pattern.
+     *
+     *  @param  input   candidate pattern string
+     *  @return boolean describing if the string forms a valid pattern.
+     */
+    bool ParserUtils::validatePattern(string input) {
+        if (input == "_") {
+            return true;
+        }
+
+        // Regex describing an allowed infix arithemtic expression
+        regex VALID_EXPRESSION("\"(?:(?:[0-9]+)|(?:[A-Za-z][A-Za-z0-9]*)(?: [\\+\\-\\*\\/\\%] (?:(?:[0-9]+)|(?:[A-Za-z][A-Za-z0-9]*)))*)\"");
+        smatch pmatch;
+
+        if (!regex_search(input, pmatch, VALID_EXPRESSION)) {
+            // Arithmetic expression is not a substring
+            return false;
+        }
+
+        string expr = pmatch.str();
+        int diff = input.length() - expr.length();
+        if (diff != 0 && diff != 2) {
+            // Pattern string is not of form "<expr>" or [X]"<expr>"[Y] where X + Y = 2
+            return false;
+        }
+        else if (diff == 2 && (input.at(0) != '_' || input.at(input.length() - 1) != '_')) {
+            // Pattern string does not have symmetric '_'
+            return false;
+        }
+
+        return true;
     }
 
     /**

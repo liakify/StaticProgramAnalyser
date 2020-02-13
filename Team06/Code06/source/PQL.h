@@ -30,7 +30,6 @@ namespace PQL {
     };
 
     struct RelationClause {
-        string status;
         string clause;
         RelationType type;
         StatementRef statementArg;
@@ -40,7 +39,6 @@ namespace PQL {
     };
 
     struct PatternClause {
-        string status;
         string clause;
         PatternType type;
         EntityRef targetArg;
@@ -95,6 +93,8 @@ namespace PQL {
     
     class ParserUtils {
     public:
+        static bool validateEntityRef(string input);
+        static bool validatePattern(string input);
         static string leftTrim(string input);
         static pair<string, string> splitString(string input, char delim);
         static vector<string> tokeniseString(string input, char delim);
