@@ -67,11 +67,11 @@ namespace Parser{
 	}
 
 	ProcId Parser::procedure() {
-		consume(regex("[[:space:]]*procedure[[:space:]]+"));
+		consume(regex("[\\s]*procedure[\\s]+"));
 		ProcName pn = proc_name();
-		consume(regex("[[:space:]]*[{][[:space:]]*"));
+		consume(regex("[\\s]*[{][\\s]*"));
 		StmtListId sl = stmtLst();
-		consume(regex("[[:space:]]*[}][[:space:]]*"));
+		consume(regex("[\\s]*[}][\\s]*"));
 		Procedure p = Procedure(pn, sl);
 		return pkb.procTable.insertProc(p);
 	}
@@ -152,51 +152,51 @@ namespace Parser{
 	}
 
 	ReadStmt Parser::read_stmt() {
-		consume(regex("[[:space:]]*read[[:space:]]+"));
+		consume(regex("[\\s]*read[\\s]+"));
 		VarId v = var_name();
-		consume(regex("[[:space:]]*[;][[:space:]]*"));
+		consume(regex("[\\s]*[;][\\s]*"));
 		return ReadStmt(v);
 	}
 
 	PrintStmt Parser::print_stmt() {
-		consume(regex("[[:space:]]*print[[:space:]]+"));
+		consume(regex("[\\s]*print[\\s]+"));
 		VarId v = var_name();
-		consume(regex("[[:space:]]*[;][[:space:]]*"));
+		consume(regex("[\\s]*[;][\\s]*"));
 		return PrintStmt(v);
 	}
 
 	CallStmt Parser::call_stmt() {
-		consume(regex("[[:space:]]*call[[:space:]]+"));
+		consume(regex("[\\s]*call[\\s]+"));
 		ProcName p = proc_name();
-		consume(regex("[[:space:]]*[;][[:space:]]*"));
+		consume(regex("[\\s]*[;][\\s]*"));
 		return CallStmt(p);
 	}
 
 	WhileStmt Parser::while_stmt() {
-		consume(regex("[[:space:]]*while[[:space:]]*[(][[:space:]]*"));
+		consume(regex("[\\s]*while[\\s]*[(][\\s]*"));
 		CondExpr cond = cond_expr();
-		consume(regex("[[:space:]]*[)][[:space:]]*[{][[:space:]]*"));
+		consume(regex("[\\s]*[)][\\s]*[{][\\s]*"));
 		StmtListId sl = stmtLst();
-		consume(regex("[[:space:]]*[}][[:space:]]*"));
+		consume(regex("[\\s]*[}][\\s]*"));
 		return WhileStmt(cond, sl);
 	}
 
 	IfStmt Parser::if_stmt() {
-		consume(regex("[[:space:]]*if[[:space:]]*[(][[:space:]]*"));
+		consume(regex("[\\s]*if[\\s]*[(][\\s]*"));
 		CondExpr cond = cond_expr();
-		consume(regex("[[:space:]]*[)][[:space:]]*then[[:space:]]*[{][[:space:]]*"));
+		consume(regex("[\\s]*[)][\\s]*then[\\s]*[{][\\s]*"));
 		StmtListId thenStmtLst = stmtLst();
-		consume(regex("[[:space:]]*[}][[:space:]]*else[[:space:]]*[{][[:space:]]*"));
+		consume(regex("[\\s]*[}][\\s]*else[\\s]*[{][\\s]*"));
 		StmtListId elseStmtLst = stmtLst();
-		consume(regex("[[:space:]]*[}][[:space:]]*"));
+		consume(regex("[\\s]*[}][\\s]*"));
 		return IfStmt(cond, thenStmtLst, elseStmtLst);
 	}
 
 	AssignStmt Parser::assign_stmt() {
 		VarId v = var_name();
-		consume(regex("[[:space:]]*[=][[:space:]]*"));
+		consume(regex("[\\s]*[=][\\s]*"));
 		Expression exp = expr();
-		consume(regex("[[:space:]]*[;][[:space:]]*"));
+		consume(regex("[\\s]*[;][\\s]*"));
 		return AssignStmt(v, exp);
 	}
 
@@ -209,30 +209,30 @@ namespace Parser{
 			this->pos = currentPos;
 		}
 		try {
-			consume(regex("[[:space:]]*[!][[:space:]]*[(][[:space:]]*"));
+			consume(regex("[\\s]*[!][\\s]*[(][\\s]*"));
 			CondExpr negated = cond_expr();
-			consume(regex("[[:space:]]*[)][[:space:]]*"));
+			consume(regex("[\\s]*[)][\\s]*"));
 			return negated;
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		try {
-			consume(regex("[[:space:]]*[(][[:space:]]*"));
+			consume(regex("[\\s]*[(][\\s]*"));
 			CondExpr left = cond_expr();
-			consume(regex("[[:space:]]*[)][[:space:]]*(&&)[[:space:]]*[(][[:space:]]*"));
+			consume(regex("[\\s]*[)][\\s]*(&&)[\\s]*[(][\\s]*"));
 			CondExpr right = cond_expr();
-			consume(regex("[[:space:]]*[)][[:space:]]*"));
+			consume(regex("[\\s]*[)][\\s]*"));
 			return CondExpr(left, right);
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
-		consume(regex("[[:space:]]*[(][[:space:]]*"));
+		consume(regex("[\\s]*[(][\\s]*"));
 		CondExpr left = cond_expr();
-		consume(regex("[[:space:]]*[)][[:space:]]*(||)[[:space:]]*[(][[:space:]]*"));
+		consume(regex("[\\s]*[)][\\s]*(||)[\\s]*[(][\\s]*"));
 		CondExpr right = cond_expr();
-		consume(regex("[[:space:]]*[)][[:space:]]*"));
+		consume(regex("[\\s]*[)][\\s]*"));
 		return CondExpr(left, right);
 	}
 
@@ -240,7 +240,7 @@ namespace Parser{
 		int currentPos = this->pos;
 		try {
 			Expression left = expr();
-			consume(regex("[[:space:]]*(>)[[:space:]]*"));
+			consume(regex("[\\s]*(>)[\\s]*"));
 			Expression right = expr();
 			return CondExpr(left, right);
 		}
@@ -249,7 +249,7 @@ namespace Parser{
 		}
 		try {
 			Expression left = expr();
-			consume(regex("[[:space:]]*(>=)[[:space:]]*"));
+			consume(regex("[\\s]*(>=)[\\s]*"));
 			Expression right = expr();
 			return CondExpr(left, right);
 		}
@@ -258,7 +258,7 @@ namespace Parser{
 		}
 		try {
 			Expression left = expr();
-			consume(regex("[[:space:]]*(<)[[:space:]]*"));
+			consume(regex("[\\s]*(<)[\\s]*"));
 			Expression right = expr();
 			return CondExpr(left, right);
 		}
@@ -267,7 +267,7 @@ namespace Parser{
 		}
 		try {
 			Expression left = expr();
-			consume(regex("[[:space:]]*(<=)[[:space:]]*"));
+			consume(regex("[\\s]*(<=)[\\s]*"));
 			Expression right = expr();
 			return CondExpr(left, right);
 		}
@@ -276,7 +276,7 @@ namespace Parser{
 		}
 		try {
 			Expression left = expr();
-			consume(regex("[[:space:]]*(==)[[:space:]]*"));
+			consume(regex("[\\s]*(==)[\\s]*"));
 			Expression right = expr();
 			return CondExpr(left, right);
 		}
@@ -284,7 +284,7 @@ namespace Parser{
 			this->pos = currentPos;
 		}
 		Expression left = expr();
-		consume(regex("[[:space:]]*(!=)[[:space:]]*"));
+		consume(regex("[\\s]*(!=)[\\s]*"));
 		Expression right = expr();
 		return CondExpr(left, right);
 	}
@@ -320,13 +320,13 @@ namespace Parser{
 		char op;
 		std::stack<Expression> operands;
 		std::stack<char> operators;
-		consume(regex("[[:space:]]*"));
+		consume(regex("[\\s]*"));
 		Expression token = factor();
 		operands.push(token);
 		while (true) {
 			try {
-				consume(regex("[[:space:]]*"));
-				op = consume(regex("[+%\*\-\/][[:space:]]*"))[0];
+				consume(regex("[\\s]*"));
+				op = consume(regex("[\\+\\%\\*\\-\\/][\\s]*"))[0];
 				if (!operators.empty() && compare_op(operators.top(), op) != -1) {
 					combine_op(operands, operators);
 				}
@@ -343,7 +343,7 @@ namespace Parser{
 		while (!operators.empty() && operands.size() > 1) {
 			combine_op(operands, operators);
 		}
-		consume(regex("[[:space:]]*"));
+		consume(regex("[\\s]*"));
 		return operands.top();
 	}
 
@@ -369,9 +369,9 @@ namespace Parser{
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
-		consume(regex("[[:space:]]*[(][[:space:]]*"));
+		consume(regex("[\\s]*[(][\\s]*"));
 		Expression opr = expr();
-		consume(regex("[[:space:]]*[)][[:space:]]*"));
+		consume(regex("[\\s]*[)][\\s]*"));
 		return opr;
 	}
 
