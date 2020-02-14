@@ -43,5 +43,8 @@
     <Text Include="program-valid-test-affects-2.txt">
       <Filter>Source Files</Filter>
     </Text>
+    <Text Include="program-valid-2.txt">
+      <Filter>Source Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>

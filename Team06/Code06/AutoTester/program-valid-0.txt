@@ -1,6 +1,6 @@
 procedure SIMPLE {
 	p = 4;
-	a = p & 2;
+	a = p * 2;
 	if (c == k) then {
 		pattern = p * a * a + p * ifs + p * w;
 		while (w > 0) {
