@@ -1,13 +1,13 @@
 #pragma once
 
-#include<stdio.h>
-#include <iostream>
+#include <stdexcept>
 #include <string>
 #include <vector>
 #include <unordered_map>
 #include "Types.h"
 
-using namespace std;
+using std::out_of_range;
+using std::unordered_map;
 
 namespace PKB {
 

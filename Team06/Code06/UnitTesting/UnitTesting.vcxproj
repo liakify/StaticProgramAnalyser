@@ -162,6 +162,8 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="testParser.cpp" />
+    <ClCompile Include="testSimple.cpp" />
     <ClCompile Include="testStmtListTable.cpp" />
     <ClCompile Include="testStmtTable.cpp" />
     <ClCompile Include="testProcTable.cpp" />

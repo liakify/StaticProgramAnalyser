@@ -2,10 +2,6 @@
 
 namespace PKB {
 
-  bool StatementList::operator== (const StatementList& other) {
-    return true;
-  }
-
   StmtListTable::StmtListTable() {
     stmtListIdGenerator = 0;
   }
@@ -14,7 +10,7 @@ namespace PKB {
   StmtListId StmtListTable::insertStmtLst(StatementList stmtLst) {
     StmtListId thisId = stmtListIdGenerator;
     stmtListIdGenerator++;
-    idStmtListTable.insert(make_pair(thisId, stmtLst));
+    idStmtListTable.insert(std::make_pair(thisId, stmtLst));
     return thisId;
   }
 
