@@ -89,14 +89,6 @@
     <ClInclude Include="source\AbstractWrapper.h" />
     <ClInclude Include="source\TestWrapper.h" />
   </ItemGroup>
-  <ItemGroup>
-    <Text Include="..\IntegrationTesting\program-invalid-0.txt" />
-    <Text Include="program-valid-0.txt" />
-    <Text Include="program-valid-1.txt" />
-    <Text Include="program-valid-test-affects-1.txt" />
-    <Text Include="program-valid-test-affects-2.txt" />
-    <Text Include="program-valid-2.txt" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
