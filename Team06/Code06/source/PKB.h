@@ -1,7 +1,5 @@
 #pragma once
 
-#include<stdio.h>
-#include <iostream>
 #include <string>
 #include <vector>
 #include <unordered_map>
@@ -10,14 +8,12 @@
 #include "VarTable.h"
 #include "ProcTable.h"
 
-using namespace std;
-
 namespace PKB {
   class PKB {
   public:
-    static VarTable varTable;
-    static ProcTable procTable;
-    static StmtListTable stmtListTable;
-    static StmtTable stmtTable;
+    VarTable varTable;
+    ProcTable procTable;
+    StmtListTable stmtListTable;
+    StmtTable stmtTable;
   };
 }

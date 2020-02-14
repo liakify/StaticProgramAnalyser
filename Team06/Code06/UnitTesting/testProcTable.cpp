@@ -12,7 +12,8 @@ namespace UnitTesting
 	public:
 		ProcName PROC_NAME_A = "p";
 		ProcName PROC_NAME_B = "X_WYS";
-		PKB::Procedure PROC_A = PKB::Procedure(PROC_NAME_A);
+		StmtListId STMTLST_ID = 2;
+		Procedure PROC_A = Procedure(PROC_NAME_A, STMTLST_ID);
 		ProcId PROC_ID_A = 0;
 		ProcId PROC_ID_B = 1;
 		bool isExceptionThrown = false;
