@@ -10,14 +10,15 @@ namespace SIMPLE {
 	/**
 	* The Expression class is used to represent expressions in SIMPLE. 
 	* An Expression is either a literal, or combines 2 other Expressions via an operator.
-	* Internally, it maintains one VarId unordered_set and one ConstValue unordered_set representing
-	* the variables and constants present in the expression.
+	* Internally, it maintains one VarId unordered_set, one ConstValue unordered_set
+	* and one string unordered_set representing the variables, constants and patterns
+	* present in the expression respectively.
 	*/
 	class Expression {
 	public:
 		/**
 		* Constructor for a non-literal Expression. The unordered_sets of the sub-expressions
-		* will be unioned to form the VarId and ConstValue unordered_sets of the expression.
+		* will be unioned to form the VarId, ConstValue and pattern unordered_sets of the expression.
 		* 
 		* @param	left	Left operand
 		* @param	right	Right operand
