@@ -1,0 +1,58 @@
+#pragma once
+
+#include <vector>
+#include <unordered_map>
+#include <unordered_set>
+
+#include "Types.h"
+
+struct parentRS
+{
+	StmtId parent = 0;
+	StmtId child = 0;
+	std::unordered_set<StmtId> allParents;
+	std::unordered_set<StmtId> allChildren;
+};
+
+class ParentKB
+{
+public:
+	/*
+		Adds Parent(stmtId1, stmtId2) relation to parentTable.
+		Also adds Parent*(s, stmtId2) for all s in s1.allParents.
+	*/
+	void addParent(StmtId stmtId1, StmtId stmtId2);
+
+	/*
+		Returns TRUE if Parent(stmtId1, stmtId2) is true, FALSE otherwise.
+	*/
+	bool parent(StmtId stmtId1, StmtId stmtId2);
+
+	/*
+		Returns TRUE if Parent*(stmtId1, stmtId2) is true, FALSE otherwise.
+	*/
+	bool parentStar(StmtId stmtId1, StmtId stmtId2);
+
+	/*
+		Returns statement ID s for which Parent(s, stmtId) is true.
+	*/
+	StmtId getParent(StmtId stmtId);
+
+	/*
+		Returns statement ID s for which Parent(stmtId, s) is true.
+	*/
+	StmtId getChild(StmtId stmtId);
+
+	/*
+		Returns all statement IDs s for which Parent*(s, stmtId) is true.
+	*/
+	std::unordered_set<StmtId> getAllParents(StmtId stmtId);
+
+	/*
+		Returns all statement IDs s for which Parent*(stmtId, s) is true.
+	*/
+	std::unordered_set<StmtId> getAllChildren(StmtId stmtId);
+
+private:
+	static std::unordered_map<StmtId, parentRS> parentTable;
+};

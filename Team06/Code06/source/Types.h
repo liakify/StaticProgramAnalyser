@@ -17,7 +17,8 @@ using ProcName = std::string;
 using StmtId = int;
 using StmtListId = int;
 
-using VarName = std::string;
 using ConstValue = std::string;
+
+using Pattern = std::string;
 
 #endif
