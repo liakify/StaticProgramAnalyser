@@ -4,29 +4,24 @@
 	TODO: Exception handling for invalid inputs
 */
 
-ModifiesKB::ModifiesKB()
-{
-
-}
-
-void ModifiesKB::addStmtModifies(int stmtId, std::string var)
+void ModifiesKB::addStmtModifies(StmtId stmtId, VarName var)
 {
 	stmtVarTable[stmtId].insert(var);
 	varStmtTable[var].insert(stmtId);
 }
 
-bool ModifiesKB::stmtModifies(int stmtId, std::string var)
+bool ModifiesKB::stmtModifies(StmtId stmtId, VarName var)
 {
-	std::unordered_set<std::string> varSet = stmtVarTable[stmtId];
+	std::unordered_set<VarName> varSet = stmtVarTable[stmtId];
 	return varSet.find(var) != varSet.end();
 }
 
-std::unordered_set<std::string> ModifiesKB::getAllVarsModifiedByStmt(int stmtId)
+std::unordered_set<VarName> ModifiesKB::getAllVarsModifiedByStmt(StmtId stmtId)
 {
 	return stmtVarTable[stmtId];
 }
 
-std::unordered_set<int> ModifiesKB::getAllStmtsModifyVar(std::string var)
+std::unordered_set<StmtId> ModifiesKB::getAllStmtsModifyVar(VarName var)
 {
 	return varStmtTable[var];
 }

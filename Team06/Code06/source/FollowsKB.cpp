@@ -4,21 +4,16 @@
 	TODO: Exception handling for invalid inputs
 */
 
-FollowsKB::FollowsKB()
-{
-
-}
-
 /*
 	TODO: Move add Follows* logic out to Design Extractor
 */
-void FollowsKB::addFollows(int stmtId1, int stmtId2)
+void FollowsKB::addFollows(StmtId stmtId1, StmtId stmtId2)
 {
 	if (followsTable.find(stmtId1) == followsTable.end())
 	{
 		followsTable.insert(std::make_pair(stmtId1, followsRS()));
 	}
-	
+
 	if (followsTable.find(stmtId2) == followsTable.end())
 	{
 		followsTable.insert(std::make_pair(stmtId2, followsRS()));
@@ -39,34 +34,34 @@ void FollowsKB::addFollows(int stmtId1, int stmtId2)
 	fRS2.allFollowing.insert(stmtId1);
 }
 
-bool FollowsKB::follows(int stmtId1, int stmtId2)
+bool FollowsKB::follows(StmtId stmtId1, StmtId stmtId2)
 {
 	return followsTable[stmtId1].follower == stmtId2;
 }
 
-bool FollowsKB::followStar(int stmtId1, int stmtId2)
+bool FollowsKB::followStar(StmtId stmtId1, StmtId stmtId2)
 {
 	followsRS fRS1 = followsTable[stmtId1];
-	std::unordered_set<int> stmt1Followers = fRS1.allFollowers;
+	std::unordered_set<StmtId> stmt1Followers = fRS1.allFollowers;
 	return stmt1Followers.find(stmtId2) != stmt1Followers.end();
 }
 
-int FollowsKB::getFollower(int stmtId)
+StmtId FollowsKB::getFollower(StmtId stmtId)
 {
 	return followsTable[stmtId].follower;
 }
 
-int FollowsKB::getFollowing(int stmtId)
+StmtId FollowsKB::getFollowing(StmtId stmtId)
 {
 	return followsTable[stmtId].following;
 }
 
-std::unordered_set<int> FollowsKB::getAllFollowers(int stmtId)
+std::unordered_set<StmtId> FollowsKB::getAllFollowers(StmtId stmtId)
 {
 	return followsTable[stmtId].allFollowers;
 }
 
-std::unordered_set<int> FollowsKB::getAllFollowing(int stmtId)
+std::unordered_set<StmtId> FollowsKB::getAllFollowing(StmtId stmtId)
 {
 	return followsTable[stmtId].allFollowing;
 }

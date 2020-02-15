@@ -4,15 +4,10 @@
 	TODO: Exception handling for invalid inputs
 */
 
-ParentKB::ParentKB()
-{
-
-}
-
 /*
 	TODO: Move add Follows* logic out to Design Extractor
 */
-void ParentKB::addParent(int stmtId1, int stmtId2)
+void ParentKB::addParent(StmtId stmtId1, StmtId stmtId2)
 {
 	if (parentTable.find(stmtId1) == parentTable.end())
 	{
@@ -39,34 +34,34 @@ void ParentKB::addParent(int stmtId1, int stmtId2)
 	pRS2.allParents.insert(stmtId1);
 }
 
-bool ParentKB::parent(int stmtId1, int stmtId2)
+bool ParentKB::parent(StmtId stmtId1, StmtId stmtId2)
 {
 	return parentTable[stmtId1].child == stmtId2;
 }
 
-bool ParentKB::parentStar(int stmtId1, int stmtId2)
+bool ParentKB::parentStar(StmtId stmtId1, StmtId stmtId2)
 {
 	parentRS pRS1 = parentTable[stmtId1];
-	std::unordered_set<int> parent1Children = pRS1.allChildren;
+	std::unordered_set<StmtId> parent1Children = pRS1.allChildren;
 	return parent1Children.find(stmtId2) != parent1Children.end();
 }
 
-int ParentKB::getParent(int stmtId)
+StmtId ParentKB::getParent(StmtId stmtId)
 {
 	return parentTable[stmtId].parent;
 }
 
-int ParentKB::getChild(int stmtId)
+StmtId ParentKB::getChild(StmtId stmtId)
 {
 	return parentTable[stmtId].child;
 }
 
-std::unordered_set<int> ParentKB::getAllParents(int stmtId)
+std::unordered_set<StmtId> ParentKB::getAllParents(StmtId stmtId)
 {
 	return parentTable[stmtId].allParents;
 }
 
-std::unordered_set<int> ParentKB::getAllChildren(int stmtId)
+std::unordered_set<StmtId> ParentKB::getAllChildren(StmtId stmtId)
 {
 	return parentTable[stmtId].allChildren;
 }

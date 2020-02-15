@@ -4,18 +4,20 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include "Types.h"
+
 class PatternKB
 {
 public:
-	void addLHSPattern(std::string pattern, int stmtId);
+	void addLHSPattern(Pattern pattern, StmtId stmtId);
 
-	void addRHSPattern(std::string pattern, int stmtId);
+	void addRHSPattern(Pattern pattern, StmtId stmtId);
 
-	std::unordered_set<int> getLHSPatternStmts(std::string pattern);
+	std::unordered_set<StmtId> getLHSPatternStmts(Pattern pattern);
 
-	std::unordered_set<int> getRHSPatternStmts(std::string pattern);
+	std::unordered_set<StmtId> getRHSPatternStmts(Pattern pattern);
 
 private:
-	std::unordered_map<std::string, std::unordered_set<int>> lhsTable;
-	std::unordered_map<std::string, std::unordered_set<int>> rhsTable;
+	std::unordered_map<Pattern, std::unordered_set<StmtId>> lhsTable;
+	std::unordered_map<Pattern, std::unordered_set<StmtId>> rhsTable;
 };

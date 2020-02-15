@@ -4,6 +4,8 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include "Types.h"
+
 /*
 	TODO: Proc Tables/API
 */
@@ -11,17 +13,15 @@
 class ModifiesKB
 {
 public:
-	ModifiesKB();
+	void addStmtModifies(StmtId stmtId, VarName var);
 
-	void addStmtModifies(int stmtId, std::string var);
+	bool stmtModifies(StmtId stmtId, VarName var);
 
-	bool stmtModifies(int stmtId, std::string var);
+	std::unordered_set<VarName> getAllVarsModifiedByStmt(StmtId stmtId);
 
-	std::unordered_set<std::string> getAllVarsModifiedByStmt(int stmtId);
-
-	std::unordered_set<int> getAllStmtsModifyVar(std::string var);
+	std::unordered_set<StmtId> getAllStmtsModifyVar(VarName var);
 
 private:
-	static std::unordered_map<int, std::unordered_set<std::string>> stmtVarTable;
-	static std::unordered_map<std::string, std::unordered_set<int>> varStmtTable;
+	static std::unordered_map<StmtId, std::unordered_set<VarName>> stmtVarTable;
+	static std::unordered_map<VarName, std::unordered_set<StmtId>> varStmtTable;
 };

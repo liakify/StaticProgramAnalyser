@@ -4,6 +4,8 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include "Types.h"
+
 /*
 	TODO: Proc Tables/API
 */
@@ -11,17 +13,15 @@
 class UsesKB
 {
 public:
-	UsesKB();
+	void addStmtUses(StmtId stmtId, VarName var);
 
-	void addStmtUses(int stmtId, std::string var);
+	bool stmtUses(StmtId stmtId, VarName var);
 
-	bool stmtUses(int stmtId, std::string var);
+	std::unordered_set<VarName> getAllVarsUsedByStmt(StmtId stmtId);
 
-	std::unordered_set<std::string> getAllVarsUsedByStmt(int stmtId);
-
-	std::unordered_set<int> getAllStmtsUsingVar(std::string var);
+	std::unordered_set<StmtId> getAllStmtsUsingVar(VarName var);
 
 private:
-	static std::unordered_map<int, std::unordered_set<std::string>> stmtVarTable;
-	static std::unordered_map<std::string, std::unordered_set<int>> varStmtTable;
+	static std::unordered_map<StmtId, std::unordered_set<VarName>> stmtVarTable;
+	static std::unordered_map<VarName, std::unordered_set<StmtId>> varStmtTable;
 };
