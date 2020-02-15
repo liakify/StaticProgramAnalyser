@@ -17,19 +17,19 @@ using Constant = int;
 using StmtRef = std::string;
 using EntityRef = std::string;
 
-enum DesignEntity {
+enum class DesignEntity {
     STATEMENT, READ, PRINT, CALL, WHILE, IF, ASSIGN, VARIABLE, CONSTANT, PROCEDURE
 };
 
-enum RelationType {
+enum class RelationType {
     FOLLOWS, FOLLOWST, PARENT, PARENTT, USESS, USESP, MODIFIESS, MODIFIESP
 };
 
-enum PatternType {
+enum class PatternType {
     ASSIGN_PATTERN, IF_PATTERN, WHILE_PATTERN
 };
 
-enum ArgType {
+enum class ArgType {
     // INVALID used when argument does not apply for that relation
     // UNKNOWN used for arguments that require further validation
     // StmtRef arguments can be SYNONYM, INTEGER or WILDCARD

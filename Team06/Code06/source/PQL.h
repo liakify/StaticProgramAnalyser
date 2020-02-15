@@ -16,28 +16,28 @@ using namespace std;
 
 namespace PQL {
 
-    const pair<ArgType, string> INVALID_ARG = { INVALID, "" };
+    const pair<ArgType, string> INVALID_ARG = { ArgType::INVALID, "" };
 
     const unordered_map<string, DesignEntity> ENTITY_MAP {
-        {"statement", STATEMENT},
-        {"read", READ},
-        {"print", PRINT},
-        {"call", CALL},
-        {"while", WHILE},
-        {"if", IF},
-        {"assign", ASSIGN},
-        {"variable", VARIABLE},
-        {"constant", CONSTANT},
-        {"procedure", PROCEDURE}
+        {"statement", DesignEntity::STATEMENT},
+        {"read", DesignEntity::READ},
+        {"print", DesignEntity::PRINT},
+        {"call", DesignEntity::CALL},
+        {"while", DesignEntity::WHILE},
+        {"if", DesignEntity::IF},
+        {"assign", DesignEntity::ASSIGN},
+        {"variable", DesignEntity::VARIABLE},
+        {"constant", DesignEntity::CONSTANT},
+        {"procedure", DesignEntity::PROCEDURE}
     };
 
     const unordered_map<string, RelationType> RELATION_MAP {
-        {"Follows", FOLLOWS},
-        {"Follows*", FOLLOWST},
-        {"Parent", PARENT},
-        {"Parent*", PARENTT},
-        {"Uses", USESS},
-        {"Modifies", MODIFIESS}
+        {"Follows", RelationType::FOLLOWS},
+        {"Follows*", RelationType::FOLLOWST},
+        {"Parent", RelationType::PARENT},
+        {"Parent*", RelationType::PARENTT},
+        {"Uses", RelationType::USESS},
+        {"Modifies", RelationType::MODIFIESS}
     };
 
     struct RelationClause {

@@ -266,13 +266,13 @@ namespace PQL {
             RelationClause relation;
 
             switch (relationClass) {
-            case FOLLOWS:
+            case RelationType::FOLLOWS:
                 // Fallthrough
-            case FOLLOWST:
+            case RelationType::FOLLOWST:
                 // Fallthrough
-            case PARENT:
+            case RelationType::PARENT:
                 // Fallthrough
-            case PARENTT:
+            case RelationType::PARENTT:
                 // Interpret and validate both arguments as statement references
                 if (!(ParserUtils::isValidStmtRef(arg1) && ParserUtils::isValidStmtRef(arg2))) {
                     // SYNTAX ERROR: at least one argument is not a valid statement reference
@@ -282,9 +282,9 @@ namespace PQL {
                     relation = { clause, relationClass, parseStmtRef(arg1), parseStmtRef(arg2), INVALID_ARG, INVALID_ARG };
                 }
                 break;
-            case USESS:
+            case RelationType::USESS:
                 // Fallthrough
-            case MODIFIESS:
+            case RelationType::MODIFIESS:
                 // Two cases for first argument: either statement ref or entity ref
                 // Not possible to distinguish here if a SYNONYM corresponds to stmt or entity ref
                 // Semantic validation will check against the synonym table and determine if
@@ -354,7 +354,7 @@ namespace PQL {
             PatternClause pattern;
 
             switch (entityType) {
-            case ASSIGN:
+            case DesignEntity::ASSIGN:
                 if (args.size() != 2) {
                     // SYNTAX ERROR: incorrect number of arguments
                     query.status = "syntax error: assign pattern does not have 2 arguments";
@@ -364,10 +364,10 @@ namespace PQL {
                     query.status = "syntax error: assign pattern has invalid pattern string";
                 }
                 else {
-                    pattern = { clause, ASSIGN_PATTERN, parseEntityRef(referenceString), args.at(1) };
+                    pattern = { clause, PatternType::ASSIGN_PATTERN, parseEntityRef(referenceString), args.at(1) };
                 }
                 break;
-            case WHILE:
+            case DesignEntity::WHILE:
                 if (args.size() != 2) {
                     // SYNTAX ERROR: incorrect number of arguments
                     query.status = "syntax error: while pattern does not have 2 arguments";
@@ -377,10 +377,10 @@ namespace PQL {
                     query.status = "syntax error: while pattern only supports '_' as second argument";
                 }
                 else {
-                    pattern = { clause, WHILE_PATTERN, parseEntityRef(referenceString), "_" };
+                    pattern = { clause, PatternType::WHILE_PATTERN, parseEntityRef(referenceString), "_" };
                 }
                 break;
-            case IF:
+            case DesignEntity::IF:
                 if (args.size() != 3) {
                     // SYNTAX ERROR: incorrect number of arguments
                     query.status = "syntax error: if pattern does not have 3 arguments";
@@ -391,7 +391,7 @@ namespace PQL {
                 }
                 else {
                     // Pattern struct only stores first two args since third arg is fixed as '_' anyway
-                    pattern = { clause, IF_PATTERN, parseEntityRef(referenceString), "_" };
+                    pattern = { clause, PatternType::IF_PATTERN, parseEntityRef(referenceString), "_" };
                 }
                 break;
             default:
@@ -412,27 +412,27 @@ namespace PQL {
 
     pair<ArgType, StmtRef> QueryParser::parseStmtRef(string arg) {
         if (arg == "_") {
-            return { WILDCARD, arg };
+            return { ArgType::WILDCARD, arg };
         }
         else if (ParserUtils::isInteger(arg)) {
-            return { INTEGER, arg };
+            return { ArgType::INTEGER, arg };
         }
         else {
-            return { SYNONYM, arg };
+            return { ArgType::SYNONYM, arg };
         }
     }
 
     pair<ArgType, EntityRef> QueryParser::parseEntityRef(string arg) {
         if (arg == "_") {
-            return { WILDCARD, arg };
+            return { ArgType::WILDCARD, arg };
         }
         else if (arg.find('\"') != string::npos) {
             // An identifier - strip leading and trailing "
             arg.pop_back();
-            return { IDENTIFIER, arg.erase(0, 1) };
+            return { ArgType::IDENTIFIER, arg.erase(0, 1) };
         }
         else {
-            return { SYNONYM, arg };
+            return { ArgType::SYNONYM, arg };
         }
     }
 
