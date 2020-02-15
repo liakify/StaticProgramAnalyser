@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 enum StmtType
 {
@@ -47,8 +48,9 @@ enum class ArgType {
     INVALID, UNKNOWN, SYNONYM, INTEGER, IDENTIFIER, WILDCARD
 };
 
-using Result = std::vector<std::string>;
-using ClauseResult = std::vector<Result>;
-using QueryResult = std::vector<Result>;
+using QueryResultEntry = std::vector<std::string>;
+using ClauseResultEntry = std::unordered_map<std::string, std::string>;
+using ClauseResult = std::vector<ClauseResultEntry>;
+using QueryResult = std::vector<QueryResultEntry>;
 
 #endif

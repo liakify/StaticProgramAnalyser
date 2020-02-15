@@ -12,28 +12,30 @@ namespace PQL {
 
 		// Evaluate Relation Clauses
 		for (RelationClause relation : query.relations) {
-			clauseResults.push_back(evaluateRelationClause(relation));
+			clauseResults.emplace_back(evaluateRelationClause(relation));
 		}
 
 		// Evaluate Pattern Clauses
 		for (PatternClause pattern : query.patterns) {
-			clauseResults.push_back(evaluatePatternClause(pattern));
+			clauseResults.emplace_back(evaluatePatternClause(pattern));
 		}
+		return QueryResult();
 	}
 
 	ClauseResult QueryEvaluator::evaluateRelationClause(const RelationClause &relationClause) {
 		switch (relationClause.type) {
 		case RelationType::FOLLOWS:
-
+			
 			break;
 		case RelationType::FOLLOWST:
 
 			break;
 		}
+		return ClauseResult();
 	}
 
 	ClauseResult QueryEvaluator::evaluatePatternClause(const PatternClause &patternClause) {
-
+		return ClauseResult();
 	}
 
 }

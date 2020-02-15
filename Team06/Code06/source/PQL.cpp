@@ -4,7 +4,6 @@ namespace PQL {
 
     PQLManager::PQLManager(PKB::PKB database) {
         this->parser = QueryParser();
-        this->evaluator = QueryEvaluator(database);
         this->formatter = QueryResultProjector();
     }
 
@@ -435,10 +434,6 @@ namespace PQL {
         else {
             return { ArgType::SYNONYM, arg };
         }
-    }
-
-    QueryEvaluator::QueryEvaluator(PKB::PKB database) {
-        this->database = database;
     }
 
     /**

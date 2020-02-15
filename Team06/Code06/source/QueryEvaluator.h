@@ -1,9 +1,15 @@
 #pragma once
 
 #include "Types.h"
+#include "PKB.h"
 #include "PQL.h"
 
 namespace PQL {
+
+	struct RelationClause;
+	struct PatternClause;
+	struct Query;
+
 	class QueryEvaluator {
 
 	public:
