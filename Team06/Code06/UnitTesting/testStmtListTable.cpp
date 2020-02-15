@@ -9,10 +9,12 @@ namespace UnitTesting
 	TEST_CLASS(TestStmtListTable)
 	{
 	public:
-		PKB::StatementList STMTLST_A = PKB::StatementList();
-		PKB::StatementList STMTLST_B = PKB::StatementList();
-		StmtId STMTLST_ID_A = 0;
-		StmtId STMTLST_ID_B = 1;
+		StmtId STMT_ID = 1;
+		std::vector<StmtId> stmt_vector = std::vector<StmtId>(1, STMT_ID);
+		StatementList STMTLST_A = StatementList(stmt_vector);
+		StatementList STMTLST_B = StatementList(stmt_vector);
+		StmtListId STMTLST_ID_A = 0;
+		StmtListId STMTLST_ID_B = 1;
 		bool isExceptionThrown = false;
 
 		TEST_METHOD(InitializingStmtListTable)
@@ -37,7 +39,7 @@ namespace UnitTesting
 			StmtListId stmtList_A_id = stmtListTable.insertStmtLst(STMTLST_A);
 			Assert::AreEqual(stmtListTable.size(), 1);
 
-			PKB::StatementList stmtlist = stmtListTable.get(stmtList_A_id);
+			StatementList stmtlist = stmtListTable.get(stmtList_A_id);
 			Assert::IsTrue(stmtlist == STMTLST_A);
 		}
 	};

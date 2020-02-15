@@ -2,6 +2,11 @@
 
 #include <string>
 
+enum StmtType
+{
+	PRINT, READ, IF, WHILE, CALL, ASSIGN
+};
+
 using VarName = std::string;
 using VarId = int;
 
@@ -9,14 +14,14 @@ using ProcId = int;
 using ProcName = std::string;
 
 using StmtId = int;
-using StmtType = std::string;
 using StmtListId = int;
 
+using ConstValue = std::string;
+using Pattern = std::string;
+
 // Additional types specific to PQL
-using Constant = int;
 using StmtRef = std::string;
 using EntityRef = std::string;
-using Pattern = std::string;
 
 enum class DesignEntity {
     STATEMENT, READ, PRINT, CALL, WHILE, IF, ASSIGN, VARIABLE, CONSTANT, PROCEDURE

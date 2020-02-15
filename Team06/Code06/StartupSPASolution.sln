@@ -1,4 +1,3 @@
-﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29709.97
@@ -72,7 +71,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		Qt5Version = $(DefaultQtVersion)
 		SolutionGuid = {1A056121-21EB-49AF-AD7E-DCCFFE0E1E46}
+		Qt5Version = $(DefaultQtVersion)
 	EndGlobalSection
 EndGlobal

@@ -2,14 +2,6 @@
 
 namespace PKB {
 
-  Procedure::Procedure(ProcName procName) {
-    this->procName = procName;
-  }
-
-  bool Procedure::operator== (const Procedure& p) {
-    return procName == p.procName;
-  }
-
   ProcTable::ProcTable() {
     procIdGenerator = 0;
   }
@@ -18,11 +10,11 @@ namespace PKB {
   // Else, the table remains unchanged.
   // Returns the ID of the procedure in the ProcTable.
   ProcId ProcTable::insertProc(Procedure proc) {
-    ProcName procName = proc.procName;
+    ProcName procName = proc.getName();
     if (nameIdTable.try_emplace(procName, procIdGenerator).second) {
       ProcId thisId = procIdGenerator;
       procIdGenerator++;
-      idProcTable.insert(make_pair(thisId, proc));
+      idProcTable.insert(std::make_pair(thisId, proc));
       return thisId;
     }
     else {

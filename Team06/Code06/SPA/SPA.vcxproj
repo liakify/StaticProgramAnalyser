@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -12,31 +12,47 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\source\DesignExtractor.cpp" />
+    <ClCompile Include="..\source\FollowsKB.cpp" />
     <ClCompile Include="..\source\LoggingUtils.cpp" />
+    <ClCompile Include="..\source\ParentKB.cpp" />
     <ClCompile Include="..\source\Parser.cpp" />
     <ClCompile Include="..\source\PKB.cpp" />
     <ClCompile Include="..\source\PQL.cpp" />
     <ClCompile Include="..\source\ProcTable.cpp" />
     <ClCompile Include="..\source\StmtListTable.cpp" />
     <ClCompile Include="..\source\StmtTable.cpp" />
+    <ClCompile Include="..\source\Simple.cpp" />
     <ClCompile Include="..\source\TNode.cpp" />
     <ClCompile Include="..\source\VarTable.cpp" />
+    <ClCompile Include="..\source\UsesKB.cpp" />
+    <ClCompile Include="..\source\ModifiesKB.cpp" />
+    <ClCompile Include="..\source\PatternKB.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\source\FollowsKB.h" />
     <ClInclude Include="..\source\LoggingUtils.h" />
+    <ClInclude Include="..\source\Parser.h" />
+    <ClInclude Include="..\source\ParentKB.h" />
     <ClInclude Include="..\source\PKB.h" />
     <ClInclude Include="..\source\PQL.h" />
     <ClInclude Include="..\source\ProcTable.h" />
     <ClInclude Include="..\source\StmtListTable.h" />
     <ClInclude Include="..\source\StmtTable.h" />
+    <ClInclude Include="..\source\Simple.h" />
     <ClInclude Include="..\source\TNode.h" />
     <ClInclude Include="..\source\VarTable.h" />
     <ClInclude Include="..\source\Types.h" />
+    <ClInclude Include="..\source\UsesKB.h" />
+    <ClInclude Include="..\source\ModifiesKB.h" />
+    <ClInclude Include="..\source\PatternKB.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClassDiagram.cd" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{DC21A1EA-D2C6-4D14-A2B4-E025B64BDE81}</ProjectGuid>
     <RootNamespace>SPA</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.18362.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
