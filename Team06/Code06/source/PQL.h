@@ -75,7 +75,7 @@ namespace PQL {
         Query parseQuery(string queryString);
     private:
         int queryCount;
-        bool validateQuerySyntax(string queryString);
+        bool validateQuerySyntax(Query& query, vector<string> stmts);
         bool validateQuerySemantics(Query &query);
         vector<string> splitStatements(string queryString);
         pair<vector<string>, vector<string>> splitConstraints(string queryBody);

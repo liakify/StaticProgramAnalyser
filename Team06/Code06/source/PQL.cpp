@@ -36,9 +36,8 @@ namespace PQL {
         queryCount += 1;
 
         vector<string> statements = splitStatements(queryString);
-        assert(statements.size() > 0);
 
-        bool isValidQuery = validateQuerySyntax(queryString);
+        bool isValidQuery = validateQuerySyntax(query, statements);
         if (!isValidQuery) return query;
 
         // Extract mappings from synonyms to design entities
@@ -64,10 +63,49 @@ namespace PQL {
         return query;
     }
 
-    // Perform basic validation of overall PQL query syntax
-    // Additional validation is performed during parsing of declarations, statements and clauses
-    bool QueryParser::validateQuerySyntax(string queryString) {
-        // Validate each declaration is of form <design-entity> <synonym>(, <synonym>)*;
+    // Performs basic validation of overall PQL query structure by validating individual
+    // statements in the PQL query
+    // Additional validation is performed during parsing of declarations, query body and clauses
+    bool QueryParser::validateQuerySyntax(Query& query, vector<string> statements) {
+        if (statements.size() == 0) {
+            query.status = "syntax error: empty query";
+            return false;
+        }
+
+        regex VALID_DECLARATION("[A-Za-z][A-Za-z0-9]* +[A-Za-z][A-Za-z0-9]*( *, *[A-Za-z][A-Za-z0-9]*)* *;");
+        smatch dmatch;
+
+        // Validate each declaration (first N - 1 statements) satisfy
+        // PQL declaration syntax of form <keyword> <synonym>(, <synonym>)*;
+        int numDeclarations = statements.size() - 1;
+        for (int i = 0; i < numDeclarations; i++) {
+            if (!regex_search(statements.at(i), dmatch, VALID_DECLARATION)) {
+                // Invalid declaration
+                query.status = "syntax error: declaration statement has incorrect syntax";
+                return false;
+            }
+        }
+
+        // Validate structure of query body (last statement)
+        regex VALID_QUERY_BODY("^Select [A-Za-z0-9<>\\(\\)_,\"\\+\\-\\*\\/\\% ]+(?!;)$");
+        smatch qbmatch;
+
+        if (!regex_search(statements.at(numDeclarations), qbmatch, VALID_QUERY_BODY)) {
+            query.status = "syntax error: query body missing 'Select' keyword or has incorrect syntax";
+            return false;
+        }
+
+        // Check if syntax violations occur from use of clause keywords and connectives
+        regex INVALID_REPEATED_RELATION("and +such that");
+        regex INVALID_REPEATED_PATTERN("and +pattern");
+        smatch rmatch;
+
+        if (regex_search(statements.at(numDeclarations), rmatch, INVALID_REPEATED_RELATION)
+            || regex_search(statements.at(numDeclarations), rmatch, INVALID_REPEATED_PATTERN)) {
+            query.status = "syntax error: query contains incorrect use of clause keyword and 'and'";
+            return false;
+        }
+
         return true;
     }
 
