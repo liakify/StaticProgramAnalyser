@@ -56,8 +56,8 @@ namespace PQL {
         parsePatternClauses(query, patternClauses);
 
         // Ensure query is semantically valid (no ambiguities, valid synonyms, argument types)
-        bool isSemanticallyCorrect = validateQuerySemantics(query);
-        if (!isSemanticallyCorrect) return query;
+        bool isSemanticallyValid = validateQuerySemantics(query);
+        if (!isSemanticallyValid) return query;
 
         query.status = "success";
         return query;
@@ -87,7 +87,7 @@ namespace PQL {
         }
 
         // Validate structure of query body (last statement)
-        regex VALID_QUERY_BODY("^Select [A-Za-z0-9<>\\(\\)_,\"\\+\\-\\*\\/\\% ]+(?!;)$");
+        regex VALID_QUERY_BODY("^Select [\\w<>\\(\\),\"\\+\\-\\*\\/\\% ]+(?!;)$");
         smatch qbmatch;
 
         if (!regex_search(statements.at(numDeclarations), qbmatch, VALID_QUERY_BODY)) {
@@ -243,15 +243,15 @@ namespace PQL {
     // C++ regex does not support negative lookbehind, (?<!(x))y - match y only if not preceded by x
     // Returns an array of clauses
     pair<vector<string>, vector<string>> QueryParser::splitConstraints(string queryBody) {
-        string RELATION_COMPOUND_CLAUSE = "such that +[A-Za-z*]+ *\\([A-Za-z0-9_,\\s]*\\)(?: and +[A-Za-z*]+ *\\([A-Za-z0-9_,\\s]*\\))*";
-        string PATTERN_COMPOUND_CLAUSE = "pattern +[A-Za-z][A-Za-z0-9]* *\\([A-Za-z_,\"\\+\\-\\*\\/\\%\\s]*\\)(?: and +[A-Za-z][A-Za-z0-9]* *\\([A-Za-z_,\"\\+\\-\\*\\/\\%\\s]*\\))*";
-        string RELATION_CLAUSE = "[A-Za-z*]+ *\\([A-Za-z0-9_,\\s]*\\)";
-        string PATTERN_CLAUSE = "[A-Za-z][A-Za-z0-9]* *\\([A-Za-z_,\"\\+\\-\\*\\/\\%\\s]*\\)";
+        string RELATION_COMPOUND_CLAUSE = "such that +[A-Za-z*]+ *\\([\\w,\\s]*\\)(?: and +[A-Za-z*]+ *\\([\\w,\\s]*\\))*";
+        string PATTERN_COMPOUND_CLAUSE = "pattern +[A-Za-z][A-Za-z0-9]* *\\([\\w,\"\\+\\-\\*\\/\\%\\s]*\\)(?: and +[A-Za-z][A-Za-z0-9]* *\\([\\w,\"\\+\\-\\*\\/\\%\\s]*\\))*";
+        string RELATION_CLAUSE = "[A-Za-z*]+ *\\([\\w,\\s]*\\)";
+        string PATTERN_CLAUSE = "[A-Za-z][A-Za-z0-9]* *\\([\\w,\"\\+\\-\\*\\/\\%\\s]*\\)";
 
         vector<string> relationClauses = ParserUtils::dualMatch(queryBody, RELATION_COMPOUND_CLAUSE, RELATION_CLAUSE);
         vector<string> patternClauses = ParserUtils::dualMatch(queryBody, PATTERN_COMPOUND_CLAUSE, PATTERN_CLAUSE);
 
-        return make_pair(relationClauses, patternClauses);
+        return { relationClauses, patternClauses };
     }
 
     bool QueryParser::parseDeclarations(Query& query, vector<string> statements) {
