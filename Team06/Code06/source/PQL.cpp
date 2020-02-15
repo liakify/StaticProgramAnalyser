@@ -185,6 +185,7 @@ namespace PQL {
         if (targets.size() < 0) {
             // SYNTAX ERROR: Query must have at least one return target
             query.status = "syntax error: missing query target";
+            return false;
         }
         else {
             query.targetEntities = targets;
@@ -223,6 +224,7 @@ namespace PQL {
             RelationType relationClass = relationMapping->second;
             string arg1 = args.at(0);
             string arg2 = args.at(1);
+
             RelationClause relation;
 
             switch (relationClass) {
@@ -237,34 +239,33 @@ namespace PQL {
                 if (!(ParserUtils::isValidStmtRef(arg1) && ParserUtils::isValidStmtRef(arg2))) {
                     // SYNTAX ERROR: at least one argument is not a valid statement reference
                     query.status = "syntax error: invalid statement reference in relation clause";
-                    return false;
                 }
-
-                relation = { clause, relationClass, arg1, arg2, "" , "" };
+                else {
+                    relation = { clause, relationClass, parseStmtRef(arg1), parseStmtRef(arg2), INVALID_ARG, INVALID_ARG };
+                }
                 break;
             case USESS:
                 // Fallthrough
             case MODIFIESS:
+                // Two cases for first argument: either statement ref or entity ref
+                // Not possible to distinguish here if a SYNONYM corresponds to stmt or entity ref
+                // Semantic validation will check against the synonym table and determine if
+                // the relation type needs to be modified to USESP or MODIFIESP for procedures
+
                 // Validate second argument as an entity reference
                 if (!(ParserUtils::isValidEntityRef(arg2))) {
                     // SYNTAX ERROR: second argument is not a valid entity reference
                     query.status = "syntax error: invalid entity reference in Uses/Modifies clause";
-                    return false;
+                } else if (ParserUtils::isValidStmtRef(arg1)) {
+                    relation = { clause, relationClass, parseStmtRef(arg1), INVALID_ARG, INVALID_ARG, parseEntityRef(arg2) };
                 }
-
-                // Two cases for first argument: either statement ref or entity ref
-                if (!(ParserUtils::isValidStmtRef(arg1) || ParserUtils::isValidEntityRef(arg2))) {
+                else if (ParserUtils::isValidEntityRef(arg1)) {
+                    relation = { clause, relationClass, INVALID_ARG, INVALID_ARG, parseEntityRef(arg1), parseEntityRef(arg2) };
+                }
+                else {
                     // SYNTAX ERROR: cannot be interpreted either as statement or entity ref
                     query.status = "syntax error: invalid first argument in Uses/Modifies clause";
-                    return false;
-
                 }
-
-                // Assume all matches are statement references (USESS or MODIFIESS)
-                // Semantic validation will check against the synonym table and determine if
-                // the relation type needs to be modified to USESP or MODIFIESP for procedures
-                relation = { clause, relationClass, arg1, "", "", arg2 };
-
                 break;
             default:
                 // SYNTAX ERROR: unknown relation type
@@ -324,8 +325,9 @@ namespace PQL {
                     // SYNTAX ERROR: invalid pattern string
                     query.status = "syntax error: assign pattern has invalid pattern string";
                 }
-                
-                pattern = { clause, ASSIGN_PATTERN, referenceString, args.at(1) };
+                else {
+                    pattern = { clause, ASSIGN_PATTERN, parseEntityRef(referenceString), args.at(1) };
+                }
                 break;
             case WHILE:
                 if (args.size() != 2) {
@@ -336,8 +338,9 @@ namespace PQL {
                     // SYNTAX ERROR: unallowed argument for while pattern clause
                     query.status = "syntax error: while pattern only supports '_' as second argument";
                 }
-
-                pattern = { clause, WHILE_PATTERN, referenceString, "_" };
+                else {
+                    pattern = { clause, WHILE_PATTERN, parseEntityRef(referenceString), "_" };
+                }
                 break;
             case IF:
                 if (args.size() != 3) {
@@ -348,9 +351,10 @@ namespace PQL {
                     // SYNTAX ERROR: unallowed argument for while pattern clause
                     query.status = "syntax error: if pattern only supports '_' for last two arguments";
                 }
-                
-                // Pattern struct only stores first two args since third arg is fixed as '_' anyway
-                pattern = { clause, IF_PATTERN, referenceString, "_" };
+                else {
+                    // Pattern struct only stores first two args since third arg is fixed as '_' anyway
+                    pattern = { clause, IF_PATTERN, parseEntityRef(referenceString), "_" };
+                }
                 break;
             default:
                 // SYNTAX ERROR: unallowed design entity in pattern clauses
@@ -366,6 +370,32 @@ namespace PQL {
             }
         }
         return true;
+    }
+
+    pair<ArgType, StmtRef> QueryParser::parseStmtRef(string arg) {
+        if (arg == "_") {
+            return { WILDCARD, arg };
+        }
+        else if (ParserUtils::isInteger(arg)) {
+            return { INTEGER, arg };
+        }
+        else {
+            return { SYNONYM, arg };
+        }
+    }
+
+    pair<ArgType, EntityRef> QueryParser::parseEntityRef(string arg) {
+        if (arg == "_") {
+            return { WILDCARD, arg };
+        }
+        else if (arg.find('\"') != string::npos) {
+            // An identifier - strip leading and trailing "
+            arg.pop_back();
+            return { IDENTIFIER, arg.erase(0, 1) };
+        }
+        else {
+            return { SYNONYM, arg };
+        }
     }
 
     QueryEvaluator::QueryEvaluator(PKB::PKB database) {
@@ -508,7 +538,7 @@ namespace PQL {
      */
     pair<string, string> ParserUtils::splitString(string input, char delim) {
         int pos = input.find_first_of(delim);
-        return make_pair(trimString(input.substr(0, pos)), trimString(input.substr(pos + 1, string::npos)));
+        return { trimString(input.substr(0, pos)), trimString(input.substr(pos + 1, string::npos)) };
     }
 
     /**

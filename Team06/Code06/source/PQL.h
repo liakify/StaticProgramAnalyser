@@ -16,6 +16,8 @@ using namespace std;
 
 namespace PQL {
 
+    const pair<ArgType, string> INVALID_ARG = { INVALID, "" };
+
     const unordered_map<string, DesignEntity> ENTITY_MAP {
         {"statement", STATEMENT},
         {"read", READ},
@@ -41,23 +43,27 @@ namespace PQL {
     struct RelationClause {
         string clause;
         RelationType type;
-        StatementRef firstStmt;
-        StatementRef secondStmt;
-        EntityRef firstEnt;
-        EntityRef secondEnt;
+        // StatementRef, EntityRef are just strings
+        // Use ArgType to determine how to interpret them
+        pair<ArgType, StmtRef> firstStmt;
+        pair<ArgType, StmtRef> secondStmt;
+        pair<ArgType, EntityRef> firstEnt;
+        pair<ArgType, EntityRef> secondEnt;
     };
 
     struct PatternClause {
         string clause;
         PatternType type;
-        EntityRef targetArg;
+        pair<ArgType, EntityRef> targetArg;
         string patternArg;
     };
 
     struct Query {
         string status;
         string queryString;
+        // Entities to return as part of query (BOOLEAN not included yet)
         vector<string> targetEntities;
+        // Maps declared synonyms to design entities
         unordered_map<string, DesignEntity> synonymTable;
         vector<RelationClause> relations;
         vector<PatternClause> patterns;
@@ -77,6 +83,8 @@ namespace PQL {
         bool parseQueryTarget(Query &query, string queryBody);
         bool parseRelationClauses(Query &query, vector<string> relationClauses);
         bool parsePatternClauses(Query &query, vector<string> patternClauses);
+        pair<ArgType, StmtRef> parseStmtRef(string arg);
+        pair<ArgType, EntityRef> parseEntityRef(string arg);
     };
 
     class QueryEvaluator {

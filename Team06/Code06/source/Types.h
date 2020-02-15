@@ -14,7 +14,7 @@ using StmtListId = int;
 
 // Additional types specific to PQL
 using Constant = int;
-using StatementRef = std::string;
+using StmtRef = std::string;
 using EntityRef = std::string;
 
 enum DesignEntity {
@@ -27,4 +27,12 @@ enum RelationType {
 
 enum PatternType {
     ASSIGN_PATTERN, IF_PATTERN, WHILE_PATTERN
+};
+
+enum ArgType {
+    // INVALID used when argument does not apply for that relation
+    // UNKNOWN used for arguments that require further validation
+    // StmtRef arguments can be SYNONYM, INTEGER or WILDCARD
+    // EntityRef arguments can be SYNONYM, IDENTIFIER or WILDCARD
+    INVALID, UNKNOWN, SYNONYM, INTEGER, IDENTIFIER, WILDCARD
 };
