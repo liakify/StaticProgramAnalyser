@@ -16,6 +16,7 @@ using StmtListId = int;
 using Constant = int;
 using StmtRef = std::string;
 using EntityRef = std::string;
+using Pattern = std::string;
 
 enum class DesignEntity {
     STATEMENT, READ, PRINT, CALL, WHILE, IF, ASSIGN, VARIABLE, CONSTANT, PROCEDURE
@@ -34,5 +35,6 @@ enum class ArgType {
     // UNKNOWN used for arguments that require further validation
     // StmtRef arguments can be SYNONYM, INTEGER or WILDCARD
     // EntityRef arguments can be SYNONYM, IDENTIFIER or WILDCARD
-    INVALID, UNKNOWN, SYNONYM, INTEGER, IDENTIFIER, WILDCARD
+    // Pattern arguments can be WILDCARD, INCLUSIVE_PATTERN, EXACT_PATTERN
+    INVALID, UNKNOWN, SYNONYM, INTEGER, IDENTIFIER, WILDCARD, INCLUSIVE_PATTERN, EXACT_PATTERN
 };
