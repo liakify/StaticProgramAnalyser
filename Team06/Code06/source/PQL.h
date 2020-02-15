@@ -11,6 +11,7 @@
 
 #include "PKB.h"
 #include "Types.h"
+#include "QueryEvaluator.h"
 
 using namespace std;
 
@@ -85,13 +86,6 @@ namespace PQL {
         bool parsePatternClauses(Query& query, vector<string> patternClauses);
         pair<ArgType, StmtRef> parseStmtRef(string arg);
         pair<ArgType, EntityRef> parseEntityRef(string arg);
-    };
-
-    class QueryEvaluator {
-    public:
-        QueryEvaluator(PKB::PKB database);
-    private:
-        static PKB::PKB database;
     };
 
     class QueryResultProjector {
