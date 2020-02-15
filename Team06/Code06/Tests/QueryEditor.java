@@ -35,8 +35,9 @@ class QueryEditor {
       while (!exit) {
         // user keeps entering query inputs line by line
 
-        // starts at Query Number 1;
-        queryNo++;
+        // Asks for next query number
+        System.out.println("Next Query # ?:");
+        queryNo = Integer.parseInt(scanner.nextLine());
 
         System.out.println("Now entering query #" + queryNo + ":");
         // System.out.println("Using template ")
@@ -105,7 +106,7 @@ class QueryEditor {
         while (true) {
           userInput = scanner.nextLine();
           if (userInput.equals("done") && !answer.equals("")) {
-            answer = answer.substring(0, answer.length() - 1);
+            answer = answer.substring(0, answer.length() - 2);
             System.out.println("Answer is: " + answer);
             query[3] = answer;
             break;
