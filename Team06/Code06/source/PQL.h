@@ -76,7 +76,7 @@ namespace PQL {
         bool parseDeclarations(Query &query, vector<string> statements);
         bool parseQueryTarget(Query &query, string queryBody);
         bool parseRelationClauses(Query &query, vector<string> relationClauses);
-        bool parsePatternCluases(Query &query, vector<string> patternClauses);
+        bool parsePatternClauses(Query &query, vector<string> patternClauses);
     };
 
     class QueryEvaluator {
@@ -108,6 +108,8 @@ namespace PQL {
         static bool isValidEntityRef(string input);
         static bool isValidPattern(string input);
         static string leftTrim(string input);
+        static string rightTrim(string input);
+        static string trimString(string input);
         static pair<string, string> splitString(string input, char delim);
         static vector<string> tokeniseString(string input, char delim);
         static vector<string> dualMatch(string input, string first, string second);

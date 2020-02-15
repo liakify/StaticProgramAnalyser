@@ -54,7 +54,7 @@ namespace PQL {
         tie(relationClauses, patternClauses) = splitConstraints(queryBody);
 
         parseRelationClauses(query, relationClauses);
-        parsePatternCluases(query, patternClauses);
+        parsePatternClauses(query, patternClauses);
 
         // Ensure query is semantically valid (no ambiguities, valid synonyms, argument types)
         bool isSemanticallyCorrect = validateQuerySemantics(query);
@@ -93,7 +93,7 @@ namespace PQL {
         }
 
         // Last statement is the query body
-        statements.push_back(ParserUtils::leftTrim(queryString));
+        statements.push_back(ParserUtils::trimString(queryString));
         return statements;
     }
 
@@ -102,10 +102,10 @@ namespace PQL {
     // C++ regex does not support negative lookbehind, (?<!(x))y - match y only if not preceded by x
     // Returns an array of clauses
     pair<vector<string>, vector<string>> QueryParser::splitConstraints(string queryBody) {
-        string RELATION_COMPOUND_CLAUSE = "such that [A-Za-z*]+ \\([A-Za-z0-9_,\\s]*\\)(?: and [A-Za-z*]+ \\([A-Za-z0-9_,\\s]*\\))*";
-        string PATTERN_COMPOUND_CLAUSE = "pattern [A-Za-z][A-Za-z0-9]* \\([A-Za-z_,\"\\+\\-\\*\\/\\%\\s]*\\)(?: and [A-Za-z][A-Za-z0-9]* \\([A-Za-z_,\"\\+\\-\\*\\/\\%\\s]*\\))*";
-        string RELATION_CLAUSE = "[A-Za-z*]+ \\([A-Za-z0-9_,\\s]*\\)";
-        string PATTERN_CLAUSE = "[A-Za-z][A-Za-z0-9]* \\([A-Za-z_,\"\\+\\-\\*\\/\\%\\s]*\\)";
+        string RELATION_COMPOUND_CLAUSE = "such that +[A-Za-z*]+ *\\([A-Za-z0-9_,\\s]*\\)(?: and +[A-Za-z*]+ *\\([A-Za-z0-9_,\\s]*\\))*";
+        string PATTERN_COMPOUND_CLAUSE = "pattern +[A-Za-z][A-Za-z0-9]* *\\([A-Za-z_,\"\\+\\-\\*\\/\\%\\s]*\\)(?: and +[A-Za-z][A-Za-z0-9]* *\\([A-Za-z_,\"\\+\\-\\*\\/\\%\\s]*\\))*";
+        string RELATION_CLAUSE = "[A-Za-z*]+ *\\([A-Za-z0-9_,\\s]*\\)";
+        string PATTERN_CLAUSE = "[A-Za-z][A-Za-z0-9]* *\\([A-Za-z_,\"\\+\\-\\*\\/\\%\\s]*\\)";
 
         vector<string> relationClauses = ParserUtils::dualMatch(queryBody, RELATION_COMPOUND_CLAUSE, RELATION_CLAUSE);
         vector<string> patternClauses = ParserUtils::dualMatch(queryBody, PATTERN_COMPOUND_CLAUSE, PATTERN_CLAUSE);
@@ -158,19 +158,19 @@ namespace PQL {
     bool QueryParser::parseQueryTarget(Query& query, string queryBody) {
         vector<string> targets;
 
-        regex SINGLE_TARGET("Select [A-Za-z][A-Za-z0-9]*");
-        regex TUPLE_TARGET("Select <[A-Za-z][A-Za-z0-9]*(,\\s[A-Za-z][A-Za-z0-9]*)+>");
+        regex SINGLE_TARGET("Select +[A-Za-z][A-Za-z0-9]*(?! *,)");
+        regex TUPLE_TARGET("Select +< *[A-Za-z][A-Za-z0-9]*( *, *[A-Za-z][A-Za-z0-9]*)+ *>(?! *,)");
         smatch tmatch;
 
         // Attempt to match a single return type, otherwise match a tuple return type
         if (regex_search(queryBody, tmatch, SINGLE_TARGET)) {
             // Strip leading "Select "
-            string targetEntity = tmatch.str().erase(0, 7);
+            string targetEntity = ParserUtils::leftTrim(tmatch.str().erase(0, 6));
             targets.push_back(targetEntity);
         }
         else if (regex_search(queryBody, tmatch, TUPLE_TARGET)) {
             // Retrieve first match - a string of form "Select <x1, x2, ...>"
-            string tupleString = tmatch.str().erase(0, 8);
+            string tupleString = ParserUtils::splitString(tmatch.str(), '<').second;
             tupleString.pop_back();
 
             // Extract all target entities in the tuple string "x1, x2, ..."
@@ -199,9 +199,9 @@ namespace PQL {
         for (auto clause : relationClauses) {
             // Each candidate relation clause is of form <relation> (arg1, arg2)
 
-            pair<string, string> splitPair = ParserUtils::splitString(clause, ' ');
+            pair<string, string> splitPair = ParserUtils::splitString(clause, '(');
             string relationKeyword = splitPair.first;
-            string argString = splitPair.second.erase(0, 1);
+            string argString = splitPair.second;
             argString.pop_back();
             vector<string> args = ParserUtils::tokeniseString(argString, ',');
 
@@ -283,15 +283,15 @@ namespace PQL {
     }
 
     // Receives a vector of pattern clause strings and constructs pattern clause objects
-    bool QueryParser::parsePatternCluases(Query& query, vector<string> patternClauses) {
+    bool QueryParser::parsePatternClauses(Query& query, vector<string> patternClauses) {
         vector<PatternClause> patterns;
 
         for (auto clause : patternClauses) {
             // Each candidate pattern clause is of form <synonym> (arg1, arg2, [arg3 if while])
 
-            pair<string, string> splitPair = ParserUtils::splitString(clause, ' ');
+            pair<string, string> splitPair = ParserUtils::splitString(clause, '(');
             string synonym = splitPair.first;
-            string argString = splitPair.second.erase(0, 1);
+            string argString = splitPair.second;
             argString.pop_back();
             vector<string> args = ParserUtils::tokeniseString(argString, ',');
 
@@ -327,30 +327,30 @@ namespace PQL {
                 
                 pattern = { clause, ASSIGN_PATTERN, referenceString, args.at(1) };
                 break;
-            case IF:
+            case WHILE:
                 if (args.size() != 2) {
                     // SYNTAX ERROR: incorrect number of arguments
-                    query.status = "syntax error: if pattern does not have 2 arguments";
+                    query.status = "syntax error: while pattern does not have 2 arguments";
                 }
                 else if (args.at(1) != "_") {
-                    // SYNTAX ERROR: unallowed argument for if pattern clause
-                    query.status = "syntax error: if pattern only supports '_' as second argument";
+                    // SYNTAX ERROR: unallowed argument for while pattern clause
+                    query.status = "syntax error: while pattern only supports '_' as second argument";
                 }
 
-                pattern = { clause, IF_PATTERN, referenceString, "_" };
+                pattern = { clause, WHILE_PATTERN, referenceString, "_" };
                 break;
-            case WHILE:
+            case IF:
                 if (args.size() != 3) {
                     // SYNTAX ERROR: incorrect number of arguments
-                    query.status = "syntax error: while pattern does not have 3 arguments";
+                    query.status = "syntax error: if pattern does not have 3 arguments";
                 }
                 else if (args.at(1) != "_" || args.at(2) != "_") {
                     // SYNTAX ERROR: unallowed argument for while pattern clause
-                    query.status = "syntax error: while pattern only supports '_' for last two arguments";
+                    query.status = "syntax error: if pattern only supports '_' for last two arguments";
                 }
                 
                 // Pattern struct only stores first two args since third arg is fixed as '_' anyway
-                pattern = { clause, WHILE_PATTERN, referenceString, "_" };
+                pattern = { clause, IF_PATTERN, referenceString, "_" };
                 break;
             default:
                 // SYNTAX ERROR: unallowed design entity in pattern clauses
@@ -479,8 +479,28 @@ namespace PQL {
     }
 
     /**
-     *  Splits a string with a given delimiter once, returning a pair of prefix and
-     *  suffix.
+     *  Returns the input string stripped of trailing spaces and newline characters.
+     *
+     *  @param  input   input string to strip.
+     *  @return right-trimmed copy of the input string.
+     */
+    string ParserUtils::rightTrim(string input) {
+        return input.erase(input.find_last_not_of(" \n\r") + 1);
+    }
+
+    /**
+     *  Returns the input string stripped of all leading and trailing spaces.
+     *
+     *  @param  input   input string to strip.
+     *  @return left- and right-trimmed copy of the input string.
+     */
+    string ParserUtils::trimString(string input) {
+        return rightTrim(leftTrim(input));
+    }
+
+    /**
+     *  Splits a string with a given delimiter once, returning a pair of the
+     *  trimmed prefix and suffix strings.
      *
      *  @param  input   input string to split.
      *  @param  delim   delimiting character.
@@ -488,7 +508,7 @@ namespace PQL {
      */
     pair<string, string> ParserUtils::splitString(string input, char delim) {
         int pos = input.find_first_of(delim);
-        return make_pair(input.substr(0, pos), input.substr(pos + 1, string::npos));
+        return make_pair(trimString(input.substr(0, pos)), trimString(input.substr(pos + 1, string::npos)));
     }
 
     /**
@@ -506,7 +526,7 @@ namespace PQL {
         istringstream stream(input);
         while (stream.good()) {
             getline(stream, substr, delim);
-            string token = leftTrim(substr);
+            string token = trimString(substr);
             if (token.length() > 0) {
                 substrings.push_back(token);
             }
@@ -539,7 +559,7 @@ namespace PQL {
 
                 while (regex_search(cclause, cmatch, CLAUSE)) {
                     for (auto atom : cmatch) {
-                        clauses.push_back(ParserUtils::leftTrim(atom.str()));
+                        clauses.push_back(ParserUtils::trimString(atom.str()));
                     }
                     cclause = cmatch.suffix().str();
                 }
