@@ -113,6 +113,109 @@ namespace PQL {
     // Validates allowed entity types as arguments to clauses
     // Validate query targets correspond to existing design entities in synonym table
     bool QueryParser::validateQuerySemantics(Query& query) {
+        unordered_map<string, DesignEntity> synonymTable = query.synonymTable;
+
+        for (string target : query.targetEntities) {
+            if (synonymTable.find(target) == synonymTable.end()) {
+                // SEMANTIC ERROR: synonym referenced as query target is undeclared
+                query.status = "semantic error: undeclared synonym for query return type";
+                return false;
+            }
+        }
+
+        for (RelationClause relation : query.relations) {
+            RelationType relationClass = relation.type;
+
+            if (relationClass == RelationType::USESS || relationClass == RelationType::MODIFIESS) {
+                if (relation.firstStmt.first == ArgType::WILDCARD) {
+                    // SEMANTIC ERROR: ill-defined wildcard argument
+                    query.status = "semantic error: wildcard not accepted as first arg for Uses/Modifies";
+                    return false;
+                }
+                else if (relation.firstStmt.first == ArgType::SYNONYM) {
+                    // Determine if the synonym corresponds to a PROCEDURE - if yes the relation
+                    // should be modified to the procedure-variable variant
+                    auto synonymMapping = synonymTable.find(relation.firstStmt.second);
+                    if (synonymMapping == synonymTable.end()) {
+                        // SEMANTIC ERROR: synonym referenced in relation clause is undeclared
+                        query.status = "semantic error: undeclared synonym arg in Uses/Modifies clause";
+                        return false;
+                    }
+                    else if (synonymMapping->second == DesignEntity::PROCEDURE) {
+                        // Modify RelationClause to <RELATION>P variant and update arguments
+                        relation.type = relation.type == RelationType::USESS
+                            ? RelationType::USESP
+                            : RelationType::MODIFIESP;
+                        relation.firstEnt = relation.firstStmt;
+                        relation.firstStmt = INVALID_ARG;
+                    }
+                }
+
+                if (relation.secondEnt.first == ArgType::SYNONYM) {
+                    auto synonymMapping = synonymTable.find(relation.secondEnt.second);
+                    if (synonymMapping == synonymTable.end()) {
+                        // SEMANTIC ERROR: synonym referenced in relation clause is undeclared
+                        query.status = "semantic error: undeclared synonym arg in Uses/Modifies clause";
+                        return false;
+                    }
+                    else if (synonymMapping->second != DesignEntity::VARIABLE) {
+                        // SEMANTIC ERROR: design entity type error (non-VARIABLE)
+                        query.status = "semantic error: synonym arg in Uses/Modifies clause not a VARIABLE";
+                        return false;
+                    }
+                }
+            }
+            else {
+                // Relation is between statements: FOLLOWS, FOLLOWST, PARENT, PARENTT
+                pair<ArgType, string> args[2] = { relation.firstStmt , relation.secondStmt };
+
+                for (auto arg : args) {
+                    if (arg.first == ArgType::INTEGER) {
+                        int lineNo = stoi(arg.second);
+                        if (lineNo <= 0) {
+                            // SEMANTIC ERROR: stmt number must be positive
+                            // Not possible to determine now if stmt number exceeds length of program
+                            query.status = "semantic error: line number in relation clause must be postiive";
+                            return false;
+                        }
+                    }
+                    else if (arg.first == ArgType::SYNONYM) {
+                        auto synonymMapping = synonymTable.find(arg.second);
+                        if (synonymMapping == synonymTable.end()) {
+                            // SEMANTIC ERROR: synonym referenced in relation clause is undeclared
+                            query.status = "semantic error: undeclared synonym arg in Follows(*)/Parent(*) clause";
+                            return false;
+                        }
+                        else if (synonymMapping->second == DesignEntity::VARIABLE
+                            || synonymMapping->second == DesignEntity::CONSTANT
+                            || synonymMapping->second == DesignEntity::PROCEDURE) {
+                            // SEMANTIC ERROR: design entity type error (non-STATEMENT or subset)
+                            query.status = "semantic error: synonym arg in relation clause not a STATEMENT or sub-type";
+                            return false;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Pattern clauses: only need to validate first argument (entity reference)
+        // of ArgType SYNONYM corresponds to a valid declared synonym
+        for (PatternClause pattern : query.patterns) {
+            if (pattern.targetArg.first == ArgType::SYNONYM) {
+                auto synonymMapping = synonymTable.find(pattern.targetArg.second);
+                if (synonymMapping == synonymTable.end()) {
+                    // SEMANTIC ERROR: synonym referenced in pattern clause is undeclared
+                    query.status = "semantic error: undeclared synonym arg used in pattern clause";
+                    return false;
+                }
+                else if (synonymMapping->second != DesignEntity::VARIABLE) {
+                    // SEMANTIC ERROR: design entity type error (non-VARIABLE)
+                    query.status = "semantic error: synonym arg in pattern clause not a VARIABLE";
+                    return false;
+                }
+            }
+        }
+
         return true;
     }
 
@@ -357,7 +460,7 @@ namespace PQL {
             case DesignEntity::ASSIGN:
                 if (args.size() != 2) {
                     // SYNTAX ERROR: incorrect number of arguments
-                    query.status = "syntax error: assign pattern does not have 2 arguments";
+                    query.status = "syntax error: assign pattern does not have two arguments";
                 }
                 else if (!ParserUtils::isValidPattern(args.at(1))) {
                     // SYNTAX ERROR: invalid pattern string
@@ -370,7 +473,7 @@ namespace PQL {
             case DesignEntity::WHILE:
                 if (args.size() != 2) {
                     // SYNTAX ERROR: incorrect number of arguments
-                    query.status = "syntax error: while pattern does not have 2 arguments";
+                    query.status = "syntax error: while pattern does not have two arguments";
                 }
                 else if (args.at(1) != "_") {
                     // SYNTAX ERROR: unallowed argument for while pattern clause
@@ -383,7 +486,7 @@ namespace PQL {
             case DesignEntity::IF:
                 if (args.size() != 3) {
                     // SYNTAX ERROR: incorrect number of arguments
-                    query.status = "syntax error: if pattern does not have 3 arguments";
+                    query.status = "syntax error: if pattern does not have two arguments";
                 }
                 else if (args.at(1) != "_" || args.at(2) != "_") {
                     // SYNTAX ERROR: unallowed argument for while pattern clause
@@ -447,7 +550,7 @@ namespace PQL {
      *  @return boolean describing if the string is an integer.
      */
     bool ParserUtils::isInteger(string input) {
-        regex VALID_INTEGER("[0-9]+");
+        regex VALID_INTEGER("^[0-9]+$");
         smatch imatch;
 
         return regex_search(input, imatch, VALID_INTEGER);
@@ -459,7 +562,7 @@ namespace PQL {
      *  @return boolean describing if the string is a valid identifier.
      */
     bool ParserUtils::isValidIdentifier(string input) {
-        regex VALID_IDENTIFIER("[A-Za-z][A-Za-z0-9]*");
+        regex VALID_IDENTIFIER("^[A-Za-z][A-Za-z0-9]*$");
         smatch imatch;
 
         return regex_search(input, imatch, VALID_IDENTIFIER);
