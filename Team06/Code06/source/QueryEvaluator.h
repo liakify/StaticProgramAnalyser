@@ -5,7 +5,7 @@
 
 namespace PQL {
 	class QueryEvaluator {
-		
+
 	public:
 		/**
 		* Constructor for a QueryEvaluator.
@@ -14,24 +14,26 @@ namespace PQL {
 		* @param	database	The PKB to evaluate queries on
 		*/
 		QueryEvaluator(PKB::PKB &database);
-		
+
 		/**
 		* Evaluates a single PQL query.
 		*
 		* @param	query	The query to be evaluated.
 		* @return	The results of the evaluation
 		*/
-		QueryResult evaluateQuery(Query query);
-	
+		QueryResult evaluateQuery(const Query &query);
+
 	private:
+		PKB::PKB database;
+		
 		/**
 		* Evaluates a single relation clause.
-		* 
+		*
 		* @param	relationClause	The relation clause to evaluate
 		* @return	The results of the evaluation
 		*/
 		ClauseResult evaluateRelationClause(const RelationClause &relationClause);
-		
+
 		/**
 		* Evaluates a single pattern clause
 		*
@@ -39,5 +41,5 @@ namespace PQL {
 		* @return	The results of the evaluation
 		*/
 		ClauseResult evaluatePatternClause(const PatternClause &patternClause);
-	}
-};
+	};
+}
