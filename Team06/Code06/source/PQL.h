@@ -29,7 +29,7 @@ namespace PQL {
         {"procedure", PROCEDURE}
     };
 
-    const unordered_map<string, RelationType> RELATION_MAP{
+    const unordered_map<string, RelationType> RELATION_MAP {
         {"Follows", FOLLOWS},
         {"Follows*", FOLLOWST},
         {"Parent", PARENT},

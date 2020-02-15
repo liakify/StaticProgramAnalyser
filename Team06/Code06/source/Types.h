@@ -14,7 +14,7 @@ using StmtListId = int;
 
 // Additional types specific to PQL
 using Constant = int;
-using StatementRef = int;
+using StatementRef = std::string;
 using EntityRef = std::string;
 
 enum DesignEntity {

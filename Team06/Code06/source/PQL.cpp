@@ -102,9 +102,9 @@ namespace PQL {
     // C++ regex does not support negative lookbehind, (?<!(x))y - match y only if not preceded by x
     // Returns an array of clauses
     pair<vector<string>, vector<string>> QueryParser::splitConstraints(string queryBody) {
-        string RELATION_COMPOUND_CLAUSE = "such that [A-Za-z*]+ \\([A-Za-z_,\\s]*\\)(?: and [A-Za-z*]+ \\([A-Za-z_,\\s]*\\))*";
+        string RELATION_COMPOUND_CLAUSE = "such that [A-Za-z*]+ \\([A-Za-z0-9_,\\s]*\\)(?: and [A-Za-z*]+ \\([A-Za-z0-9_,\\s]*\\))*";
         string PATTERN_COMPOUND_CLAUSE = "pattern [A-Za-z][A-Za-z0-9]* \\([A-Za-z_,\"\\+\\-\\*\\/\\%\\s]*\\)(?: and [A-Za-z][A-Za-z0-9]* \\([A-Za-z_,\"\\+\\-\\*\\/\\%\\s]*\\))*";
-        string RELATION_CLAUSE = "[A-Za-z*]+ \\([A-Za-z_,\\s]*\\)";
+        string RELATION_CLAUSE = "[A-Za-z*]+ \\([A-Za-z0-9_,\\s]*\\)";
         string PATTERN_CLAUSE = "[A-Za-z][A-Za-z0-9]* \\([A-Za-z_,\"\\+\\-\\*\\/\\%\\s]*\\)";
 
         vector<string> relationClauses = ParserUtils::dualMatch(queryBody, RELATION_COMPOUND_CLAUSE, RELATION_CLAUSE);
@@ -194,6 +194,91 @@ namespace PQL {
     }
 
     bool QueryParser::parseRelationClauses(Query& query, vector<string> relationClauses) {
+        vector<RelationClause> relations;
+
+        for (auto clause : relationClauses) {
+            // Each candidate relation clause is of form <relation> (arg1, arg2)
+
+            pair<string, string> splitPair = ParserUtils::splitString(clause, ' ');
+            string relationKeyword = splitPair.first;
+            string argString = splitPair.second.erase(0, 1);
+            argString.pop_back();
+            vector<string> args = ParserUtils::tokeniseString(argString, ',');
+
+            // Find the relation corresponding to the provided relation keyword
+            // Uses and Modifies for procedures are treated as that for statements first
+            // until subsequent validation changes the relation type
+            auto relationMapping = RELATION_MAP.find(relationKeyword);
+            if (relationMapping == RELATION_MAP.end()) {
+                // SYNTAX ERROR: unknown relation
+                query.status = "syntax error: invalid relation keyword";
+                return false;
+            }
+            else if (args.size() != 2) {
+                // SYNTAX ERROR: too few or too many arguments
+                query.status = "syntax error: relations only accept 2 arguments";
+                return false;
+            }
+
+            RelationType relationClass = relationMapping->second;
+            string arg1 = args.at(0);
+            string arg2 = args.at(1);
+            RelationClause relation;
+
+            switch (relationClass) {
+            case FOLLOWS:
+                // Fallthrough
+            case FOLLOWST:
+                // Fallthrough
+            case PARENT:
+                // Fallthrough
+            case PARENTT:
+                // Interpret and validate both arguments as statement references
+                if (!(ParserUtils::isValidStmtRef(arg1) && ParserUtils::isValidStmtRef(arg2))) {
+                    // SYNTAX ERROR: at least one argument is not a valid statement reference
+                    query.status = "syntax error: invalid statement reference in relation clause";
+                    return false;
+                }
+
+                relation = { clause, relationClass, arg1, arg2, "" , "" };
+                break;
+            case USESS:
+                // Fallthrough
+            case MODIFIESS:
+                // Validate second argument as an entity reference
+                if (!(ParserUtils::isValidEntityRef(arg2))) {
+                    // SYNTAX ERROR: second argument is not a valid entity reference
+                    query.status = "syntax error: invalid entity reference in Uses/Modifies clause";
+                    return false;
+                }
+
+                // Two cases for first argument: either statement ref or entity ref
+                if (!(ParserUtils::isValidStmtRef(arg1) || ParserUtils::isValidEntityRef(arg2))) {
+                    // SYNTAX ERROR: cannot be interpreted either as statement or entity ref
+                    query.status = "syntax error: invalid first argument in Uses/Modifies clause";
+                    return false;
+
+                }
+
+                // Assume all matches are statement references (USESS or MODIFIESS)
+                // Semantic validation will check against the synonym table and determine if
+                // the relation type needs to be modified to USESP or MODIFIESP for procedures
+                relation = { clause, relationClass, arg1, "", "", arg2 };
+
+                break;
+            default:
+                // SYNTAX ERROR: unknown relation type
+                query.status = "internal error: failed to match relation type";
+            }
+
+            if (query.status != "ok") {
+                return false;
+            }
+            else {
+                // Relation parsed successfully - add new relation clause
+                relations.push_back(relation);
+            }
+        }
         return true;
     }
 
@@ -239,9 +324,8 @@ namespace PQL {
                     // SYNTAX ERROR: invalid pattern string
                     query.status = "syntax error: assign pattern has invalid pattern string";
                 }
-                else {
-                    pattern = { clause, ASSIGN_PATTERN, referenceString, args.at(1) };
-                }
+                
+                pattern = { clause, ASSIGN_PATTERN, referenceString, args.at(1) };
                 break;
             case IF:
                 if (args.size() != 2) {
@@ -252,9 +336,8 @@ namespace PQL {
                     // SYNTAX ERROR: unallowed argument for if pattern clause
                     query.status = "syntax error: if pattern only supports '_' as second argument";
                 }
-                else {
-                    pattern = { clause, IF_PATTERN, referenceString, "_" };
-                }
+
+                pattern = { clause, IF_PATTERN, referenceString, "_" };
                 break;
             case WHILE:
                 if (args.size() != 3) {
@@ -265,10 +348,9 @@ namespace PQL {
                     // SYNTAX ERROR: unallowed argument for while pattern clause
                     query.status = "syntax error: while pattern only supports '_' for last two arguments";
                 }
-                else {
-                    // Pattern struct only stores first two args since third arg is fixed as '_' anyway
-                    pattern = { clause, WHILE_PATTERN, referenceString, "_" };
-                }
+                
+                // Pattern struct only stores first two args since third arg is fixed as '_' anyway
+                pattern = { clause, WHILE_PATTERN, referenceString, "_" };
                 break;
             default:
                 // SYNTAX ERROR: unallowed design entity in pattern clauses
