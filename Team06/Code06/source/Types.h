@@ -27,6 +27,8 @@ using Constant = int;
 using StmtRef = std::string;
 using EntityRef = std::string;
 
+using Synonym = std::string;
+
 // Additional types specific to PQL
 enum class DesignEntity {
     STATEMENT, READ, PRINT, CALL, WHILE, IF, ASSIGN, VARIABLE, CONSTANT, PROCEDURE
