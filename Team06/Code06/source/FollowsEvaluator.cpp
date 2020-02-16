@@ -27,6 +27,12 @@ namespace PQL {
 				// One statement number, one synonym
 				return evaluateFollowsClauseIntSyn(database, clause, synonymTable);
 			}
+			else if (argType1 == ArgType::WILDCARD && argType2 == ArgType::SYNONYM ||
+				argType1 == ArgType::SYNONYM && argType2 == ArgType::WILDCARD) {
+				// One synonym, one wildcard
+				return evaluateFollowsClauseWildSyn(database, clause, synonymTable);
+
+			}
 		}
 
 		ClauseResult evaluateFollowsClauseIntInt(PKB::PKB& database, RelationClause clause) {
@@ -77,26 +83,41 @@ namespace PQL {
 				StmtId arg1 = std::stoi(clause.getArgs().first.second);
 				Synonym arg2 = clause.getArgs().second.second;
 
-				std::unordered_set<StmtId> followers = database.followsKB.getAllFollowers(arg1);
-				ClauseResult clauseResult;
-				for (StmtId stmt : followers) {
-					ClauseResultEntry result = { {arg2, std::to_string(stmt)} };
-					clauseResult.emplace_back(result);
+				StmtId follower = database.followsKB.getFollower(arg1);
+				if (follower == 0) {
+					return { {} };
 				}
-				return clauseResult;
+				else {
+					ClauseResultEntry resultEntry = { { arg2, std::to_string(follower) } };
+					return { resultEntry };
+				}
 			}
 			else {
 				// Case 2: Synonym, Integer
 				Synonym arg1 = clause.getArgs().first.second;
 				StmtId arg2 = std::stoi(clause.getArgs().second.second);
 				
-				std::unordered_set<StmtId> following = database.followsKB.getAllFollowing(arg2);
-				ClauseResult clauseResult;
-				for (StmtId stmt : following) {
-					ClauseResultEntry result = { {arg1, std::to_string(stmt)} };
-					clauseResult.emplace_back(result);
+				StmtId following = database.followsKB.getFollowing(arg2);
+				if (following == 0) {
+					return { {} };
 				}
-				return clauseResult;
+				else {
+					ClauseResultEntry resultEntry = { { arg1, std::to_string(following) } };
+					return { resultEntry };
+				}
+			}
+		}
+
+		ClauseResult evaluateFollowsClauseWildSyn(PKB::PKB& database, RelationClause clause,
+			unordered_map<string, DesignEntity>& synonymTable) {
+			ArgType argType1 = clause.getArgs().first.first;
+			ArgType argType2 = clause.getArgs().second.first;
+
+			if (argType1 == ArgType::WILDCARD && argType2 == ArgType::SYNONYM) {
+				// Case 1: Wildcard, Synonym
+			}
+			else {
+				// Case 2: Synonym, Wildcard
 			}
 		}
 
