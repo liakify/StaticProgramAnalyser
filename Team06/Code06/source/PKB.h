@@ -16,6 +16,7 @@
 namespace PKB {
   class PKB {
   public:
+      int x = 0;
     VarTable varTable;
     ProcTable procTable;
     StmtListTable stmtListTable;
