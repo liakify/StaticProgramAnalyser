@@ -16,6 +16,15 @@ namespace PQL {
 			}
 		}
 
+		ClauseResult evaluateFollowsClauseWildWild(PKB::PKB& database) {
+			for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
+				if (database.followsKB.getFollower(i) != 0) {
+					return { {"_RESULT", "TRUE"} };
+				}
+			}
+			return {};
+		}
+
 		ClauseResult evaluateFollowsClauseIntWild(PKB::PKB& database, RelationClause clause) {
 			ArgType argType1 = clause.getArgs().first.first;
 			ArgType argType2 = clause.getArgs().second.first;
@@ -147,7 +156,7 @@ namespace PQL {
 			}
 			else if (argType1 == ArgType::WILDCARD && argType2 == ArgType::WILDCARD) {
 				// Two wildcards supplied
-				// TODO: Request PKB to add indicator
+				return evaluateFollowsClauseWildWild(database);
 			}
 			
 			else if (argType1 == ArgType::INTEGER && argType2 == ArgType::WILDCARD ||
@@ -171,6 +180,7 @@ namespace PQL {
 			}
 			else {
 				SPA::LoggingUtils::LogErrorMessage("FollowsEvaluator::evaluateFollowsClause: Invalid ArgTypes for Follows clause. argType1 = %d, argType2 = %d\n", argType1, argType2);
+				return {};
 			}
 		}
 
