@@ -1,10 +1,11 @@
-#include "QueryEvaluator.h"
 #include "FollowsEvaluator.h"
 #include "FollowsStarEvaluator.h"
 #include "LoggingUtils.h"
 #include "ModifiesEvaluator.h"
 #include "ParentEvaluator.h"
 #include "ParentStarEvaluator.h"
+#include "QueryEvaluator.h"
+#include "UsesEvaluator.h"
 
 namespace PQL {
 	
@@ -51,7 +52,7 @@ namespace PQL {
 			return {};
 			break;
 		case RelationType::USESS:
-			return {};
+			return UsesEvaluator::evaluateUsesClause(this->database, relationClause, synonymTable);
 			break;
 		case RelationType::USESP:
 			SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluateRelationClause: USESP not implemented!\n");
