@@ -87,7 +87,7 @@ namespace Parser{
 			}
 		}
 		for (size_t i = 0; i < statements.size() - 1; i++) {
-			//pkb.followsKB.addFollows(statements[i], statements[i + 1]);
+			pkb.followsKB.addFollows(statements[i], statements[i + 1]);
 		}
 		StatementList sl = StatementList(statements);
 		return pkb.stmtListTable.insertStmtLst(sl);
@@ -98,7 +98,7 @@ namespace Parser{
 		try {
 			ReadStmt readStmt = read_stmt();
 			StmtId stmtId = pkb.stmtTable.insertStmt(readStmt);
-			//pkb.modifiesKB.addStmtModifies(stmtId, readStmt.getVar());
+			pkb.modifiesKB.addStmtModifies(stmtId, readStmt.getVar());
 			return stmtId;
 		} catch (const invalid_argument&) {
 			this->pos = currentPos;
@@ -106,7 +106,7 @@ namespace Parser{
 		try {
 			PrintStmt printStmt = print_stmt();
 			StmtId stmtId = pkb.stmtTable.insertStmt(printStmt);
-			//pkb.usesKB.addStmtUses(stmtId, printStmt.getVar());
+			pkb.usesKB.addStmtUses(stmtId, printStmt.getVar());
 			return stmtId;
 		}
 		catch (const invalid_argument&) {
@@ -145,7 +145,7 @@ namespace Parser{
 		AssignStmt assignStmt = assign_stmt();
 		Expression exp = assignStmt.getExpr();
 		StmtId stmtId = pkb.stmtTable.insertStmt(assignStmt);
-		//pkb.modifiesKB.addStmtModifies(stmtId, assignStmt.getVar());
+		pkb.modifiesKB.addStmtModifies(stmtId, assignStmt.getVar());
 		populateUsesKB(stmtId, exp.getVarIds());
 		populatePatternKB(stmtId, exp);
 		return stmtId;
@@ -391,23 +391,23 @@ namespace Parser{
 		StatementList sl = pkb.stmtListTable.get(stmtLstId);
 		std::vector<StmtId> idList = sl.getStmtIds();
 		for (size_t i = 0; i < idList.size(); i++) {
-			//pkb.parentKB.addParent(stmtId, idList[i]);
+			pkb.parentKB.addParent(stmtId, idList[i]);
 		}
 	}
 
 	void Parser::populateUsesKB(StmtId stmtId, std::unordered_set<VarId> varSet) {
 		std::unordered_set<VarId>::iterator it;
 		for (it = varSet.begin(); it != varSet.end(); it++) {
-			//pkb.usesKB.addStmtUses(stmtId, *it);
+			pkb.usesKB.addStmtUses(stmtId, *it);
 		}
 	}
 
 	void Parser::populatePatternKB(StmtId stmtId, Expression exp) {
-		//pkb.patternKB.addRHSPattern(exp.getStr(), stmtId);
+		pkb.patternKB.addRHSPattern(exp.getStr(), stmtId);
 		std::unordered_set<std::string> patterns = exp.getPatterns();
 		std::unordered_set<std::string>::iterator it;
 		for (it = patterns.begin(); it != patterns.end(); it++) {
-			//pkb.patternKB.addRHSPattern(*it, stmtId);
+			pkb.patternKB.addRHSPattern(*it, stmtId);
 		}
 	}
 }

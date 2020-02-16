@@ -54,5 +54,5 @@ public:
 	std::unordered_set<StmtId> getAllChildren(StmtId stmtId);
 
 private:
-	static std::unordered_map<StmtId, parentRS> parentTable;
+	std::unordered_map<StmtId, parentRS> parentTable;
 };

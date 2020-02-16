@@ -54,5 +54,5 @@ public:
 	std::unordered_set<StmtId> getAllFollowing(StmtId stmtId);
 
 private:
-	static std::unordered_map<StmtId, followsRS> followsTable;
+	std::unordered_map<StmtId, followsRS> followsTable;
 };
