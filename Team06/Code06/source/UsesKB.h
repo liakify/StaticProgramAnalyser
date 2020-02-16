@@ -13,15 +13,15 @@
 class UsesKB
 {
 public:
-	void addStmtUses(StmtId stmtId, VarName var);
+	void addStmtUses(StmtId stmtId, VarId var);
 
-	bool stmtUses(StmtId stmtId, VarName var);
+	bool stmtUses(StmtId stmtId, VarId var);
 
-	std::unordered_set<VarName> getAllVarsUsedByStmt(StmtId stmtId);
+	std::unordered_set<VarId> getAllVarsUsedByStmt(StmtId stmtId);
 
-	std::unordered_set<StmtId> getAllStmtsUsingVar(VarName var);
+	std::unordered_set<StmtId> getAllStmtsUsingVar(VarId var);
 
 private:
-	static std::unordered_map<StmtId, std::unordered_set<VarName>> stmtVarTable;
-	static std::unordered_map<VarName, std::unordered_set<StmtId>> varStmtTable;
+	std::unordered_map<StmtId, std::unordered_set<VarId>> stmtVarTable;
+	std::unordered_map<VarId, std::unordered_set<StmtId>> varStmtTable;
 };
