@@ -12,7 +12,7 @@ namespace PQL {
 		*
 		* @param	database	The PKB to evaluate the clause on.
 		* @param	clause		The clause to evaluate.
-		* @synonymTable	The synonym table associated with the query containing the clause.
+		* @param	synonymTable	The synonym table associated with the query containing the clause.
 		* @return	The result of the evaluation.
 		*/
 		ClauseResult evaluateFollowsClause(PKB::PKB& database, RelationClause clause, 

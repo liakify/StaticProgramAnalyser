@@ -28,10 +28,5 @@ namespace PQL {
 			}
 
 		}
-
-		ClauseResult evaluateAssignPatternClause(const PKB::PKB& database, const PatternClause& clause, 
-			const unordered_map<string, DesignEntity>& synonymTable) {
-			
-		}
 	}
 }
