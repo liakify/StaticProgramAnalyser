@@ -1,4 +1,5 @@
 #include "QueryEvaluator.h"
+#include "FollowsEvaluator.h"
 
 namespace PQL {
 	
@@ -12,20 +13,21 @@ namespace PQL {
 
 		// Evaluate Relation Clauses
 		for (RelationClause relation : query.relations) {
-			clauseResults.emplace_back(evaluateRelationClause(relation));
+			clauseResults.emplace_back(evaluateRelationClause(relation, query.synonymTable));
 		}
 
 		// Evaluate Pattern Clauses
 		for (PatternClause pattern : query.patterns) {
-			clauseResults.emplace_back(evaluatePatternClause(pattern));
+			clauseResults.emplace_back(evaluatePatternClause(pattern, query.synonymTable));
 		}
 		return QueryResult();
 	}
 
-	ClauseResult QueryEvaluator::evaluateRelationClause(RelationClause &relationClause) {
+	ClauseResult QueryEvaluator::evaluateRelationClause(RelationClause &relationClause, 
+		std::unordered_map<std::string, DesignEntity> &synonymTable) {
 		switch (relationClause.type) {
 		case RelationType::FOLLOWS:
-			
+			return FollowsEvaluator::evaluateFollowsClause(this->database, relationClause, synonymTable);
 			break;
 		case RelationType::FOLLOWST:
 
@@ -34,7 +36,8 @@ namespace PQL {
 		return ClauseResult();
 	}
 
-	ClauseResult QueryEvaluator::evaluatePatternClause(PatternClause &patternClause) {
+	ClauseResult QueryEvaluator::evaluatePatternClause(PatternClause &patternClause, 
+		std::unordered_map<std::string, DesignEntity> &synonymTable) {
 		return ClauseResult();
 	}
 
