@@ -22,6 +22,7 @@
     <ClCompile Include="..\source\QueryEvaluator.cpp" />
     <ClCompile Include="..\source\QueryParser.cpp" />
     <ClCompile Include="..\source\QueryProjector.cpp" />
+    <ClCompile Include="..\source\QueryUtils.cpp" />
     <ClCompile Include="..\source\StmtListTable.cpp" />
     <ClCompile Include="..\source\StmtTable.cpp" />
     <ClCompile Include="..\source\Simple.cpp" />
@@ -42,6 +43,7 @@
     <ClInclude Include="..\source\QueryEvaluator.h" />
     <ClInclude Include="..\source\QueryParser.h" />
     <ClInclude Include="..\source\QueryProjector.h" />
+    <ClInclude Include="..\source\QueryUtils.h" />
     <ClInclude Include="..\source\StmtListTable.h" />
     <ClInclude Include="..\source\StmtTable.h" />
     <ClInclude Include="..\source\Simple.h" />
