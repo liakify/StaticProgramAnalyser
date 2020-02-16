@@ -27,7 +27,7 @@ namespace PQL {
 		* @param	query	The query to be evaluated.
 		* @return	The results of the evaluation
 		*/
-		QueryResult evaluateQuery(const Query &query);
+		QueryResult evaluateQuery(Query &query);
 
 	private:
 		PKB::PKB database;
@@ -38,7 +38,7 @@ namespace PQL {
 		* @param	relationClause	The relation clause to evaluate
 		* @return	The results of the evaluation
 		*/
-		ClauseResult evaluateRelationClause(const RelationClause &relationClause);
+		ClauseResult evaluateRelationClause(RelationClause &relationClause);
 
 		/**
 		* Evaluates a single pattern clause
@@ -46,6 +46,6 @@ namespace PQL {
 		* @param	patternClause	The pattern clause to evaluate
 		* @return	The results of the evaluation
 		*/
-		ClauseResult evaluatePatternClause(const PatternClause &patternClause);
+		ClauseResult evaluatePatternClause(PatternClause &patternClause);
 	};
 }

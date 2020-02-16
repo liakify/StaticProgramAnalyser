@@ -6,7 +6,7 @@ namespace PQL {
 		this->database = database;
 	}
 
-	QueryResult QueryEvaluator::evaluateQuery(const Query &query) {
+	QueryResult QueryEvaluator::evaluateQuery(Query &query) {
 		// Results of Clauses
 		std::vector<ClauseResult> clauseResults;
 
@@ -22,7 +22,7 @@ namespace PQL {
 		return QueryResult();
 	}
 
-	ClauseResult QueryEvaluator::evaluateRelationClause(const RelationClause &relationClause) {
+	ClauseResult QueryEvaluator::evaluateRelationClause(RelationClause &relationClause) {
 		switch (relationClause.type) {
 		case RelationType::FOLLOWS:
 			
@@ -34,7 +34,7 @@ namespace PQL {
 		return ClauseResult();
 	}
 
-	ClauseResult QueryEvaluator::evaluatePatternClause(const PatternClause &patternClause) {
+	ClauseResult QueryEvaluator::evaluatePatternClause(PatternClause &patternClause) {
 		return ClauseResult();
 	}
 

@@ -50,6 +50,25 @@ namespace PQL {
         pair<ArgType, StmtRef> secondStmt;
         pair<ArgType, EntityRef> firstEnt;
         pair<ArgType, EntityRef> secondEnt;
+        pair<pair<ArgType, string>, pair<ArgType, string>> getArgs() {
+            switch (type) {
+            case RelationType::FOLLOWS:
+            case RelationType::FOLLOWST:
+            case RelationType::PARENT:
+            case RelationType::PARENTT:
+                return { firstStmt, secondStmt };
+                break;
+            case RelationType::USESS:
+            case RelationType::MODIFIESS:
+                return { firstStmt, secondEnt };
+                break;
+            case RelationType::USESP:
+            case RelationType::MODIFIESP:
+                return { firstEnt, secondEnt };
+            default:
+                return { INVALID_ARG, INVALID_ARG };
+            };
+        };
     };
 
     struct PatternClause {

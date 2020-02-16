@@ -16,8 +16,8 @@ namespace PQL {
 		* @param	synonymTable	The synonym table associated with the query containing the clause.
 		* @return	The results of the evaluation.
 		*/
-		ClauseResult evaluatePatternClause(const PKB::PKB& database, const PatternClause& clause,
-			const unordered_map<string, DesignEntity>& synonymTable);
+		ClauseResult evaluatePatternClause(PKB::PKB& database, PatternClause& clause,
+			unordered_map<string, DesignEntity>& synonymTable);
 
 	}
 }
