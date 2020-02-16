@@ -16,7 +16,9 @@
     <ClCompile Include="..\source\FollowsKB.cpp" />
     <ClCompile Include="..\source\FollowsStarEvaluator.cpp" />
     <ClCompile Include="..\source\LoggingUtils.cpp" />
+    <ClCompile Include="..\source\ParentEvaluator.cpp" />
     <ClCompile Include="..\source\ParentKB.cpp" />
+    <ClCompile Include="..\source\ParentStarEvaluator.cpp" />
     <ClCompile Include="..\source\Parser.cpp" />
     <ClCompile Include="..\source\PatternEvaluator.cpp" />
     <ClCompile Include="..\source\PKB.cpp" />
@@ -37,6 +39,8 @@
     <ClInclude Include="..\source\FollowsKB.h" />
     <ClInclude Include="..\source\FollowsStarEvaluator.h" />
     <ClInclude Include="..\source\LoggingUtils.h" />
+    <ClInclude Include="..\source\ParentEvaluator.h" />
+    <ClInclude Include="..\source\ParentStarEvaluator.h" />
     <ClInclude Include="..\source\Parser.h" />
     <ClInclude Include="..\source\ParentKB.h" />
     <ClInclude Include="..\source\PatternEvaluator.h" />

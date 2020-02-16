@@ -1,10 +1,16 @@
-#include "FollowsEvaluator.h"
 #include "FollowsStarEvaluator.h"
 #include "LoggingUtils.h"
 
 namespace PQL {
 	namespace FollowsStarEvaluator {
 
+		/**
+		* Evaluates a single Follows* clause on the given PKB where the inputs are two StmtIds.
+		*
+		* @param	database	The PKB to evaluate the clause on.
+		* @param	clause		The clause to evaluate.
+		* @return	The result of the evaluation.
+		*/
 		ClauseResult evaluateFollowsStarClauseIntInt(PKB::PKB& database, RelationClause clause) {
 			StmtId arg1 = std::stoi(clause.getArgs().first.second);
 			StmtId arg2 = std::stoi(clause.getArgs().second.second);
@@ -19,6 +25,12 @@ namespace PQL {
 			}
 		}
 
+		/**
+		* Evaluates a single Follows* clause on the given PKB where the inputs are two wildcards.
+		*
+		* @param	database	The PKB to evaluate the clause on.
+		* @return	The result of the evaluation.
+		*/
 		ClauseResult evaluateFollowsStarClauseWildWild(PKB::PKB& database) {
 			for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
 				if (database.followsKB.getFollower(i) != 0) {
@@ -30,6 +42,13 @@ namespace PQL {
 			return {};
 		}
 
+		/**
+		* Evaluates a single Follows* clause on the given PKB where the input contains a StmtId and a wildcard.
+		*
+		* @param	database	The PKB to evaluate the clause on.
+		* @param	clause		The clause to evaluate.
+		* @return	The result of the evaluation.
+		*/
 		ClauseResult evaluateFollowsStarClauseIntWild(PKB::PKB& database, RelationClause clause) {
 			ArgType argType1 = clause.getArgs().first.first;
 			ArgType argType2 = clause.getArgs().second.first;
@@ -60,6 +79,14 @@ namespace PQL {
 			}
 		}
 
+		/**
+		* Evaluates a single Follows* clause on the given PKB where the input contains a StmtId and a synonym.
+		*
+		* @param	database	The PKB to evaluate the clause on.
+		* @param	clause		The clause to evaluate.
+		* @param	synonymTable	The synonym table associated with the query containing the clause.
+		* @return	The result of the evaluation.
+		*/
 		ClauseResult evaluateFollowsStarClauseIntSyn(PKB::PKB& database, RelationClause clause,
 			unordered_map<string, DesignEntity>& synonymTable) {
 			ArgType argType1 = clause.getArgs().first.first;
@@ -97,6 +124,14 @@ namespace PQL {
 			}
 		}
 
+		/**
+		* Evaluates a single Follows* clause on the given PKB where the inputs contain a wildcard and a synonym.
+		*
+		* @param	database	The PKB to evaluate the clause on.
+		* @param	clause		The clause to evaluate.
+		* @param	synonymTable	The synonym table associated with the query containing the clause.
+		* @return	The result of the evaluation.
+		*/
 		ClauseResult evaluateFollowsStarClauseWildSyn(PKB::PKB& database, RelationClause clause,
 			unordered_map<string, DesignEntity>& synonymTable) {
 			ArgType argType1 = clause.getArgs().first.first;
@@ -133,7 +168,14 @@ namespace PQL {
 			}
 		}
 
-
+		/**
+		* Evaluates a single Follows* clause on the given PKB where the input contains two synonyms.
+		*
+		* @param	database	The PKB to evaluate the clause on.
+		* @param	clause		The clause to evaluate.
+		* @param	synonymTable	The synonym table associated with the query containing the clause.
+		* @return	The result of the evaluation.
+		*/
 		ClauseResult evaluateFollowsStarClauseSynSyn(PKB::PKB& database, RelationClause clause,
 			unordered_map<string, DesignEntity>& synonymTable) {
 			Synonym arg1 = clause.getArgs().first.second;
@@ -152,7 +194,7 @@ namespace PQL {
 			return clauseResult;
 		}
 
-		ClauseResult evaluateFollowsStarStarClause(PKB::PKB& database, RelationClause clause,
+		ClauseResult evaluateFollowsStarClause(PKB::PKB& database, RelationClause clause,
 			unordered_map<string, DesignEntity>& synonymTable) {
 
 			ArgType argType1 = clause.getArgs().first.first;
