@@ -9,7 +9,9 @@ namespace PQL {
 			StmtId arg2 = std::stoi(clause.getArgs().second.second);
 
 			if (database.followsKB.follows(arg1, arg2)) {
-				return { {"_RESULT", "TRUE"} };
+				ClauseResultEntry resultEntry;
+				resultEntry["_RESULT"] = "TRUE";
+				return { resultEntry };
 			}
 			else {
 				return {};
@@ -19,7 +21,9 @@ namespace PQL {
 		ClauseResult evaluateFollowsClauseWildWild(PKB::PKB& database) {
 			for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
 				if (database.followsKB.getFollower(i) != 0) {
-					return { {"_RESULT", "TRUE"} };
+					ClauseResultEntry resultEntry;
+					resultEntry["_RESULT"] = "TRUE";
+					return { resultEntry };
 				}
 			}
 			return {};
@@ -33,7 +37,9 @@ namespace PQL {
 				// Case 1: Integer, Wildcard
 				StmtId arg1 = std::stoi(clause.getArgs().first.second);
 				if (database.followsKB.getFollower(arg1) != 0) {
-					return { {"_RESULT", "TRUE"} };
+					ClauseResultEntry resultEntry;
+					resultEntry["_RESULT"] = "TRUE";
+					return { resultEntry };
 				}
 				else {
 					return {};
@@ -43,7 +49,9 @@ namespace PQL {
 				// Case 2: Wildcard, Integer
 				StmtId arg2 = std::stoi(clause.getArgs().second.second);
 				if (database.followsKB.getFollowing(arg2) != 0) {
-					return { {"_RESULT", "TRUE"} };
+					ClauseResultEntry resultEntry;
+					resultEntry["_RESULT"] = "TRUE";
+					return { resultEntry };
 				}
 				else {
 					return {};
@@ -66,9 +74,8 @@ namespace PQL {
 					return {};
 				}
 				else {
-					std::unordered_map<std::string, std::string> resultPair;
-					resultPair[arg2] = follower;
-					ClauseResultEntry resultEntry = { resultPair };
+					ClauseResultEntry resultEntry;
+					resultEntry[arg2] = follower;
 					return { resultEntry };
 				}
 			}
@@ -82,9 +89,8 @@ namespace PQL {
 					return {};
 				}
 				else {
-					std::unordered_map<std::string, std::string> resultPair;
-					resultPair[arg1] = following;
-					ClauseResultEntry resultEntry = { resultPair };
+					ClauseResultEntry resultEntry;
+					resultEntry[arg1] = following;
 					return { resultEntry };
 				}
 			}
@@ -102,9 +108,8 @@ namespace PQL {
 				ClauseResult clauseResult = {};
 				for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
 					if (database.followsKB.getFollowing(i) != 0) {
-						std::unordered_map<std::string, std::string> resultPair;
-						resultPair[arg2] = std::to_string(i);
-						ClauseResultEntry resultEntry = { resultPair };
+						ClauseResultEntry resultEntry;
+						resultEntry[arg2] = std::to_string(i);
 						clauseResult.emplace_back(resultEntry);
 					}
 				}
@@ -116,9 +121,8 @@ namespace PQL {
 				ClauseResult clauseResult = {};
 				for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
 					if (database.followsKB.getFollower(i) != 0) {
-						std::unordered_map<std::string, std::string> resultPair;
-						resultPair[arg1] = std::to_string(i);
-						ClauseResultEntry resultEntry = { resultPair };
+						ClauseResultEntry resultEntry;
+						resultEntry[arg1] = std::to_string(i);
 						clauseResult.emplace_back(resultEntry);
 					}
 				}
@@ -136,9 +140,10 @@ namespace PQL {
 			for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
 				StmtId follower = database.followsKB.getFollower(i);
 				if (follower != 0) {
-					std::unordered_map<std::string, std::string> resultPair;
-					resultPair[arg1] = std::to_string(i);
-					resultPair[arg2] = std::to_string(follower);
+					ClauseResultEntry resultEntry;
+					resultEntry[arg1] = std::to_string(i);
+					resultEntry[arg2] = std::to_string(follower);
+					clauseResult.emplace_back(resultEntry);
 				}
 			}
 			return clauseResult;
@@ -158,7 +163,6 @@ namespace PQL {
 				// Two wildcards supplied
 				return evaluateFollowsClauseWildWild(database);
 			}
-			
 			else if (argType1 == ArgType::INTEGER && argType2 == ArgType::WILDCARD ||
 				argType1 == ArgType::WILDCARD && argType2 == ArgType::INTEGER) {
 				// One statement number, one wildcard supplied

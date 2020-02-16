@@ -51,7 +51,7 @@ enum class ArgType {
 };
 
 using QueryResultEntry = std::vector<std::string>;
-using ClauseResultEntry = std::vector<std::unordered_map<std::string, std::string> >;
+using ClauseResultEntry = std::unordered_map<std::string, std::string>;
 using ClauseResult = std::vector<ClauseResultEntry>;
 using QueryResult = std::vector<QueryResultEntry>;
 
