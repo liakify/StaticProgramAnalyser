@@ -43,3 +43,33 @@ stmt s;
 Select s;
 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18
 5000
+10 - valid (extra declarations)
+while w; print p;
+Select w
+15, 17
+5000
+11 - invalid syntax (special characters)
+read e9\\3;
+Select e9\\3;
+none
+5000
+12 - invalid declaration (non-existant design entity)
+statement stmt;
+Select stmt
+none
+5000
+13 - invalid syntax (duplicated synonym)
+print p; read p;
+Select p
+none
+5000
+14 - invalid syntax (undeclared)
+stmt s;
+Select p
+none
+5000
+15 - invalid syntax (synonym start with digit)
+stmt 9333;
+Select 9333
+none
+5000
