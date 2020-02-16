@@ -2,6 +2,7 @@
 #include "FollowsEvaluator.h"
 #include "FollowsStarEvaluator.h"
 #include "LoggingUtils.h"
+#include "ModifiesEvaluator.h"
 #include "ParentEvaluator.h"
 #include "ParentStarEvaluator.h"
 
@@ -41,6 +42,20 @@ namespace PQL {
 			break;
 		case RelationType::PARENTT:
 			return ParentStarEvaluator::evaluateParentStarClause(this->database, relationClause, synonymTable);
+			break;
+		case RelationType::MODIFIESS:
+			return ModifiesEvaluator::evaluateModifiesClause(this->database, relationClause, synonymTable);
+			break;
+		case RelationType::MODIFIESP:
+			SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluateRelationClause: MODIFIESP not implemented!\n");
+			return {};
+			break;
+		case RelationType::USESS:
+			return {};
+			break;
+		case RelationType::USESP:
+			SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluateRelationClause: USESP not implemented!\n");
+			return {};
 			break;
 		default:
 			SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluateRelationClause: Unknown relation type %d\n", relationClause.type);

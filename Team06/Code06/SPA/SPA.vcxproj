@@ -16,6 +16,7 @@
     <ClCompile Include="..\source\FollowsKB.cpp" />
     <ClCompile Include="..\source\FollowsStarEvaluator.cpp" />
     <ClCompile Include="..\source\LoggingUtils.cpp" />
+    <ClCompile Include="..\source\ModifiesEvaluator.cpp" />
     <ClCompile Include="..\source\ParentEvaluator.cpp" />
     <ClCompile Include="..\source\ParentKB.cpp" />
     <ClCompile Include="..\source\ParentStarEvaluator.cpp" />
@@ -29,6 +30,7 @@
     <ClCompile Include="..\source\StmtTable.cpp" />
     <ClCompile Include="..\source\Simple.cpp" />
     <ClCompile Include="..\source\TNode.cpp" />
+    <ClCompile Include="..\source\UsesEvaluator.cpp" />
     <ClCompile Include="..\source\VarTable.cpp" />
     <ClCompile Include="..\source\UsesKB.cpp" />
     <ClCompile Include="..\source\ModifiesKB.cpp" />
@@ -39,6 +41,7 @@
     <ClInclude Include="..\source\FollowsKB.h" />
     <ClInclude Include="..\source\FollowsStarEvaluator.h" />
     <ClInclude Include="..\source\LoggingUtils.h" />
+    <ClInclude Include="..\source\ModifiesEvaluator.h" />
     <ClInclude Include="..\source\ParentEvaluator.h" />
     <ClInclude Include="..\source\ParentStarEvaluator.h" />
     <ClInclude Include="..\source\Parser.h" />
@@ -52,6 +55,7 @@
     <ClInclude Include="..\source\StmtTable.h" />
     <ClInclude Include="..\source\Simple.h" />
     <ClInclude Include="..\source\TNode.h" />
+    <ClInclude Include="..\source\UsesEvaluator.h" />
     <ClInclude Include="..\source\VarTable.h" />
     <ClInclude Include="..\source\Types.h" />
     <ClInclude Include="..\source\UsesKB.h" />
