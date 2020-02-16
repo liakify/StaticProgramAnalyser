@@ -1,0 +1,21 @@
+procedure SelectModifies {
+    a = b;
+    read c;
+    print c;
+
+    if (d == e) then {
+        read f;
+        while (k == l) {
+            read m;
+        }
+    } else {
+        read g;
+        while (n == o) {
+            read p;
+        }
+    }
+
+    while (h == i) {
+        read j;
+    }
+}

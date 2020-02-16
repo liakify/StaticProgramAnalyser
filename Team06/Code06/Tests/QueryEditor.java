@@ -8,7 +8,20 @@ class QueryEditor {
 
   private static int queryNo = 0;
   private static final String template = "Select ";
-  private static final String FILE_NAME = "pattern-0-queries.txt";
+  private static final String FILE_NAME = "parent-0-queries.txt";
+
+  // private static void readFile(String filepath) 
+  //   throws IO Exception {
+  //     StringBuilder resultStringBuilder = new StringBuilder();
+  //     try (BufferedReader br
+  //       = new BufferedReader(new InputStreamReader(inputStream))) {
+  //         String line;
+  //         while ((line = br.readLine()) != null) {
+  //             resultStringBuilder.append(line).append("\n");
+  //         }
+  //     }
+  //     return resultStringBuilder.toString();
+  // }
 
   public static void main(String[] args) {
     File file = new File(FILE_NAME);
@@ -31,13 +44,12 @@ class QueryEditor {
         + "Type 'exit' to quit.");
       String userInput;
       String selectCl;
+      // Asks for next query number
+      System.out.println("Next Query # ?:");
+      queryNo = Integer.parseInt(scanner.nextLine());
 
       while (!exit) {
         // user keeps entering query inputs line by line
-
-        // Asks for next query number
-        System.out.println("Next Query # ?:");
-        queryNo = Integer.parseInt(scanner.nextLine());
 
         System.out.println("Now entering query #" + queryNo + ":");
         // System.out.println("Using template ")
@@ -135,6 +147,9 @@ class QueryEditor {
         // TODO: User can display queries by number
 
         // TODO: User can re-number all queries
+
+
+        queryNo++;
       }
 
       fw.flush();
