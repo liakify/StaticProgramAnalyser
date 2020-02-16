@@ -31,7 +31,10 @@ namespace PQL {
 				argType1 == ArgType::SYNONYM && argType2 == ArgType::WILDCARD) {
 				// One synonym, one wildcard
 				return evaluateFollowsClauseWildSyn(database, clause, synonymTable);
-
+			}
+			else {
+				// Two synonyms
+				return evaluateFollowsClauseSynSyn(database, clause, synonymTable);
 			}
 		}
 
@@ -85,7 +88,7 @@ namespace PQL {
 
 				StmtId follower = database.followsKB.getFollower(arg1);
 				if (follower == 0) {
-					return { {} };
+					return {};
 				}
 				else {
 					ClauseResultEntry resultEntry = { { arg2, std::to_string(follower) } };
@@ -99,7 +102,7 @@ namespace PQL {
 				
 				StmtId following = database.followsKB.getFollowing(arg2);
 				if (following == 0) {
-					return { {} };
+					return {};
 				}
 				else {
 					ClauseResultEntry resultEntry = { { arg1, std::to_string(following) } };
@@ -114,10 +117,28 @@ namespace PQL {
 			ArgType argType2 = clause.getArgs().second.first;
 
 			if (argType1 == ArgType::WILDCARD && argType2 == ArgType::SYNONYM) {
+				Synonym arg2 = clause.getArgs().second.second;
+
 				// Case 1: Wildcard, Synonym
+				ClauseResult clauseResult = {};
+				for (StmtId i = 1; i <= database.stmtTable.size; i++) {
+					if (database.followsKB.getFollowing(i) != 0) {
+						ClauseResultEntry resultEntry = { {arg2, std::to_string(i)} };
+						clauseResult.emplace_back(resultEntry);
+					}
+				}
+				return clauseResult;
 			}
 			else {
+				Synonym arg1 = clause.getArgs().first.second;
 				// Case 2: Synonym, Wildcard
+				ClauseResult clauseResult = {};
+				for (StmtId i = 1; i <= database.stmtTable.size; i++) {
+					if (database.followsKB.getFollower(i) != 0) {
+						ClauseResultEntry resultEntry = { {arg1, std::to_string(i)} };
+						clauseResult.emplace_back(resultEntry);
+					}
+				}
 			}
 		}
 
