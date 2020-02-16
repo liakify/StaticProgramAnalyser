@@ -1,34 +1,123 @@
-// such that arguments not related to pattern
+// 'such that clause' arguments not related to pattern
 
 such that = true, pattern = true;
 false false
 true false
 false true
+Select a such that Follows(7, 8) pattern a (nested, _"patternmatch"_)
 
 // such that arguments are related
 
-pattern a (<v>, _??_)
+Select a1 such that Follows(a1, a2) pattern a1 (v, _)
+2, 3
+Select a2 such that Follows(a1, a2) pattern a1 (v, _)
+3, 4
+Select a1 such that Follows(a1, a2) pattern a2 (v, _"c"_)
+2
+Select a2 such that Follows(a1, a2) pattern a2 (v, _"c"_)
+3
+
+select a1 such that Follows*(a1, pn) pattern a1 (v, _)
+2, 3, 4
+select pn such that Follows*(a1, pn) pattern a1 (v, _)
+5
+select a1 such that Follows*(pn, a1) pattern a1 (v, _)
+2, 3, 4
+select pn such that Follows*(pn, a1) pattern a1 (v, _)
+1
+
+// for follows => empty set queries
+Select a such that Follows(a, 1) pattern a (v, _)
+// for pattern => empty set queries
+Select a such that Follows(a, a1) pattern a("notfound", "notfound")
+// for follows* => empty set queries
+Select a such that Follows* (a, 1) pattern a (v, _)
+// for pattern => empty set queries
+Select a such that Follows*(a, a1) pattern a("notfound", "notfound")
 
 
-such that follows(a1, a2) pattern a1 (<v>, _)
-^ select a1, select a2
-such that follows(a1, a2) pattern a2 (<v>, _)
-^ select a1, select a2
-*** star version x2
+Select a1 such that Parent(ifs, a1) pattern a1 (v, _)
+7, 8
+// not 9
+Select ifs such that Parent(ifs, a1) pattern a1 (v, _)
+6
+// specifying pattern arguments - ???
+Select a1 such that Parent(ifs, a1) pattern a1 ("nested", "patternNoMatch")
+7
+// not 16
+Select w such that Parent(w, a1) pattern a1 ("nested", "patternMatch")
+12
 
-such that parents(a1, a2) pattern a1 (<v>, _)
-^ select a1, select a2
-such that parents(a1, a2) pattern a2 (<v>, _)
-^ select a1, select a2
-*** star version x2
+// for Parent*
+Select a1 such that Parent*(w, a1) pattern a1 (v, _)
+13, 15
+// select w version
+Select w such that Parent*(w, a1) pattern a1 (v, _)
+12, 14
+// specifying pattern arguments
+Select a1 such that Parent*(w, a1) pattern a1 ("nested2", "patternMatch")
+15
+// select w version
+Select w such that Parent*(w, a1) pattern a1 ("nested2", "patternMatch")
+12, 14
 
-uses(a1, u) pattern a1 (v, _)
-uses(a2, v) pattern a1 (v, _)
-uses(a1, v) pattern a1 (v, _)
+// Parent => empty set queries
+Select a such that Parent (1, a) pattern a (v, _)
+// pattern => empty set queries
+Select a such that Parent (_, _) pattern a ("notfound", "notfound")
+// Parent => empty set queries
+Select a such that Parent* (1, a) pattern a (v, _)
+// pattern => empty set queries
+Select a such that Parent* (_, _) pattern a ("notfound", "notfound")
+
+
+// case 1: related by same assignment
+// case 1: select v
+Select a1 such that uses(a1, "patternMatch") pattern a1 (v, _)
+8, 13, 15
+//specifying pattern
+Select a1 such that uses(a1, "patternMatch") pattern a1 ("nested", _)
+8, 13
+// case 1 select u
+Select u such that uses(a1, u) pattern a1 (v, _)
+b, c, d, patternMatch, patternNoMatch
+//specifying pattern
+Select u such that uses(a1, u) pattern a1 ("a", _)
+b, c, d
+// case 1 select v
+Select v such that uses(a1, u) pattern a1 (v, _)
+//specifying pattern 
+a, nested, nested2
+Select v such that uses(a1, u) pattern a1 (v, _"b"_)
+a
+
+
+// specify pattern?
+
+// Uses => empty set 
+// Pattern => empty set
+
+// related by same variable
+2. uses(if | while | print | a2, v) pattern a1 (v, _)
+// 
+Select v such that uses(ifs, v) pattern a1 (v, _)
+Select v such that uses(w, v) pattern a1 (v, _)
+Select v such that uses(pn, v) pattern a1 (v, _)
+Select v such that uses(a2, v) pattern a1 (v, _)
+^specifying pattern variations (x2)
+^^ select different synonyms
+
+// related both a1 and v
+3. uses(a1, v) pattern a1 (v, _)
 ^ select <vary by all variables>
+
+^^ vary left argument by <assign | if | while | print >
+
 
 modifies(a1, u) pattern a1 (v, _)
 modifies(a2, v) pattern a1 (v, _)
 modifies(a1, v) pattern a1 (v, _)
 ^ select <vary by all variables>
+^^ vary left argument by <assign | if | while | read >
+
 

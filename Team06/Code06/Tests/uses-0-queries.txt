@@ -8,6 +8,7 @@ s, _
 assign - default
 print
 if-cond
+  operators
 if-thenstmtlist
 if-elsestmtlist
 while-cond
