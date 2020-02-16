@@ -1,0 +1,39 @@
+s, v
+s, "a"
+s, _
+2, v
+2, "a"
+2, _
+
+assign - default
+read
+if-thenstmtlist
+if-elsestmtlist
+while-stmtlist
+procedure (to do chained procedures for iteration 3)
+call (to do for iteration 3)
+
+
+// false
+assign
+print
+read
+if-cond
+if-thenstmtlist
+if-elsestmtlist
+while-cond
+while-stmtlist
+procedure (to do chained procedures for iteration 3)
+call (to do for iteration 3)
+
+s, "(invalid var name)"
+
+// invalid
+s, 2
+s, s
+s, -1
+_, v
+_, _
+_, "a"
+"a", v
+v, v2

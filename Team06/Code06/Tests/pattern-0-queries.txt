@@ -1,2 +1,25 @@
-1 - 
-Such 
+1 - pattern a("a", _) 
+2 - pattern a("a", _"b"_) 
+3 - pattern a("a", _"1"_) 
+4 - pattern a(_, _) 
+5 - pattern a(_, _"a"_) 
+6 - pattern a(_, _"1"_) 
+7 - pattern a(v, _) 
+8 - pattern a(v, _"a"_) 
+9 - pattern a(v, _"1"_)
+
+pattern(undefined variables) => none
+Select v pattern (v1, _);
+Select a1 pattern a (v, _)
+
+// false
+1 - pattern a("notfound", _)
+2 - pattern a("a", _"notfound"_)
+3 - pattern a("a", _"123"_)
+4 - pattern a("notfound", _"notfound"_)
+
+// invalid cases
+pattern a(1, _)
+pattern a(_, 1)
+pattern a(1,1)
+3 - pattern a("a", _"0123"_)

@@ -1,0 +1,34 @@
+// such that arguments not related to pattern
+
+such that = true, pattern = true;
+false false
+true false
+false true
+
+// such that arguments are related
+
+pattern a (<v>, _??_)
+
+
+such that follows(a1, a2) pattern a1 (<v>, _)
+^ select a1, select a2
+such that follows(a1, a2) pattern a2 (<v>, _)
+^ select a1, select a2
+*** star version x2
+
+such that parents(a1, a2) pattern a1 (<v>, _)
+^ select a1, select a2
+such that parents(a1, a2) pattern a2 (<v>, _)
+^ select a1, select a2
+*** star version x2
+
+uses(a1, u) pattern a1 (v, _)
+uses(a2, v) pattern a1 (v, _)
+uses(a1, v) pattern a1 (v, _)
+^ select <vary by all variables>
+
+modifies(a1, u) pattern a1 (v, _)
+modifies(a2, v) pattern a1 (v, _)
+modifies(a1, v) pattern a1 (v, _)
+^ select <vary by all variables>
+

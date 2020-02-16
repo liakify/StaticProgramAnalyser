@@ -1,18 +1,13 @@
 Procedure pattern0 {
-  a = 1;
   a = 0;
+  a = 3245678;
   a = b;
 
   a = b + 1;
-  a = b + 0;
   a = b - 1;
-  a = b - 0;
   a = b * 1;
-  a = b * 0;
   a = b % 1;
-  a = b % 0;
   a = b / 1;
-  a = b / 0;
 
   a = 1 + 1;
   a = 2 - 2;
@@ -35,10 +30,9 @@ Procedure pattern0 {
   a = (b % 1);
   a = (b / 1);
 
-  a = ((b + b));
   a = (((b + b)));
-  a = (   b + b   );
-  a = ( (   b + b   ) );
+  a = (   b +   b   );
+  a = ( (   b    +     b   ) );
   
   a = a + b + c;
   a = (a + b) + c;
@@ -60,6 +54,7 @@ Procedure pattern0 {
   a = (a / b) / c;
   a = a / (b / c);
 
-  
+  a = x * y / v - z / t
 
+  a1 = b;
 }

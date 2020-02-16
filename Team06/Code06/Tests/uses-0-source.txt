@@ -1,0 +1,21 @@
+procedure SelectUses {
+    a = b;
+    read c;
+    print c;
+
+    if (d == e) then {
+        print f;
+        while (k == l) {
+            print m;
+        }
+    } else {
+        print g;
+        while (n == o) {
+            print p;
+        }
+    }
+
+    while (h == i) {
+        print j;
+    }
+}

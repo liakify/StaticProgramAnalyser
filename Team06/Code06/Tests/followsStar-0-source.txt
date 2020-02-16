@@ -1,0 +1,17 @@
+Procedure SelectFollows {
+  read x;
+  read x;
+  read x;
+  if (x == 0) then {
+    read x;
+    read x;
+    while (x > 0) {
+      read x;
+      read x;   }
+    read x; } else {
+    if (x > 0) then {
+      read x;     } else {
+      read x;     }
+    while (x > 0) {
+      read x;    }  }
+  read x;}

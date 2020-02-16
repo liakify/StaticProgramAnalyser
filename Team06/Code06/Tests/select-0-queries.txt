@@ -73,3 +73,9 @@ stmt 9333;
 Select 9333
 none
 5000
+
+
+upper case
+lower case
+numbers
+whitespace

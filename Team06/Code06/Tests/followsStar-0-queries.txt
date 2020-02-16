@@ -1,0 +1,31 @@
+1 - direct follows -> true (s1, s2)
+2 - direct follows -> true (s1, s1)
+3 - direct follows -> true (1, 2)
+4 - direct follows -> true (1, s)
+5 - direct follows -> true (_, 2)
+6 - direct follows -> true (_, s2)
+7 - direct follows -> true (s1, _)
+8 - direct follows -> true (_, _)
+(s, 2)
+(1, _)
+
+6 - indirect follows -> false (1, 3)
+
+7 - nothing before first stmt
+
+8 - nothing after last stmt
+
+9 - last line of if and first line of else stmt branches do not follows
+
+10 - same statement do not follows - Follows(7, 7)
+
+- same nesting lvl different stmt list - Follows (9, 15)
+
+11 - if and following stmt - (ifs, s)
+
+- while and following stmt - (w, s)
+
+// invalid - 
+-1, 1
+1, -1
+-1, -1
