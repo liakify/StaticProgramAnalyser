@@ -3,6 +3,7 @@
 #include "FollowsStarEvaluator.h"
 #include "LoggingUtils.h"
 #include "ParentEvaluator.h"
+#include "ParentStarEvaluator.h"
 
 namespace PQL {
 	
@@ -37,8 +38,13 @@ namespace PQL {
 			break;
 		case RelationType::PARENT:
 			return ParentEvaluator::evaluateParentClause(this->database, relationClause, synonymTable);
+			break;
+		case RelationType::PARENTT:
+			return ParentStarEvaluator::evaluateParentStarClause(this->database, relationClause, synonymTable);
+			break;
 		default:
 			SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluateRelationClause: Unknown relation type %d\n", relationClause.type);
+			return {};
 		}
 	}
 

@@ -229,7 +229,7 @@ namespace PQL {
 				return evaluateFollowsStarClauseSynSyn(database, clause, synonymTable);
 			}
 			else {
-				SPA::LoggingUtils::LogErrorMessage("FollowsEvaluator::evaluateFollowsClause: Invalid ArgTypes for Follows clause. argType1 = %d, argType2 = %d\n", argType1, argType2);
+				SPA::LoggingUtils::LogErrorMessage("FollowsEvaluator::evaluateFollowsClause: Invalid ArgTypes for Follows* clause. argType1 = %d, argType2 = %d\n", argType1, argType2);
 				return {};
 			}
 		}

@@ -2,7 +2,7 @@
 #include "LoggingUtils.h"
 
 namespace PQL {
-	namespace Parent {
+	namespace ParentEvaluator {
 
 		/**
 		* Evaluates a single Parent clause on the given PKB where the inputs are two StmtIds.
