@@ -1,5 +1,7 @@
 #include "QueryEvaluator.h"
 #include "FollowsEvaluator.h"
+#include "FollowsStarEvaluator.h"
+#include "LoggingUtils.h"
 
 namespace PQL {
 	
@@ -30,10 +32,11 @@ namespace PQL {
 			return FollowsEvaluator::evaluateFollowsClause(this->database, relationClause, synonymTable);
 			break;
 		case RelationType::FOLLOWST:
-
+			return FollowsStarEvaluator::evaluateFollowsStarClause(this->database, relationClause, synonymTable);
 			break;
+		default:
+			SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluateRelationClause: Unknown relation type %d\n", relationClause.type);
 		}
-		return ClauseResult();
 	}
 
 	ClauseResult QueryEvaluator::evaluatePatternClause(PatternClause &patternClause, 
