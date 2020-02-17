@@ -1,0 +1,35 @@
+===== Summary & Directives =====
+For single-procedure sources, ensure that non-SIMPLE prog_lines apart from procedure declaration, occupy no lines. This makes it easy to count.
+Write general approach to each test case. So that we have an overview to make sure we covered everything reasonable.
+TODOs are notes for Iteration 3. 
+
+*** TODO: 
+Query Editor to auto-number queries
+
+
+=== Select ===
+Approach: 
+All possible result-cl clauses (i.e. 9 design entities)
+Valid syntax cases
+Invalid syntax cases
+
+*** TODO:
+call clause
+tuples
+
+
+=== Uses ===
+Approach: 
+All argument variations of Uses using stmts and variables,
++ testing on all nesting levels, bracket levels, boolean and arithmetic operators
++ relevant empty sets
+StmtRef variations: print, if, while, procedure
++ relevant empty sets
+Unfound variable names
+Unrelated Synonyms
+Invalid semantics
+
+*** TODO:
+procedure that does not 'use'
+call type stmtRef variant
+tuples
