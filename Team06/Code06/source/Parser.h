@@ -20,8 +20,8 @@ namespace Parser {
 		/**
 		* Parser constructor for full SIMPLE programs. 
 		* 
-		* @param	source	SIMPLE program string for parsing
-		* @param	pkb		PKB reference for use when parsing
+		* @param	source	SIMPLE program string for parsing.
+		* @param	pkb		PKB reference for use when parsing.
 		*/
 		Parser(string source, PKB::PKB& pkb);
 		
@@ -31,7 +31,7 @@ namespace Parser {
 		Parser();
 
 		/**
-		* Parses full SIMPLE source and populates pkb accordingly.
+		* Parses full SIMPLE source and populates PKB accordingly.
 		* 
 		* @throws	std::invalid_argument	if the SIMPLE source has syntax errors.
 		* @throws	std::logic_error		if the Parser was created as an Expression Parser.
@@ -80,8 +80,12 @@ namespace Parser {
 		ProcName proc_name();
 		ConstValue const_value();
 
+		std::unordered_set<VarId> getAllUses(StmtListId sid);
+		std::unordered_set<VarId> getAllModifies(StmtListId sid);
+
 		void populateParentKB(StmtId stmtId, StmtListId stmtLstId);
 		void populateUsesKB(StmtId stmtId, std::unordered_set<VarId> varSet);
+		void populateModifiesKB(StmtId stmtId, std::unordered_set<VarId> varSet);
 		void populatePatternKB(StmtId stmtId, Expression exp);
 	};
 	int analyse(string& src);
