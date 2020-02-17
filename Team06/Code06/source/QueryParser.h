@@ -29,7 +29,7 @@ namespace PQL {
          *  Accepts an input PQL query string for parsing and validation, and returns
          *  a well-formed Query struct if successful, or terminates early if an error
          *  is encountered.
-
+         *
          *  The 'status' attribute of the returned Query is populated with "success" if
          *  parsing and validation were both successful, or otherwise an error message
          *  describing the syntax or semantic error encountered.

@@ -57,7 +57,7 @@ namespace PQL {
         int numDeclarations = statements.size() - 1;
         for (int i = 0; i < numDeclarations; i++) {
             if (!regex_search(statements.at(i), dmatch, VALID_DECLARATION)) {
-                // Invalid declaration
+                // SYNTAX ERROR: invalid declaration
                 query.status = "syntax error: declaration statement has incorrect syntax";
                 return false;
             }
@@ -68,7 +68,7 @@ namespace PQL {
         smatch qbmatch;
 
         if (!regex_search(statements.at(numDeclarations), qbmatch, VALID_QUERY_BODY)) {
-            query.status = "syntax error: query body missing 'Select' keyword or has incorrect syntax";
+            query.status = "syntax error: query missing 'Select' keyword or has unrecognised characters";
             return false;
         }
 
@@ -79,6 +79,7 @@ namespace PQL {
 
         if (regex_search(statements.at(numDeclarations), rmatch, INVALID_REPEATED_RELATION)
             || regex_search(statements.at(numDeclarations), rmatch, INVALID_REPEATED_PATTERN)) {
+            // SYNTAX ERROR: incorrect use of 'and' keyword to connect adjacent clauses
             query.status = "syntax error: query contains incorrect use of clause keyword and 'and'";
             return false;
         }
@@ -94,6 +95,10 @@ namespace PQL {
 
         for (string target : query.targetEntities) {
             if (synonymTable.find(target) == synonymTable.end()) {
+                // Case 1: single return type (accepts special return type BOOLEAN)
+                if (query.targetEntities.size() == 1 && target == "BOOLEAN") continue;
+                
+                // Case 2: tuple return type (treat BOOLEAN as an identifier)
                 // SEMANTIC ERROR: synonym referenced as query target is undeclared
                 query.status = "semantic error: undeclared synonym for query return type";
                 return false;
