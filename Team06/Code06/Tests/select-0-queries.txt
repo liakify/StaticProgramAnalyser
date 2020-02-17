@@ -18,7 +18,7 @@ procedure p;
 Select p
 Select
 5000
-5 - 
+5 - if
 if ifs;
 Select ifs
 9, 12
@@ -33,7 +33,7 @@ variable v;
 Select v;
 a, b, c, d, e, f, g, h, i, j, k, x, y
 5000
-8 - constants
+8 - constant
 constant c;
 Select c;
 0, 1
@@ -43,39 +43,53 @@ stmt s;
 Select s;
 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18
 5000
-10 - valid (extra declarations)
+10 - valid: unused declarations
 while w; print p;
 Select w
 15, 17
 5000
-11 - invalid syntax (special characters)
+11 - invalid: syntax (special characters)
 read e9\\3;
 Select e9\\3;
 none
 5000
-12 - invalid declaration (non-existant design entity)
+12 - invalid: syntax (non-existant design entity)
 statement stmt;
 Select stmt
 none
 5000
-13 - invalid syntax (duplicated synonym)
+13 - invalid: syntax (duplicated synonym)
 print p; read p;
 Select p
 none
 5000
-14 - invalid syntax (undeclared)
+14 - invalid: syntax (undeclared synonym)
 stmt s;
 Select p
 none
 5000
-15 - invalid syntax (synonym start with digit)
+15 - invalid: syntax (synonym start with digit)
 stmt 9333;
 Select 9333
 none
 5000
-
-
-upper case
-lower case
-numbers
-whitespace
+16 - valid: Uppercase synonym
+while UpperW;
+Select UpperW
+15, 16
+5000
+17 - valid: number in synonym
+while w2;
+Select w2;
+15, 16
+5000
+18 - valid: whitespace in query
+while w2;
+Select        w2;
+15, 16
+5000
+19 - valid: whitespace in declaration
+while    w2;
+Select w2;
+15, 16
+5000

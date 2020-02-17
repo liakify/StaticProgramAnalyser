@@ -1,21 +1,13 @@
 procedure SelectUses {
-    a = b;
+    a = b + b1 / (b2 * (b3 % b4) - b5);
     read c;
     print c;
-
     if (d == e) then {
         print f;
-        while (k == l) {
-            print m;
-        }
-    } else {
-        print g;
-        while (n == o) {
-            print p;
-        }
-    }
-
-    while (h == i) {
-        print j;
-    }
-}
+        while (g != h) {
+            print i; } } else {
+        read j;
+        while (k >= l) {
+            print m; }}
+    while ((!(n <= o)) || ((p > q) && (r < s))) {
+        print t; }}

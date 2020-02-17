@@ -1,33 +1,19 @@
 procedure Select {
 	read x;
 	read y;
-
 	print x;
 	print y;
-
 	a = b;
 	c = d;
-
 	e = 0;
 	f = 1;
-
 	if (e == 0) then {
-		read g;
-	} else {
-		print g;
-	}
-
+		read g; } else {
+		print g; }
 	if (f == 0) then {
-		read h;
-	} else {
-		print h;
-	}
-
+		read h; } else {
+		print h; }
 	while (i == 0) {
-		read k;
-	}
-
+		read k;	}
 	while (j == 0) {
-		print k;
-	}
-}
+		print k; }}
