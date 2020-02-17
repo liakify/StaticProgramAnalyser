@@ -47,7 +47,7 @@ namespace PQL {
         }
 
         // Regex describing an allowed infix arithemtic expression
-        regex VALID_EXPRESSION("\"(?:(?:[0-9]+)|(?:[A-Za-z][A-Za-z0-9]*)(?: [\\+\\-\\*\\/\\%] (?:(?:[0-9]+)|(?:[A-Za-z][A-Za-z0-9]*)))*)\"");
+        regex VALID_EXPRESSION("\" *(?:(?:[0-9]+)|(?:[A-Za-z][A-Za-z0-9]*)(?: *[\\+\\-\\*\\/\\%] *(?:(?:[0-9]+)|(?:[A-Za-z][A-Za-z0-9]*)))*) *\"");
         smatch pmatch;
 
         if (!regex_search(input, pmatch, VALID_EXPRESSION)) {
