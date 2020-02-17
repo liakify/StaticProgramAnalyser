@@ -1,5 +1,4 @@
-#ifndef TYPES_H
-#define TYPES_H
+#pragma once
 
 #include <string>
 
@@ -18,7 +17,4 @@ using StmtId = int;
 using StmtListId = int;
 
 using ConstValue = std::string;
-
 using Pattern = std::string;
-
-#endif
