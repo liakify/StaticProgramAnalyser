@@ -49,7 +49,7 @@ namespace PQL {
             return false;
         }
 
-        regex VALID_DECLARATION("^[A-Za-z][A-Za-z0-9]* +[A-Za-z][A-Za-z0-9]*( *, *[A-Za-z][A-Za-z0-9]*)*$");
+        regex VALID_DECLARATION("^[A-Za-z]\\w* +[A-Za-z][A-Za-z0-9]*( *, *[A-Za-z][A-Za-z0-9]*)*$");
         smatch dmatch;
 
         // Validate each declaration (first N - 1 statements) satisfy
@@ -204,7 +204,7 @@ namespace PQL {
     vector<string> QueryParser::splitStatements(string queryString) {
         vector<string> statements;
 
-        regex DECLARATION("[A-Za-z0-9,\\s]+;");
+        regex DECLARATION("[\\w,\\s]+;");
         smatch stmatch;
 
         while (regex_search(queryString, stmatch, DECLARATION)) {

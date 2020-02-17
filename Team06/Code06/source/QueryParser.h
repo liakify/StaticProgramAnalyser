@@ -6,7 +6,6 @@
 #include "PQLTypes.h"
 #include "QueryUtils.h"
 
-using std::istringstream;
 using std::regex;
 using std::smatch;
 
