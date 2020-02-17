@@ -2,8 +2,9 @@
 #include <stdexcept>
 
 #include "TestWrapper.h"
-#include "Parser.h"
 #include "LoggingUtils.h"
+#include "Parser.h"
+#include "PQL.h"
 
 // implementation code of WrapperFactory - do NOT modify the next 5 lines
 AbstractWrapper* WrapperFactory::wrapper = 0;
@@ -26,9 +27,8 @@ void TestWrapper::parse(std::string filename) {
     std::ifstream ifs(filename);
     std::string program((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());;
     try {
-        Parser::analyse(program);
-        //Parser::Parser expParser = Parser::Parser();
-        //Expression e = expParser.parseExpression(program);
+        parser.parseSimple(program, pkb);
+        //Expression e = parser.parseExpression(program);
     }
     catch (std::invalid_argument& e) {
         SPA::LoggingUtils::LogErrorMessage("%s", e.what());
@@ -41,7 +41,8 @@ void TestWrapper::parse(std::string filename) {
 void TestWrapper::evaluate(std::string query, std::list<std::string>& results){
 // call your evaluator to evaluate the query here
   // ...code to evaluate query...
-
   // store the answers to the query in the results list (it is initially empty)
+    PQL::PQLManager pql = PQL::PQLManager(pkb);
+    //results.push_back(pql.evaluateQuery(query));
   // each result must be a string.
 }

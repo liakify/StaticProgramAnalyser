@@ -32,8 +32,8 @@ namespace PQL {
          */
         string evaluateQuery(string queryString);
     private:
-        static QueryParser parser;
-        static QueryEvaluator evaluator;
+        QueryParser parser;
+        QueryEvaluator evaluator;
         static QueryProjector formatter;
     };
 

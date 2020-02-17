@@ -2,8 +2,8 @@
 
 namespace PQL {
 
-    QueryEvaluator::QueryEvaluator(PKB::PKB database) {
-        this->database = database;
+    QueryEvaluator::QueryEvaluator(PKB::PKB database)
+        : database(database) {
     }
     
 }
