@@ -19,7 +19,6 @@ class ParentKB
 public:
 	/*
 		Adds Parent(stmtId1, stmtId2) relation to parentTable.
-		Also adds Parent*(s, stmtId2) for all s in s1.allParents.
 	*/
 	void addParent(StmtId stmtId1, StmtId stmtId2);
 

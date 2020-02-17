@@ -4,9 +4,6 @@
 	TODO: Exception handling for invalid inputs
 */
 
-/*
-	TODO: Move add Follows* logic out to Design Extractor
-*/
 void ParentKB::addParent(StmtId stmtId1, StmtId stmtId2)
 {
 	if (parentTable.find(stmtId1) == parentTable.end())

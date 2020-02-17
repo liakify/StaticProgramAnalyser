@@ -19,7 +19,6 @@ class FollowsKB
 public:
 	/*
 		Adds Follows(stmtId1, stmtId2) relation to followsTable.
-		Also adds Follows*(s, stmtId2) for all s in s1.allFollowed.
 	*/
 	void addFollows(StmtId stmtId1, StmtId stmtId2);
 

@@ -4,9 +4,6 @@
 	TODO: Exception handling for invalid inputs
 */
 
-/*
-	TODO: Move add Follows* logic out to Design Extractor
-*/
 void FollowsKB::addFollows(StmtId stmtId1, StmtId stmtId2)
 {
 	if (followsTable.find(stmtId1) == followsTable.end())
