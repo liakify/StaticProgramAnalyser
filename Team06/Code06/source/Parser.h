@@ -80,8 +80,12 @@ namespace Parser {
 		ProcName proc_name();
 		ConstValue const_value();
 
+		std::unordered_set<VarId> getAllUses(StmtListId sid);
+		std::unordered_set<VarId> getAllModifies(StmtListId sid);
+
 		void populateParentKB(StmtId stmtId, StmtListId stmtLstId);
 		void populateUsesKB(StmtId stmtId, std::unordered_set<VarId> varSet);
+		void populateModifiesKB(StmtId stmtId, std::unordered_set<VarId> varSet);
 		void populatePatternKB(StmtId stmtId, Expression exp);
 	};
 	int analyse(string& src);
