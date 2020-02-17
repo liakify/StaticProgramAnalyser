@@ -12,6 +12,7 @@ namespace Parser{
 	}
 
 	Expression Parser::parseExpression(string exp) {
+		this->pkb = PKB::PKB();
 		this->isExpression = true;
 		this->src = exp;
 		this->pos = 0;
