@@ -18,6 +18,18 @@ call clause
 tuples
 
 
+=== Follows ===
+Approach: 
+
+=== Follows* ===
+Approach: 
+
+=== Parent ===
+Approach: 
+
+=== Parent* ===
+Approach: 
+
 === Uses ===
 Approach: 
 All argument variations of Uses using stmts and variables,
@@ -27,9 +39,27 @@ StmtRef variations: print, if, while, procedure
 + relevant empty sets
 Unfound variable names
 Unrelated Synonyms
-Invalid semantics
+Invalid semantics (Uses(_, v))
 
 *** TODO:
 procedure that does not 'use'
+call type stmtRef variant
+tuples
+
+=== Modifies ===
+Approach: 
+All argument variations of Uses using stmts and variables,
++ testing on all nesting levels
++ relevant empty sets
+StmtRef variations: read, if, while, procedure
++ relevant empty sets
++ direct and indirect container relationships
++ then-branch and else-branch of if statements
+Unfound variable names
+Unrelated Synonyms
+Invalid semantics (Modifies(_, v))
+
+*** TODO:
+procedure that does not 'modify'
 call type stmtRef variant
 tuples
