@@ -44,6 +44,16 @@ public:
 	StmtId getFollowing(StmtId stmtId);
 
 	/*
+		Returns TRUE if stmtId has a follower, FALSE otherwise.
+	*/
+	bool hasFollower(StmtId stmtId);
+
+	/*
+		Return TRUE if stmtId is following another statement, FALSE otherwise.
+	*/
+	bool isFollowing(StmtId stmtId);
+
+	/*
 		Returns all statement IDs s for which Follows*(stmtId, s) is true.
 	*/
 	std::unordered_set<StmtId> getAllFollowers(StmtId stmtId);
@@ -52,6 +62,16 @@ public:
 		Returns all statement IDs s for which Follows*(s, stmtId) is true.
 	*/
 	std::unordered_set<StmtId> getAllFollowing(StmtId stmtId);
+
+	/*
+		Sets allFollowers of stmtId to followers
+	*/
+	void setAllFollowers(StmtId stmtId, std::unordered_set<StmtId> followers);
+
+	/*
+		Sets allFollowing of stmtId to following
+	*/
+	void setAllFollowing(StmtId stmtId, std::unordered_set<StmtId> following);
 
 private:
 	std::unordered_map<StmtId, followsRS> followsTable;
