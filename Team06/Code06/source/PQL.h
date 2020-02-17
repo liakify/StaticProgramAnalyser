@@ -34,7 +34,7 @@ namespace PQL {
     private:
         QueryParser parser;
         QueryEvaluator evaluator;
-        static QueryProjector formatter;
+        QueryProjector formatter;
     };
 
 }

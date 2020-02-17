@@ -261,7 +261,7 @@ namespace PQL {
                 }
 
                 auto synonymMapping = synonymTable.find(synonym);
-                if (synonymMapping != ENTITY_MAP.end()) {
+                if (synonymMapping != synonymTable.end()) {
                     // SEMANTIC ERROR: current synonym has already been declared
                     query.status = "semantic error: conflicting synonym declaration";
                     return false;
