@@ -124,6 +124,8 @@ namespace Parser{
 			StmtListId stmtLstId = whileStmt.getStmtLstId();
 			populateParentKB(stmtId, stmtLstId);
 			populateUsesKB(stmtId, whileStmt.getCondExpr().getVarIds());
+			populateUsesKB(stmtId, getAllUses(stmtLstId));
+			populateModifiesKB(stmtId, getAllModifies(stmtLstId));
 			return stmtId;
 		}
 		catch (const invalid_argument&) {
@@ -137,6 +139,10 @@ namespace Parser{
 			populateParentKB(stmtId, stmtLstId1);
 			populateParentKB(stmtId, stmtLstId2);
 			populateUsesKB(stmtId, ifStmt.getCondExpr().getVarIds());
+			populateUsesKB(stmtId, getAllUses(stmtLstId1));
+			populateUsesKB(stmtId, getAllUses(stmtLstId2));
+			populateModifiesKB(stmtId, getAllModifies(stmtLstId1));
+			populateModifiesKB(stmtId, getAllModifies(stmtLstId2));
 			return stmtId;
 		}
 		catch (const invalid_argument&) {
@@ -394,13 +400,20 @@ namespace Parser{
 		StatementList sl = pkb.stmtListTable.get(sid);
 		std::vector<StmtId> idList = sl.getStmtIds();
 		for (StmtId id : idList) {
-			//pkb.usesKB.getAllVarsUsedByStmt(id);
+			std::unordered_set<VarId> set = pkb.usesKB.getAllVarsUsedByStmt(id);
+			result.insert(set.begin(), set.end());
 		}
 		return result;
 	}
 
 	std::unordered_set<VarId> Parser::getAllModifies(StmtListId sid) {
 		std::unordered_set<VarId> result;
+		StatementList sl = pkb.stmtListTable.get(sid);
+		std::vector<StmtId> idList = sl.getStmtIds();
+		for (StmtId id : idList) {
+			std::unordered_set<VarId> set = pkb.modifiesKB.getAllVarsModifiedByStmt(id);
+			result.insert(set.begin(), set.end());
+		}
 		return result;
 	}
 
@@ -415,6 +428,12 @@ namespace Parser{
 	void Parser::populateUsesKB(StmtId stmtId, std::unordered_set<VarId> varSet) {
 		for (VarId id : varSet) {
 			pkb.usesKB.addStmtUses(stmtId, id);
+		}
+	}
+
+	void Parser::populateModifiesKB(StmtId stmtId, std::unordered_set<VarId> varSet) {
+		for (VarId id : varSet) {
+			pkb.modifiesKB.addStmtModifies(stmtId, id);
 		}
 	}
 
