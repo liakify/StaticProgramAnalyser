@@ -51,9 +51,10 @@
     <ClInclude Include="..\source\PatternEvaluator.h" />
     <ClInclude Include="..\source\PKB.h" />
     <ClInclude Include="..\source\PQL.h" />
-    <ClInclude Include="..\source\PQLTypes.h" />    
+    <ClInclude Include="..\source\PQLTypes.h" />
     <ClInclude Include="..\source\ProcTable.h" />
     <ClInclude Include="..\source\QueryEvaluator.h" />
+    <ClInclude Include="..\source\QueryParser.h" />
     <ClInclude Include="..\source\QueryProjector.h" />
     <ClInclude Include="..\source\QueryUtils.h" />
     <ClInclude Include="..\source\StmtListTable.h" />

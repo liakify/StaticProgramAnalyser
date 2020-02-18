@@ -13,7 +13,7 @@ namespace PQL {
 		*/
 		ClauseResult evaluateUsesClauseIntId(PKB::PKB& database, RelationClause clause) {
 			StmtId arg1 = std::stoi(clause.getArgs().first.second);
-			EntityRef arg2 = clause.getArgs().second.second;
+			VarId arg2 = database.varTable.getVarId(clause.getArgs().second.second);
 
 			if (database.usesKB.stmtUses(arg1, arg2)) {
 				ClauseResultEntry resultEntry;
@@ -64,9 +64,9 @@ namespace PQL {
 			StmtId arg1 = std::stoi(clause.getArgs().first.second);
 			Synonym arg2 = clause.getArgs().second.second;
 
-			std::unordered_set<VarName> usedVars = database.usesKB.getAllVarsUsedByStmt(arg1);
+			std::unordered_set<VarId> usedVars = database.usesKB.getAllVarsUsedByStmt(arg1);
 			ClauseResult clauseResult;
-			for (VarName var : usedVars) {
+			for (VarId var : usedVars) {
 				ClauseResultEntry resultEntry;
 				resultEntry[arg2] = var;
 				clauseResult.emplace_back(resultEntry);
@@ -89,7 +89,7 @@ namespace PQL {
 			ArgType argType2 = clause.getArgs().second.first;
 
 			Synonym arg1 = clause.getArgs().first.second;
-			VarName arg2 = clause.getArgs().second.second;
+			VarId arg2 = database.varTable.getVarId(clause.getArgs().second.second);
 
 			std::unordered_set<StmtId> usingStmts = database.usesKB.getAllStmtsUsingVar(arg2);
 			ClauseResult clauseResult;
@@ -143,8 +143,8 @@ namespace PQL {
 
 			ClauseResult clauseResult = {};
 			for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
-				std::unordered_set<VarName> usedVars = database.usesKB.getAllVarsUsedByStmt(i);
-				for (VarName var : usedVars) {
+				std::unordered_set<VarId> usedVars = database.usesKB.getAllVarsUsedByStmt(i);
+				for (VarId var : usedVars) {
 					ClauseResultEntry resultEntry;
 					resultEntry[arg1] = std::to_string(i);
 					resultEntry[arg2] = var;

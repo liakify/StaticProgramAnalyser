@@ -56,7 +56,7 @@ namespace PQL {
 			if (argType1 == ArgType::INTEGER && argType2 == ArgType::WILDCARD) {
 				// Case 1: Integer, Wildcard
 				StmtId arg1 = std::stoi(clause.getArgs().first.second);
-				if (database.parentKB.getChild(arg1) != 0) {
+				if (database.parentKB.getDirectChildren(arg1).size() > 0) {
 					ClauseResultEntry resultEntry;
 					resultEntry["_RESULT"] = "TRUE";
 					return { resultEntry };
@@ -98,7 +98,7 @@ namespace PQL {
 				StmtId arg1 = std::stoi(clause.getArgs().first.second);
 				Synonym arg2 = clause.getArgs().second.second;
 
-				StmtId child = database.parentKB.getChild(arg1);
+				StmtId child = database.parentKB.getDirectChildren(arg1).size();
 				if (child == 0) {
 					return {};
 				}
@@ -158,7 +158,7 @@ namespace PQL {
 				// TODO: Check for set of children
 				ClauseResult clauseResult = {};
 				for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
-					if (database.parentKB.getChild(i) != 0) {
+					if (database.parentKB.getDirectChildren(i).size() != 0) {
 						ClauseResultEntry resultEntry;
 						resultEntry[arg1] = std::to_string(i);
 						clauseResult.emplace_back(resultEntry);

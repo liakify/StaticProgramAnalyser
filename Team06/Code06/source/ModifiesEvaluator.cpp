@@ -13,7 +13,7 @@ namespace PQL {
 		*/
 		ClauseResult evaluateModifiesClauseIntId(PKB::PKB& database, RelationClause clause) {
 			StmtId arg1 = std::stoi(clause.getArgs().first.second);
-			EntityRef arg2 = clause.getArgs().second.second;
+			VarId arg2 = database.varTable.getVarId(clause.getArgs().second.second);
 
 			if (database.modifiesKB.stmtModifies(arg1, arg2)) {
 				ClauseResultEntry resultEntry;
@@ -64,9 +64,9 @@ namespace PQL {
 			StmtId arg1 = std::stoi(clause.getArgs().first.second);
 			Synonym arg2 = clause.getArgs().second.second;
 
-			std::unordered_set<VarName> modifiedVars = database.modifiesKB.getAllVarsModifiedByStmt(arg1);
+			std::unordered_set<VarId> modifiedVars = database.modifiesKB.getAllVarsModifiedByStmt(arg1);
 			ClauseResult clauseResult;
-			for (VarName var: modifiedVars) {
+			for (VarId var: modifiedVars) {
 				ClauseResultEntry resultEntry;
 				resultEntry[arg2] = var;
 				clauseResult.emplace_back(resultEntry);
@@ -89,7 +89,7 @@ namespace PQL {
 			ArgType argType2 = clause.getArgs().second.first;
 
 			Synonym arg1 = clause.getArgs().first.second;
-			VarName arg2 = clause.getArgs().second.second;
+			VarId arg2 = database.varTable.getVarId(clause.getArgs().second.second);
 
 			std::unordered_set<StmtId> modifyingStmts = database.modifiesKB.getAllStmtsModifyVar(arg2);
 			ClauseResult clauseResult;
@@ -143,8 +143,8 @@ namespace PQL {
 
 			ClauseResult clauseResult = {};
 			for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
-				std::unordered_set<VarName> modifiedVars= database.modifiesKB.getAllVarsModifiedByStmt(i);
-				for (VarName var : modifiedVars) {
+				std::unordered_set<VarId> modifiedVars = database.modifiesKB.getAllVarsModifiedByStmt(i);
+				for (VarId var : modifiedVars) {
 					ClauseResultEntry resultEntry;
 					resultEntry[arg1] = std::to_string(i);
 					resultEntry[arg2] = var;
