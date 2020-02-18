@@ -9,7 +9,7 @@
 struct parentRS
 {
 	StmtId parent = 0;
-	StmtId child = 0;
+	std::unordered_set<StmtId> directChildren;
 	std::unordered_set<StmtId> allParents;
 	std::unordered_set<StmtId> allChildren;
 };
@@ -19,7 +19,6 @@ class ParentKB
 public:
 	/*
 		Adds Parent(stmtId1, stmtId2) relation to parentTable.
-		Also adds Parent*(s, stmtId2) for all s in s1.allParents.
 	*/
 	void addParent(StmtId stmtId1, StmtId stmtId2);
 
@@ -39,9 +38,19 @@ public:
 	StmtId getParent(StmtId stmtId);
 
 	/*
-		Returns statement ID s for which Parent(stmtId, s) is true.
+		Returns child statement ID s for which Parent(stmtId, s) is true.
 	*/
-	StmtId getChild(StmtId stmtId);
+	std::unordered_set<StmtId> getDirectChildren(StmtId stmtId);
+
+	/*
+		Returns TRUE if stmtId has a parent, FALSE otherwise.
+	*/
+	bool hasParent(StmtId stmtId);
+
+	/*
+		Returns TRUE if stmtId has direct children, FALSE otherwise.
+	*/
+	bool hasDirectChildren(StmtId stmtId);
 
 	/*
 		Returns all statement IDs s for which Parent*(s, stmtId) is true.
@@ -53,6 +62,16 @@ public:
 	*/
 	std::unordered_set<StmtId> getAllChildren(StmtId stmtId);
 
+	/*
+		Sets allChildren of stmtId to children
+	*/
+	void setAllChildren(StmtId stmtId, std::unordered_set<StmtId> children);
+
+	/*
+		Sets allParents of stmtId to parents
+	*/
+	void setAllParents(StmtId stmtId, std::unordered_set<StmtId> parents);
+
 private:
-	static std::unordered_map<StmtId, parentRS> parentTable;
+	std::unordered_map<StmtId, parentRS> parentTable;
 };

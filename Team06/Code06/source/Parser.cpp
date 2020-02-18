@@ -3,43 +3,20 @@
 using std::invalid_argument;
 
 namespace Parser{
-	Parser::Parser(string source, PKB::PKB& pkb)
-		: src(source), pkb(pkb), isExpression(false) {
-	}
-
-	Parser::Parser() 
-		: isExpression(true) {
-	}
-
-	void Parser::parse() {
-		if (!isExpression) {
-			this->pos = 0;
-			program();
-		}
-		else {
-			throw std::logic_error(
-				"Parser object created as an Expression parser instead of a full SIMPLE parser."
-			);
-		}
+	void Parser::parseSimple(string src, PKB::PKB& pkb) {
+		this->isExpression = false;
+		this->pkb = pkb;
+		this->src = src;
+		this->pos = 0;
+		program();
 	}
 
 	Expression Parser::parseExpression(string exp) {
-		if (isExpression) {
-			this->src = exp;
-			this->pos = 0;
-			return expr();
-		}
-		else {
-			throw std::logic_error(
-				"Parser object created as a full SIMPLE parser instead of an Expression parser."
-			);
-		}
-	}
-
-	int analyse(string& src) {
-		Parser p = Parser(src, PKB::PKB());
-		p.parse();
-		return 0;
+		this->pkb = PKB::PKB();
+		this->isExpression = true;
+		this->src = exp;
+		this->pos = 0;
+		return expr();
 	}
 
 	string Parser::consume(regex rgx) {
@@ -87,7 +64,7 @@ namespace Parser{
 			}
 		}
 		for (size_t i = 0; i < statements.size() - 1; i++) {
-			//pkb.followsKB.addFollows(statements[i], statements[i + 1]);
+			pkb.followsKB.addFollows(statements[i], statements[i + 1]);
 		}
 		StatementList sl = StatementList(statements);
 		return pkb.stmtListTable.insertStmtLst(sl);
@@ -98,7 +75,7 @@ namespace Parser{
 		try {
 			ReadStmt readStmt = read_stmt();
 			StmtId stmtId = pkb.stmtTable.insertStmt(readStmt);
-			//pkb.modifiesKB.addStmtModifies(stmtId, readStmt.getVar());
+			pkb.modifiesKB.addStmtModifies(stmtId, readStmt.getVar());
 			return stmtId;
 		} catch (const invalid_argument&) {
 			this->pos = currentPos;
@@ -106,7 +83,7 @@ namespace Parser{
 		try {
 			PrintStmt printStmt = print_stmt();
 			StmtId stmtId = pkb.stmtTable.insertStmt(printStmt);
-			//pkb.usesKB.addStmtUses(stmtId, printStmt.getVar());
+			pkb.usesKB.addStmtUses(stmtId, printStmt.getVar());
 			return stmtId;
 		}
 		catch (const invalid_argument&) {
@@ -124,6 +101,8 @@ namespace Parser{
 			StmtListId stmtLstId = whileStmt.getStmtLstId();
 			populateParentKB(stmtId, stmtLstId);
 			populateUsesKB(stmtId, whileStmt.getCondExpr().getVarIds());
+			populateUsesKB(stmtId, getAllUses(stmtLstId));
+			populateModifiesKB(stmtId, getAllModifies(stmtLstId));
 			return stmtId;
 		}
 		catch (const invalid_argument&) {
@@ -137,6 +116,10 @@ namespace Parser{
 			populateParentKB(stmtId, stmtLstId1);
 			populateParentKB(stmtId, stmtLstId2);
 			populateUsesKB(stmtId, ifStmt.getCondExpr().getVarIds());
+			populateUsesKB(stmtId, getAllUses(stmtLstId1));
+			populateUsesKB(stmtId, getAllUses(stmtLstId2));
+			populateModifiesKB(stmtId, getAllModifies(stmtLstId1));
+			populateModifiesKB(stmtId, getAllModifies(stmtLstId2));
 			return stmtId;
 		}
 		catch (const invalid_argument&) {
@@ -145,9 +128,11 @@ namespace Parser{
 		AssignStmt assignStmt = assign_stmt();
 		Expression exp = assignStmt.getExpr();
 		StmtId stmtId = pkb.stmtTable.insertStmt(assignStmt);
-		//pkb.modifiesKB.addStmtModifies(stmtId, assignStmt.getVar());
+		pkb.modifiesKB.addStmtModifies(stmtId, assignStmt.getVar());
 		populateUsesKB(stmtId, exp.getVarIds());
 		populatePatternKB(stmtId, exp);
+		VarName vn = pkb.varTable.get(assignStmt.getVar());
+		pkb.patternKB.addLHSPattern(vn, stmtId);
 		return stmtId;
 	}
 
@@ -387,27 +372,53 @@ namespace Parser{
 		return integer();
 	}
 
+	std::unordered_set<VarId> Parser::getAllUses(StmtListId sid) {
+		std::unordered_set<VarId> result;
+		StatementList sl = pkb.stmtListTable.get(sid);
+		std::vector<StmtId> idList = sl.getStmtIds();
+		for (StmtId id : idList) {
+			std::unordered_set<VarId> set = pkb.usesKB.getAllVarsUsedByStmt(id);
+			result.insert(set.begin(), set.end());
+		}
+		return result;
+	}
+
+	std::unordered_set<VarId> Parser::getAllModifies(StmtListId sid) {
+		std::unordered_set<VarId> result;
+		StatementList sl = pkb.stmtListTable.get(sid);
+		std::vector<StmtId> idList = sl.getStmtIds();
+		for (StmtId id : idList) {
+			std::unordered_set<VarId> set = pkb.modifiesKB.getAllVarsModifiedByStmt(id);
+			result.insert(set.begin(), set.end());
+		}
+		return result;
+	}
+
 	void Parser::populateParentKB(StmtId stmtId, StmtListId stmtLstId) {
 		StatementList sl = pkb.stmtListTable.get(stmtLstId);
 		std::vector<StmtId> idList = sl.getStmtIds();
-		for (size_t i = 0; i < idList.size(); i++) {
-			//pkb.parentKB.addParent(stmtId, idList[i]);
+		for (StmtId id : idList) {
+			pkb.parentKB.addParent(stmtId, id);
 		}
 	}
 
 	void Parser::populateUsesKB(StmtId stmtId, std::unordered_set<VarId> varSet) {
-		std::unordered_set<VarId>::iterator it;
-		for (it = varSet.begin(); it != varSet.end(); it++) {
-			//pkb.usesKB.addStmtUses(stmtId, *it);
+		for (VarId id : varSet) {
+			pkb.usesKB.addStmtUses(stmtId, id);
+		}
+	}
+
+	void Parser::populateModifiesKB(StmtId stmtId, std::unordered_set<VarId> varSet) {
+		for (VarId id : varSet) {
+			pkb.modifiesKB.addStmtModifies(stmtId, id);
 		}
 	}
 
 	void Parser::populatePatternKB(StmtId stmtId, Expression exp) {
-		//pkb.patternKB.addRHSPattern(exp.getStr(), stmtId);
-		std::unordered_set<std::string> patterns = exp.getPatterns();
-		std::unordered_set<std::string>::iterator it;
-		for (it = patterns.begin(); it != patterns.end(); it++) {
-			//pkb.patternKB.addRHSPattern(*it, stmtId);
+		pkb.patternKB.addRHSPattern(exp.getStr(), stmtId);
+		std::unordered_set<Pattern> patterns = exp.getPatterns();
+		for (Pattern p : patterns) {
+			pkb.patternKB.addRHSPattern(p, stmtId);
 		}
 	}
 }

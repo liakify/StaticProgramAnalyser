@@ -26,11 +26,13 @@
     <ClCompile Include="..\source\PQL.cpp" />
     <ClCompile Include="..\source\ProcTable.cpp" />
     <ClCompile Include="..\source\QueryEvaluator.cpp" />
+    <ClCompile Include="..\source\UsesEvaluator.cpp" />
+    <ClCompile Include="..\source\QueryParser.cpp" />
+    <ClCompile Include="..\source\QueryProjector.cpp" />
+    <ClCompile Include="..\source\QueryUtils.cpp" />
     <ClCompile Include="..\source\StmtListTable.cpp" />
     <ClCompile Include="..\source\StmtTable.cpp" />
     <ClCompile Include="..\source\Simple.cpp" />
-    <ClCompile Include="..\source\TNode.cpp" />
-    <ClCompile Include="..\source\UsesEvaluator.cpp" />
     <ClCompile Include="..\source\VarTable.cpp" />
     <ClCompile Include="..\source\UsesKB.cpp" />
     <ClCompile Include="..\source\ModifiesKB.cpp" />
@@ -49,8 +51,11 @@
     <ClInclude Include="..\source\PatternEvaluator.h" />
     <ClInclude Include="..\source\PKB.h" />
     <ClInclude Include="..\source\PQL.h" />
+    <ClInclude Include="..\source\PQLTypes.h" />    
     <ClInclude Include="..\source\ProcTable.h" />
     <ClInclude Include="..\source\QueryEvaluator.h" />
+    <ClInclude Include="..\source\QueryProjector.h" />
+    <ClInclude Include="..\source\QueryUtils.h" />
     <ClInclude Include="..\source\StmtListTable.h" />
     <ClInclude Include="..\source\StmtTable.h" />
     <ClInclude Include="..\source\Simple.h" />
@@ -61,6 +66,7 @@
     <ClInclude Include="..\source\UsesKB.h" />
     <ClInclude Include="..\source\ModifiesKB.h" />
     <ClInclude Include="..\source\PatternKB.h" />
+    <ClInclude Include="..\source\DesignExtractor.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />

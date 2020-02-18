@@ -1,5 +1,4 @@
-#ifndef TYPES_H
-#define TYPES_H
+#pragma once
 
 #include <string>
 #include <vector>
@@ -20,7 +19,6 @@ using StmtId = int;
 using StmtListId = int;
 
 using ConstValue = std::string;
-
 using Pattern = std::string;
 
 using Constant = int;
@@ -28,27 +26,6 @@ using StmtRef = std::string;
 using EntityRef = std::string;
 
 using Synonym = std::string;
-
-// Additional types specific to PQL
-enum class DesignEntity {
-    STATEMENT, READ, PRINT, CALL, WHILE, IF, ASSIGN, VARIABLE, CONSTANT, PROCEDURE
-};
-
-enum class RelationType {
-    FOLLOWS, FOLLOWST, PARENT, PARENTT, USESS, USESP, MODIFIESS, MODIFIESP
-};
-
-enum class PatternType {
-    ASSIGN_PATTERN, IF_PATTERN, WHILE_PATTERN
-};
-
-enum class ArgType {
-    // INVALID used when argument does not apply for that relation
-    // UNKNOWN used for arguments that require further validation
-    // StmtRef arguments can be SYNONYM, INTEGER or WILDCARD
-    // EntityRef arguments can be SYNONYM, IDENTIFIER or WILDCARD
-    INVALID, UNKNOWN, SYNONYM, INTEGER, IDENTIFIER, WILDCARD
-};
 
 using QueryResultEntry = std::vector<std::string>;
 using ClauseResultEntry = std::unordered_map<std::string, std::string>;
