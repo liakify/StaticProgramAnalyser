@@ -11,28 +11,20 @@ namespace UnitTesting {
 		std::string VALID_EXP = "(x+1)*2%3/(zz+9)+10-5*y";
 		std::string VALID_EXP2 = "(  ( x+1)*2%3/( zz+ 9)  +10 -(5*y))";
 		std::string INVALID_EXP = "(x+1)*2%3/(zz+9)+10-5*";
+		Parser::Parser parser = Parser::Parser();
 
-		TEST_METHOD(AnalyseTest) {
-			Assert::AreEqual(0, Parser::analyse(VALID_SRC));
-			Assert::ExpectException<std::invalid_argument>([this] {Parser::analyse(INVALID_SRC); });
+		TEST_METHOD(ParseSimpleTest) {
+			PKB::PKB pkb = PKB::PKB();
+			try {
+				parser.parseSimple(VALID_SRC, pkb);
+			}
+			catch (std::invalid_argument&) {
+				Assert::IsTrue(false);
+			}
+			Assert::ExpectException<std::invalid_argument>([this, &pkb] {parser.parseSimple(INVALID_SRC, pkb); });
 		}
 
-		TEST_METHOD(ParserType) {
-			Parser::Parser expParser = Parser::Parser();
-			Parser::Parser simpleParser1 = Parser::Parser(VALID_SRC, PKB::PKB());
-			Parser::Parser simpleParser2 = Parser::Parser(INVALID_SRC, PKB::PKB());
-			
-			Assert::ExpectException<std::logic_error>([&expParser] {expParser.parse(); });
-			auto f = [this, &simpleParser1] {simpleParser1.parseExpression(INVALID_SRC); };
-			Assert::ExpectException<std::logic_error>(f);
-			auto g = [this, &simpleParser2] {simpleParser2.parseExpression(VALID_SRC); };
-			Assert::ExpectException<std::logic_error>(g);
-			auto h = [this, &expParser] {expParser.parseExpression(INVALID_EXP); };
-			Assert::ExpectException<std::invalid_argument>(h);
-			Assert::ExpectException<std::invalid_argument>([&simpleParser2] {simpleParser2.parse(); });
-
-		}
-		TEST_METHOD(ExprParser) {
+		TEST_METHOD(ParseExpressionTest) {
 			Parser::Parser expParser = Parser::Parser();
 			Expression exp = expParser.parseExpression(VALID_EXP);
 			std::string expected = "((((((x+1)*2)%3)/(zz+9))+10)-(5*y))";
