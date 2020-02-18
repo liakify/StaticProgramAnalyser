@@ -10,7 +10,7 @@ namespace PQL {
     public:
         QueryEvaluator(PKB::PKB database);
     private:
-        static PKB::PKB database;
+        PKB::PKB database;
     };
     
 }
