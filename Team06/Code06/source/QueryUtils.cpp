@@ -47,22 +47,13 @@ namespace PQL {
         }
 
         // Regex describing an allowed infix arithemtic expression
-        regex VALID_EXPRESSION("\" *(?:(?:[0-9]+)|(?:[A-Za-z][A-Za-z0-9]*)(?: *[\\+\\-\\*\\/\\%] *(?:(?:[0-9]+)|(?:[A-Za-z][A-Za-z0-9]*)))*) *\"");
+        // Use an optional capturing group for the underscore and substitute it at the end
+        // Ensures symmetric pattern string (both underscores present or absent together)
+        regex VALID_EXPRESSION("^(_?) *\" *(?:(?:[0-9]+)|(?:[A-Za-z][A-Za-z0-9]*)(?: *[\\+\\-\\*\\/\\%] *(?:(?:[0-9]+)|(?:[A-Za-z][A-Za-z0-9]*)))*) *\" *\\1$");
         smatch pmatch;
 
         if (!regex_search(input, pmatch, VALID_EXPRESSION)) {
-            // Arithmetic expression is not a substring
-            return false;
-        }
-
-        string expr = pmatch.str();
-        int diff = input.length() - expr.length();
-        if (diff != 0 && diff != 2) {
-            // Pattern string is not of form "<expr>" or [X]"<expr>"[Y] where X + Y = 2
-            return false;
-        }
-        else if (diff == 2 && (input.at(0) != '_' || input.at(input.length() - 1) != '_')) {
-            // Pattern string does not have symmetric '_'
+            // Arithmetic expression is not a substring or pattern string is asymmetric
             return false;
         }
 
