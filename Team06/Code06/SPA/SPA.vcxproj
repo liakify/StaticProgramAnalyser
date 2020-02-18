@@ -52,6 +52,7 @@
     <ClInclude Include="..\source\UsesKB.h" />
     <ClInclude Include="..\source\ModifiesKB.h" />
     <ClInclude Include="..\source\PatternKB.h" />
+    <ClInclude Include="..\source\DesignExtractor.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />

@@ -4,9 +4,6 @@
 	TODO: Exception handling for invalid inputs
 */
 
-/*
-	TODO: Move add Follows* logic out to Design Extractor
-*/
 void FollowsKB::addFollows(StmtId stmtId1, StmtId stmtId2)
 {
 	if (followsTable.find(stmtId1) == followsTable.end())
@@ -24,14 +21,6 @@ void FollowsKB::addFollows(StmtId stmtId1, StmtId stmtId2)
 
 	fRS1.follower = stmtId2;
 	fRS2.following = stmtId1;
-
-	for (auto following : fRS1.allFollowing)
-	{
-		followsTable[following].allFollowers.insert(stmtId2);
-	}
-
-	fRS2.allFollowing = fRS1.allFollowing;
-	fRS2.allFollowing.insert(stmtId1);
 }
 
 bool FollowsKB::follows(StmtId stmtId1, StmtId stmtId2)
@@ -41,8 +30,7 @@ bool FollowsKB::follows(StmtId stmtId1, StmtId stmtId2)
 
 bool FollowsKB::followStar(StmtId stmtId1, StmtId stmtId2)
 {
-	followsRS fRS1 = followsTable[stmtId1];
-	std::unordered_set<StmtId> stmt1Followers = fRS1.allFollowers;
+	std::unordered_set<StmtId> stmt1Followers = followsTable[stmtId1].allFollowers;
 	return stmt1Followers.find(stmtId2) != stmt1Followers.end();
 }
 
@@ -56,6 +44,16 @@ StmtId FollowsKB::getFollowing(StmtId stmtId)
 	return followsTable[stmtId].following;
 }
 
+bool FollowsKB::hasFollower(StmtId stmtId)
+{
+	return followsTable[stmtId].follower != 0;
+}
+
+bool FollowsKB::isFollowing(StmtId stmtId)
+{
+	return followsTable[stmtId].following != 0;
+}
+
 std::unordered_set<StmtId> FollowsKB::getAllFollowers(StmtId stmtId)
 {
 	return followsTable[stmtId].allFollowers;
@@ -64,4 +62,14 @@ std::unordered_set<StmtId> FollowsKB::getAllFollowers(StmtId stmtId)
 std::unordered_set<StmtId> FollowsKB::getAllFollowing(StmtId stmtId)
 {
 	return followsTable[stmtId].allFollowing;
+}
+
+void FollowsKB::setAllFollowers(StmtId stmtId, std::unordered_set<StmtId> followers)
+{
+	followsTable[stmtId].allFollowers = followers;
+}
+
+void FollowsKB::setAllFollowing(StmtId stmtId, std::unordered_set<StmtId> following)
+{
+	followsTable[stmtId].allFollowing = following;
 }
