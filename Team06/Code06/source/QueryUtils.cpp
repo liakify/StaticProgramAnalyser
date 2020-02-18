@@ -72,6 +72,13 @@ namespace PQL {
         return rightTrim(leftTrim(input));
     }
 
+    string QueryUtils::stripPattern(string input) {
+        regex STRIP_TARGET("[ \"]");
+        smatch cmatch;
+
+        return regex_replace(input, STRIP_TARGET, "");
+    }
+
     pair<string, string> QueryUtils::splitString(string input, char delim) {
         int pos = input.find_first_of(delim);
         return { trimString(input.substr(0, pos)), trimString(input.substr(pos + 1, string::npos)) };
