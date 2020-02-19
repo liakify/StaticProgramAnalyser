@@ -162,6 +162,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="testDesignExtractor.cpp" />
     <ClCompile Include="testPatternKB.cpp" />
     <ClCompile Include="testModifiesKB.cpp" />
     <ClCompile Include="testUsesKB.cpp" />
