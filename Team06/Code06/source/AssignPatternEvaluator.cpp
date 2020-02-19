@@ -64,7 +64,95 @@ namespace PQL {
 			return {};
 		}
 
+		/**
+		* Evaluates a single assign pattern clause on the given PKB where the inputs are one identifier and one pattern.
+		*
+		* @param	database	The PKB to evaluate the clause on.
+		* @return	The result of the evaluation.
+		*/
+		ClauseResult evaluateAssignPatternClauseIdPtn(PKB::PKB& database, PatternClause& clause) {
+			VarName arg1 = clause.getArgs().first.second;
+			Pattern arg2 = clause.getArgs().second.second;
+			
+			std::unordered_set<StmtId> stmts1 = database.patternKB.getLHSPatternStmts(arg1);
+			std::unordered_set<StmtId> stmts2 = database.patternKB.getRHSPatternStmts(arg2);
+			
+			// Find the intersection
+			std::unordered_set<StmtId> stmts;
+			for (StmtId stmt : stmts1) {
+				if (stmts2.find(stmt) != stmts2.end()) {
+					stmts.insert(stmt);
+				}
+			}
 
+			for (StmtId stmt : stmts) {
+				if (database.stmtTable.get(stmt).getType() == StmtType::ASSIGN) {
+					ClauseResultEntry resultEntry;
+					resultEntry["_RESULT"] = "TRUE";
+					return { resultEntry };
+				}
+			}
+
+			return {};
+		}
+
+		/**
+		* Evaluates a single assign pattern clause on the given PKB where the inputs are one synonym and one wildcard.
+		*
+		* @param	database	The PKB to evaluate the clause on.
+		* @return	The result of the evaluation.
+		*/
+		ClauseResult evaluateAssignPatternClauseSynWild(PKB::PKB& database, PatternClause& clause,
+			std::unordered_map<string, DesignEntity>& synonymTable) {
+			Synonym arg1 = clause.getArgs().first.second;
+			
+			std::unordered_set<StmtId> stmts = database.patternKB.getLHSPatternStmts("_");
+
+			ClauseResult clauseResult;
+			for (StmtId stmt : stmts) {
+				if (database.stmtTable.get(stmt).getType() == StmtType::ASSIGN) {
+					ClauseResultEntry resultEntry;
+					resultEntry[arg1] = std::to_string(stmt);
+					clauseResult.emplace_back(resultEntry);
+				}
+			}
+
+			return clauseResult;
+		}
+
+		/**
+		* Evaluates a single assign pattern clause on the given PKB where the inputs are one synonym and one pattern.
+		*
+		* @param	database	The PKB to evaluate the clause on.
+		* @return	The result of the evaluation.
+		*/
+		ClauseResult evaluateAssignPatternClauseSynPtn(PKB::PKB& database, PatternClause& clause,
+			std::unordered_map<string, DesignEntity>& synonymTable) {
+			Synonym arg1 = clause.getArgs().first.second;
+			Pattern arg2 = clause.getArgs().second.second;
+
+			std::unordered_set<StmtId> stmts1 = database.patternKB.getLHSPatternStmts("_");
+			std::unordered_set<StmtId> stmts2 = database.patternKB.getRHSPatternStmts(arg2);
+
+			// Find the intersection
+			std::unordered_set<StmtId> stmts;
+			for (StmtId stmt : stmts1) {
+				if (stmts2.find(stmt) != stmts2.end()) {
+					stmts.insert(stmt);
+				}
+			}
+
+			ClauseResult clauseResult;
+			for (StmtId stmt : stmts) {
+				if (database.stmtTable.get(stmt).getType() == StmtType::ASSIGN) {
+					ClauseResultEntry resultEntry;
+					resultEntry[arg1] = std::to_string(stmt);
+					clauseResult.emplace_back(resultEntry);
+				}
+			}
+
+			return clauseResult;
+		}
 
 		ClauseResult evaluateAssignPatternClause(PKB::PKB& database, PatternClause clause,
 			std::unordered_map<string, DesignEntity>& synonymTable) {
