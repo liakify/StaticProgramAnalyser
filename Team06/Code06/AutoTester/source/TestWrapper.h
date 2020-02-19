@@ -7,7 +7,7 @@
 
 // include your other headers here
 #include "AbstractWrapper.h"
-#include "Parser.h"
+#include "FrontEnd.h"
 #include "PQL.h"
 
 class TestWrapper : public AbstractWrapper {
@@ -24,8 +24,8 @@ class TestWrapper : public AbstractWrapper {
   // method for evaluating a query
   virtual void evaluate(std::string query, std::list<std::string>& results);
 private:
+  FrontEnd::FrontEndManager frontEnd;
   PKB::PKB pkb;
-  FrontEnd::Parser parser;
 };
 
 #endif

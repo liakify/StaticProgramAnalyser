@@ -33,7 +33,7 @@ void TestWrapper::parse(std::string filename) {
     std::ifstream ifs(filename);
     std::string program((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());;
     try {
-        parser.parseSimple(program, pkb);
+        pkb = frontEnd.parseSimple(program);
         // Expression e = parser.parseExpression(program);
     }
     catch (std::invalid_argument& e) {
