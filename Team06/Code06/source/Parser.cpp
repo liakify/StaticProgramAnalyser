@@ -217,7 +217,7 @@ namespace FrontEnd {
 		}
 		consume(regex("[\\s]*[(][\\s]*"));
 		CondExpr left = cond_expr();
-		consume(regex("[\\s]*[)][\\s]*(||)[\\s]*[(][\\s]*"));
+		consume(regex("[\\s]*[)][\\s]*(\\|\\|)[\\s]*[(][\\s]*"));
 		CondExpr right = cond_expr();
 		consume(regex("[\\s]*[)][\\s]*"));
 		return CondExpr(left, right);
