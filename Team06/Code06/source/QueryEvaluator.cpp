@@ -81,7 +81,7 @@ namespace PQL {
 			return {};
 			break;
 		default:
-			SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluateRelationClause: Unknown pattern type %d\n", patternClause.type);
+			SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluatePatternClause: Unknown pattern type %d\n", patternClause.type);
 			return {};
 		}
 

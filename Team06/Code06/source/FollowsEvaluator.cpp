@@ -1,5 +1,6 @@
 #include "FollowsEvaluator.h"
 #include "LoggingUtils.h"
+#include "TypeUtils.h"
 
 namespace PQL {
 	namespace FollowsEvaluator {
@@ -102,9 +103,14 @@ namespace PQL {
 					return {};
 				}
 				else {
-					ClauseResultEntry resultEntry;
-					resultEntry[arg2] = follower;
-					return { resultEntry };
+					if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(follower).getType(), synonymTable[arg2])) {
+						ClauseResultEntry resultEntry;
+						resultEntry[arg2] = follower;
+						return { resultEntry };
+					}
+					else {
+						return {};
+					}
 				}
 			}
 			else {
@@ -117,9 +123,14 @@ namespace PQL {
 					return {};
 				}
 				else {
-					ClauseResultEntry resultEntry;
-					resultEntry[arg1] = following;
-					return { resultEntry };
+					if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(following).getType(), synonymTable[arg1])) {
+						ClauseResultEntry resultEntry;
+						resultEntry[arg1] = following;
+						return { resultEntry };
+					}
+					else {
+						return {};
+					}
 				}
 			}
 		}
@@ -143,7 +154,8 @@ namespace PQL {
 				// Case 1: Wildcard, Synonym
 				ClauseResult clauseResult = {};
 				for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
-					if (database.followsKB.getFollowing(i) != 0) {
+					if (database.followsKB.getFollowing(i) != 0 &&
+						SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i).getType(), synonymTable[arg2])) {
 						ClauseResultEntry resultEntry;
 						resultEntry[arg2] = std::to_string(i);
 						clauseResult.emplace_back(resultEntry);
@@ -156,7 +168,8 @@ namespace PQL {
 				// Case 2: Synonym, Wildcard
 				ClauseResult clauseResult = {};
 				for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
-					if (database.followsKB.getFollower(i) != 0) {
+					if (database.followsKB.getFollower(i) != 0 &&
+						SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i).getType(), synonymTable[arg1])) {
 						ClauseResultEntry resultEntry;
 						resultEntry[arg1] = std::to_string(i);
 						clauseResult.emplace_back(resultEntry);
@@ -183,10 +196,13 @@ namespace PQL {
 			for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
 				StmtId follower = database.followsKB.getFollower(i);
 				if (follower != 0) {
-					ClauseResultEntry resultEntry;
-					resultEntry[arg1] = std::to_string(i);
-					resultEntry[arg2] = std::to_string(follower);
-					clauseResult.emplace_back(resultEntry);
+					if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i).getType(), synonymTable[arg1]) &&
+						SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(follower).getType(), synonymTable[arg2])) {
+						ClauseResultEntry resultEntry;
+						resultEntry[arg1] = std::to_string(i);
+						resultEntry[arg2] = std::to_string(follower);
+						clauseResult.emplace_back(resultEntry);
+					}
 				}
 			}
 			return clauseResult;
