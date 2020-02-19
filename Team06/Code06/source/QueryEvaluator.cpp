@@ -27,7 +27,33 @@ namespace PQL {
 		for (PatternClause pattern : query.patterns) {
 			clauseResults.emplace_back(evaluatePatternClause(pattern, query.synonymTable));
 		}
+
+		// Combine Results
+		ClauseResult result = combineClauseResults(clauseResults);
+		
 		return QueryResult();
+	}
+
+	std::vector<ClauseResult> combineTwoClauseResults(ClauseResult clauseResults1, ClauseResult clauseResults2) {
+
+	}
+
+	ClauseResult combineClauseResults(std::vector<ClauseResult> clauseResults) {
+		if (clauseResults.size() == 1) {
+			return clauseResults[0];
+		}
+		std::vector<ClauseResult> left;
+		std::vector<ClauseResult> right;
+		for (int i = 0; i < clauseResults.size() / 2; i++) {
+			left.emplace_back(clauseResults[i]);
+		}
+		for (int i = clauseResults.size() / 2; i < clauseResults.size(); i++) {
+			right.emplace_back(clauseResults[i]);
+		}
+		ClauseResult leftResult = combineClauseResults(left);
+		ClauseResult rightResult = combineClauseResults(right);
+		ClauseResult combinedResults = combineTwoClauseResults(leftResult, rightResult);
+		return combinedResults;
 	}
 
 	ClauseResult QueryEvaluator::evaluateRelationClause(RelationClause &relationClause, 

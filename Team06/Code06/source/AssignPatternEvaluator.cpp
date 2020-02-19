@@ -26,6 +26,7 @@ namespace PQL {
 		* Evaluates a single assign pattern clause on the given PKB where the inputs are one wildcard and one pattern.
 		*
 		* @param	database	The PKB to evaluate the clause on.
+		* @param	clause		The clause to evaluate.
 		* @return	The result of the evaluation.
 		*/
 		ClauseResult evaluateAssignPatternClauseWildPtn(PKB::PKB& database, PatternClause &clause) {
@@ -46,6 +47,7 @@ namespace PQL {
 		* Evaluates a single assign pattern clause on the given PKB where the inputs are one identifier and one wildcard.
 		*
 		* @param	database	The PKB to evaluate the clause on.
+		* @param	clause		The clause to evaluate.
 		* @return	The result of the evaluation.
 		*/
 		ClauseResult evaluateAssignPatternClauseIdWild(PKB::PKB& database, PatternClause& clause) {
@@ -68,6 +70,7 @@ namespace PQL {
 		* Evaluates a single assign pattern clause on the given PKB where the inputs are one identifier and one pattern.
 		*
 		* @param	database	The PKB to evaluate the clause on.
+		* @param	clause		The clause to evaluate.
 		* @return	The result of the evaluation.
 		*/
 		ClauseResult evaluateAssignPatternClauseIdPtn(PKB::PKB& database, PatternClause& clause) {
@@ -100,6 +103,8 @@ namespace PQL {
 		* Evaluates a single assign pattern clause on the given PKB where the inputs are one synonym and one wildcard.
 		*
 		* @param	database	The PKB to evaluate the clause on.
+		* @param	clause		The clause to evaluate.
+		* @param	synonymTable	The synonym table associated with the query containing the clause.
 		* @return	The result of the evaluation.
 		*/
 		ClauseResult evaluateAssignPatternClauseSynWild(PKB::PKB& database, PatternClause& clause,
@@ -124,6 +129,8 @@ namespace PQL {
 		* Evaluates a single assign pattern clause on the given PKB where the inputs are one synonym and one pattern.
 		*
 		* @param	database	The PKB to evaluate the clause on.
+		* @param	clause		The clause to evaluate.
+		* @param	synonymTable	The synonym table associated with the query containing the clause.
 		* @return	The result of the evaluation.
 		*/
 		ClauseResult evaluateAssignPatternClauseSynPtn(PKB::PKB& database, PatternClause& clause,
