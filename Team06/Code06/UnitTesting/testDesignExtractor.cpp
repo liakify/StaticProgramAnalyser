@@ -63,10 +63,10 @@ namespace UnitTesting
 			Assert::IsTrue(pkb.parentKB.parentStar(7, 9));
 			Assert::IsTrue(pkb.parentKB.parentStar(7, 10));
 
-			Assert::IsFalse(pkb.parentKB.parentStar(1, 6));
-			Assert::IsFalse(pkb.parentKB.parentStar(2, 6));
-			Assert::IsFalse(pkb.parentKB.parentStar(4, 6));
-			Assert::IsFalse(pkb.parentKB.parentStar(5, 6));
+			Assert::IsFalse(pkb.parentKB.parentStar(7, 11));
+			Assert::IsFalse(pkb.parentKB.parentStar(8, 11));
+			Assert::IsFalse(pkb.parentKB.parentStar(9, 11));
+			Assert::IsFalse(pkb.parentKB.parentStar(10, 11));
 
 			Assert::IsTrue(pkb.parentKB.parentStar(11, 12));
 			Assert::IsTrue(pkb.parentKB.parentStar(11, 14));
