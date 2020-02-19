@@ -6,9 +6,6 @@ namespace PKB {
     varIdGenerator = 0;
   }
 
-  // If varName is not in the VarTable, varName is inserted into the VarTable. 
-  // Else, the table remains unchanged.
-  // Returns the ID of the variable in the VarTable.
   VarId VarTable::insertVar(VarName varName) {
     if (nameIdTable.try_emplace(varName, varIdGenerator).second) {
       VarId thisId = varIdGenerator++;
@@ -20,13 +17,11 @@ namespace PKB {
     }
   }
 
-  // Returns the name of a variable at the given ID in the VarTable.
-      // Throws an exception if the id is not found in the table.
   VarName VarTable::get(VarId varId) {
     return idNameTable.at(varId); // throws out_of_range exception
   }
 
-  // Returns the ID of varName in the VarTable.If varName is not found, -1 is returned.
+
   VarId VarTable::getVarId(VarName varName) {
     try {
       return nameIdTable.at(varName);
