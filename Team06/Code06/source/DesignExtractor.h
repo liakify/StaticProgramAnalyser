@@ -13,19 +13,14 @@ namespace FrontEnd {
 	class DesignExtractor {
 	public:
 		/**
-		* Design Extractor constructor.
-		*
-		* @param	pkb		Reference to PKB to be updated.
-		*/
-		DesignExtractor(PKB::PKB& pkb);
-
-		/**
 		* Updates the PKB with secondary relationships.
 		* Relationships handled:
 		*	Follows*
 		*	Parent*
+		*
+		* @param	pkb		Reference to PKB to be updated.
 		*/
-		void run();
+		void run(PKB::PKB& pkb);
 
 	private:
 		PKB::PKB pkb;

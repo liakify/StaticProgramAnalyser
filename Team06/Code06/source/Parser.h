@@ -28,6 +28,7 @@ namespace FrontEnd {
 		/**
 		* Parses standalone SIMPLE expressions. PKB remains unmodified.
 		* 
+		* @param	exp						SIMPLE expression to be parsed.
 		* @throws	std::invalid_argument	if the SIMPLE source has syntax errors.
 		*/
 		Expression parseExpression(string exp);
