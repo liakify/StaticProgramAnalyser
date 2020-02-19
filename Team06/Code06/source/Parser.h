@@ -1,5 +1,4 @@
-#ifndef PARSER_H
-#define PARSER_H
+#pragma once
 
 #include <stdexcept>
 #include <regex>
@@ -76,4 +75,3 @@ namespace FrontEnd {
 		void populatePatternKB(StmtId stmtId, Expression exp);
 	};
 }
-#endif
