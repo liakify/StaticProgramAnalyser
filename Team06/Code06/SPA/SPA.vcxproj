@@ -16,6 +16,7 @@
     <ClCompile Include="..\source\FollowsEvaluator.cpp" />
     <ClCompile Include="..\source\FollowsKB.cpp" />
     <ClCompile Include="..\source\FollowsStarEvaluator.cpp" />
+    <ClCompile Include="..\source\FrontEnd.cpp" />
     <ClCompile Include="..\source\LoggingUtils.cpp" />
     <ClCompile Include="..\source\ModifiesEvaluator.cpp" />
     <ClCompile Include="..\source\ParentEvaluator.cpp" />
@@ -44,6 +45,7 @@
     <ClInclude Include="..\source\FollowsEvaluator.h" />
     <ClInclude Include="..\source\FollowsKB.h" />
     <ClInclude Include="..\source\FollowsStarEvaluator.h" />
+    <ClInclude Include="..\source\FrontEnd.h" />
     <ClInclude Include="..\source\LoggingUtils.h" />
     <ClInclude Include="..\source\ModifiesEvaluator.h" />
     <ClInclude Include="..\source\ParentEvaluator.h" />
