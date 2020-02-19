@@ -6,7 +6,6 @@ namespace PKB {
     stmtIdGenerator = 0;
   }
 
-  // Inserts stmt into the StmtTable. Returns the ID of the statement in the StmtTable.
   StmtId StmtTable::insertStmt(Statement stmt) {
     idStmtTable.insert(std::make_pair(stmtIdGenerator, stmt));
     StmtType thisType = stmt.getType();
@@ -21,14 +20,10 @@ namespace PKB {
     return thisId;
   }
 
-  // Returns the statement object at the given ID in the StmtTable. 
-  // Throws an exception if the ID is not found in the table.
   Statement StmtTable::get(StmtId stmtId) {
     return idStmtTable.at(stmtId); // throws out_of_range exception
   }
 
-  // Returns a list of statement IDs that match the specified statement type. 
-  // An empty list is returned if no such statements exist.
   list<StmtId> StmtTable::getStmtsByType(StmtType stmtType) {
     try {
       return typeIdsTable.at(stmtType);
@@ -38,7 +33,6 @@ namespace PKB {
     }
   }
 
-  // Returns the number of statements in the StmtTable.
   int StmtTable::size() {
     return idStmtTable.size();
   }
