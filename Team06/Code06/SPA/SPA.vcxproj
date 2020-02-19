@@ -32,6 +32,7 @@
     <ClCompile Include="..\source\PatternKB.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\source\Constants.h" />
     <ClInclude Include="..\source\FollowsKB.h" />
     <ClInclude Include="..\source\LoggingUtils.h" />
     <ClInclude Include="..\source\Parser.h" />
