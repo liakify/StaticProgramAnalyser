@@ -12,14 +12,19 @@ namespace PQL {
     class QueryProjector {
     public:
         /**
-          *  Constructor for QueryProjector class to format result from QueryResult
-          *
-          *  @param      result    ClauseResult returned by QueryEvaluator.
-          */
-        QueryProjector(ClauseResult &result);
+         *  Empty constructor for the QueryProjector class.
+         */
+        QueryProjector();
 
         /**
-          *  Constructor for QueryProjector class to format result from QueryResult
+         *  Update the query result being held by QueryProjector.
+         * 
+         *  @param      result      ClauseResult from QueryEvaluator.
+         */
+        void updateResult(ClauseResult &result);
+
+        /**
+          *  Format result (ClauseResult) received from QueryResult.
           *
           *  @return      List of strings containing query result.
           */
