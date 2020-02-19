@@ -13,6 +13,7 @@
   <ItemGroup>
     <ClCompile Include="..\source\DesignExtractor.cpp" />
     <ClCompile Include="..\source\FollowsKB.cpp" />
+    <ClCompile Include="..\source\FrontEnd.cpp" />
     <ClCompile Include="..\source\LoggingUtils.cpp" />
     <ClCompile Include="..\source\ParentKB.cpp" />
     <ClCompile Include="..\source\Parser.cpp" />
@@ -34,6 +35,7 @@
   <ItemGroup>
     <ClInclude Include="..\source\Constants.h" />
     <ClInclude Include="..\source\FollowsKB.h" />
+    <ClInclude Include="..\source\FrontEnd.h" />
     <ClInclude Include="..\source\LoggingUtils.h" />
     <ClInclude Include="..\source\Parser.h" />
     <ClInclude Include="..\source\ParentKB.h" />
