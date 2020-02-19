@@ -4,8 +4,8 @@ using std::invalid_argument;
 
 namespace FrontEnd {
 	PKB::PKB Parser::parseSimple(string src) {
+		this->pkb = PKB::PKB();
 		this->isExpression = false;
-		this->pkb = pkb;
 		this->src = src;
 		this->pos = 0;
 		program();
@@ -39,6 +39,7 @@ namespace FrontEnd {
 	}
 
 	void Parser::program() {
+		procedure();
 		while (this->pos < src.length()) {
 			procedure();
 		}

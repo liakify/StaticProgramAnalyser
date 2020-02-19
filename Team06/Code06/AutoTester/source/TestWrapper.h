@@ -1,5 +1,4 @@
-#ifndef TESTWRAPPER_H
-#define TESTWRAPPER_H
+#pragma once
 
 #include <string>
 #include <iostream>
@@ -27,5 +26,3 @@ private:
   FrontEnd::FrontEndManager frontEnd;
   PKB::PKB pkb;
 };
-
-#endif
