@@ -1,10 +1,10 @@
+#include "AssignPatternEvaluator.h"
 #include "FollowsEvaluator.h"
 #include "FollowsStarEvaluator.h"
 #include "LoggingUtils.h"
 #include "ModifiesEvaluator.h"
 #include "ParentEvaluator.h"
 #include "ParentStarEvaluator.h"
-#include "PatternEvaluator.h"
 #include "QueryEvaluator.h"
 #include "UsesEvaluator.h"
 
@@ -68,7 +68,22 @@ namespace PQL {
 	ClauseResult QueryEvaluator::evaluatePatternClause(PatternClause &patternClause, 
 		std::unordered_map<std::string, DesignEntity> &synonymTable) {
 		
-		return PatternEvaluator::evaluatePatternClause(this->database, patternClause, synonymTable);
+		switch (patternClause.type) {
+		case PatternType::ASSIGN_PATTERN:
+			return AssignPatternEvaluator::evaluateAssignPatternClause(this->database, patternClause, synonymTable);
+			break;
+		case PatternType::IF_PATTERN:
+			SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluatePatternClause: Evaluator for IF_PATTERN pattern type not implemented!");
+			return {};
+			break;
+		case PatternType::WHILE_PATTERN:
+			SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluatePatternClause: Evaluator for WHILE_PATTERN pattern type not implemented!");
+			return {};
+			break;
+		default:
+			SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluateRelationClause: Unknown pattern type %d\n", patternClause.type);
+			return {};
+		}
 
 	}
 

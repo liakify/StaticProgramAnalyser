@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\source\AssignPatternEvaluator.cpp" />
     <ClCompile Include="..\source\DesignExtractor.cpp" />
     <ClCompile Include="..\source\FollowsEvaluator.cpp" />
     <ClCompile Include="..\source\FollowsKB.cpp" />
@@ -21,7 +22,6 @@
     <ClCompile Include="..\source\ParentKB.cpp" />
     <ClCompile Include="..\source\ParentStarEvaluator.cpp" />
     <ClCompile Include="..\source\Parser.cpp" />
-    <ClCompile Include="..\source\PatternEvaluator.cpp" />
     <ClCompile Include="..\source\PKB.cpp" />
     <ClCompile Include="..\source\PQL.cpp" />
     <ClCompile Include="..\source\ProcTable.cpp" />
@@ -39,6 +39,7 @@
     <ClCompile Include="..\source\PatternKB.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\source\AssignPatternEvaluator.h" />
     <ClInclude Include="..\source\FollowsEvaluator.h" />
     <ClInclude Include="..\source\FollowsKB.h" />
     <ClInclude Include="..\source\FollowsStarEvaluator.h" />
@@ -48,7 +49,6 @@
     <ClInclude Include="..\source\ParentStarEvaluator.h" />
     <ClInclude Include="..\source\Parser.h" />
     <ClInclude Include="..\source\ParentKB.h" />
-    <ClInclude Include="..\source\PatternEvaluator.h" />
     <ClInclude Include="..\source\PKB.h" />
     <ClInclude Include="..\source\PQL.h" />
     <ClInclude Include="..\source\PQLTypes.h" />
