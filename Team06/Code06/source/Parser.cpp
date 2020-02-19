@@ -2,13 +2,14 @@
 
 using std::invalid_argument;
 
-namespace Parser{
-	void Parser::parseSimple(string src, PKB::PKB& pkb) {
+namespace FrontEnd {
+	PKB::PKB Parser::parseSimple(string src) {
+		this->pkb = PKB::PKB();
 		this->isExpression = false;
-		this->pkb = pkb;
 		this->src = src;
 		this->pos = 0;
 		program();
+		return this->pkb;
 	}
 
 	Expression Parser::parseExpression(string exp) {
@@ -38,6 +39,7 @@ namespace Parser{
 	}
 
 	void Parser::program() {
+		procedure();
 		while (this->pos < src.length()) {
 			procedure();
 		}
@@ -215,7 +217,7 @@ namespace Parser{
 		}
 		consume(regex("[\\s]*[(][\\s]*"));
 		CondExpr left = cond_expr();
-		consume(regex("[\\s]*[)][\\s]*(||)[\\s]*[(][\\s]*"));
+		consume(regex("[\\s]*[)][\\s]*(\\|\\|)[\\s]*[(][\\s]*"));
 		CondExpr right = cond_expr();
 		consume(regex("[\\s]*[)][\\s]*"));
 		return CondExpr(left, right);

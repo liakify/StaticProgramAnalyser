@@ -16,8 +16,8 @@ void ParentKB::addParent(StmtId stmtId1, StmtId stmtId2)
 		parentTable.insert(std::make_pair(stmtId2, parentRS()));
 	}
 
-	parentRS pRS1 = parentTable[stmtId1];
-	parentRS pRS2 = parentTable[stmtId2];
+	parentRS& pRS1 = parentTable[stmtId1];
+	parentRS& pRS2 = parentTable[stmtId2];
 
 	pRS1.directChildren.insert(stmtId2);
 	pRS2.parent = stmtId1;
