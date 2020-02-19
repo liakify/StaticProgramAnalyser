@@ -3,8 +3,6 @@
 
 #include "TestWrapper.h"
 #include "LoggingUtils.h"
-#include "Parser.h"
-#include "PQL.h"
 
 // implementation code of WrapperFactory - do NOT modify the next 5 lines
 AbstractWrapper* WrapperFactory::wrapper = 0;
@@ -33,7 +31,7 @@ void TestWrapper::parse(std::string filename) {
     std::ifstream ifs(filename);
     std::string program((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());;
     try {
-        parser.parseSimple(program, pkb);
+        this->pkb = frontEnd.parseSimple(program);
         // Expression e = parser.parseExpression(program);
     }
     catch (std::invalid_argument& e) {

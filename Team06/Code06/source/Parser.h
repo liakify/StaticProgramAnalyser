@@ -1,5 +1,4 @@
-#ifndef PARSER_H
-#define PARSER_H
+#pragma once
 
 #include <stdexcept>
 #include <regex>
@@ -11,7 +10,7 @@ using std::regex;
 using std::string;
 using namespace SIMPLE;
 
-namespace Parser {
+namespace FrontEnd {
 	/**
 	* The Parser class is used for parsing SIMPLE source code.
 	*/
@@ -21,14 +20,15 @@ namespace Parser {
 		* Parses full SIMPLE source and populates PKB accordingly.
 		* 
 		* @param	source					SIMPLE program string for parsing.
-		* @param	pkb					PKB reference for use when parsing.
+		* @return	PKB::PKB				A populated PKB instance
 		* @throws	std::invalid_argument	if the SIMPLE source has syntax errors.
 		*/
-		void parseSimple(string source, PKB::PKB& pkb);
+		PKB::PKB parseSimple(string source);
 
 		/**
 		* Parses standalone SIMPLE expressions. PKB remains unmodified.
 		* 
+		* @param	exp						SIMPLE expression to be parsed.
 		* @throws	std::invalid_argument	if the SIMPLE source has syntax errors.
 		*/
 		Expression parseExpression(string exp);
@@ -76,4 +76,3 @@ namespace Parser {
 		void populatePatternKB(StmtId stmtId, Expression exp);
 	};
 }
-#endif
