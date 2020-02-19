@@ -11,13 +11,18 @@ namespace PQL {
 		* @param	synonymTable	The synonym table associated with the query containing the clause.
 		* @return	The results of the evaluation.
 		*/
-		ClauseResult evaluateAssignPatternClause(const PKB::PKB& database, const PatternClause& clause,
-			const unordered_map<string, DesignEntity>& synonymTable) {
-			return vector<ClauseResultEntry>();
+		ClauseResult evaluateAssignPatternClause(PKB::PKB& database, PatternClause& clause,
+			unordered_map<string, DesignEntity>& synonymTable) {
+			
+			ArgType argType1 = clause.getArgs().first.first;
+			ArgType argType2 = clause.getArgs().second.first;
+
+			return ClauseResult();
+
 		}
 
-		ClauseResult evaluatePatternClause(const PKB::PKB& database, const PatternClause& clause,
-			const unordered_map<string, DesignEntity>& synonymTable) {
+		ClauseResult evaluatePatternClause(PKB::PKB& database, PatternClause& clause,
+			unordered_map<string, DesignEntity>& synonymTable) {
 
 			switch (clause.type) {
 			case PatternType::ASSIGN_PATTERN:

@@ -4,6 +4,7 @@
 #include "ModifiesEvaluator.h"
 #include "ParentEvaluator.h"
 #include "ParentStarEvaluator.h"
+#include "PatternEvaluator.h"
 #include "QueryEvaluator.h"
 #include "UsesEvaluator.h"
 
@@ -66,7 +67,9 @@ namespace PQL {
 
 	ClauseResult QueryEvaluator::evaluatePatternClause(PatternClause &patternClause, 
 		std::unordered_map<std::string, DesignEntity> &synonymTable) {
-		return ClauseResult();
+		
+		return PatternEvaluator::evaluatePatternClause(this->database, patternClause, synonymTable);
+
 	}
 
 }
