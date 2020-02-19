@@ -3,43 +3,20 @@
 using std::invalid_argument;
 
 namespace Parser{
-	Parser::Parser(string source, PKB::PKB& pkb)
-		: src(source), pkb(pkb), isExpression(false) {
-	}
-
-	Parser::Parser() 
-		: isExpression(true) {
-	}
-
-	void Parser::parse() {
-		if (!isExpression) {
-			this->pos = 0;
-			program();
-		}
-		else {
-			throw std::logic_error(
-				"Parser object created as an Expression parser instead of a full SIMPLE parser."
-			);
-		}
+	void Parser::parseSimple(string src, PKB::PKB& pkb) {
+		this->isExpression = false;
+		this->pkb = pkb;
+		this->src = src;
+		this->pos = 0;
+		program();
 	}
 
 	Expression Parser::parseExpression(string exp) {
-		if (isExpression) {
-			this->src = exp;
-			this->pos = 0;
-			return expr();
-		}
-		else {
-			throw std::logic_error(
-				"Parser object created as a full SIMPLE parser instead of an Expression parser."
-			);
-		}
-	}
-
-	int analyse(string& src) {
-		Parser p = Parser(src, PKB::PKB());
-		p.parse();
-		return 0;
+		this->pkb = PKB::PKB();
+		this->isExpression = true;
+		this->src = exp;
+		this->pos = 0;
+		return expr();
 	}
 
 	string Parser::consume(regex rgx) {

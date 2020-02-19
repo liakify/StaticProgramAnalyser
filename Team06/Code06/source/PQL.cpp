@@ -2,9 +2,9 @@
 
 namespace PQL {
 
-    PQLManager::PQLManager(PKB::PKB& database) {
+    PQLManager::PQLManager(PKB::PKB& database) 
+        : evaluator(QueryEvaluator(database)) {
         this->parser = QueryParser();
-        this->evaluator = QueryEvaluator(database);
         this->formatter = QueryProjector();
     }
 
