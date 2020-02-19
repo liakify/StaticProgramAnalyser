@@ -20,10 +20,10 @@ namespace FrontEnd {
 		* Parses full SIMPLE source and populates PKB accordingly.
 		* 
 		* @param	source					SIMPLE program string for parsing.
-		* @param	pkb					PKB reference for use when parsing.
+		* @return	PKB::PKB				A populated PKB instance
 		* @throws	std::invalid_argument	if the SIMPLE source has syntax errors.
 		*/
-		void parseSimple(string source, PKB::PKB& pkb);
+		PKB::PKB parseSimple(string source);
 
 		/**
 		* Parses standalone SIMPLE expressions. PKB remains unmodified.

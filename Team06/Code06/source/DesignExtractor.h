@@ -18,15 +18,15 @@ namespace FrontEnd {
 		*	Follows*
 		*	Parent*
 		*
-		* @param	pkb		Reference to PKB to be updated.
+		* @param	pkb			Reference to PKB to be updated.
+		* @return	PKB::PKB	The updated PKB instance.
 		*/
-		void run(PKB::PKB& pkb);
+		PKB::PKB run(PKB::PKB& pkb);
 
 	private:
 		PKB::PKB pkb;
 
 		void populateFollowStar();
-
 		void populateParentStar();
 	};
 }

@@ -6,10 +6,8 @@ namespace FrontEnd {
 	}
 
 	PKB::PKB FrontEndManager::parseSimple(string source) {
-		PKB::PKB pkb = PKB::PKB();
-		parser.parseSimple(source, pkb);
-		de.run(pkb);
-		return pkb;
+		PKB::PKB pkb = parser.parseSimple(source);
+		return de.run(pkb);
 	}
 	Expression FrontEndManager::parseExpression(string exp) {
 		return parser.parseExpression(exp);

@@ -7,6 +7,7 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 namespace UnitTesting {
 	TEST_CLASS(TestParser) {
 		std::string VALID_SRC = "procedure p{read x;}";
+		std::string VALID_SRC2 = "procedure p{x = c+3;    while(x<4) {print x;} }";
 		std::string INVALID_SRC = "procedure p{read 1;}";
 		std::string VALID_EXP = "(x+1)*2%3/(zz+9)+10-5*y";
 		std::string VALID_EXP2 = "(  ( x+1)*2%3/( zz+ 9)  +10 -(5*y))";
@@ -14,14 +15,14 @@ namespace UnitTesting {
 		FrontEnd::Parser parser = FrontEnd::Parser();
 
 		TEST_METHOD(ParseSimpleTest) {
-			PKB::PKB pkb = PKB::PKB();
 			try {
-				parser.parseSimple(VALID_SRC, pkb);
+				parser.parseSimple(VALID_SRC);
+				parser.parseSimple(VALID_SRC2);
 			}
 			catch (std::invalid_argument&) {
 				Assert::IsTrue(false);
 			}
-			Assert::ExpectException<std::invalid_argument>([this, &pkb] {parser.parseSimple(INVALID_SRC, pkb); });
+			Assert::ExpectException<std::invalid_argument>([this] {parser.parseSimple(INVALID_SRC); });
 		}
 
 		TEST_METHOD(ParseExpressionTest) {

@@ -1,10 +1,11 @@
 #include "DesignExtractor.h"
 
 namespace FrontEnd {
-	void DesignExtractor::run(PKB::PKB& pkb) {
+	PKB::PKB DesignExtractor::run(PKB::PKB& pkb) {
 		this->pkb = pkb;
 		populateFollowStar();
 		populateParentStar();
+		return this->pkb;
 	}
 
 	void DesignExtractor::populateFollowStar() {

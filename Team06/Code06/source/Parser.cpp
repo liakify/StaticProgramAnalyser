@@ -3,12 +3,13 @@
 using std::invalid_argument;
 
 namespace FrontEnd {
-	void Parser::parseSimple(string src, PKB::PKB& pkb) {
+	PKB::PKB Parser::parseSimple(string src) {
 		this->isExpression = false;
 		this->pkb = pkb;
 		this->src = src;
 		this->pos = 0;
 		program();
+		return this->pkb;
 	}
 
 	Expression Parser::parseExpression(string exp) {
