@@ -543,7 +543,7 @@ namespace PQL {
         else if (arg.find('\"') != string::npos) {
             // An identifier - strip leading and trailing "
             arg.pop_back();
-            return { ArgType::IDENTIFIER, arg.erase(0, 1) };
+            return { ArgType::IDENTIFIER, QueryUtils::trimString(arg.erase(0, 1)) };
         }
         else {
             return { ArgType::SYNONYM, arg };
