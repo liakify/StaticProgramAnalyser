@@ -105,30 +105,21 @@ namespace PQL {
         return substrings;
     }
 
-    vector<string> QueryUtils::dualMatch(string input, string first, string second) {
-        vector<string> clauses;
+    vector<string> QueryUtils::matchAll(string input, string pattern) {
+        vector<string> matches;
 
-        regex COMPOUND_CLAUSE(first);
-        smatch ccmatch;
+        regex INPUT_PATTERN(pattern);
+        smatch ssmatch;
 
-        while (regex_search(input, ccmatch, COMPOUND_CLAUSE)) {
-            for (auto token : ccmatch) {
-                string cclause = token.str();
-
-                regex CLAUSE(second);
-                smatch cmatch;
-
-                while (regex_search(cclause, cmatch, CLAUSE)) {
-                    for (auto atom : cmatch) {
-                        clauses.push_back(QueryUtils::trimString(atom.str()));
-                    }
-                    cclause = cmatch.suffix().str();
-                }
-                input = ccmatch.suffix().str();
+        while (regex_search(input, ssmatch, INPUT_PATTERN)) {
+            for (auto match : ssmatch) {
+                string token = match.str();
+                matches.push_back(trimString(token));
             }
+            input = ssmatch.suffix().str();
         }
 
-        return clauses;
+        return matches;
     }
 
 }

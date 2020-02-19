@@ -23,11 +23,16 @@ namespace PQL {
 
         // Extract last statement (Select <var> (constraints)...)
         string queryBody = statements.back();
+        
+        bool hasValidTarget;
+        string queryBodySuffix;
+        tie(hasValidTarget, queryBodySuffix) = parseQueryTarget(query, queryBody);
+        if (!hasValidEntities) return query;
 
-        parseQueryTarget(query, queryBody);
-
+        bool hasValidClauses;
         vector<string> relationClauses, patternClauses;
-        tie(relationClauses, patternClauses) = splitConstraints(queryBody);
+        tie(hasValidClauses, relationClauses, patternClauses) = splitConstraints(query, queryBodySuffix);
+        if (!hasValidClauses) return query;
 
         parseRelationClauses(query, relationClauses);
         parsePatternClauses(query, patternClauses);
@@ -221,20 +226,46 @@ namespace PQL {
         return statements;
     }
 
-    // Assumes syntactically invalid compound clauses do not exist after syntax checking, e.g.
+    // Assumes invalid connected clauses do not exist after syntax checking, e.g.
     // Select a such that Modifies (a, v) and such that Parent (a, w) and pattern (v, _)
     // C++ regex does not support negative lookbehind, (?<!(x))y - match y only if not preceded by x
+    // Consumes compound clauses from start to end, terminating early if failing to do so before
+    // reaching the end of the query string (i.e. there exists some incorrect syntax)
     // Returns an array of clauses
-    pair<vector<string>, vector<string>> QueryParser::splitConstraints(string queryBody) {
-        string RELATION_COMPOUND_CLAUSE = "such that +[A-Za-z*]+ *\\([\\w,\\s]*\\)(?: and +[A-Za-z*]+ *\\([\\w,\\s]*\\))*";
-        string PATTERN_COMPOUND_CLAUSE = "pattern +[A-Za-z][A-Za-z0-9]* *\\([\\w,\"\\+\\-\\*\\/\\%\\s]*\\)(?: and +[A-Za-z][A-Za-z0-9]* *\\([\\w,\"\\+\\-\\*\\/\\%\\s]*\\))*";
-        string RELATION_CLAUSE = "[A-Za-z*]+ *\\([\\w,\\s]*\\)";
+    tuple<bool, vector<string>, vector<string>> QueryParser::splitConstraints(Query& query, string queryBodySuffix) {
+        regex RELATION_COMPOUND_CLAUSE("^ *such that +[A-Za-z*]+ *\\([\\w,\"\\s]*\\)(?: and +[A-Za-z*]+ *\\([\\w,\"\\s]*\\))*");
+        regex PATTERN_COMPOUND_CLAUSE("^ *pattern +[A-Za-z][A-Za-z0-9]* *\\([\\w,\"\\+\\-\\*\\/\\%\\s]*\\)(?: and +[A-Za-z][A-Za-z0-9]* *\\([\\w,\"\\+\\-\\*\\/\\%\\s]*\\))*");
+        smatch ccmatch;
+
+        string RELATION_CLAUSE = "[A-Za-z*]+ *\\([\\w,\"\\s]*\\)";
         string PATTERN_CLAUSE = "[A-Za-z][A-Za-z0-9]* *\\([\\w,\"\\+\\-\\*\\/\\%\\s]*\\)";
 
-        vector<string> relationClauses = QueryUtils::dualMatch(queryBody, RELATION_COMPOUND_CLAUSE, RELATION_CLAUSE);
-        vector<string> patternClauses = QueryUtils::dualMatch(queryBody, PATTERN_COMPOUND_CLAUSE, PATTERN_CLAUSE);
+        vector<string> relationClauses;
+        vector<string> patternClauses;
 
-        return { relationClauses, patternClauses };
+        // Continue consuming compound clauses until the end of the query
+        while (queryBodySuffix.length() > 0) {
+
+            // Attempt to consume either a relation or pattern compound clause
+            // If this fails, then the query string is synctactically invalid
+            if (regex_search(queryBodySuffix, ccmatch, RELATION_COMPOUND_CLAUSE)) {
+                vector<string> relations = QueryUtils::matchAll(ccmatch.str(), RELATION_CLAUSE);
+                relationClauses.insert(relationClauses.end(), relations.begin(), relations.end());
+            }
+            else if (regex_search(queryBodySuffix, ccmatch, PATTERN_COMPOUND_CLAUSE)) {
+                vector<string> patterns = QueryUtils::matchAll(ccmatch.str(), PATTERN_CLAUSE);
+                patternClauses.insert(patternClauses.end(), patterns.begin(), patterns.end());
+            }
+            else {
+                // SYNTAX ERROR: compound clauses fail to obey query syntax somewhere in query body
+                query.status = "syntax error: compound clauses in query body violate query body syntax";
+                return { false, relationClauses, patternClauses };
+            }
+
+            queryBodySuffix = QueryUtils::leftTrim(ccmatch.suffix().str());
+        }
+
+        return { true, relationClauses, patternClauses };
     }
 
     bool QueryParser::parseDeclarations(Query& query, vector<string> statements) {
@@ -279,7 +310,7 @@ namespace PQL {
         return true;
     }
 
-    bool QueryParser::parseQueryTarget(Query& query, string queryBody) {
+    pair<bool, string> QueryParser::parseQueryTarget(Query& query, string queryBody) {
         vector<string> targets;
 
         regex SINGLE_TARGET("Select +[A-Za-z][A-Za-z0-9]*(?! *,)");
@@ -288,7 +319,7 @@ namespace PQL {
 
         // Attempt to match a single return type, otherwise match a tuple return type
         if (regex_search(queryBody, tmatch, SINGLE_TARGET)) {
-            // Strip leading "Select "
+            // Strip leading "Select"
             string targetEntity = QueryUtils::leftTrim(tmatch.str().erase(0, 6));
             targets.push_back(targetEntity);
         }
@@ -302,20 +333,17 @@ namespace PQL {
         }
         else {
             // SYNTAX ERROR: unable to parse select target to entities
-            query.status = "syntax error: target entity not correctly specified";
-            return false;
+            query.status = "syntax error: missing query target or target entities not correctly specified";
+            return { false, "" };
         }
 
-        if (targets.size() < 0) {
-            // SYNTAX ERROR: Query must have at least one return target
-            query.status = "syntax error: missing query target";
-            return false;
-        }
-        else {
-            query.targetEntities = targets;
-        }
+        // Extract the suffix of the query body (following the query return types)
+        string queryBodySuffix = QueryUtils::leftTrim(tmatch.suffix().str());
 
-        return true;
+        assert(targets.size() >= 1);
+        query.targetEntities = targets;
+
+        return { true, queryBodySuffix };
     }
 
     bool QueryParser::parseRelationClauses(Query& query, vector<string> relationClauses) {
