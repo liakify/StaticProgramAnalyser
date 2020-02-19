@@ -92,7 +92,8 @@ namespace PQL {
 
         /**
          *  Splits a string with a given delimiter once, returning a pair of the
-         *  trimmed prefix and suffix strings.
+         *  trimmed prefix and suffix strings. If the delimiting character is not found in
+         *  the input string, returns a pair of the trimmed input string and an empty string.
          *
          *  @param      input       input string to split.
          *  @param      delim       delimiting character.

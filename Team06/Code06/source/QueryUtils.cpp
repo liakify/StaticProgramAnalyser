@@ -29,7 +29,7 @@ namespace PQL {
     bool QueryUtils::isValidEntityRef(string input) {
         if (input.find('\"') != string::npos) {
             // String contains a " - interpret literally as variable name
-            regex VALID_ENTITY_REFERENCE("^\"[A-Za-z][A-Za-z0-9]*\"$");
+            regex VALID_ENTITY_REFERENCE("^\" *[A-Za-z][A-Za-z0-9]* *\"$");
             smatch ematch;
 
             // Entity reference is not a string of form "<identifier>"
@@ -81,6 +81,11 @@ namespace PQL {
 
     pair<string, string> QueryUtils::splitString(string input, char delim) {
         int pos = input.find_first_of(delim);
+        if (pos == string::npos) {
+            // Delimiting character not found
+            return { trimString(input), "" };
+        }
+
         return { trimString(input.substr(0, pos)), trimString(input.substr(pos + 1, string::npos)) };
     }
 
