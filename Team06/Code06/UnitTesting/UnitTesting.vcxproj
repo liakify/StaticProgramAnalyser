@@ -162,6 +162,11 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="testPatternKB.cpp" />
+    <ClCompile Include="testModifiesKB.cpp" />
+    <ClCompile Include="testUsesKB.cpp" />
+    <ClCompile Include="testParentKB.cpp" />
+    <ClCompile Include="testFollowsKB.cpp" />
     <ClCompile Include="testParser.cpp" />
     <ClCompile Include="testSimple.cpp" />
     <ClCompile Include="testStmtListTable.cpp" />
