@@ -1,5 +1,6 @@
 #include "QueryProjector.h"
 #include <string>
+#include "assert.h"
 
 namespace PQL {
 
@@ -12,8 +13,10 @@ namespace PQL {
 
         for (auto itr1 = this->result.begin();
               itr1 != this->result.end(); ++itr1) {
-            for (auto itr2 =*itr1.begin(); itr2 != *itr1.end(); ++ itr2) {
-              formattedResult.push_back(std::to_string(*itr2->second));
+            ClauseResultEntry clauseResultEntry = *itr1;
+            for (auto itr2 = clauseResultEntry.begin(); itr2 != clauseResultEntry.end(); ++ itr2) {
+              auto value = itr2->second;
+              formattedResult.push_back(std::to_string(value));
             }
         }
 
