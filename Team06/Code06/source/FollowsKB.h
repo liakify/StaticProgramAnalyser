@@ -33,12 +33,14 @@ public:
 	bool followStar(StmtId stmtId1, StmtId stmtId2);
 
 	/*
-		Returns statement ID s for which Follow(stmtId, s) is true.
+		Returns statement ID s for which Follow(stmtId, s) is true. 
+		If stmtId is not found or stmtId has no follower, INVALID_STMT_ID 0 is returned.
 	*/
 	StmtId getFollower(StmtId stmtId);
 
 	/*
 		Returns statement ID s for which Follow(s, stmtId) is true.
+		If stmtId is not found or stmtId is not following another statement, NVALID_STMT_ID 0 is returned.
 	*/
 	StmtId getFollowing(StmtId stmtId);
 

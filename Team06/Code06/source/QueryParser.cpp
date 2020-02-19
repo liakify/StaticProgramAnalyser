@@ -528,10 +528,10 @@ namespace PQL {
         }
         else if (arg.at(0) == '_') {
             // Inclusive pattern string
-            return { ArgType::INCLUSIVE_PATTERN, arg };
+            return { ArgType::INCLUSIVE_PATTERN, QueryUtils::stripPattern(arg) };
         }
         else {
-            return { ArgType::EXACT_PATTERN, arg };
+            return { ArgType::EXACT_PATTERN, QueryUtils::stripPattern(arg) };
         }
     }
 

@@ -83,6 +83,14 @@ namespace PQL {
         static string trimString(string input);
 
         /**
+         *  Strips an input pattern argument string of all whitespaces and quotation marks.
+         *
+         *  @param      input       input pattern string to strip.
+         *  @return     an equivalent pattern string without spaces and quotation marks.
+         */
+        static string stripPattern(string input);
+
+        /**
          *  Splits a string with a given delimiter once, returning a pair of the
          *  trimmed prefix and suffix strings.
          *
@@ -114,5 +122,5 @@ namespace PQL {
          */
         static vector<string> dualMatch(string input, string first, string second);
     };
-    
+
 }

@@ -34,11 +34,13 @@ public:
 
 	/*
 		Returns statement ID s for which Parent(s, stmtId) is true.
+		If stmtId is not found or stmtId has no parent, INVALID_STMT_ID 0 is returned.
 	*/
 	StmtId getParent(StmtId stmtId);
 
 	/*
-		Returns child statement ID s for which Parent(stmtId, s) is true.
+		Returns unordered_set of child statement IDs for which Parent(stmtId, s) is true.
+		If stmtId is not found or stmtId has direct children, empty set is returned.
 	*/
 	std::unordered_set<StmtId> getDirectChildren(StmtId stmtId);
 

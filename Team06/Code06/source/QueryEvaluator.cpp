@@ -1,3 +1,4 @@
+#include "AssignPatternEvaluator.h"
 #include "FollowsEvaluator.h"
 #include "FollowsStarEvaluator.h"
 #include "LoggingUtils.h"
@@ -6,6 +7,7 @@
 #include "ParentStarEvaluator.h"
 #include "QueryEvaluator.h"
 #include "UsesEvaluator.h"
+#include "TypeUtils.h"
 
 namespace PQL {
 	
@@ -13,7 +15,7 @@ namespace PQL {
 		this->database = database;
 	}
 
-	QueryResult QueryEvaluator::evaluateQuery(Query &query) {
+	ClauseResult QueryEvaluator::evaluateQuery(Query &query) {
 		// Results of Clauses
 		std::vector<ClauseResult> clauseResults;
 
@@ -26,7 +28,128 @@ namespace PQL {
 		for (PatternClause pattern : query.patterns) {
 			clauseResults.emplace_back(evaluatePatternClause(pattern, query.synonymTable));
 		}
-		return QueryResult();
+
+		// Combine Results
+		ClauseResult combinedResult = combineClauseResults(clauseResults);
+		
+		// Extract necessary results to answer query
+		ClauseResult result = extractQueryResults(query, combinedResult);
+
+		return result;
+	}
+
+	ClauseResult QueryEvaluator::extractQueryResults(Query &query, ClauseResult& combinedResult) {
+		// Iteration 1: Only one target entity
+		if (combinedResult.empty()) {
+			return {};
+		}
+
+		Synonym target = query.targetEntities[0];
+
+
+		if (combinedResult[0].find(target) != combinedResult[0].end()) {
+			ClauseResult result;
+			for (ClauseResultEntry entry : combinedResult) {
+				ClauseResultEntry resultEntry;
+				resultEntry[target] = entry[target];
+				result.emplace_back(resultEntry);
+			}
+			return result;
+		}
+		else {
+			if (query.synonymTable[target] == DesignEntity::VARIABLE) {
+				ClauseResult result;
+				std::unordered_set<VarName> vars = database.varTable.getAllVars();
+				for (VarName var : vars) {
+					ClauseResultEntry resultEntry;
+					resultEntry[target] = var;
+					result.emplace_back(resultEntry);
+				}
+				return result;
+			}
+			else {
+				ClauseResult result;
+				for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
+					if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i).getType(), query.synonymTable[target])) {
+						ClauseResultEntry resultEntry;
+						resultEntry[target] = std::to_string(i);
+						result.emplace_back(resultEntry);
+					}
+				}
+				return result;
+			}
+		}
+	}
+
+	ClauseResultEntry QueryEvaluator::combineTwoClauseResultEntries(ClauseResultEntry &entry1, ClauseResultEntry &entry2, 
+		std::unordered_set<Synonym> &commonSynonyms) {
+
+		ClauseResultEntry combinedEntry;
+		for (std::pair<std::string, std::string> field : entry1) {
+			combinedEntry.insert(field);
+		}
+
+		for (std::pair<std::string, std::string> field : entry2) {
+			if (commonSynonyms.find(field.first) == commonSynonyms.end()) {
+				combinedEntry.insert(field);
+			}
+		}
+
+		return combinedEntry;
+	}
+
+	bool QueryEvaluator::checkCommonSynonyms(ClauseResultEntry &entry1, ClauseResultEntry &entry2, 
+		std::unordered_set<Synonym> &commonSynonyms) {
+		for (Synonym synonym : commonSynonyms) {
+			if (entry1[synonym] != entry2[synonym]) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	ClauseResult QueryEvaluator::combineTwoClauseResults(ClauseResult clauseResults1, ClauseResult clauseResults2) {
+		if (clauseResults1.empty() || clauseResults2.empty()) {
+			return {};
+		}
+
+		// Extract common synonyms
+		std::unordered_set<Synonym> commonSynonyms;
+		for (std::pair<std::string, std::string> entry : clauseResults1[0]) {
+			if (clauseResults2[0].find(entry.first) != clauseResults2[0].end()) {
+				commonSynonyms.insert(entry.first);
+			}
+		}
+
+		ClauseResult combinedResult;
+		// Perform a Cartesian Product
+		for (ClauseResultEntry entry1 : clauseResults1) {
+			for (ClauseResultEntry entry2 : clauseResults2) {
+				if (checkCommonSynonyms(entry1, entry2, commonSynonyms)) {
+					combinedResult.emplace_back(combineTwoClauseResultEntries(entry1, entry2, commonSynonyms));
+				}
+			}
+		}
+
+		return combinedResult;
+	}
+
+	ClauseResult QueryEvaluator::combineClauseResults(std::vector<ClauseResult> clauseResults) {
+		if (clauseResults.size() == 1) {
+			return clauseResults[0];
+		}
+		std::vector<ClauseResult> left;
+		std::vector<ClauseResult> right;
+		for (int i = 0; i < (int)clauseResults.size() / 2; i++) {
+			left.emplace_back(clauseResults[i]);
+		}
+		for (int i = clauseResults.size() / 2; i < (int)clauseResults.size(); i++) {
+			right.emplace_back(clauseResults[i]);
+		}
+		ClauseResult leftResult = combineClauseResults(left);
+		ClauseResult rightResult = combineClauseResults(right);
+		ClauseResult combinedResults = combineTwoClauseResults(leftResult, rightResult);
+		return combinedResults;
 	}
 
 	ClauseResult QueryEvaluator::evaluateRelationClause(RelationClause &relationClause, 
@@ -66,7 +189,24 @@ namespace PQL {
 
 	ClauseResult QueryEvaluator::evaluatePatternClause(PatternClause &patternClause, 
 		std::unordered_map<std::string, DesignEntity> &synonymTable) {
-		return ClauseResult();
+		
+		switch (patternClause.type) {
+		case PatternType::ASSIGN_PATTERN:
+			return AssignPatternEvaluator::evaluateAssignPatternClause(this->database, patternClause, synonymTable);
+			break;
+		case PatternType::IF_PATTERN:
+			SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluatePatternClause: Evaluator for IF_PATTERN pattern type not implemented!");
+			return {};
+			break;
+		case PatternType::WHILE_PATTERN:
+			SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluatePatternClause: Evaluator for WHILE_PATTERN pattern type not implemented!");
+			return {};
+			break;
+		default:
+			SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluatePatternClause: Unknown pattern type %d\n", patternClause.type);
+			return {};
+		}
+
 	}
 
 }

@@ -1,5 +1,6 @@
 #include "ModifiesEvaluator.h"
 #include "LoggingUtils.h"
+#include "TypeUtils.h"
 
 namespace PQL {
 	namespace ModifiesEvaluator {
@@ -94,9 +95,11 @@ namespace PQL {
 			std::unordered_set<StmtId> modifyingStmts = database.modifiesKB.getAllStmtsModifyVar(arg2);
 			ClauseResult clauseResult;
 			for (StmtId stmt : modifyingStmts) {
-				ClauseResultEntry resultEntry;
-				resultEntry[arg1] = stmt;
-				clauseResult.emplace_back(resultEntry);
+				if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(stmt).getType(), synonymTable[arg1])) {
+					ClauseResultEntry resultEntry;
+					resultEntry[arg1] = stmt;
+					clauseResult.emplace_back(resultEntry);
+				}
 			}
 
 			return clauseResult;
@@ -120,9 +123,11 @@ namespace PQL {
 			ClauseResult clauseResult = {};
 			for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
 				if (database.modifiesKB.getAllVarsModifiedByStmt(i).size() > 0) {
-					ClauseResultEntry resultEntry;
-					resultEntry[arg1] = std::to_string(i);
-					clauseResult.emplace_back(resultEntry);
+					if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i).getType(), synonymTable[arg1])) {
+						ClauseResultEntry resultEntry;
+						resultEntry[arg1] = std::to_string(i);
+						clauseResult.emplace_back(resultEntry);
+					}
 				}
 			}
 			return clauseResult;
@@ -143,12 +148,14 @@ namespace PQL {
 
 			ClauseResult clauseResult = {};
 			for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
-				std::unordered_set<VarId> modifiedVars = database.modifiesKB.getAllVarsModifiedByStmt(i);
-				for (VarId var : modifiedVars) {
-					ClauseResultEntry resultEntry;
-					resultEntry[arg1] = std::to_string(i);
-					resultEntry[arg2] = var;
-					clauseResult.emplace_back(resultEntry);
+				if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i).getType(), synonymTable[arg1])) {
+					std::unordered_set<VarId> modifiedVars = database.modifiesKB.getAllVarsModifiedByStmt(i);
+					for (VarId var : modifiedVars) {
+						ClauseResultEntry resultEntry;
+						resultEntry[arg1] = std::to_string(i);
+						resultEntry[arg2] = var;
+						clauseResult.emplace_back(resultEntry);
+					}
 				}
 			}
 			return clauseResult;
