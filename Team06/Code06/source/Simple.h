@@ -1,5 +1,4 @@
-#ifndef SIMPLE_H
-#define SIMPLE_H
+#pragma once
 
 #include <string>
 #include <vector>
@@ -170,5 +169,3 @@ namespace SIMPLE {
 		StmtListId stmtLstId;
 	};
 }
-
-#endif
