@@ -7,6 +7,7 @@
 #include "ParentStarEvaluator.h"
 #include "QueryEvaluator.h"
 #include "UsesEvaluator.h"
+#include "TypeUtils.h"
 
 namespace PQL {
 	
@@ -29,9 +30,55 @@ namespace PQL {
 		}
 
 		// Combine Results
-		ClauseResult result = combineClauseResults(clauseResults);
+		ClauseResult combinedResult = combineClauseResults(clauseResults);
 		
+		// Extract necessary results to answer query
+		ClauseResult result = extractQueryResults(query, combinedResult);
+
 		return QueryResult();
+	}
+
+	ClauseResult QueryEvaluator::extractQueryResults(Query &query, ClauseResult& combinedResult) {
+		// Iteration 1: Only one target entity
+		if (combinedResult.empty()) {
+			return {};
+		}
+
+		Synonym target = query.targetEntities[0];
+
+
+		if (combinedResult[0].find(target) != combinedResult[0].end()) {
+			ClauseResult result;
+			for (ClauseResultEntry entry : combinedResult) {
+				ClauseResultEntry resultEntry;
+				resultEntry[target] = entry[target];
+				result.emplace_back(resultEntry);
+			}
+			return result;
+		}
+		else {
+			if (query.synonymTable[target] == DesignEntity::VARIABLE) {
+				ClauseResult result;
+				std::unordered_set<VarName> vars = database.varTable.getAllVars();
+				for (VarName var : vars) {
+					ClauseResultEntry resultEntry;
+					resultEntry[target] = var;
+					result.emplace_back(resultEntry);
+				}
+				return result;
+			}
+			else {
+				ClauseResult result;
+				for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
+					if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i).getType(), query.synonymTable[target])) {
+						ClauseResultEntry resultEntry;
+						resultEntry[target] = std::to_string(i);
+						result.emplace_back(resultEntry);
+					}
+				}
+				return result;
+			}
+		}
 	}
 
 	ClauseResultEntry QueryEvaluator::combineTwoClauseResultEntries(ClauseResultEntry &entry1, ClauseResultEntry &entry2, 

@@ -53,6 +53,15 @@ namespace PQL {
 			std::unordered_map<std::string, DesignEntity> &synonymTable);
 
 		/**
+		* Summarizes the combined results of the clauses into the results needed to answer the given query.
+		*
+		* @param	query	The query to evaluate.
+		* @param	combinedResults The combined results of all the clauses.
+		* @return	The results necessary to answer the given query.
+		*/
+		ClauseResult extractQueryResults(Query &query, ClauseResult &combinedResults);
+
+		/**
 		* Combines two clause result entries that have identical values for all common synonyms.
 		*
 		* @param	entry1	The first result entry.
