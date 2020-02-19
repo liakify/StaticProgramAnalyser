@@ -2,7 +2,7 @@
 
 using std::invalid_argument;
 
-namespace Parser{
+namespace FrontEnd {
 	void Parser::parseSimple(string src, PKB::PKB& pkb) {
 		this->isExpression = false;
 		this->pkb = pkb;

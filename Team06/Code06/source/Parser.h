@@ -11,7 +11,7 @@ using std::regex;
 using std::string;
 using namespace SIMPLE;
 
-namespace Parser {
+namespace FrontEnd {
 	/**
 	* The Parser class is used for parsing SIMPLE source code.
 	*/

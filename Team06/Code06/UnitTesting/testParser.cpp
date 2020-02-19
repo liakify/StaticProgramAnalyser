@@ -11,7 +11,7 @@ namespace UnitTesting {
 		std::string VALID_EXP = "(x+1)*2%3/(zz+9)+10-5*y";
 		std::string VALID_EXP2 = "(  ( x+1)*2%3/( zz+ 9)  +10 -(5*y))";
 		std::string INVALID_EXP = "(x+1)*2%3/(zz+9)+10-5*";
-		Parser::Parser parser = Parser::Parser();
+		FrontEnd::Parser parser = FrontEnd::Parser();
 
 		TEST_METHOD(ParseSimpleTest) {
 			PKB::PKB pkb = PKB::PKB();
@@ -25,7 +25,7 @@ namespace UnitTesting {
 		}
 
 		TEST_METHOD(ParseExpressionTest) {
-			Parser::Parser expParser = Parser::Parser();
+			FrontEnd::Parser expParser = FrontEnd::Parser();
 			Expression exp = expParser.parseExpression(VALID_EXP);
 			std::string expected = "((((((x+1)*2)%3)/(zz+9))+10)-(5*y))";
 			Assert::AreEqual(expected, exp.getStr());
