@@ -16,8 +16,8 @@ void FollowsKB::addFollows(StmtId stmtId1, StmtId stmtId2)
 		followsTable.insert(std::make_pair(stmtId2, followsRS()));
 	}
 
-	followsRS fRS1 = followsTable[stmtId1];
-	followsRS fRS2 = followsTable[stmtId2];
+	followsRS& fRS1 = followsTable[stmtId1];
+	followsRS& fRS2 = followsTable[stmtId2];
 
 	fRS1.follower = stmtId2;
 	fRS2.following = stmtId1;
