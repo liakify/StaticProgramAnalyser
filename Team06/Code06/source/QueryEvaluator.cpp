@@ -34,20 +34,69 @@ namespace PQL {
 		return QueryResult();
 	}
 
-	std::vector<ClauseResult> combineTwoClauseResults(ClauseResult clauseResults1, ClauseResult clauseResults2) {
+	ClauseResultEntry QueryEvaluator::combineTwoClauseResultEntries(ClauseResultEntry &entry1, ClauseResultEntry &entry2, 
+		std::unordered_set<Synonym> &commonSynonyms) {
 
+		ClauseResultEntry combinedEntry;
+		for (std::pair<std::string, std::string> field : entry1) {
+			combinedEntry.insert(field);
+		}
+
+		for (std::pair<std::string, std::string> field : entry2) {
+			if (commonSynonyms.find(field.first) == commonSynonyms.end()) {
+				combinedEntry.insert(field);
+			}
+		}
+
+		return combinedEntry;
 	}
 
-	ClauseResult combineClauseResults(std::vector<ClauseResult> clauseResults) {
+	bool QueryEvaluator::checkCommonSynonyms(ClauseResultEntry &entry1, ClauseResultEntry &entry2, 
+		std::unordered_set<Synonym> &commonSynonyms) {
+		for (Synonym synonym : commonSynonyms) {
+			if (entry1[synonym] != entry2[synonym]) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	ClauseResult QueryEvaluator::combineTwoClauseResults(ClauseResult clauseResults1, ClauseResult clauseResults2) {
+		if (clauseResults1.empty() || clauseResults2.empty()) {
+			return {};
+		}
+
+		// Extract common synonyms
+		std::unordered_set<Synonym> commonSynonyms;
+		for (std::pair<std::string, std::string> entry : clauseResults1[0]) {
+			if (clauseResults2[0].find(entry.first) != clauseResults2[0].end()) {
+				commonSynonyms.insert(entry.first);
+			}
+		}
+
+		ClauseResult combinedResult;
+		// Perform a Cartesian Product
+		for (ClauseResultEntry entry1 : clauseResults1) {
+			for (ClauseResultEntry entry2 : clauseResults2) {
+				if (checkCommonSynonyms(entry1, entry2, commonSynonyms)) {
+					combinedResult.emplace_back(combineTwoClauseResultEntries(entry1, entry2, commonSynonyms));
+				}
+			}
+		}
+
+		return combinedResult;
+	}
+
+	ClauseResult QueryEvaluator::combineClauseResults(std::vector<ClauseResult> clauseResults) {
 		if (clauseResults.size() == 1) {
 			return clauseResults[0];
 		}
 		std::vector<ClauseResult> left;
 		std::vector<ClauseResult> right;
-		for (int i = 0; i < clauseResults.size() / 2; i++) {
+		for (int i = 0; i < (int)clauseResults.size() / 2; i++) {
 			left.emplace_back(clauseResults[i]);
 		}
-		for (int i = clauseResults.size() / 2; i < clauseResults.size(); i++) {
+		for (int i = clauseResults.size() / 2; i < (int)clauseResults.size(); i++) {
 			right.emplace_back(clauseResults[i]);
 		}
 		ClauseResult leftResult = combineClauseResults(left);

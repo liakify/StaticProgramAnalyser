@@ -51,5 +51,44 @@ namespace PQL {
 		*/
 		ClauseResult evaluatePatternClause(PatternClause &patternClause, 
 			std::unordered_map<std::string, DesignEntity> &synonymTable);
+
+		/**
+		* Combines two clause result entries that have identical values for all common synonyms.
+		*
+		* @param	entry1	The first result entry.
+		* @param	entry2	The second result entry.
+		* @param	commonSynonyms	The synonyms that are common between the two entries.
+		* @return	The combined result entries.
+		*/
+		ClauseResultEntry combineTwoClauseResultEntries(ClauseResultEntry& entry1, ClauseResultEntry& entry2,
+			std::unordered_set<Synonym>& commonSynonyms);
+
+		/**
+		* Checks if two clause result entries have identical values for all common synonyms.
+		*
+		* @param	entry1	The first result entry.
+		* @param	entry2	The second result entry.
+		* @param	commonSynonyms	The synonyms that are common between the two entries.
+		* @return	True if all all common synonyms have identical values, false otherwise.
+		*/
+		bool checkCommonSynonyms(ClauseResultEntry& entry1, ClauseResultEntry& entry2,
+			std::unordered_set<Synonym>& commonSynonyms);
+
+		/**
+		* Combines two sets of clause result entries.
+		* 
+		* @param	clauseResults1	The first set of clause result entries.
+		* @param	clauseResults2	The first set of clause result entries.
+		* @return	The combined set of clause result entries.
+		*/
+		ClauseResult combineTwoClauseResults(ClauseResult clauseResults1, ClauseResult clauseResults2);
+
+		/**
+		* Combines a list of clause results.
+		* 
+		* @param	clauseResults	The list of clause results to combine.
+		* @return	The combined clause result.
+		*/
+		ClauseResult combineClauseResults(std::vector<ClauseResult> clauseResults);
 	};
 }
