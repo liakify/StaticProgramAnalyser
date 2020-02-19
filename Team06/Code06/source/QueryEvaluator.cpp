@@ -15,7 +15,7 @@ namespace PQL {
 		this->database = database;
 	}
 
-	QueryResult QueryEvaluator::evaluateQuery(Query &query) {
+	ClauseResult QueryEvaluator::evaluateQuery(Query &query) {
 		// Results of Clauses
 		std::vector<ClauseResult> clauseResults;
 
@@ -35,7 +35,7 @@ namespace PQL {
 		// Extract necessary results to answer query
 		ClauseResult result = extractQueryResults(query, combinedResult);
 
-		return QueryResult();
+		return result;
 	}
 
 	ClauseResult QueryEvaluator::extractQueryResults(Query &query, ClauseResult& combinedResult) {

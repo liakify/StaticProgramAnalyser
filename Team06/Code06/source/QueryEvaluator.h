@@ -27,7 +27,7 @@ namespace PQL {
 		* @param	query	The query to be evaluated.
 		* @return	The results of the evaluation
 		*/
-		QueryResult evaluateQuery(Query &query);
+		ClauseResult evaluateQuery(Query &query);
 
 	private:
 		PKB::PKB database;
