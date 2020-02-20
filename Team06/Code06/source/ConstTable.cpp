@@ -3,7 +3,7 @@
 namespace PKB {
 
   ConstTable::ConstTable() {
-    ConstIdGenerator = 0;
+    ConstIdGenerator = 1;
   }
 
   ConstId ConstTable::insertConst(ConstValue ConstValue) {

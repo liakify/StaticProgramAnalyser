@@ -3,7 +3,7 @@
 namespace PKB {
 
   ProcTable::ProcTable() {
-    procIdGenerator = 0;
+    procIdGenerator = 1;
   }
 
   ProcId ProcTable::insertProc(Procedure proc) {
