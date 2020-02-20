@@ -51,10 +51,17 @@ namespace UnitTesting
 			stmtTable.insertStmtAtId(STMT_B, 1);
 			Assert::IsTrue(stmtTable.get(1).getType() == READ);
 			Assert::IsTrue(stmtTable.get(2).getType() == PRINT);
+			set = stmtTable.getStmtsByType(PRINT);
+			Assert::IsTrue(set.find(stmt_A_id) == set.end());
+			Assert::IsTrue(set.find(stmt_A_id + 1) != set.end());
 			stmtTable.insertStmtAtId(STMT_A, 1);
 			Assert::IsTrue(stmtTable.get(1).getType() == PRINT);
 			Assert::IsTrue(stmtTable.get(2).getType() == READ);
 			Assert::IsTrue(stmtTable.get(3).getType() == PRINT);
+			set = stmtTable.getStmtsByType(PRINT);
+			Assert::IsTrue(set.find(stmt_A_id) != set.end());
+			Assert::IsTrue(set.find(stmt_A_id + 1) == set.end());
+			Assert::IsTrue(set.find(stmt_A_id + 2) != set.end());
 		}
 	};
 }
