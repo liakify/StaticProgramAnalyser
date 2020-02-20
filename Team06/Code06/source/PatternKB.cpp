@@ -1,4 +1,5 @@
 #include "PatternKB.h"
+#include <stdexcept>
 
 void PatternKB::addLHSPattern(Pattern pattern, StmtId stmtId)
 {
@@ -12,10 +13,20 @@ void PatternKB::addRHSPattern(Pattern pattern, StmtId stmtId)
 
 std::unordered_set<StmtId> PatternKB::getLHSPatternStmts(Pattern pattern)
 {
-	return lhsTable[pattern];
+	try {
+		return lhsTable.at(pattern);
+	}
+	catch (const std::out_of_range & oor) {
+		return {};
+	}
 }
 
 std::unordered_set<StmtId> PatternKB::getRHSPatternStmts(Pattern pattern)
 {
-	return rhsTable[pattern];
+	try {
+		return rhsTable.at(pattern);
+	}
+	catch (const std::out_of_range & oor) {
+		return {};
+	}
 }

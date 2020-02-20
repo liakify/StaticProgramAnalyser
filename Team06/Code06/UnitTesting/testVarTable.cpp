@@ -34,11 +34,14 @@ namespace UnitTesting
 
 			PKB::VarTable varTable;
 
-			varTable.insertVar(VAR_NAME_A);
+			VarId insertVarResult = varTable.insertVar(VAR_NAME_A);
 			Assert::AreEqual(varTable.size(), 1);
 			
 			VarId a = varTable.getVarId(VAR_NAME_A);
 			Assert::AreNotEqual(a, -1);
+			Assert::AreEqual(a, insertVarResult);
+
+			// Checks for get()
 			Assert::AreEqual(varTable.get(a), VAR_NAME_A);
 		}
 	};

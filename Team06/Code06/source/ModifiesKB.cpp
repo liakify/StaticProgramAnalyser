@@ -1,8 +1,5 @@
 #include "ModifiesKB.h"
-
-/*
-	TODO: Exception handling for invalid inputs
-*/
+#include <stdexcept>
 
 void ModifiesKB::addStmtModifies(StmtId stmtId, VarId var)
 {
@@ -12,16 +9,31 @@ void ModifiesKB::addStmtModifies(StmtId stmtId, VarId var)
 
 bool ModifiesKB::stmtModifies(StmtId stmtId, VarId var)
 {
-	std::unordered_set<VarId> varSet = stmtVarTable[stmtId];
-	return varSet.find(var) != varSet.end();
+	try {
+		std::unordered_set<VarId> varSet = stmtVarTable.at(stmtId);
+		return varSet.find(var) != varSet.end();
+	}
+	catch (const std::out_of_range & oor) {
+		return false;
+	}
 }
 
 std::unordered_set<VarId> ModifiesKB::getAllVarsModifiedByStmt(StmtId stmtId)
 {
-	return stmtVarTable[stmtId];
+	try {
+		return stmtVarTable.at(stmtId);
+	}
+	catch (const std::out_of_range & oor) {
+		return {};
+	}
 }
 
 std::unordered_set<StmtId> ModifiesKB::getAllStmtsModifyVar(VarId var)
 {
-	return varStmtTable[var];
+	try {
+		return varStmtTable.at(var);
+	}
+	catch (const std::out_of_range & oor) {
+		return {};
+	}
 }

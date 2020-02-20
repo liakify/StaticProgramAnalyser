@@ -41,6 +41,7 @@
     <ClCompile Include="..\source\PatternKB.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\source\Constants.h" />
     <ClInclude Include="..\source\AssignPatternEvaluator.h" />
     <ClInclude Include="..\source\FollowsEvaluator.h" />
     <ClInclude Include="..\source\FollowsKB.h" />

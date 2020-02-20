@@ -177,6 +177,9 @@
     <ClInclude Include="..\source\TypeUtils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\source\Constants.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="..\source\FrontEnd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
