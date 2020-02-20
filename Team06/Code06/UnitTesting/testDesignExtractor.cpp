@@ -54,6 +54,27 @@ namespace UnitTesting
 			Assert::IsTrue(pkb.followsKB.followStar(2, 6));
 			Assert::IsTrue(pkb.followsKB.followStar(1, 6));
 			Assert::IsTrue(pkb.followsKB.followStar(3, 5));
+
+			Assert::IsFalse(pkb.followsKB.followStar(1, 3));
+			Assert::IsFalse(pkb.followsKB.followStar(1, 4));
+			Assert::IsFalse(pkb.followsKB.followStar(1, 5));
+			Assert::IsFalse(pkb.followsKB.followStar(3, 1));
+			Assert::IsFalse(pkb.followsKB.followStar(4, 1));
+			Assert::IsFalse(pkb.followsKB.followStar(5, 1));
+
+			Assert::IsFalse(pkb.followsKB.followStar(2, 3));
+			Assert::IsFalse(pkb.followsKB.followStar(2, 4));
+			Assert::IsFalse(pkb.followsKB.followStar(2, 5));
+			Assert::IsFalse(pkb.followsKB.followStar(3, 2));
+			Assert::IsFalse(pkb.followsKB.followStar(4, 2));
+			Assert::IsFalse(pkb.followsKB.followStar(5, 2));
+
+			Assert::IsFalse(pkb.followsKB.followStar(3, 6));
+			Assert::IsFalse(pkb.followsKB.followStar(4, 6));
+			Assert::IsFalse(pkb.followsKB.followStar(5, 6));
+			Assert::IsFalse(pkb.followsKB.followStar(6, 3));
+			Assert::IsFalse(pkb.followsKB.followStar(6, 4));
+			Assert::IsFalse(pkb.followsKB.followStar(6, 5));
 		}
 
 		TEST_METHOD(populateParentStar) {
@@ -63,10 +84,53 @@ namespace UnitTesting
 			Assert::IsTrue(pkb.parentKB.parentStar(7, 9));
 			Assert::IsTrue(pkb.parentKB.parentStar(7, 10));
 
+			Assert::IsFalse(pkb.parentKB.parentStar(8, 7));
+			Assert::IsFalse(pkb.parentKB.parentStar(9, 8));
+			Assert::IsFalse(pkb.parentKB.parentStar(10, 8));
+			Assert::IsFalse(pkb.parentKB.parentStar(9, 7));
+			Assert::IsFalse(pkb.parentKB.parentStar(10, 7));
+
 			Assert::IsFalse(pkb.parentKB.parentStar(7, 11));
 			Assert::IsFalse(pkb.parentKB.parentStar(8, 11));
 			Assert::IsFalse(pkb.parentKB.parentStar(9, 11));
 			Assert::IsFalse(pkb.parentKB.parentStar(10, 11));
+			Assert::IsFalse(pkb.parentKB.parentStar(7, 12));
+			Assert::IsFalse(pkb.parentKB.parentStar(8, 12));
+			Assert::IsFalse(pkb.parentKB.parentStar(9, 12));
+			Assert::IsFalse(pkb.parentKB.parentStar(10, 12));
+			Assert::IsFalse(pkb.parentKB.parentStar(7, 13));
+			Assert::IsFalse(pkb.parentKB.parentStar(8, 13));
+			Assert::IsFalse(pkb.parentKB.parentStar(9, 13));
+			Assert::IsFalse(pkb.parentKB.parentStar(10, 13));
+			Assert::IsFalse(pkb.parentKB.parentStar(7, 14));
+			Assert::IsFalse(pkb.parentKB.parentStar(8, 14));
+			Assert::IsFalse(pkb.parentKB.parentStar(9, 14));
+			Assert::IsFalse(pkb.parentKB.parentStar(10, 14));
+			Assert::IsFalse(pkb.parentKB.parentStar(7, 15));
+			Assert::IsFalse(pkb.parentKB.parentStar(8, 15));
+			Assert::IsFalse(pkb.parentKB.parentStar(9, 15));
+			Assert::IsFalse(pkb.parentKB.parentStar(10, 15));
+
+			Assert::IsFalse(pkb.parentKB.parentStar(11, 7));
+			Assert::IsFalse(pkb.parentKB.parentStar(11, 8));
+			Assert::IsFalse(pkb.parentKB.parentStar(11, 9));
+			Assert::IsFalse(pkb.parentKB.parentStar(11, 10));
+			Assert::IsFalse(pkb.parentKB.parentStar(12, 7));
+			Assert::IsFalse(pkb.parentKB.parentStar(12, 8));
+			Assert::IsFalse(pkb.parentKB.parentStar(12, 9));
+			Assert::IsFalse(pkb.parentKB.parentStar(12, 10));
+			Assert::IsFalse(pkb.parentKB.parentStar(13, 7));
+			Assert::IsFalse(pkb.parentKB.parentStar(13, 8));
+			Assert::IsFalse(pkb.parentKB.parentStar(13, 8));
+			Assert::IsFalse(pkb.parentKB.parentStar(13, 10));
+			Assert::IsFalse(pkb.parentKB.parentStar(14, 7));
+			Assert::IsFalse(pkb.parentKB.parentStar(14, 8));
+			Assert::IsFalse(pkb.parentKB.parentStar(14, 9));
+			Assert::IsFalse(pkb.parentKB.parentStar(14, 10));
+			Assert::IsFalse(pkb.parentKB.parentStar(15, 7));
+			Assert::IsFalse(pkb.parentKB.parentStar(15, 8));
+			Assert::IsFalse(pkb.parentKB.parentStar(15, 9));
+			Assert::IsFalse(pkb.parentKB.parentStar(15, 10));
 
 			Assert::IsTrue(pkb.parentKB.parentStar(11, 12));
 			Assert::IsTrue(pkb.parentKB.parentStar(11, 14));
@@ -74,6 +138,13 @@ namespace UnitTesting
 			Assert::IsTrue(pkb.parentKB.parentStar(14, 15));
 			Assert::IsTrue(pkb.parentKB.parentStar(11, 14));
 			Assert::IsTrue(pkb.parentKB.parentStar(11, 15));
+
+			Assert::IsFalse(pkb.parentKB.parentStar(12, 11));
+			Assert::IsFalse(pkb.parentKB.parentStar(14, 11));
+			Assert::IsFalse(pkb.parentKB.parentStar(13, 12));
+			Assert::IsFalse(pkb.parentKB.parentStar(15, 14));
+			Assert::IsFalse(pkb.parentKB.parentStar(14, 11));
+			Assert::IsFalse(pkb.parentKB.parentStar(15, 11));
 		}
 	};
 }
