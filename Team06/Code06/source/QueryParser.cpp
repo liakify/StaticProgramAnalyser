@@ -412,7 +412,10 @@ namespace PQL {
                     relation = { clause, relationClass, parseStmtRef(arg1), INVALID_ARG, INVALID_ARG, parseEntityRef(arg2) };
                 }
                 else if (QueryUtils::isValidEntityRef(arg1)) {
-                    relation = { clause, relationClass, INVALID_ARG, INVALID_ARG, parseEntityRef(arg1), parseEntityRef(arg2) };
+                    relation = { 
+                        clause, relationClass == RelationType::USESS ? RelationType::USESP : RelationType::MODIFIESP,
+                        INVALID_ARG, INVALID_ARG, parseEntityRef(arg1), parseEntityRef(arg2)
+                    };
                 }
                 else {
                     // SYNTAX ERROR: cannot be interpreted either as statement or entity ref
