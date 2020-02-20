@@ -19,6 +19,13 @@ namespace PQL {
 		// Results of Clauses
 		std::vector<ClauseResult> clauseResults;
 
+		// Add table containing "TRUE" to handle empty queries
+		ClauseResult trueClauseResult;
+		ClauseResultEntry trueClauseResultEntry;
+		trueClauseResultEntry["_RESULT"] = "TRUE";
+		trueClauseResult.emplace_back(trueClauseResultEntry);
+		clauseResults.emplace_back(trueClauseResult);
+
 		// Evaluate Relation Clauses
 		for (RelationClause relation : query.relations) {
 			clauseResults.emplace_back(evaluateRelationClause(relation, query.synonymTable));
@@ -41,11 +48,11 @@ namespace PQL {
 	ClauseResult QueryEvaluator::extractQueryResults(Query &query, ClauseResult& combinedResult) {
 		// Iteration 1: Only one target entity
 		if (combinedResult.empty()) {
+			SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::extractQueryResults: Empty Result!\n");
 			return {};
 		}
 
 		Synonym target = query.targetEntities[0];
-
 
 		if (combinedResult[0].find(target) != combinedResult[0].end()) {
 			// Target does not exist in table: treat results from table as true if table is not empty

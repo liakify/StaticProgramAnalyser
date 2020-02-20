@@ -30,9 +30,12 @@ namespace PQL {
 		* @return	The result of the evaluation.
 		*/
 		ClauseResult evaluateAssignPatternClauseWildPtn(PKB::PKB& database, PatternClause &clause) {
+			
 			Pattern arg2 = clause.getArgs().second.second;
 			
 			std::unordered_set<StmtId> stmts = database.patternKB.getRHSPatternStmts(arg2);
+			
+			ClauseResult clauseResult;
 			for (StmtId stmt : stmts) {
 				if (database.stmtTable.get(stmt).getType() == StmtType::ASSIGN) {
 					ClauseResultEntry resultEntry;
