@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <unordered_map>
+#include <unordered_set>
 #include "Types.h"
 
 using std::out_of_range;
@@ -43,6 +44,11 @@ namespace PKB {
      */
     VarId getVarId(VarName varName);
 
+    /**
+     *  Returns all variables in the VarTable
+     */
+    std::unordered_set<VarName> getAllVars();
+    
     /**
      *  Returns the number of variables in the VarTable
      */

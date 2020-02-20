@@ -12,15 +12,24 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\source\ConstTable.cpp" />
+    <ClCompile Include="..\source\AssignPatternEvaluator.cpp" />
     <ClCompile Include="..\source\DesignExtractor.cpp" />
+    <ClCompile Include="..\source\FollowsEvaluator.cpp" />
     <ClCompile Include="..\source\FollowsKB.cpp" />
+    <ClCompile Include="..\source\FollowsStarEvaluator.cpp" />
+    <ClCompile Include="..\source\FrontEnd.cpp" />
     <ClCompile Include="..\source\LoggingUtils.cpp" />
+    <ClCompile Include="..\source\ModifiesEvaluator.cpp" />
+    <ClCompile Include="..\source\ParentEvaluator.cpp" />
     <ClCompile Include="..\source\ParentKB.cpp" />
+    <ClCompile Include="..\source\ParentStarEvaluator.cpp" />
     <ClCompile Include="..\source\Parser.cpp" />
     <ClCompile Include="..\source\PKB.cpp" />
     <ClCompile Include="..\source\PQL.cpp" />
     <ClCompile Include="..\source\ProcTable.cpp" />
     <ClCompile Include="..\source\QueryEvaluator.cpp" />
+    <ClCompile Include="..\source\TypeUtils.cpp" />
+    <ClCompile Include="..\source\UsesEvaluator.cpp" />
     <ClCompile Include="..\source\QueryParser.cpp" />
     <ClCompile Include="..\source\QueryProjector.cpp" />
     <ClCompile Include="..\source\QueryUtils.cpp" />
@@ -34,8 +43,16 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\ConstTable.h" />
+    <ClInclude Include="..\source\Constants.h" />
+    <ClInclude Include="..\source\AssignPatternEvaluator.h" />
+    <ClInclude Include="..\source\FollowsEvaluator.h" />
     <ClInclude Include="..\source\FollowsKB.h" />
+    <ClInclude Include="..\source\FollowsStarEvaluator.h" />
+    <ClInclude Include="..\source\FrontEnd.h" />
     <ClInclude Include="..\source\LoggingUtils.h" />
+    <ClInclude Include="..\source\ModifiesEvaluator.h" />
+    <ClInclude Include="..\source\ParentEvaluator.h" />
+    <ClInclude Include="..\source\ParentStarEvaluator.h" />
     <ClInclude Include="..\source\Parser.h" />
     <ClInclude Include="..\source\ParentKB.h" />
     <ClInclude Include="..\source\PKB.h" />
@@ -49,6 +66,9 @@
     <ClInclude Include="..\source\StmtListTable.h" />
     <ClInclude Include="..\source\StmtTable.h" />
     <ClInclude Include="..\source\Simple.h" />
+    <ClInclude Include="..\source\TNode.h" />
+    <ClInclude Include="..\source\TypeUtils.h" />
+    <ClInclude Include="..\source\UsesEvaluator.h" />
     <ClInclude Include="..\source\VarTable.h" />
     <ClInclude Include="..\source\Types.h" />
     <ClInclude Include="..\source\UsesKB.h" />

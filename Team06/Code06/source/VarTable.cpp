@@ -31,6 +31,16 @@ namespace PKB {
     }
   }
 
+  // Returns all variables in the VarTable.
+  std::unordered_set<VarName> VarTable::getAllVars() {
+      std::unordered_set<VarName> vars;
+      for (std::pair<VarName, VarId> var : nameIdTable) {
+          vars.insert(var.first);
+      }
+      return vars;
+  }
+
+  // Returns the number of variables in the VarTable.
   int VarTable::size() {
     return nameIdTable.size();
   }
