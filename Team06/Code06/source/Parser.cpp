@@ -98,8 +98,9 @@ namespace FrontEnd {
 			this->pos = currentPos;
 		}
 		try {
+			StmtId stmtId = pkb.stmtTable.size() + 1;
 			WhileStmt whileStmt = while_stmt();
-			StmtId stmtId = pkb.stmtTable.insertStmt(whileStmt);
+			pkb.stmtTable.insertStmtAtId(whileStmt, stmtId);
 			StmtListId stmtLstId = whileStmt.getStmtLstId();
 			populateParentKB(stmtId, stmtLstId);
 			populateUsesKB(stmtId, whileStmt.getCondExpr().getVarIds());
@@ -111,8 +112,9 @@ namespace FrontEnd {
 			this->pos = currentPos;
 		}
 		try {
+			StmtId stmtId = pkb.stmtTable.size() + 1;
 			IfStmt ifStmt = if_stmt();
-			StmtId stmtId = pkb.stmtTable.insertStmt(ifStmt);
+			pkb.stmtTable.insertStmtAtId(ifStmt, stmtId);
 			StmtListId stmtLstId1 = ifStmt.getThenStmtLstId();
 			StmtListId stmtLstId2 = ifStmt.getElseStmtLstId();
 			populateParentKB(stmtId, stmtLstId1);

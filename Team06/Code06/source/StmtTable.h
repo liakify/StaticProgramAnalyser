@@ -10,7 +10,7 @@
 
 using std::out_of_range;
 using std::unordered_map;
-using std::list;
+using std::unordered_set;
 using SIMPLE::Statement;
 
 namespace PKB {
@@ -22,7 +22,7 @@ namespace PKB {
   class StmtTable
   {
     unordered_map<StmtId, Statement> idStmtTable;
-    unordered_map<StmtType, list<StmtId>> typeIdsTable;
+    unordered_map<StmtType, unordered_set<StmtId>> typeIdsTable;
     StmtId stmtIdGenerator;
 
   public:
@@ -30,9 +30,11 @@ namespace PKB {
     StmtTable();
 
     /**
-     *  nserts stmt into the StmtTable. Returns the ID of the statement in the StmtTable.
+     *  Inserts stmt into the StmtTable. Returns the ID of the statement in the StmtTable.
      */
     StmtId insertStmt(Statement stmt);
+
+    void insertStmtAtId(Statement stmt, StmtId id);
 
     /**
      *  Returns the statement object at the given ID in the StmtTable. 
@@ -44,7 +46,7 @@ namespace PKB {
      *  Returns a list of statement IDs that match the specified statement type.
      *  An empty list is returned if no such statements exist.
      */
-    list<StmtId> getStmtsByType(StmtType stmtType);
+    unordered_set<StmtId> getStmtsByType(StmtType stmtType);
 
     /**
      *  Returns the number of statements in the StmtTable.
