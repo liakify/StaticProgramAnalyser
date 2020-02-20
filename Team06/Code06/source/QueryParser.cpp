@@ -432,6 +432,8 @@ namespace PQL {
                 relations.push_back(relation);
             }
         }
+
+        query.relations = relations;
         return true;
     }
 
@@ -521,6 +523,8 @@ namespace PQL {
                 patterns.push_back(pattern);
             }
         }
+
+        query.patterns = patterns;
         return true;
     }
 
