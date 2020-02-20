@@ -34,10 +34,10 @@ namespace UnitTesting
 
 			PKB::ConstTable constTable;
 
-			VarId insertConstResult = constTable.insertConst(CONST_VALUE_A);
+			ConstId insertConstResult = constTable.insertConst(CONST_VALUE_A);
 			Assert::AreEqual(constTable.size(), 1);
 
-			VarId a = constTable.getConstId(CONST_VALUE_A);
+			ConstId a = constTable.getConstId(CONST_VALUE_A);
 			Assert::AreNotEqual(a, -1);
 			Assert::AreEqual(a, insertConstResult);
 
