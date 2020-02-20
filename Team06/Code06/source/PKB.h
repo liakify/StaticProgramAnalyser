@@ -6,6 +6,7 @@
 #include "StmtListTable.h"
 #include "StmtTable.h"
 #include "VarTable.h"
+#include "ConstTable.h"
 #include "ProcTable.h"
 #include "FollowsKB.h"
 #include "ParentKB.h"
@@ -25,6 +26,7 @@ namespace PKB {
   public:
     VarTable varTable;
     ProcTable procTable;
+    ConstTable constTable;
     StmtListTable stmtListTable;
     StmtTable stmtTable;
     FollowsKB followsKB;

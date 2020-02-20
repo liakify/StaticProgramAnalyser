@@ -44,6 +44,9 @@
     <ClCompile Include="testParser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="testConstTable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="testFollowsKB.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

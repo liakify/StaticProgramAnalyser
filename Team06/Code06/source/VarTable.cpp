@@ -3,7 +3,7 @@
 namespace PKB {
 
   VarTable::VarTable() {
-    varIdGenerator = 0;
+    varIdGenerator = 1;
   }
 
   VarId VarTable::insertVar(VarName varName) {
