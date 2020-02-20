@@ -34,6 +34,12 @@ namespace PKB {
      */
     StmtId insertStmt(Statement stmt);
 
+    /**
+     *  Inserts stmt into the StmtTable with a specified ID.
+     *  If an existing statement uses that ID, the displaced statement
+     *  takes on a new ID = existing id + 1. This happens sequentially until
+     *  all statements have a unique ID.
+     */
     void insertStmtAtId(Statement stmt, StmtId id);
 
     /**
