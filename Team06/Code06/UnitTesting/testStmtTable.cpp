@@ -47,6 +47,14 @@ namespace UnitTesting
 
 			Assert::IsFalse(set.empty());
 			Assert::IsFalse(set.find(stmt_A_id) == set.end());
+
+			stmtTable.insertStmtAtId(STMT_B, 1);
+			Assert::IsTrue(stmtTable.get(1).getType() == READ);
+			Assert::IsTrue(stmtTable.get(2).getType() == PRINT);
+			stmtTable.insertStmtAtId(STMT_A, 1);
+			Assert::IsTrue(stmtTable.get(1).getType() == PRINT);
+			Assert::IsTrue(stmtTable.get(2).getType() == READ);
+			Assert::IsTrue(stmtTable.get(3).getType() == PRINT);
 		}
 	};
 }
