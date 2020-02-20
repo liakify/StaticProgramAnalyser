@@ -6,6 +6,14 @@ namespace PKB {
     stmtIdGenerator = 1;
   }
 
+  StmtId StmtTable::reserveId() {
+      return stmtIdGenerator++;
+  }
+
+  void StmtTable::unreserveId() {
+      stmtIdGenerator--;
+  }
+
   StmtId StmtTable::insertStmt(Statement stmt) {
     idStmtTable.insert(std::make_pair(stmtIdGenerator, stmt));
     StmtType thisType = stmt.getType();
@@ -22,21 +30,19 @@ namespace PKB {
 
   void StmtTable::insertStmtAtId(Statement stmt, StmtId id) {
       try {
-          Statement displaced = idStmtTable.at(id);
-          idStmtTable.erase(id);
-          typeIdsTable.at(displaced.getType()).erase(id);
-
+          Statement s = get(id);
+      }
+      catch (std::out_of_range&) {
           idStmtTable.insert(std::make_pair(id, stmt));
           StmtType thisType = stmt.getType();
+
           unordered_set<StmtId> newSet{ id };
           if (!typeIdsTable.try_emplace(thisType, newSet).second) {
               typeIdsTable.at(thisType).insert(id);
           }
-          insertStmtAtId(displaced, id + 1);
+          return;
       }
-      catch (std::out_of_range&) {
-          insertStmt(stmt);
-      }
+      throw std::invalid_argument("ID already exists in StmtTable.");
   }
 
   Statement StmtTable::get(StmtId stmtId) {

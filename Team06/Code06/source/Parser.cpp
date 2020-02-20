@@ -98,7 +98,7 @@ namespace FrontEnd {
 			this->pos = currentPos;
 		}
 		try {
-			StmtId stmtId = pkb.stmtTable.size() + 1;
+			StmtId stmtId = pkb.stmtTable.reserveId();
 			WhileStmt whileStmt = while_stmt();
 			pkb.stmtTable.insertStmtAtId(whileStmt, stmtId);
 			StmtListId stmtLstId = whileStmt.getStmtLstId();
@@ -110,9 +110,10 @@ namespace FrontEnd {
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
+			pkb.stmtTable.unreserveId();
 		}
 		try {
-			StmtId stmtId = pkb.stmtTable.size() + 1;
+			StmtId stmtId = pkb.stmtTable.reserveId();
 			IfStmt ifStmt = if_stmt();
 			pkb.stmtTable.insertStmtAtId(ifStmt, stmtId);
 			StmtListId stmtLstId1 = ifStmt.getThenStmtLstId();
@@ -128,6 +129,7 @@ namespace FrontEnd {
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
+			pkb.stmtTable.unreserveId();
 		}
 		AssignStmt assignStmt = assign_stmt();
 		Expression exp = assignStmt.getExpr();
