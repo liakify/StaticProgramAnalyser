@@ -17,4 +17,6 @@ using StmtId = int;
 using StmtListId = int;
 
 using ConstValue = std::string;
+using ConstId = int;
+
 using Pattern = std::string;
