@@ -1,31 +1,18 @@
 procedure SelectParent {
 	read z;
-
 	if (a == 0) {
 		read x;
 		while (b == 0) {
-			read x;
-		}
+			assign = assign; }
 		if (c == 0) then {
-			read x;
-		} else {
-			read x;
-		}
-	}
-
+			print x; } else {
+			read x; } }
 	read z;
-
 	while (d == 0) {
 		read y;
 		if (e == 0) then {
-			read y;
-		} else {
-			read y;
-		}
+			read y; } else {
+			assign = assign y; }
 		while (f == 0) {
-			read y;
-		}
-	}
-
-	read z;
-}
+			print y; } }
+	read z; }
