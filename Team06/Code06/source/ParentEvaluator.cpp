@@ -103,8 +103,8 @@ namespace PQL {
 				for (StmtId child : directChildren) {
 					if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(child).getType(), synonymTable[arg2])) {
 						ClauseResultEntry resultEntry;
-						resultEntry[arg2] = child;
-						clauseResult.emplace_back(child);
+						resultEntry[arg2] = std::to_string(child);
+						clauseResult.emplace_back(resultEntry);
 					}
 				}
 				return clauseResult;
@@ -121,7 +121,7 @@ namespace PQL {
 				else {
 					if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(parent).getType(), synonymTable[arg1])) {
 						ClauseResultEntry resultEntry;
-						resultEntry[arg1] = parent;
+						resultEntry[arg1] = std::to_string(parent);
 						return { resultEntry };
 					}
 					else {
