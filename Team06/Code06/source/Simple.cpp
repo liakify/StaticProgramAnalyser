@@ -7,34 +7,35 @@ namespace SIMPLE {
 		this->str = getStr();
 		this->varSet = std::unordered_set<VarId>(left.varSet);
 		this->varSet.insert(right.varSet.begin(), right.varSet.end());
-		this->constSet = std::unordered_set<ConstValue>(left.constSet);
+		this->constSet = std::unordered_set<ConstId>(left.constSet);
 		this->constSet.insert(right.constSet.begin(), right.constSet.end());
-		this->patterns = std::unordered_set<ConstValue>(left.patterns);
+		this->patterns = std::unordered_set<Pattern>(left.patterns);
 		this->patterns.insert(right.patterns.begin(), right.patterns.end());
 		this->patterns.insert("_" + this->str + "_");
 	}
 
-	Expression::Expression(VarName name, VarId id)
+	Expression::Expression(std::string name, int id, ExprType type)
 		: left(*this), right(*this), op('\0'), str(name) {
-		this->varSet.insert(id);
-		this->patterns.insert("_" + this->str + "_");
-	}
-
-	Expression::Expression(ConstValue name)
-		: left(*this), right(*this), op('\0'), str(name) {
-		constSet.insert(name);
-		this->patterns.insert("_" + this->str + "_");
+		if (type == VAR) {
+			this->varSet.insert(id);
+			this->patterns.insert("_" + this->str + "_");
+		} else if (type == CONST) {
+			this->constSet.insert(id);
+			this->patterns.insert("_" + this->str + "_");
+		} else {
+			throw std::invalid_argument("ExprType is not VAR or CONST");
+		}
 	}
 
 	std::unordered_set<VarId> Expression::getVarIds() {
 		return this->varSet;
 	}
 	
-	std::unordered_set<ConstValue> Expression::getConstValues() {
+	std::unordered_set<ConstId> Expression::getConstValues() {
 		return this->constSet;
 	}
 
-	std::unordered_set<std::string> Expression::getPatterns() {
+	std::unordered_set<Pattern> Expression::getPatterns() {
 		return patterns;
 	}
 
@@ -55,7 +56,7 @@ namespace SIMPLE {
 		: leftCond(&left), rightCond(&right), leftFactor(nullptr), rightFactor(nullptr) {
 		this->varSet = std::unordered_set<VarId>(left.varSet);
 		this->varSet.insert(right.varSet.begin(), right.varSet.end());
-		this->constSet = std::unordered_set<ConstValue>(left.constSet);
+		this->constSet = std::unordered_set<ConstId>(left.constSet);
 		this->constSet.insert(right.constSet.begin(), right.constSet.end());
 	}
 
@@ -64,8 +65,8 @@ namespace SIMPLE {
 		this->varSet = std::unordered_set<VarId>(left.getVarIds());
 		std::unordered_set<VarId> temp = std::unordered_set<VarId>(right.getVarIds());
 		this->varSet.insert(temp.begin(), temp.end());
-		this->constSet = std::unordered_set<ConstValue>(left.getConstValues());
-		std::unordered_set<ConstValue> temp2 = std::unordered_set<ConstValue>(right.getConstValues());
+		this->constSet = std::unordered_set<ConstId>(left.getConstValues());
+		std::unordered_set<ConstId> temp2 = std::unordered_set<ConstId>(right.getConstValues());
 		this->constSet.insert(temp2.begin(), temp2.end());
 	}
 
@@ -73,7 +74,7 @@ namespace SIMPLE {
 		return this->varSet;
 	}
 
-	std::unordered_set<ConstValue> CondExpr::getConstValues() {
+	std::unordered_set<ConstId> CondExpr::getConstValues() {
 		return this->constSet;
 	}
 

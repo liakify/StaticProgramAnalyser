@@ -30,7 +30,7 @@ namespace PQL {
          *  @param      queryString     input PQL query string.
          *  @param      resultList      list to populate the query results with.
          */
-        void evaluateQuery(string queryString, list<string>& resultList);
+        void evaluateQuery(string queryString, std::list<string>& resultList);
     private:
         QueryParser parser;
         QueryEvaluator evaluator;

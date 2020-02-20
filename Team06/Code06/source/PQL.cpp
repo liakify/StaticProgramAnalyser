@@ -9,7 +9,7 @@ namespace PQL {
         this->formatter = QueryProjector();
     }
 
-    void PQLManager::evaluateQuery(string queryString, list<string>& resultList) {
+    void PQLManager::evaluateQuery(string queryString, std::list<string>& resultList) {
 
         // Validate then parse PQL query string into its query struct representation
         Query query = this->parser.parseQuery(queryString);

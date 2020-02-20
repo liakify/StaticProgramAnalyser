@@ -19,13 +19,14 @@ namespace UnitTesting {
 		VarId VAR_ID_1 = 1;
 		VarId VAR_ID_2 = 3;
 		ConstValue CONST_VALUE = "999";
+		ConstId CONST_ID = 1;
 		std::string PATTERN_1 = "_" + VAR_NAME_1 + "_";
 		std::string PATTERN_2 = "_" + VAR_NAME_2 + "_";
 		std::string PATTERN_3 = "_" + CONST_VALUE + "_";
 
-		Expression varExp = Expression(VAR_NAME_1, VAR_ID_1);
-		Expression varExp2 = Expression(VAR_NAME_2, VAR_ID_2);
-		Expression constExp = Expression(CONST_VALUE);
+		Expression varExp = Expression(VAR_NAME_1, VAR_ID_1, VAR);
+		Expression varExp2 = Expression(VAR_NAME_2, VAR_ID_2, VAR);
+		Expression constExp = Expression(CONST_VALUE, CONST_ID, CONST);
 		Expression exp = Expression(constExp, varExp, op);
 		Expression exp2 = Expression(varExp2, exp, op);
 
@@ -35,11 +36,11 @@ namespace UnitTesting {
 
 		TEST_METHOD(TestExpression) {
 			std::unordered_set<VarId> varSet;
-			std::unordered_set<ConstValue> constSet;
+			std::unordered_set<ConstId> constSet;
 			std::unordered_set<std::string> patterns;
 
 			Assert::AreEqual(VAR_NAME_1, varExp.getStr());
-			Assert::IsTrue(varExp.getConstValues() == std::unordered_set<ConstValue>());
+			Assert::IsTrue(varExp.getConstValues() == std::unordered_set<ConstId>());
 			varSet.insert(VAR_ID_1);
 			Assert::IsTrue(varExp.getVarIds() == varSet);
 			patterns.insert(PATTERN_1);
@@ -47,7 +48,7 @@ namespace UnitTesting {
 
 			Assert::AreEqual(CONST_VALUE, constExp.getStr());
 			Assert::IsTrue(constExp.getVarIds() == std::unordered_set<VarId>());
-			constSet.insert(CONST_VALUE);
+			constSet.insert(CONST_ID);
 			Assert::IsTrue(constExp.getConstValues() == constSet);
 			patterns = std::unordered_set<std::string>();
 			patterns.insert(PATTERN_3);
@@ -74,14 +75,14 @@ namespace UnitTesting {
 
 		TEST_METHOD(TestCondExpr) {
 			std::unordered_set<VarId> varSet, varSet2;
-			std::unordered_set<ConstValue> constSet;
+			std::unordered_set<ConstId> constSet;
 
 			varSet.insert(VAR_ID_2);
 			Assert::IsTrue(cond1.getVarIds() == varSet);
 			Assert::IsTrue(cond1.getConstValues() == constSet);
 
 			varSet2.insert(VAR_ID_1);
-			constSet.insert(CONST_VALUE);
+			constSet.insert(CONST_ID);
 			Assert::IsTrue(cond2.getVarIds() == varSet2);
 			Assert::IsTrue(cond2.getConstValues() == constSet);
 
