@@ -483,7 +483,7 @@ namespace PQL {
                     query.status = "syntax error: assign pattern has invalid pattern string";
                 }
                 else {
-                    pattern = { clause, PatternType::ASSIGN_PATTERN, parseEntityRef(referenceString), parsePattern(args.at(1)) };
+                    pattern = { clause, PatternType::ASSIGN_PATTERN, synonym, parseEntityRef(referenceString), parsePattern(args.at(1)) };
                 }
                 break;
             case DesignEntity::WHILE:
@@ -496,7 +496,7 @@ namespace PQL {
                     query.status = "syntax error: while pattern only supports '_' as second argument";
                 }
                 else {
-                    pattern = { clause, PatternType::WHILE_PATTERN, parseEntityRef(referenceString), parsePattern(args.at(1)) };
+                    pattern = { clause, PatternType::WHILE_PATTERN, synonym, parseEntityRef(referenceString), parsePattern(args.at(1)) };
                 }
                 break;
             case DesignEntity::IF:
@@ -510,7 +510,7 @@ namespace PQL {
                 }
                 else {
                     // Pattern struct only stores first two args since third arg is fixed as '_' anyway
-                    pattern = { clause, PatternType::IF_PATTERN, parseEntityRef(referenceString), parsePattern(args.at(1)) };
+                    pattern = { clause, PatternType::IF_PATTERN, synonym, parseEntityRef(referenceString), parsePattern(args.at(1)) };
                 }
                 break;
             default:

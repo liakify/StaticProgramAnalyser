@@ -149,12 +149,13 @@ namespace PQL {
 
     /**
      *  Struct representing a parsed pattern clause in a PQL query. Contains the
-     *  clause string, pattern type and method to retrieve its arguments. Arguments
-     *  are returned as pairs of ArgType and the argument string.
+     *  clause string, pattern type, synonym and method to retrieve its arguments.
+     *  Arguments are returned as pairs of ArgType and the argument string.
      */
     struct PatternClause {
         string clause;
         PatternType type;
+        string synonym;
         pair<ArgType, EntityRef> targetArg;
         pair<ArgType, Pattern> patternArg;
         pair<pair<ArgType, string>, pair<ArgType, string>> getArgs() {
