@@ -9,6 +9,11 @@ enum StmtType
 	PRINT, READ, IF, WHILE, CALL, ASSIGN
 };
 
+enum ExprType
+{
+	VAR, CONST
+};
+
 using VarName = std::string;
 using VarId = int;
 

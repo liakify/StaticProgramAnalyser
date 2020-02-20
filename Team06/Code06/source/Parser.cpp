@@ -340,20 +340,22 @@ namespace FrontEnd {
 		int currentPos = this->pos;
 		try {
 			if (isExpression) {
-				// Sentinel VarId value
-				return Expression(name(), -1);
+				// Sentinel id value
+				return Expression(name(), -1, VAR);
 			}
 			else {
 				VarId id = var_name();
 				VarName name = pkb.varTable.get(id);
-				return Expression(name, id);
+				return Expression(name, id, VAR);
 			}
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		try {
-			return Expression(const_value());
+			ConstId id = const_value();
+			ConstValue value = pkb.constTable.get(id);
+			return Expression(value, id, CONST);
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
@@ -372,8 +374,8 @@ namespace FrontEnd {
 		return name();
 	}
 
-	ConstValue Parser::const_value() {
-		return integer();
+	ConstId Parser::const_value() {
+		return pkb.constTable.insertConst(integer());
 	}
 
 	std::unordered_set<VarId> Parser::getAllUses(StmtListId sid) {
