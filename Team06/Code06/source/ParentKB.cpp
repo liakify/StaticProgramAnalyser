@@ -1,8 +1,5 @@
 #include "ParentKB.h"
-
-/*
-	TODO: Exception handling for invalid inputs
-*/
+#include <stdexcept>
 
 void ParentKB::addParent(StmtId stmtId1, StmtId stmtId2)
 {
@@ -16,8 +13,8 @@ void ParentKB::addParent(StmtId stmtId1, StmtId stmtId2)
 		parentTable.insert(std::make_pair(stmtId2, parentRS()));
 	}
 
-	parentRS& pRS1 = parentTable[stmtId1];
-	parentRS& pRS2 = parentTable[stmtId2];
+	parentRS& pRS1 = parentTable.at(stmtId1);
+	parentRS& pRS2 = parentTable.at(stmtId2);
 
 	pRS1.directChildren.insert(stmtId2);
 	pRS2.parent = stmtId1;
@@ -25,52 +22,102 @@ void ParentKB::addParent(StmtId stmtId1, StmtId stmtId2)
 
 bool ParentKB::parent(StmtId stmtId1, StmtId stmtId2)
 {
-	std::unordered_set<StmtId> stmtId1Children = parentTable[stmtId1].directChildren;
-	return stmtId1Children.find(stmtId2) != stmtId1Children.end();
+	try {
+		std::unordered_set<StmtId> stmtId1Children = parentTable.at(stmtId1).directChildren;
+		return stmtId1Children.find(stmtId2) != stmtId1Children.end();
+	}
+	catch (const std::out_of_range & oor) {
+		return false;
+	}
 }
 
 bool ParentKB::parentStar(StmtId stmtId1, StmtId stmtId2)
 {
-	std::unordered_set<StmtId> stmtId1AllChildren = parentTable[stmtId1].allChildren;
-	return stmtId1AllChildren.find(stmtId2) != stmtId1AllChildren.end();
+	try {
+		std::unordered_set<StmtId> stmtId1AllChildren = parentTable.at(stmtId1).allChildren;
+		return stmtId1AllChildren.find(stmtId2) != stmtId1AllChildren.end();
+	}
+	catch (const std::out_of_range & oor) {
+		return false;
+	}
 }
 
 StmtId ParentKB::getParent(StmtId stmtId)
 {
-	return parentTable[stmtId].parent;
+	try {
+		return parentTable.at(stmtId).parent;
+	}
+	catch (const std::out_of_range & oor) {
+		return INVALID_STMT_ID;
+	}
 }
 
 std::unordered_set<StmtId> ParentKB::getDirectChildren(StmtId stmtId)
 {
-	return parentTable[stmtId].directChildren;
+	try {
+		return parentTable.at(stmtId).directChildren;
+	}
+	catch (const std::out_of_range & oor) {
+		return {};
+	}
 }
 
 bool ParentKB::hasParent(StmtId stmtId)
 {
-	return parentTable[stmtId].parent != 0;
+	try {
+		return parentTable.at(stmtId).parent != 0;
+	}
+	catch (const std::out_of_range & oor) {
+		return false;
+	}
 }
 
 bool ParentKB::hasDirectChildren(StmtId stmtId)
 {
-	return parentTable[stmtId].directChildren.size() != 0;
+	try {
+		return parentTable.at(stmtId).directChildren.size() != 0;
+	}
+	catch (const std::out_of_range & oor) {
+		return false;
+	}
 }
 
 std::unordered_set<StmtId> ParentKB::getAllParents(StmtId stmtId)
 {
-	return parentTable[stmtId].allParents;
+	try {
+		return parentTable.at(stmtId).allParents;
+	}
+	catch (const std::out_of_range & oor) {
+		return {};
+	}
 }
 
 std::unordered_set<StmtId> ParentKB::getAllChildren(StmtId stmtId)
 {
-	return parentTable[stmtId].allChildren;
+	try {
+		return parentTable.at(stmtId).allChildren;
+	}
+	catch (const std::out_of_range & oor) {
+		return {};
+	}
 }
 
 void ParentKB::setAllChildren(StmtId stmtId, std::unordered_set<StmtId> children)
 {
-	parentTable[stmtId].allChildren = children;
+	try {
+		parentTable.at(stmtId).allChildren = children;
+	}
+	catch (const std::out_of_range & oor) {
+		return;
+	}
 }
 
 void ParentKB::setAllParents(StmtId stmtId, std::unordered_set<StmtId> parents)
 {
-	parentTable[stmtId].allParents = parents;
+	try {
+		parentTable.at(stmtId).allParents = parents;
+	}
+	catch (const std::out_of_range & oor) {
+		return;
+	}
 }

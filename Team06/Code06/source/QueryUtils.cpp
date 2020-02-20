@@ -29,7 +29,7 @@ namespace PQL {
     bool QueryUtils::isValidEntityRef(string input) {
         if (input.find('\"') != string::npos) {
             // String contains a " - interpret literally as variable name
-            regex VALID_ENTITY_REFERENCE("^\"[A-Za-z][A-Za-z0-9]*\"$");
+            regex VALID_ENTITY_REFERENCE("^\" *[A-Za-z][A-Za-z0-9]* *\"$");
             smatch ematch;
 
             // Entity reference is not a string of form "<identifier>"
@@ -81,6 +81,11 @@ namespace PQL {
 
     pair<string, string> QueryUtils::splitString(string input, char delim) {
         int pos = input.find_first_of(delim);
+        if (pos == string::npos) {
+            // Delimiting character not found
+            return { trimString(input), "" };
+        }
+
         return { trimString(input.substr(0, pos)), trimString(input.substr(pos + 1, string::npos)) };
     }
 
@@ -100,30 +105,21 @@ namespace PQL {
         return substrings;
     }
 
-    vector<string> QueryUtils::dualMatch(string input, string first, string second) {
-        vector<string> clauses;
+    vector<string> QueryUtils::matchAll(string input, string pattern) {
+        vector<string> matches;
 
-        regex COMPOUND_CLAUSE(first);
-        smatch ccmatch;
+        regex INPUT_PATTERN(pattern);
+        smatch ssmatch;
 
-        while (regex_search(input, ccmatch, COMPOUND_CLAUSE)) {
-            for (auto token : ccmatch) {
-                string cclause = token.str();
-
-                regex CLAUSE(second);
-                smatch cmatch;
-
-                while (regex_search(cclause, cmatch, CLAUSE)) {
-                    for (auto atom : cmatch) {
-                        clauses.push_back(QueryUtils::trimString(atom.str()));
-                    }
-                    cclause = cmatch.suffix().str();
-                }
-                input = ccmatch.suffix().str();
+        while (regex_search(input, ssmatch, INPUT_PATTERN)) {
+            for (auto match : ssmatch) {
+                string token = match.str();
+                matches.push_back(trimString(token));
             }
+            input = ssmatch.suffix().str();
         }
 
-        return clauses;
+        return matches;
     }
 
 }
