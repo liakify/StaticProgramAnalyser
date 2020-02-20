@@ -12,19 +12,38 @@ namespace PKB {
     StmtId thisId = stmtIdGenerator;
     stmtIdGenerator++;
 
-    list<StmtId> newList{ thisId };
-    if (!typeIdsTable.try_emplace(thisType, newList).second) {
-      typeIdsTable.at(thisType).push_back(thisId);
+    unordered_set<StmtId> newSet{ thisId };
+    if (!typeIdsTable.try_emplace(thisType, newSet).second) {
+      typeIdsTable.at(thisType).insert(thisId);
     }
 
     return thisId;
+  }
+
+  void StmtTable::insertStmtAtId(Statement stmt, StmtId id) {
+      try {
+          Statement displaced = idStmtTable.at(id);
+          idStmtTable.erase(id);
+          typeIdsTable.at(displaced.getType()).erase(id);
+
+          idStmtTable.insert(std::make_pair(id, stmt));
+          StmtType thisType = stmt.getType();
+          unordered_set<StmtId> newSet{ id };
+          if (!typeIdsTable.try_emplace(thisType, newSet).second) {
+              typeIdsTable.at(thisType).insert(id);
+          }
+          insertStmtAtId(displaced, id + 1);
+      }
+      catch (std::out_of_range&) {
+          insertStmt(stmt);
+      }
   }
 
   Statement StmtTable::get(StmtId stmtId) {
     return idStmtTable.at(stmtId); // throws out_of_range exception
   }
 
-  list<StmtId> StmtTable::getStmtsByType(StmtType stmtType) {
+  unordered_set<StmtId> StmtTable::getStmtsByType(StmtType stmtType) {
     try {
       return typeIdsTable.at(stmtType);
     }
