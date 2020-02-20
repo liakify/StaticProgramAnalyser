@@ -48,20 +48,16 @@ namespace UnitTesting
 			Assert::IsFalse(set.empty());
 			Assert::IsFalse(set.find(stmt_A_id) == set.end());
 
-			stmtTable.insertStmtAtId(STMT_B, 1);
-			Assert::IsTrue(stmtTable.get(1).getType() == READ);
-			Assert::IsTrue(stmtTable.get(2).getType() == PRINT);
-			set = stmtTable.getStmtsByType(PRINT);
-			Assert::IsTrue(set.find(stmt_A_id) == set.end());
-			Assert::IsTrue(set.find(stmt_A_id + 1) != set.end());
-			stmtTable.insertStmtAtId(STMT_A, 1);
-			Assert::IsTrue(stmtTable.get(1).getType() == PRINT);
-			Assert::IsTrue(stmtTable.get(2).getType() == READ);
-			Assert::IsTrue(stmtTable.get(3).getType() == PRINT);
-			set = stmtTable.getStmtsByType(PRINT);
-			Assert::IsTrue(set.find(stmt_A_id) != set.end());
-			Assert::IsTrue(set.find(stmt_A_id + 1) == set.end());
-			Assert::IsTrue(set.find(stmt_A_id + 2) != set.end());
+			Assert::ExpectException<std::invalid_argument>([&stmtTable, this] {stmtTable.insertStmtAtId(STMT_B, 1); });
+			StmtId reserved = stmtTable.reserveId();
+			StmtId stmt_B_id = stmtTable.insertStmt(STMT_B);
+			Assert::IsTrue(set.find(reserved) == set.end());
+			try {
+				stmtTable.insertStmtAtId(STMT_B, reserved);
+			}
+			catch (std::invalid_argument&) {
+				Assert::IsTrue(false);
+			}
 		}
 	};
 }

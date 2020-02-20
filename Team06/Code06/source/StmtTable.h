@@ -34,11 +34,22 @@ namespace PKB {
      */
     StmtId insertStmt(Statement stmt);
 
+    /*
+    *   Returns a reserved ID to be used for future insertion.
+    */
+    StmtId reserveId();
+
+    /*
+    *   Decrements the StmtId generator value.
+    *   Only call this if it is needed to directly undo a reserveId() call,
+    *   i.e. no other statements were added between the latest reserveId() call
+    *   and this call.
+    */
+    void unreserveId();
+
     /**
-     *  Inserts stmt into the StmtTable with a specified ID.
-     *  If an existing statement uses that ID, the displaced statement
-     *  takes on a new ID = existing id + 1. This happens sequentially until
-     *  all statements have a unique ID.
+     *  Inserts stmt into the StmtTable at a specified ID.
+     *  If the ID already exists, an error is thrown.
      */
     void insertStmtAtId(Statement stmt, StmtId id);
 
