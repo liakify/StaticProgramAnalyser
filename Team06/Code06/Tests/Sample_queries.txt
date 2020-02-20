@@ -1,5 +1,5 @@
 1 - comment
 while w;
-Select w such that Parent(w, 7)
+Select w such that Uses(w, "x")
 none
 5000
