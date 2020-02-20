@@ -59,5 +59,8 @@
     <ClCompile Include="testPatternKB.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="testDesignExtractor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
