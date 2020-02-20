@@ -33,10 +33,10 @@ stmt s;
 Select s such that Parent(_, s)
 3, 5, 7, 8, 11, 13, 14, 16
 5000
-7 - all chilren, same synonym
+7 - no statement can be a parent of itself
 stmt s;
 Select s such that Parent(s, s)
-3, 5, 7, 8, 11, 13, 14, 16
+none
 5000
 7 - all statments, underscore, underscore
 stmt s;
@@ -83,22 +83,7 @@ stmt s;
 Select s such that Parent (1, 1)
 none
 5000
-- invalid: negative on LHS
-stmt s;
-Select s such that Parent (-1, 1)
-none
-5000
-- invalid: negative on RHS
-stmt s;
-Select s such that Parent (1, -1)
-none
-5000
-- invalid: negative on both sides
-stmt s;
-Select s such that Parent (-1, -1)
-none
-5000
-- (read, stmt)
+- false (read, stmt)
 read r; stmt s;
 Select s such that Parent(r, s)
 none
@@ -161,5 +146,30 @@ none
 - invalid: procedure on RHS
 procedure p; stmt s;
 Select s such that Parent (p, s)
+none
+5000
+- invalid: "varName" on LHS
+stmt s;
+Select s such that Parent ("varName", s)
+none
+5000
+- invalid: "varName" on RHS
+stmt s;
+Select s such that Parent (s, "varName")
+none
+5000
+- invalid: negative on LHS
+stmt s;
+Select s such that Parent (-1, 1)
+none
+5000
+- invalid: negative on RHS
+stmt s;
+Select s such that Parent (1, -1)
+none
+5000
+- invalid: negative on both sides
+stmt s;
+Select s such that Parent (-1, -1)
 none
 5000
