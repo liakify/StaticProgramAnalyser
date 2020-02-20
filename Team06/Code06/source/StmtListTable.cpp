@@ -3,7 +3,7 @@
 namespace PKB {
 
   StmtListTable::StmtListTable() {
-    stmtListIdGenerator = 0;
+    stmtListIdGenerator = 1;
   }
 
   StmtListId StmtListTable::insertStmtLst(StatementList stmtLst) {
