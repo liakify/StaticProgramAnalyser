@@ -190,16 +190,27 @@ namespace PQL {
 			Synonym arg1 = clause.getArgs().first.second;
 			Synonym arg2 = clause.getArgs().second.second;
 
+			bool singleSynonym = (arg1 == arg2);
+
 			ClauseResult clauseResult = {};
 			for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
 				std::unordered_set<StmtId> followers = database.followsKB.getAllFollowers(i);
 				for (StmtId follower : followers) {
 					if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i).getType(), synonymTable[arg1]) &&
 						SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(follower).getType(), synonymTable[arg2])) {
-						ClauseResultEntry resultEntry;
-						resultEntry[arg1] = std::to_string(i);
-						resultEntry[arg2] = std::to_string(follower);
-						clauseResult.emplace_back(resultEntry);
+						if (!singleSynonym) {
+							ClauseResultEntry resultEntry;
+							resultEntry[arg1] = std::to_string(i);
+							resultEntry[arg2] = std::to_string(follower);
+							clauseResult.emplace_back(resultEntry);
+						}
+						else {
+							if (i == follower) {
+								ClauseResultEntry resultEntry;
+								resultEntry[arg1] = std::to_string(i);
+								clauseResult.emplace_back(resultEntry);
+							}
+						}
 					}
 				}
 			}

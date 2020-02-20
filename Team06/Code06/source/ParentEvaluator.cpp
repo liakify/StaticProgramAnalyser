@@ -189,16 +189,27 @@ namespace PQL {
 			Synonym arg1 = clause.getArgs().first.second;
 			Synonym arg2 = clause.getArgs().second.second;
 
+			bool singleSynonym = (arg1 == arg2);
+
 			ClauseResult clauseResult = {};
 			for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
 				StmtId parent = database.parentKB.getParent(i);
 				if (parent != 0) {
 					if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(parent).getType(), synonymTable[arg1]) && 
 						SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i).getType(), synonymTable[arg2])) {
-						ClauseResultEntry resultEntry;
-						resultEntry[arg1] = std::to_string(parent);
-						resultEntry[arg2] = std::to_string(i);
-						clauseResult.emplace_back(resultEntry);
+						if (!singleSynonym) {
+							ClauseResultEntry resultEntry;
+							resultEntry[arg1] = std::to_string(parent);
+							resultEntry[arg2] = std::to_string(i);
+							clauseResult.emplace_back(resultEntry);
+						}
+						else {
+							if (i == parent) {
+								ClauseResultEntry resultEntry;
+								resultEntry[arg1] = std::to_string(i);
+								clauseResult.emplace_back(resultEntry);
+							}
+						}
 					}
 				}
 			}
