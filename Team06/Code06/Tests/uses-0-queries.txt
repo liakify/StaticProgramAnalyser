@@ -56,7 +56,7 @@ None
 1 - argument variant: stmtRef variant: print
 print pn; variable v;
 Select pn such that Uses(pn, v)
-3, 5, 7, 8, 10, 12
+3, 5, 7, 10, 12
 5000
 1 - argument variant: stmtRef variant: print => empty
 print pn; variable v;
