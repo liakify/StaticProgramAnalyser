@@ -158,6 +158,10 @@ namespace PQL {
 		if (clauseResults.size() == 1) {
 			return clauseResults[0];
 		}
+		if (clauseResults.size() < 1) {
+			SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::combineClauseResults: clauseResults empty!");
+			return {};
+		}
 		std::vector<ClauseResult> left;
 		std::vector<ClauseResult> right;
 		for (int i = 0; i < (int)clauseResults.size() / 2; i++) {
