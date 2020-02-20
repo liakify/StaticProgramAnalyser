@@ -7,6 +7,7 @@
 #include "Types.h"
 
 using std::pair;
+using std::tuple;
 using std::string;
 using std::unordered_map;
 using std::vector;
