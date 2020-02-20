@@ -69,7 +69,7 @@ namespace PQL {
 			ClauseResult clauseResult;
 			for (VarId var: modifiedVars) {
 				ClauseResultEntry resultEntry;
-				resultEntry[arg2] = var;
+				resultEntry[arg2] = database.varTable.get(var);
 				clauseResult.emplace_back(resultEntry);
 			}
 
@@ -97,7 +97,7 @@ namespace PQL {
 			for (StmtId stmt : modifyingStmts) {
 				if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(stmt).getType(), synonymTable[arg1])) {
 					ClauseResultEntry resultEntry;
-					resultEntry[arg1] = stmt;
+					resultEntry[arg1] = std::to_string(stmt);
 					clauseResult.emplace_back(resultEntry);
 				}
 			}
@@ -153,7 +153,7 @@ namespace PQL {
 					for (VarId var : modifiedVars) {
 						ClauseResultEntry resultEntry;
 						resultEntry[arg1] = std::to_string(i);
-						resultEntry[arg2] = var;
+						resultEntry[arg2] = database.varTable.get(var);
 						clauseResult.emplace_back(resultEntry);
 					}
 				}

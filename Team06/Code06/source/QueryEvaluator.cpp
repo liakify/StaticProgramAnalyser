@@ -48,6 +48,7 @@ namespace PQL {
 
 
 		if (combinedResult[0].find(target) != combinedResult[0].end()) {
+			// Target does not exist in table: treat results from table as true if table is not empty
 			ClauseResult result;
 			for (ClauseResultEntry entry : combinedResult) {
 				ClauseResultEntry resultEntry;
@@ -57,7 +58,25 @@ namespace PQL {
 			return result;
 		}
 		else {
-			if (query.synonymTable[target] == DesignEntity::VARIABLE) {
+			// Case bash by target entity type
+			if (query.synonymTable[target] == DesignEntity::PROCEDURE) {
+				// Iteration 1: Only one procedure
+				ClauseResult result;
+				ClauseResultEntry resultEntry;
+				resultEntry[target] = database.procTable.get(1).getName();
+				result.emplace_back(resultEntry);
+				return result;
+			}
+			else if (query.synonymTable[target] == DesignEntity::CONSTANT) {
+				ClauseResult result;
+				for (ConstId i = 1; i <= database.constTable.size(); i++) {
+					ClauseResultEntry resultEntry;
+					resultEntry[target] = database.constTable.get(i);
+					result.emplace_back(resultEntry);
+				}
+				return result;
+			}
+			else if (query.synonymTable[target] == DesignEntity::VARIABLE) {
 				ClauseResult result;
 				std::unordered_set<VarName> vars = database.varTable.getAllVars();
 				for (VarName var : vars) {
@@ -68,6 +87,7 @@ namespace PQL {
 				return result;
 			}
 			else {
+				// Statement
 				ClauseResult result;
 				for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
 					if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i).getType(), query.synonymTable[target])) {

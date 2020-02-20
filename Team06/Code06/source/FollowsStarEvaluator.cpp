@@ -102,9 +102,8 @@ namespace PQL {
 				std::unordered_set<StmtId> followers = database.followsKB.getAllFollowers(arg1);
 				for (StmtId follower : followers) {
 					if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(follower).getType(), synonymTable[arg2])) {
-						std::unordered_map<std::string, std::string> resultPair;
-						resultPair[arg2] = follower;
-						ClauseResultEntry resultEntry = { resultPair };
+						ClauseResultEntry resultEntry;
+						resultEntry[arg2] = std::to_string(follower);
 						clauseResult.emplace_back(resultEntry);
 					}
 				}
@@ -119,9 +118,8 @@ namespace PQL {
 				std::unordered_set<StmtId> following = database.followsKB.getAllFollowing(arg2);
 				for (StmtId follow : following) {
 					if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(follow).getType(), synonymTable[arg1])) {
-						std::unordered_map<std::string, std::string> resultPair;
-						resultPair[arg1] = follow;
-						ClauseResultEntry resultEntry = { resultPair };
+						ClauseResultEntry resultEntry;
+						resultEntry[arg1] = std::to_string(follow);
 						clauseResult.emplace_back(resultEntry);
 					}
 				}
@@ -150,9 +148,8 @@ namespace PQL {
 				for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
 					if (database.followsKB.getFollowing(i) != 0) {
 						if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i).getType(), synonymTable[arg2])) {
-							std::unordered_map<std::string, std::string> resultPair;
-							resultPair[arg2] = std::to_string(i);
-							ClauseResultEntry resultEntry = { resultPair };
+							ClauseResultEntry resultEntry;
+							resultEntry[arg2] = std::to_string(i);
 							clauseResult.emplace_back(resultEntry);
 						}
 					}
@@ -166,9 +163,8 @@ namespace PQL {
 				for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
 					if (database.followsKB.getFollower(i) != 0) {
 						if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i).getType(), synonymTable[arg1])) {
-							std::unordered_map<std::string, std::string> resultPair;
-							resultPair[arg1] = std::to_string(i);
-							ClauseResultEntry resultEntry = { resultPair };
+							ClauseResultEntry resultEntry;
+							resultEntry[arg1] = std::to_string(i);
 							clauseResult.emplace_back(resultEntry);
 						}
 					}
@@ -190,16 +186,27 @@ namespace PQL {
 			Synonym arg1 = clause.getArgs().first.second;
 			Synonym arg2 = clause.getArgs().second.second;
 
+			bool singleSynonym = (arg1 == arg2);
+
 			ClauseResult clauseResult = {};
 			for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
 				std::unordered_set<StmtId> followers = database.followsKB.getAllFollowers(i);
 				for (StmtId follower : followers) {
 					if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i).getType(), synonymTable[arg1]) &&
 						SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(follower).getType(), synonymTable[arg2])) {
-						ClauseResultEntry resultEntry;
-						resultEntry[arg1] = std::to_string(i);
-						resultEntry[arg2] = std::to_string(follower);
-						clauseResult.emplace_back(resultEntry);
+						if (!singleSynonym) {
+							ClauseResultEntry resultEntry;
+							resultEntry[arg1] = std::to_string(i);
+							resultEntry[arg2] = std::to_string(follower);
+							clauseResult.emplace_back(resultEntry);
+						}
+						else {
+							if (i == follower) {
+								ClauseResultEntry resultEntry;
+								resultEntry[arg1] = std::to_string(i);
+								clauseResult.emplace_back(resultEntry);
+							}
+						}
 					}
 				}
 			}

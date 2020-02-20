@@ -105,7 +105,7 @@ namespace PQL {
 				else {
 					if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(follower).getType(), synonymTable[arg2])) {
 						ClauseResultEntry resultEntry;
-						resultEntry[arg2] = follower;
+						resultEntry[arg2] = std::to_string(follower);
 						return { resultEntry };
 					}
 					else {
@@ -125,7 +125,7 @@ namespace PQL {
 				else {
 					if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(following).getType(), synonymTable[arg1])) {
 						ClauseResultEntry resultEntry;
-						resultEntry[arg1] = following;
+						resultEntry[arg1] = std::to_string(following);
 						return { resultEntry };
 					}
 					else {
@@ -192,16 +192,27 @@ namespace PQL {
 			Synonym arg1 = clause.getArgs().first.second;
 			Synonym arg2 = clause.getArgs().second.second;
 
+			bool singleSynonym = (arg1 == arg2);
+
 			ClauseResult clauseResult = {};
 			for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
 				StmtId follower = database.followsKB.getFollower(i);
 				if (follower != 0) {
 					if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i).getType(), synonymTable[arg1]) &&
 						SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(follower).getType(), synonymTable[arg2])) {
-						ClauseResultEntry resultEntry;
-						resultEntry[arg1] = std::to_string(i);
-						resultEntry[arg2] = std::to_string(follower);
-						clauseResult.emplace_back(resultEntry);
+						if (!singleSynonym) {
+							ClauseResultEntry resultEntry;
+							resultEntry[arg1] = std::to_string(i);
+							resultEntry[arg2] = std::to_string(follower);
+							clauseResult.emplace_back(resultEntry);
+						}
+						else {
+							if (i == follower) {
+								ClauseResultEntry resultEntry;
+								resultEntry[arg1] = std::to_string(i);
+								clauseResult.emplace_back(resultEntry);
+							}
+						}
 					}
 				}
 			}
