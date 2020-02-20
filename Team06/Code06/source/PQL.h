@@ -24,13 +24,13 @@ namespace PQL {
         PQLManager(PKB::PKB& database);
 
         /**
-         *  Accepts a PQL query string for parsing and evaluation against the populated
-         *  PKB for a parsed SIMPLE progrma.
+         *  Accepts an empty list and a PQL query string for parsing and evaluation against the populated
+         *  PKB for a parsed SIMPLE program. The query results are inserted into the empty list.
          *
          *  @param      queryString     input PQL query string.
-         *  @return     string of space-delimited query results.
+         *  @param      resultList      list to populate the query results with.
          */
-        string evaluateQuery(string queryString);
+        void evaluateQuery(string queryString, list<string>& resultList);
     private:
         QueryParser parser;
         QueryEvaluator evaluator;

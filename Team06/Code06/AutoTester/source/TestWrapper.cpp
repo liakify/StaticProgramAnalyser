@@ -1,6 +1,3 @@
-#include <fstream>
-#include <stdexcept>
-
 #include "TestWrapper.h"
 #include "LoggingUtils.h"
 
@@ -25,14 +22,12 @@ TestWrapper::TestWrapper() {
  *
  *  @param      filename    filename of SIMPLE source program.
  */
-// method for parsing the SIMPLE source
 void TestWrapper::parse(std::string filename) {
 	// Create input file stream and char iterator
     std::ifstream ifs(filename);
     std::string program((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());;
     try {
         this->pkb = frontEnd.parseSimple(program);
-        // Expression e = parser.parseExpression(program);
     }
     catch (std::invalid_argument& e) {
         SPA::LoggingUtils::LogErrorMessage("%s", e.what());
@@ -48,7 +43,7 @@ void TestWrapper::parse(std::string filename) {
  */
 void TestWrapper::evaluate(std::string query, std::list<std::string>& results) {
     PQL::PQLManager pql = PQL::PQLManager(pkb);
-
-    // Evaluate query and store result
-    results.push_back(pql.evaluateQuery(query));
+    
+    // Evaluate query and store result into provided list
+    pql.evaluateQuery(query, results);
 }

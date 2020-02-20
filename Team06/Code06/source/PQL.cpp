@@ -1,3 +1,4 @@
+#include "LoggingUtils.h"
 #include "PQL.h"
 
 namespace PQL {
@@ -8,21 +9,23 @@ namespace PQL {
         this->formatter = QueryProjector();
     }
 
-    string PQLManager::evaluateQuery(string queryString) {
+    void PQLManager::evaluateQuery(string queryString, list<string>& resultList) {
 
         // Validate then parse PQL query string into its query struct representation
         Query query = this->parser.parseQuery(queryString);
         if (query.status != "success") {
-            return query.status;
+            // Terminate early if parsing or validation failed
+            SPA::LoggingUtils::LogErrorMessage(query.status);
+            return;
         }
 
         // Evaluate the given query struct against the PKB
-        // vector<string> rawResults = this->evaluator.parseQuery(query);
+        ClauseResult rawResults = this->evaluator.evaluateQuery(query);
 
         // Process the list of results into a single output string
-        // return this->formatter.format(rawResults);
+        this->formatter.formatResult(rawResults, resultList);
 
-        return "None";
+        return;
     }
     
 }
