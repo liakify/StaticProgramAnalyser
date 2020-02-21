@@ -1,5 +1,4 @@
-#ifndef PARSER_H
-#define PARSER_H
+#pragma once
 
 #include <stdexcept>
 #include <regex>
@@ -11,38 +10,26 @@ using std::regex;
 using std::string;
 using namespace SIMPLE;
 
-namespace Parser {
+namespace FrontEnd {
 	/**
 	* The Parser class is used for parsing SIMPLE source code.
 	*/
 	class Parser {
 	public:
 		/**
-		* Parser constructor for full SIMPLE programs. 
-		* 
-		* @param	source	SIMPLE program string for parsing.
-		* @param	pkb		PKB reference for use when parsing.
-		*/
-		Parser(string source, PKB::PKB& pkb);
-		
-		/**
-		* Empty Parser constructor for SIMPLE expressions.
-		*/
-		Parser();
-
-		/**
 		* Parses full SIMPLE source and populates PKB accordingly.
 		* 
+		* @param	source					SIMPLE program string for parsing.
+		* @return	PKB::PKB				A populated PKB instance
 		* @throws	std::invalid_argument	if the SIMPLE source has syntax errors.
-		* @throws	std::logic_error		if the Parser was created as an Expression Parser.
 		*/
-		void parse();
+		PKB::PKB parseSimple(string source);
 
 		/**
 		* Parses standalone SIMPLE expressions. PKB remains unmodified.
 		* 
+		* @param	exp						SIMPLE expression to be parsed.
 		* @throws	std::invalid_argument	if the SIMPLE source has syntax errors.
-		* @throws	std::logic_error		if the Parser was created as a full SIMPLE Parser.
 		*/
 		Expression parseExpression(string exp);
 	private:
@@ -78,7 +65,7 @@ namespace Parser {
 
 		VarId var_name();
 		ProcName proc_name();
-		ConstValue const_value();
+		ConstId const_value();
 
 		std::unordered_set<VarId> getAllUses(StmtListId sid);
 		std::unordered_set<VarId> getAllModifies(StmtListId sid);
@@ -88,6 +75,4 @@ namespace Parser {
 		void populateModifiesKB(StmtId stmtId, std::unordered_set<VarId> varSet);
 		void populatePatternKB(StmtId stmtId, Expression exp);
 	};
-	int analyse(string& src);
 }
-#endif

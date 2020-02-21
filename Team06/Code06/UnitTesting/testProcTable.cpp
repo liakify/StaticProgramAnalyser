@@ -37,11 +37,13 @@ namespace UnitTesting
 
 			PKB::ProcTable procTable;
 
-			procTable.insertProc(PROC_A);
+			ProcId insertProcResult = procTable.insertProc(PROC_A);
 			Assert::AreEqual(procTable.size(), 1);
 
 			ProcId a = procTable.getProcId(PROC_NAME_A);
 			Assert::AreNotEqual(a, -1);
+			Assert::AreEqual(insertProcResult, a);
+
 			Assert::IsTrue(procTable.get(a) == PROC_A);
 		}
 	};

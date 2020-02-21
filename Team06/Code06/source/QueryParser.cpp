@@ -23,11 +23,16 @@ namespace PQL {
 
         // Extract last statement (Select <var> (constraints)...)
         string queryBody = statements.back();
+        
+        bool hasValidTarget;
+        string queryBodySuffix;
+        tie(hasValidTarget, queryBodySuffix) = parseQueryTarget(query, queryBody);
+        if (!hasValidEntities) return query;
 
-        parseQueryTarget(query, queryBody);
-
+        bool hasValidClauses;
         vector<string> relationClauses, patternClauses;
-        tie(relationClauses, patternClauses) = splitConstraints(queryBody);
+        tie(hasValidClauses, relationClauses, patternClauses) = splitConstraints(query, queryBodySuffix);
+        if (!hasValidClauses) return query;
 
         parseRelationClauses(query, relationClauses);
         parsePatternClauses(query, patternClauses);
@@ -49,7 +54,7 @@ namespace PQL {
             return false;
         }
 
-        regex VALID_DECLARATION("[A-Za-z][A-Za-z0-9]* +[A-Za-z][A-Za-z0-9]*( *, *[A-Za-z][A-Za-z0-9]*)* *;");
+        regex VALID_DECLARATION("^[A-Za-z]\\w* +[A-Za-z][A-Za-z0-9]*( *, *[A-Za-z][A-Za-z0-9]*)*$");
         smatch dmatch;
 
         // Validate each declaration (first N - 1 statements) satisfy
@@ -204,13 +209,14 @@ namespace PQL {
     vector<string> QueryParser::splitStatements(string queryString) {
         vector<string> statements;
 
-        regex DECLARATION("[A-Za-z0-9,\\s]+;");
+        regex DECLARATION("[\\w,\\s]+;");
         smatch stmatch;
 
         while (regex_search(queryString, stmatch, DECLARATION)) {
             for (auto token : stmatch) {
                 string stmt = token.str();
-                statements.push_back(QueryUtils::leftTrim(stmt));
+                stmt.pop_back();
+                statements.push_back(QueryUtils::trimString(stmt));
             }
             queryString = stmatch.suffix().str();
         }
@@ -220,20 +226,46 @@ namespace PQL {
         return statements;
     }
 
-    // Assumes syntactically invalid compound clauses do not exist after syntax checking, e.g.
+    // Assumes invalid connected clauses do not exist after syntax checking, e.g.
     // Select a such that Modifies (a, v) and such that Parent (a, w) and pattern (v, _)
     // C++ regex does not support negative lookbehind, (?<!(x))y - match y only if not preceded by x
+    // Consumes compound clauses from start to end, terminating early if failing to do so before
+    // reaching the end of the query string (i.e. there exists some incorrect syntax)
     // Returns an array of clauses
-    pair<vector<string>, vector<string>> QueryParser::splitConstraints(string queryBody) {
-        string RELATION_COMPOUND_CLAUSE = "such that +[A-Za-z*]+ *\\([\\w,\\s]*\\)(?: and +[A-Za-z*]+ *\\([\\w,\\s]*\\))*";
-        string PATTERN_COMPOUND_CLAUSE = "pattern +[A-Za-z][A-Za-z0-9]* *\\([\\w,\"\\+\\-\\*\\/\\%\\s]*\\)(?: and +[A-Za-z][A-Za-z0-9]* *\\([\\w,\"\\+\\-\\*\\/\\%\\s]*\\))*";
-        string RELATION_CLAUSE = "[A-Za-z*]+ *\\([\\w,\\s]*\\)";
+    tuple<bool, vector<string>, vector<string>> QueryParser::splitConstraints(Query& query, string queryBodySuffix) {
+        regex RELATION_COMPOUND_CLAUSE("^ *such that +[A-Za-z*]+ *\\([\\w,\"\\s]*\\)(?: and +[A-Za-z*]+ *\\([\\w,\"\\s]*\\))*");
+        regex PATTERN_COMPOUND_CLAUSE("^ *pattern +[A-Za-z][A-Za-z0-9]* *\\([\\w,\"\\+\\-\\*\\/\\%\\s]*\\)(?: and +[A-Za-z][A-Za-z0-9]* *\\([\\w,\"\\+\\-\\*\\/\\%\\s]*\\))*");
+        smatch ccmatch;
+
+        string RELATION_CLAUSE = "[A-Za-z*]+ *\\([\\w,\"\\s]*\\)";
         string PATTERN_CLAUSE = "[A-Za-z][A-Za-z0-9]* *\\([\\w,\"\\+\\-\\*\\/\\%\\s]*\\)";
 
-        vector<string> relationClauses = QueryUtils::dualMatch(queryBody, RELATION_COMPOUND_CLAUSE, RELATION_CLAUSE);
-        vector<string> patternClauses = QueryUtils::dualMatch(queryBody, PATTERN_COMPOUND_CLAUSE, PATTERN_CLAUSE);
+        vector<string> relationClauses;
+        vector<string> patternClauses;
 
-        return { relationClauses, patternClauses };
+        // Continue consuming compound clauses until the end of the query
+        while (queryBodySuffix.length() > 0) {
+
+            // Attempt to consume either a relation or pattern compound clause
+            // If this fails, then the query string is synctactically invalid
+            if (regex_search(queryBodySuffix, ccmatch, RELATION_COMPOUND_CLAUSE)) {
+                vector<string> relations = QueryUtils::matchAll(ccmatch.str(), RELATION_CLAUSE);
+                relationClauses.insert(relationClauses.end(), relations.begin(), relations.end());
+            }
+            else if (regex_search(queryBodySuffix, ccmatch, PATTERN_COMPOUND_CLAUSE)) {
+                vector<string> patterns = QueryUtils::matchAll(ccmatch.str(), PATTERN_CLAUSE);
+                patternClauses.insert(patternClauses.end(), patterns.begin(), patterns.end());
+            }
+            else {
+                // SYNTAX ERROR: compound clauses fail to obey query syntax somewhere in query body
+                query.status = "syntax error: compound clauses in query body violate query body syntax";
+                return { false, relationClauses, patternClauses };
+            }
+
+            queryBodySuffix = QueryUtils::leftTrim(ccmatch.suffix().str());
+        }
+
+        return { true, relationClauses, patternClauses };
     }
 
     bool QueryParser::parseDeclarations(Query& query, vector<string> statements) {
@@ -261,7 +293,7 @@ namespace PQL {
                 }
 
                 auto synonymMapping = synonymTable.find(synonym);
-                if (synonymMapping != ENTITY_MAP.end()) {
+                if (synonymMapping != synonymTable.end()) {
                     // SEMANTIC ERROR: current synonym has already been declared
                     query.status = "semantic error: conflicting synonym declaration";
                     return false;
@@ -278,7 +310,7 @@ namespace PQL {
         return true;
     }
 
-    bool QueryParser::parseQueryTarget(Query& query, string queryBody) {
+    pair<bool, string> QueryParser::parseQueryTarget(Query& query, string queryBody) {
         vector<string> targets;
 
         regex SINGLE_TARGET("Select +[A-Za-z][A-Za-z0-9]*(?! *,)");
@@ -287,7 +319,7 @@ namespace PQL {
 
         // Attempt to match a single return type, otherwise match a tuple return type
         if (regex_search(queryBody, tmatch, SINGLE_TARGET)) {
-            // Strip leading "Select "
+            // Strip leading "Select"
             string targetEntity = QueryUtils::leftTrim(tmatch.str().erase(0, 6));
             targets.push_back(targetEntity);
         }
@@ -301,20 +333,17 @@ namespace PQL {
         }
         else {
             // SYNTAX ERROR: unable to parse select target to entities
-            query.status = "syntax error: target entity not correctly specified";
-            return false;
+            query.status = "syntax error: missing query target or target entities not correctly specified";
+            return { false, "" };
         }
 
-        if (targets.size() < 0) {
-            // SYNTAX ERROR: Query must have at least one return target
-            query.status = "syntax error: missing query target";
-            return false;
-        }
-        else {
-            query.targetEntities = targets;
-        }
+        // Extract the suffix of the query body (following the query return types)
+        string queryBodySuffix = QueryUtils::leftTrim(tmatch.suffix().str());
 
-        return true;
+        assert(targets.size() >= 1);
+        query.targetEntities = targets;
+
+        return { true, queryBodySuffix };
     }
 
     bool QueryParser::parseRelationClauses(Query& query, vector<string> relationClauses) {
@@ -383,7 +412,10 @@ namespace PQL {
                     relation = { clause, relationClass, parseStmtRef(arg1), INVALID_ARG, INVALID_ARG, parseEntityRef(arg2) };
                 }
                 else if (QueryUtils::isValidEntityRef(arg1)) {
-                    relation = { clause, relationClass, INVALID_ARG, INVALID_ARG, parseEntityRef(arg1), parseEntityRef(arg2) };
+                    relation = { 
+                        clause, relationClass == RelationType::USESS ? RelationType::USESP : RelationType::MODIFIESP,
+                        INVALID_ARG, INVALID_ARG, parseEntityRef(arg1), parseEntityRef(arg2)
+                    };
                 }
                 else {
                     // SYNTAX ERROR: cannot be interpreted either as statement or entity ref
@@ -403,6 +435,8 @@ namespace PQL {
                 relations.push_back(relation);
             }
         }
+
+        query.relations = relations;
         return true;
     }
 
@@ -449,7 +483,7 @@ namespace PQL {
                     query.status = "syntax error: assign pattern has invalid pattern string";
                 }
                 else {
-                    pattern = { clause, PatternType::ASSIGN_PATTERN, parseEntityRef(referenceString), parsePattern(args.at(1)) };
+                    pattern = { clause, PatternType::ASSIGN_PATTERN, synonym, parseEntityRef(referenceString), parsePattern(args.at(1)) };
                 }
                 break;
             case DesignEntity::WHILE:
@@ -462,7 +496,7 @@ namespace PQL {
                     query.status = "syntax error: while pattern only supports '_' as second argument";
                 }
                 else {
-                    pattern = { clause, PatternType::WHILE_PATTERN, parseEntityRef(referenceString), parsePattern(args.at(1)) };
+                    pattern = { clause, PatternType::WHILE_PATTERN, synonym, parseEntityRef(referenceString), parsePattern(args.at(1)) };
                 }
                 break;
             case DesignEntity::IF:
@@ -476,7 +510,7 @@ namespace PQL {
                 }
                 else {
                     // Pattern struct only stores first two args since third arg is fixed as '_' anyway
-                    pattern = { clause, PatternType::IF_PATTERN, parseEntityRef(referenceString), parsePattern(args.at(1)) };
+                    pattern = { clause, PatternType::IF_PATTERN, synonym, parseEntityRef(referenceString), parsePattern(args.at(1)) };
                 }
                 break;
             default:
@@ -492,6 +526,8 @@ namespace PQL {
                 patterns.push_back(pattern);
             }
         }
+
+        query.patterns = patterns;
         return true;
     }
 
@@ -514,7 +550,7 @@ namespace PQL {
         else if (arg.find('\"') != string::npos) {
             // An identifier - strip leading and trailing "
             arg.pop_back();
-            return { ArgType::IDENTIFIER, arg.erase(0, 1) };
+            return { ArgType::IDENTIFIER, QueryUtils::trimString(arg.erase(0, 1)) };
         }
         else {
             return { ArgType::SYNONYM, arg };
@@ -527,10 +563,10 @@ namespace PQL {
         }
         else if (arg.at(0) == '_') {
             // Inclusive pattern string
-            return { ArgType::INCLUSIVE_PATTERN, arg };
+            return { ArgType::INCLUSIVE_PATTERN, QueryUtils::stripPattern(arg) };
         }
         else {
-            return { ArgType::EXACT_PATTERN, arg };
+            return { ArgType::EXACT_PATTERN, QueryUtils::stripPattern(arg) };
         }
     }
 

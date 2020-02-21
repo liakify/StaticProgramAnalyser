@@ -43,10 +43,21 @@ namespace UnitTesting
 			StmtId stmt_A_id = stmtTable.insertStmt(STMT_A);
 			Assert::AreEqual(stmtTable.size(), 1);
 
-			list<StmtId> list = stmtTable.getStmtsByType(PRINT);
+			unordered_set<StmtId> set = stmtTable.getStmtsByType(PRINT);
 
-			Assert::IsFalse(list.empty());
-			Assert::AreEqual(list.front(), stmt_A_id);
+			Assert::IsFalse(set.empty());
+			Assert::IsFalse(set.find(stmt_A_id) == set.end());
+
+			Assert::ExpectException<std::invalid_argument>([&stmtTable, this] {stmtTable.insertStmtAtId(STMT_B, 1); });
+			StmtId reserved = stmtTable.reserveId();
+			StmtId stmt_B_id = stmtTable.insertStmt(STMT_B);
+			Assert::IsTrue(set.find(reserved) == set.end());
+			try {
+				stmtTable.insertStmtAtId(STMT_B, reserved);
+			}
+			catch (std::invalid_argument&) {
+				Assert::IsTrue(false);
+			}
 		}
 	};
 }

@@ -2,44 +2,22 @@
 
 using std::invalid_argument;
 
-namespace Parser{
-	Parser::Parser(string source, PKB::PKB& pkb)
-		: src(source), pkb(pkb), isExpression(false) {
-	}
-
-	Parser::Parser() 
-		: isExpression(true) {
-	}
-
-	void Parser::parse() {
-		if (!isExpression) {
-			this->pos = 0;
-			program();
-		}
-		else {
-			throw std::logic_error(
-				"Parser object created as an Expression parser instead of a full SIMPLE parser."
-			);
-		}
+namespace FrontEnd {
+	PKB::PKB Parser::parseSimple(string src) {
+		this->pkb = PKB::PKB();
+		this->isExpression = false;
+		this->src = src;
+		this->pos = 0;
+		program();
+		return this->pkb;
 	}
 
 	Expression Parser::parseExpression(string exp) {
-		if (isExpression) {
-			this->src = exp;
-			this->pos = 0;
-			return expr();
-		}
-		else {
-			throw std::logic_error(
-				"Parser object created as a full SIMPLE parser instead of an Expression parser."
-			);
-		}
-	}
-
-	int analyse(string& src) {
-		Parser p = Parser(src, PKB::PKB());
-		p.parse();
-		return 0;
+		this->pkb = PKB::PKB();
+		this->isExpression = true;
+		this->src = exp;
+		this->pos = 0;
+		return expr();
 	}
 
 	string Parser::consume(regex rgx) {
@@ -61,6 +39,7 @@ namespace Parser{
 	}
 
 	void Parser::program() {
+		procedure();
 		while (this->pos < src.length()) {
 			procedure();
 		}
@@ -119,8 +98,9 @@ namespace Parser{
 			this->pos = currentPos;
 		}
 		try {
+			StmtId stmtId = pkb.stmtTable.reserveId();
 			WhileStmt whileStmt = while_stmt();
-			StmtId stmtId = pkb.stmtTable.insertStmt(whileStmt);
+			pkb.stmtTable.insertStmtAtId(whileStmt, stmtId);
 			StmtListId stmtLstId = whileStmt.getStmtLstId();
 			populateParentKB(stmtId, stmtLstId);
 			populateUsesKB(stmtId, whileStmt.getCondExpr().getVarIds());
@@ -130,10 +110,12 @@ namespace Parser{
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
+			pkb.stmtTable.unreserveId();
 		}
 		try {
+			StmtId stmtId = pkb.stmtTable.reserveId();
 			IfStmt ifStmt = if_stmt();
-			StmtId stmtId = pkb.stmtTable.insertStmt(ifStmt);
+			pkb.stmtTable.insertStmtAtId(ifStmt, stmtId);
 			StmtListId stmtLstId1 = ifStmt.getThenStmtLstId();
 			StmtListId stmtLstId2 = ifStmt.getElseStmtLstId();
 			populateParentKB(stmtId, stmtLstId1);
@@ -147,6 +129,7 @@ namespace Parser{
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
+			pkb.stmtTable.unreserveId();
 		}
 		AssignStmt assignStmt = assign_stmt();
 		Expression exp = assignStmt.getExpr();
@@ -238,7 +221,7 @@ namespace Parser{
 		}
 		consume(regex("[\\s]*[(][\\s]*"));
 		CondExpr left = cond_expr();
-		consume(regex("[\\s]*[)][\\s]*(||)[\\s]*[(][\\s]*"));
+		consume(regex("[\\s]*[)][\\s]*(\\|\\|)[\\s]*[(][\\s]*"));
 		CondExpr right = cond_expr();
 		consume(regex("[\\s]*[)][\\s]*"));
 		return CondExpr(left, right);
@@ -359,20 +342,22 @@ namespace Parser{
 		int currentPos = this->pos;
 		try {
 			if (isExpression) {
-				// Sentinel VarId value
-				return Expression(name(), -1);
+				// Sentinel id value
+				return Expression(name(), -1, VAR);
 			}
 			else {
 				VarId id = var_name();
 				VarName name = pkb.varTable.get(id);
-				return Expression(name, id);
+				return Expression(name, id, VAR);
 			}
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		try {
-			return Expression(const_value());
+			ConstId id = const_value();
+			ConstValue value = pkb.constTable.get(id);
+			return Expression(value, id, CONST);
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
@@ -391,8 +376,8 @@ namespace Parser{
 		return name();
 	}
 
-	ConstValue Parser::const_value() {
-		return integer();
+	ConstId Parser::const_value() {
+		return pkb.constTable.insertConst(integer());
 	}
 
 	std::unordered_set<VarId> Parser::getAllUses(StmtListId sid) {

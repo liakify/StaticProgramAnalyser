@@ -83,8 +83,17 @@ namespace PQL {
         static string trimString(string input);
 
         /**
+         *  Strips an input pattern argument string of all whitespaces and quotation marks.
+         *
+         *  @param      input       input pattern string to strip.
+         *  @return     an equivalent pattern string without spaces and quotation marks.
+         */
+        static string stripPattern(string input);
+
+        /**
          *  Splits a string with a given delimiter once, returning a pair of the
-         *  trimmed prefix and suffix strings.
+         *  trimmed prefix and suffix strings. If the delimiting character is not found in
+         *  the input string, returns a pair of the trimmed input string and an empty string.
          *
          *  @param      input       input string to split.
          *  @param      delim       delimiting character.
@@ -103,16 +112,14 @@ namespace PQL {
         static vector<string> tokeniseString(string input, char delim);
 
         /**
-         *  Performs two levels of regex matching on an input string with two separate
-         *  regex patterns. Returns a vector of strings that match the second regex in
-         *  strings that match the first regex.
+         *  Searches the input string and returns a vector of all strings that match the regular
+         *  expression constructed from the input regex pattern.
          *
-         *  @param      input       input string to perform dual regex matching.
-         *  @param      first       first (outer) regex pattern, e.g. structure of compound clauses.
-         *  @param      second      second (inner) regex pattern, e.g. structure of atomic clauses.
-         *  @return     a vector containing all substring matches for both regexes.
+         *  @param      input       input string to perform regex matching.
+         *  @param      pattern     regex pattern to match substrings with.
+         *  @return     a vector containing all substring matches for the provided pattern.
          */
-        static vector<string> dualMatch(string input, string first, string second);
+        static vector<string> matchAll(string input, string pattern);
     };
-    
+
 }

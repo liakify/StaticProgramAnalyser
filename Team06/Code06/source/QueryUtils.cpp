@@ -29,7 +29,7 @@ namespace PQL {
     bool QueryUtils::isValidEntityRef(string input) {
         if (input.find('\"') != string::npos) {
             // String contains a " - interpret literally as variable name
-            regex VALID_ENTITY_REFERENCE("^\"[A-Za-z][A-Za-z0-9]*\"$");
+            regex VALID_ENTITY_REFERENCE("^\" *[A-Za-z][A-Za-z0-9]* *\"$");
             smatch ematch;
 
             // Entity reference is not a string of form "<identifier>"
@@ -47,22 +47,13 @@ namespace PQL {
         }
 
         // Regex describing an allowed infix arithemtic expression
-        regex VALID_EXPRESSION("\" *(?:(?:[0-9]+)|(?:[A-Za-z][A-Za-z0-9]*)(?: *[\\+\\-\\*\\/\\%] *(?:(?:[0-9]+)|(?:[A-Za-z][A-Za-z0-9]*)))*) *\"");
+        // Use an optional capturing group for the underscore and substitute it at the end
+        // Ensures symmetric pattern string (both underscores present or absent together)
+        regex VALID_EXPRESSION("^(_?) *\" *(?:(?:[0-9]+)|(?:[A-Za-z][A-Za-z0-9]*)(?: *[\\+\\-\\*\\/\\%] *(?:(?:[0-9]+)|(?:[A-Za-z][A-Za-z0-9]*)))*) *\" *\\1$");
         smatch pmatch;
 
         if (!regex_search(input, pmatch, VALID_EXPRESSION)) {
-            // Arithmetic expression is not a substring
-            return false;
-        }
-
-        string expr = pmatch.str();
-        int diff = input.length() - expr.length();
-        if (diff != 0 && diff != 2) {
-            // Pattern string is not of form "<expr>" or [X]"<expr>"[Y] where X + Y = 2
-            return false;
-        }
-        else if (diff == 2 && (input.at(0) != '_' || input.at(input.length() - 1) != '_')) {
-            // Pattern string does not have symmetric '_'
+            // Arithmetic expression is not a substring or pattern string is asymmetric
             return false;
         }
 
@@ -81,8 +72,20 @@ namespace PQL {
         return rightTrim(leftTrim(input));
     }
 
+    string QueryUtils::stripPattern(string input) {
+        regex STRIP_TARGET("[ \"]");
+        smatch cmatch;
+
+        return regex_replace(input, STRIP_TARGET, "");
+    }
+
     pair<string, string> QueryUtils::splitString(string input, char delim) {
         int pos = input.find_first_of(delim);
+        if (pos == string::npos) {
+            // Delimiting character not found
+            return { trimString(input), "" };
+        }
+
         return { trimString(input.substr(0, pos)), trimString(input.substr(pos + 1, string::npos)) };
     }
 
@@ -102,30 +105,21 @@ namespace PQL {
         return substrings;
     }
 
-    vector<string> QueryUtils::dualMatch(string input, string first, string second) {
-        vector<string> clauses;
+    vector<string> QueryUtils::matchAll(string input, string pattern) {
+        vector<string> matches;
 
-        regex COMPOUND_CLAUSE(first);
-        smatch ccmatch;
+        regex INPUT_PATTERN(pattern);
+        smatch ssmatch;
 
-        while (regex_search(input, ccmatch, COMPOUND_CLAUSE)) {
-            for (auto token : ccmatch) {
-                string cclause = token.str();
-
-                regex CLAUSE(second);
-                smatch cmatch;
-
-                while (regex_search(cclause, cmatch, CLAUSE)) {
-                    for (auto atom : cmatch) {
-                        clauses.push_back(QueryUtils::trimString(atom.str()));
-                    }
-                    cclause = cmatch.suffix().str();
-                }
-                input = ccmatch.suffix().str();
+        while (regex_search(input, ssmatch, INPUT_PATTERN)) {
+            for (auto match : ssmatch) {
+                string token = match.str();
+                matches.push_back(trimString(token));
             }
+            input = ssmatch.suffix().str();
         }
 
-        return clauses;
+        return matches;
     }
 
 }

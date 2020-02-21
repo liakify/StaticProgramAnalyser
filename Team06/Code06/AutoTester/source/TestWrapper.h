@@ -1,12 +1,14 @@
-#ifndef TESTWRAPPER_H
-#define TESTWRAPPER_H
+#pragma once
 
-#include <string>
+#include <fstream>
 #include <iostream>
 #include <list>
+#include <stdexcept>
+#include <string>
 
-// include your other headers here
 #include "AbstractWrapper.h"
+#include "FrontEnd.h"
+#include "PQL.h"
 
 class TestWrapper : public AbstractWrapper {
  public:
@@ -21,6 +23,7 @@ class TestWrapper : public AbstractWrapper {
   
   // method for evaluating a query
   virtual void evaluate(std::string query, std::list<std::string>& results);
+private:
+  FrontEnd::FrontEndManager frontEnd;
+  PKB::PKB pkb;
 };
-
-#endif

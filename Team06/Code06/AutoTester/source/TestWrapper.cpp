@@ -1,8 +1,4 @@
-#include <fstream>
-#include <stdexcept>
-
 #include "TestWrapper.h"
-#include "Parser.h"
 #include "LoggingUtils.h"
 
 // implementation code of WrapperFactory - do NOT modify the next 5 lines
@@ -20,28 +16,34 @@ TestWrapper::TestWrapper() {
   // as well as any initialization required for your spa program
 }
 
-// method for parsing the SIMPLE source
+/**
+ *  Accepts the name of a text file containing the SIMPLE source program and parses
+ *  it to populate the PKB.
+ *
+ *  @param      filename    filename of SIMPLE source program.
+ */
 void TestWrapper::parse(std::string filename) {
-	// call your parser to do the parsing
+	// Create input file stream and char iterator
     std::ifstream ifs(filename);
     std::string program((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());;
     try {
-        Parser::analyse(program);
-        //Parser::Parser expParser = Parser::Parser();
-        //Expression e = expParser.parseExpression(program);
+        this->pkb = frontEnd.parseSimple(program);
     }
     catch (std::invalid_argument& e) {
         SPA::LoggingUtils::LogErrorMessage("%s", e.what());
     }
-  // ...rest of your code...
-    
 }
 
-// method to evaluating a query
-void TestWrapper::evaluate(std::string query, std::list<std::string>& results){
-// call your evaluator to evaluate the query here
-  // ...code to evaluate query...
-
-  // store the answers to the query in the results list (it is initially empty)
-  // each result must be a string.
+/**
+ *  Evaluates a PQL query string against a populated PKB and inserts the query result
+ *  into the (initially empty) list of query result strings.
+ *
+ *  @param      query       input PQL query string.
+ *  @param      results     reference to list of query result strings.
+ */
+void TestWrapper::evaluate(std::string query, std::list<std::string>& results) {
+    PQL::PQLManager pql = PQL::PQLManager(pkb);
+    
+    // Evaluate query and store result into provided list
+    pql.evaluateQuery(query, results);
 }

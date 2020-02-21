@@ -7,6 +7,7 @@
 #include "Types.h"
 
 using std::pair;
+using std::tuple;
 using std::string;
 using std::unordered_map;
 using std::vector;
@@ -19,7 +20,7 @@ using EntityRef = std::string;
  *  Enumeration for recognised program design entities in PQL queries.
  */
 enum class DesignEntity {
-    STATEMENT, READ, PRINT, CALL, WHILE, IF, ASSIGN, VARIABLE, CONSTANT, PROCEDURE
+    STATEMENT, READ, PRINT, CALL, WHILE, IF, ASSIGN, VARIABLE, CONSTANT, PROCEDURE, PROG_LINE
 };
 
 /**
@@ -77,8 +78,11 @@ namespace PQL {
      */
     const pair<ArgType, string> INVALID_ARG = { ArgType::INVALID, "" };
 
+    /**
+     *  Map from program entity keyword to program entity enum.
+     */
     const unordered_map<string, DesignEntity> ENTITY_MAP {
-        {"statement", DesignEntity::STATEMENT},
+        {"stmt", DesignEntity::STATEMENT},
         {"read", DesignEntity::READ},
         {"print", DesignEntity::PRINT},
         {"call", DesignEntity::CALL},
@@ -87,9 +91,18 @@ namespace PQL {
         {"assign", DesignEntity::ASSIGN},
         {"variable", DesignEntity::VARIABLE},
         {"constant", DesignEntity::CONSTANT},
-        {"procedure", DesignEntity::PROCEDURE}
+        {"procedure", DesignEntity::PROCEDURE},
+        {"prog_line", DesignEntity::PROG_LINE}
     };
 
+    /**
+     *  Map from relation keyword to relation type enum.
+     *
+     *  Note that there are no unique keywords for the procedure-variable variants
+     *  of the Uses and Modifies relations, since the variant is only determined
+     *  at time of semantic validation by examining the program entity types of
+     *  the supplied arguments.
+     */
     const unordered_map<string, RelationType> RELATION_MAP {
         {"Follows", RelationType::FOLLOWS},
         {"Follows*", RelationType::FOLLOWST},
@@ -136,12 +149,13 @@ namespace PQL {
 
     /**
      *  Struct representing a parsed pattern clause in a PQL query. Contains the
-     *  clause string, pattern type and method to retrieve its arguments. Arguments
-     *  are returned as pairs of ArgType and the argument string.
+     *  clause string, pattern type, synonym and method to retrieve its arguments.
+     *  Arguments are returned as pairs of ArgType and the argument string.
      */
     struct PatternClause {
         string clause;
         PatternType type;
+        string synonym;
         pair<ArgType, EntityRef> targetArg;
         pair<ArgType, Pattern> patternArg;
         pair<pair<ArgType, string>, pair<ArgType, string>> getArgs() {

@@ -3,33 +3,53 @@
 namespace PKB {
 
   StmtTable::StmtTable() {
-    stmtIdGenerator = 0;
+    stmtIdGenerator = 1;
   }
 
-  // Inserts stmt into the StmtTable. Returns the ID of the statement in the StmtTable.
+  StmtId StmtTable::reserveId() {
+      return stmtIdGenerator++;
+  }
+
+  void StmtTable::unreserveId() {
+      stmtIdGenerator--;
+  }
+
   StmtId StmtTable::insertStmt(Statement stmt) {
     idStmtTable.insert(std::make_pair(stmtIdGenerator, stmt));
     StmtType thisType = stmt.getType();
     StmtId thisId = stmtIdGenerator;
     stmtIdGenerator++;
 
-    list<StmtId> newList{ thisId };
-    if (!typeIdsTable.try_emplace(thisType, newList).second) {
-      typeIdsTable.at(thisType).push_back(thisId);
+    unordered_set<StmtId> newSet{ thisId };
+    if (!typeIdsTable.try_emplace(thisType, newSet).second) {
+      typeIdsTable.at(thisType).insert(thisId);
     }
 
     return thisId;
   }
 
-  // Returns the statement object at the given ID in the StmtTable. 
-  // Throws an exception if the ID is not found in the table.
+  void StmtTable::insertStmtAtId(Statement stmt, StmtId id) {
+      try {
+          Statement s = get(id);
+      }
+      catch (std::out_of_range&) {
+          idStmtTable.insert(std::make_pair(id, stmt));
+          StmtType thisType = stmt.getType();
+
+          unordered_set<StmtId> newSet{ id };
+          if (!typeIdsTable.try_emplace(thisType, newSet).second) {
+              typeIdsTable.at(thisType).insert(id);
+          }
+          return;
+      }
+      throw std::invalid_argument("ID already exists in StmtTable.");
+  }
+
   Statement StmtTable::get(StmtId stmtId) {
     return idStmtTable.at(stmtId); // throws out_of_range exception
   }
 
-  // Returns a list of statement IDs that match the specified statement type. 
-  // An empty list is returned if no such statements exist.
-  list<StmtId> StmtTable::getStmtsByType(StmtType stmtType) {
+  unordered_set<StmtId> StmtTable::getStmtsByType(StmtType stmtType) {
     try {
       return typeIdsTable.at(stmtType);
     }
@@ -38,7 +58,6 @@ namespace PKB {
     }
   }
 
-  // Returns the number of statements in the StmtTable.
   int StmtTable::size() {
     return idStmtTable.size();
   }
