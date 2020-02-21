@@ -6,32 +6,32 @@ Select s1 such that Follows(s2, s3) pattern a (v, _)
 2 - case 0a: (false, false)
 assign a,; stmt s1, s2; variable v;
 Select s1 such that Parent(1, s2) pattern a (v, _)
-none
+
 5000
 3 - case 0a: (true, false)
 assign a; stmt s1, s2; variable v;
 Select s1 such that Uses(s2, "b") pattern a (v, _"notFound"_)
-none
+
 5000
 4 - case 0a: (false, true)
 assign a; stmt s1, s2; variable v;
 Select s1 such that Modifies(s2, "notFound") pattern a (v, _"notFound"_)
-none
+
 5000
 5 - case 0b: result-cl related to either such-that or pattern clause (related-true, unrelated-true)
 assign a; stmt s1, s2; variable v;
 Select s1 such that Modifies(s1, v) pattern a ("a", _)
-2, 3, 4, 10, 11, 19
+2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19
 5000
 6 - case 0b: (related-true, unrelated-false)
 assign a,; stmt s1, s2; variable v;
 Select s1 such that Parent(s1, 8) pattern a (v, _"notFound"_)
-none
+
 5000
 7 - case 0b: (unrelated-false, related-true)
 assign a; stmt s; variable v;
 Select a such that Modifies(s, "b") pattern a (v, _)
-none
+
 5000
 8 - case 1a1: Connected clauses | Follows | assign
 assign a1, a2; variable v;
@@ -76,22 +76,22 @@ select pn such that Follows*(pn, a) pattern a (v, _)
 15 - case 1a0: follows => empty
 assign a; variable v;
 Select a such that Follows(a, 1) pattern a (v, _)
-none
+
 5000
 16 - case 1a0: pattern => empty
 assign a; stmt s;
 Select a such that Follows(a, s) pattern a("notFound", "notFound")
-none
+
 5000
 17 - case 1b0: follows* => empty
 assign a; variable v;
 Select a such that Follows* (a, 1) pattern a (v, _)
-none
+
 5000
 18 - case 1b0: pattern => empty
 assign a; stmt s;
 Select a such that Follows*(a, s) pattern a("notFound", "notFound")
-none
+
 5000
 19 - case 1c1: Connected clauses | Parent | if
 assign a; if ifs; variable v;
@@ -136,22 +136,22 @@ Select w such that Parent*(w, a) pattern a ("nested2", "patternMatch")
 27 - case 1c0: Parent => empty
 assign a; variable v;
 Select a such that Parent (1, a) pattern a (v, _)
-none
+
 5000
 28 - case 1c0: pattern => empty
 assign a;
 Select a such that Parent (_, _) pattern a ("notFound", "notFound")
-none
+
 5000
 29 - case 1d0: Parent* => empty
 assign a; variable v;
 Select a such that Parent* (1, a) pattern a (v, _)
-none
+
 5000
 30 - case 1d0: pattern => empty
 assign a;
 Select a such that Parent* (_, _) pattern a ("notFound", "notFound")
-none
+
 5000
 31 - case 1e1: Connected clauses | Uses | common by assign
 assign a; variable v;
@@ -226,12 +226,12 @@ d
 45 - case 1e0: Uses => empty set
 assign a; variablve v;
 Select a such that Uses(a, "notFound") pattern a (v, _)
-none
+
 5000
 46 - case 1e0: Pattern => empty set
 assign a; variablve v; stmt s;
 Select s such that uses(s, v) pattern a (v, _"notFound"_)
-none
+
 5000
 47 - case 1f1: Connected clauses | Modifies | common by assign
 assign a; variable v1, v2;
@@ -291,10 +291,10 @@ a, nested, nested2, d
 58 - case 1f0: Modifes => empty set
 assign a; variable v;
 Select a such that Modifies(a, "notFound") pattern a (v, _)
-none
+
 5000
 59 - case 1f0: pattern => empty set
 assign a; variable v;
 Select a such that Modifies(a, v) pattern a (v, _"notFound"_)
-none
+
 5000

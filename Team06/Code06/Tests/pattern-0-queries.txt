@@ -151,7 +151,7 @@ Select a pattern a (_, _"b % c"_)
 1 - RHS: combined operators
 assign a;
 Select a pattern a (_, _"y % v"_)
-None
+
 5000
 1 - RHS: combined operators
 assign a;
@@ -166,12 +166,12 @@ Select a pattern a (_, _"b + c"_)
 1 - operator precedence with 1 nesting lvl
 assign a;
 Select a pattern a (_, _"c * d"_)
-None
+
 5000
 1 - operator precedence with 1 nesting lvl
 assign a;
 Select a pattern a (_, _"(b + c) * d"_)
-None
+
 5000
 1 - operator precedence with 2 nesting lvls
 assign a;
@@ -181,7 +181,7 @@ Select a pattern a (_, _"b / ((c - d) % e "_)
 1 - operator precedence with 2 nesting lvls
 assign a;
 Select a pattern a (_, _"d % e"_)
-None
+
 5000
 1 - Argument variant: (_, _)
 assign a;
@@ -221,22 +221,22 @@ a
 1 - unfound variable names: ("notfound", _)
 assign a; 
 Select a pattern a ("notFound", _)
-None
+
 5000
 1 - unfound variable names: (_, _"notfound"_)
 assign a; 
 Select a pattern a (v, _"notFound"_)
-None
+
 5000
 1 - unfound constants: 
 assign a; 
 Select a pattern a (v, _"999999"_)
-None
+
 5000
 1 - invalid constants: (_, _"0123"_)
 assign a; 
 Select a pattern a (v, _"0123"_)
-None
+
 5000
 1 - unrelated synonyms: syn-assign
 assign a, a1; 
@@ -246,7 +246,7 @@ Select a pattern a1 (_, _)
 1 - unrelated synonyms: syn-assign => empty
 assign a, a1; 
 Select a pattern a1 ("c", _)
-None
+
 5000
 1 - unrelated synonyms: entRef
 assign a; variable v, v1;
@@ -256,7 +256,7 @@ a, b, bcd, b123, a123, c, x, y, v, z, t, d, e
 1 - unrelated synonyms: entRef => empty
 assign a; variable v, v1;
 Select v pattern a (v1, _"notFound"_)
-None
+
 5000
 1 - unrelated synonyms: expression-spec
 assign a; variable v, v1;
@@ -266,20 +266,20 @@ a, b, bcd, b123, a123, c, x, y, v, z, t, d, e
 1 - unrelated synonyms: expression-spec => empty
 assign a; variable v, v1;
 Select v pattern a ("notFound", v1)
-None
+
 5000
 1 - invalid: pattern a(1, _)
 assign a;
 Select a pattern a (1, _)
-None
+
 5000
 1 - invalid: pattern a(_, 1)
 assign a;
 Select a pattern a (1, _)
-None
+
 5000
 1 - invalid: pattern a(1, 1)
 assign a;
 Select a pattern a (1, _)
-None
+
 5000
