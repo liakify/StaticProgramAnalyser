@@ -30,7 +30,7 @@ namespace PQL {
 		* @return	The result of the evaluation.
 		*/
 		ClauseResult evaluateAssignPatternClauseWildPtn(PKB::PKB& database, PatternClause &clause) {
-			
+			Synonym arg0 = clause.synonym;
 			Pattern arg2 = clause.getArgs().second.second;
 			
 			std::unordered_set<StmtId> stmts = database.patternKB.getRHSPatternStmts(arg2);
@@ -39,11 +39,11 @@ namespace PQL {
 			for (StmtId stmt : stmts) {
 				if (database.stmtTable.get(stmt).getType() == StmtType::ASSIGN) {
 					ClauseResultEntry resultEntry;
-					resultEntry["_RESULT"] = "TRUE";
-					return { resultEntry };
+					resultEntry[arg0] = std::to_string(stmt);
+					clauseResult.emplace_back(resultEntry);
 				}
 			}
-			return {};
+			return clauseResult;
 		}
 
 		/**
@@ -54,19 +54,20 @@ namespace PQL {
 		* @return	The result of the evaluation.
 		*/
 		ClauseResult evaluateAssignPatternClauseIdWild(PKB::PKB& database, PatternClause& clause) {
+			Synonym arg0 = clause.synonym;
 			VarName arg1 = clause.getArgs().first.second;
-			// Here, we check if the given identifer appears on the LHS of any assign statement
 			
 			std::unordered_set<StmtId> stmts = database.patternKB.getLHSPatternStmts(arg1);
+			ClauseResult clauseResult;
 			for (StmtId stmt : stmts) {
 				if (database.stmtTable.get(stmt).getType() == StmtType::ASSIGN) {
 					ClauseResultEntry resultEntry;
-					resultEntry["_RESULT"] = "TRUE";
-					return { resultEntry };
+					resultEntry[arg0] = std::to_string(stmt);
+					clauseResult.emplace_back(resultEntry);
 				}
 			}
 			
-			return {};
+			return clauseResult;
 		}
 
 		/**
@@ -77,6 +78,7 @@ namespace PQL {
 		* @return	The result of the evaluation.
 		*/
 		ClauseResult evaluateAssignPatternClauseIdPtn(PKB::PKB& database, PatternClause& clause) {
+			Synonym arg0 = clause.synonym;
 			VarName arg1 = clause.getArgs().first.second;
 			Pattern arg2 = clause.getArgs().second.second;
 			
@@ -91,15 +93,16 @@ namespace PQL {
 				}
 			}
 
+			ClauseResult clauseResult;
 			for (StmtId stmt : stmts) {
 				if (database.stmtTable.get(stmt).getType() == StmtType::ASSIGN) {
 					ClauseResultEntry resultEntry;
-					resultEntry["_RESULT"] = "TRUE";
-					return { resultEntry };
+					resultEntry[arg0] = std::to_string(stmt);
+					clauseResult.emplace_back(resultEntry);
 				}
 			}
 
-			return {};
+			return clauseResult;
 		}
 
 		/**
@@ -112,16 +115,22 @@ namespace PQL {
 		*/
 		ClauseResult evaluateAssignPatternClauseSynWild(PKB::PKB& database, PatternClause& clause,
 			std::unordered_map<string, DesignEntity>& synonymTable) {
+			Synonym arg0 = clause.synonym;
 			Synonym arg1 = clause.getArgs().first.second;
 			
-			std::unordered_set<StmtId> stmts = database.patternKB.getLHSPatternStmts("_");
+			std::unordered_set<StmtId> stmts = database.stmtTable.getStmtsByType(StmtType::ASSIGN);
 
+			// If synonym 'arg1' appeared on LHS, then it must have been modified by the assignment
 			ClauseResult clauseResult;
 			for (StmtId stmt : stmts) {
 				if (database.stmtTable.get(stmt).getType() == StmtType::ASSIGN) {
-					ClauseResultEntry resultEntry;
-					resultEntry[arg1] = std::to_string(stmt);
-					clauseResult.emplace_back(resultEntry);
+					std::unordered_set<VarId> vars = database.modifiesKB.getAllVarsModifiedByStmt(stmt);
+					for (VarId var : vars) {
+						ClauseResultEntry resultEntry;
+						resultEntry[arg0] = std::to_string(stmt);
+						resultEntry[arg1] = database.varTable.get(var);
+						clauseResult.emplace_back(resultEntry);
+					}
 				}
 			}
 
@@ -138,10 +147,11 @@ namespace PQL {
 		*/
 		ClauseResult evaluateAssignPatternClauseSynPtn(PKB::PKB& database, PatternClause& clause,
 			std::unordered_map<string, DesignEntity>& synonymTable) {
+			Synonym arg0 = clause.synonym;
 			Synonym arg1 = clause.getArgs().first.second;
 			Pattern arg2 = clause.getArgs().second.second;
 
-			std::unordered_set<StmtId> stmts1 = database.patternKB.getLHSPatternStmts("_");
+			std::unordered_set<StmtId> stmts1 = database.stmtTable.getStmtsByType(StmtType::ASSIGN);
 			std::unordered_set<StmtId> stmts2 = database.patternKB.getRHSPatternStmts(arg2);
 
 			// Find the intersection
@@ -155,9 +165,13 @@ namespace PQL {
 			ClauseResult clauseResult;
 			for (StmtId stmt : stmts) {
 				if (database.stmtTable.get(stmt).getType() == StmtType::ASSIGN) {
-					ClauseResultEntry resultEntry;
-					resultEntry[arg1] = std::to_string(stmt);
-					clauseResult.emplace_back(resultEntry);
+					std::unordered_set<VarId> vars = database.modifiesKB.getAllVarsModifiedByStmt(stmt);
+					for (VarId var : vars) {
+						ClauseResultEntry resultEntry;
+						resultEntry[arg0] = std::to_string(stmt);
+						resultEntry[arg1] = database.varTable.get(var);
+						clauseResult.emplace_back(resultEntry);
+					}
 				}
 			}
 
