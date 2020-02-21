@@ -34,8 +34,9 @@ namespace PQL {
         tie(hasValidClauses, relationClauses, patternClauses) = splitConstraints(query, queryBodySuffix);
         if (!hasValidClauses) return query;
 
-        parseRelationClauses(query, relationClauses);
-        parsePatternClauses(query, patternClauses);
+        bool hasValidRelations = parseRelationClauses(query, relationClauses);
+        bool hasValidPatterns = parsePatternClauses(query, patternClauses);
+        if (!(hasValidRelations && hasValidPatterns)) return query;
 
         // Ensure query is semantically valid (no ambiguities, valid synonyms, argument types)
         bool isSemanticallyValid = validateQuerySemantics(query);
@@ -466,7 +467,7 @@ namespace PQL {
             // First argument is always an entity reference, validate it
             if (!QueryUtils::isValidEntityRef(referenceString)) {
                 // SYNTAX ERROR: invalid entity reference
-                query.status = "syntax error: pattern has invalid entity reference";
+                query.status = "syntax error: pattern clause has invalid entity reference";
                 return false;
             }
 

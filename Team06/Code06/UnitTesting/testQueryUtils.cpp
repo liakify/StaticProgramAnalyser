@@ -129,7 +129,7 @@ namespace UnitTesting {
 			{ { "recurse(M[0:N/2], M[N/2 + 1:N], R[0:N])", "\\[[A-Za-z0-9\\+\\-\\*\\/\\%\\s:]+\\]" }, { "[0:N/2]", "[N/2 + 1:N]", "[0:N]" } }
 		};
 
-		TEST_METHOD(TestIsInteger) {
+		TEST_METHOD(isInteger) {
 			for (auto input : VALID_INTEGERS) {
 				Assert::IsTrue(QueryUtils::isInteger(input));
 			}
@@ -138,7 +138,7 @@ namespace UnitTesting {
 			}
 		}
 
-		TEST_METHOD(TestIsValidIdentifier) {
+		TEST_METHOD(isValidIdentifier) {
 			for (auto input : VALID_IDENTIFIERS) {
 				Assert::IsTrue(QueryUtils::isValidIdentifier(input));
 			}
@@ -147,7 +147,7 @@ namespace UnitTesting {
 			}
 		}
 
-		TEST_METHOD(TestIsValidStmtRef) {
+		TEST_METHOD(isValidStmtRef) {
 			for (auto input : VALID_STMT_REFS) {
 				Assert::IsTrue(QueryUtils::isValidStmtRef(input));
 			}
@@ -156,7 +156,7 @@ namespace UnitTesting {
 			}
 		}
 
-		TEST_METHOD(TestIsValidPattern) {
+		TEST_METHOD(isValidPattern) {
 			for (auto input : VALID_PATTERNS) {
 				Assert::IsTrue(QueryUtils::isValidPattern(input));
 			}
@@ -165,7 +165,7 @@ namespace UnitTesting {
 			}
 		}
 
-		TEST_METHOD(TestTrimMethods) {
+		TEST_METHOD(trimMethods) {
 			for (auto testcase : LEFT_TRIM_TESTS) {
 				Assert::IsTrue(QueryUtils::leftTrim(testcase.first) == testcase.second);
 			}
@@ -177,25 +177,25 @@ namespace UnitTesting {
 			}
 		}
 
-		TEST_METHOD(TestStripPattern) {
+		TEST_METHOD(stripPattern) {
 			for (auto testcase : STRIPPED_PATTERN_TESTS) {
 				Assert::IsTrue(QueryUtils::stripPattern(testcase.first) == testcase.second);
 			}
 		}
 
-		TEST_METHOD(TestSplitString) {
+		TEST_METHOD(splitString) {
 			for (auto testcase : SPLIT_STRING_TESTS) {
 				Assert::IsTrue(QueryUtils::splitString(testcase.first.first, testcase.first.second) == testcase.second);
 			}
 		}
 
-		TEST_METHOD(TestTokeniseString) {
+		TEST_METHOD(tokeniseString) {
 			for (auto testcase : SPLIT_STRING_TESTS) {
 				Assert::IsTrue(QueryUtils::splitString(testcase.first.first, testcase.first.second) == testcase.second);
 			}
 		}
 		
-		TEST_METHOD(TestMatchAll) {
+		TEST_METHOD(matchAll) {
 			for (auto testcase : REGEX_MATCHER_TESTS) {
 				Assert::IsTrue(QueryUtils::matchAll(testcase.first.first, testcase.first.second) == testcase.second);
 			}
