@@ -106,7 +106,7 @@ namespace PQL {
                 
                 // Case 2: tuple return type (treat BOOLEAN as an identifier)
                 // SEMANTIC ERROR: synonym referenced as query target is undeclared
-                query.status = "semantic error: undeclared synonym for query return type";
+                query.status = "semantic error: undeclared synonym part of query return type";
                 return false;
             }
         }
@@ -126,7 +126,7 @@ namespace PQL {
                     auto synonymMapping = synonymTable.find(relation.firstStmt.second);
                     if (synonymMapping == synonymTable.end()) {
                         // SEMANTIC ERROR: synonym referenced in relation clause is undeclared
-                        query.status = "semantic error: undeclared synonym arg in Uses/Modifies clause";
+                        query.status = "semantic error: undeclared synonym as first arg in Uses/Modifies clause";
                         return false;
                     }
                     else if (synonymMapping->second == DesignEntity::PROCEDURE) {
@@ -143,12 +143,12 @@ namespace PQL {
                     auto synonymMapping = synonymTable.find(relation.secondEnt.second);
                     if (synonymMapping == synonymTable.end()) {
                         // SEMANTIC ERROR: synonym referenced in relation clause is undeclared
-                        query.status = "semantic error: undeclared synonym arg in Uses/Modifies clause";
+                        query.status = "semantic error: undeclared synonym as second arg in Uses/Modifies clause";
                         return false;
                     }
                     else if (synonymMapping->second != DesignEntity::VARIABLE) {
                         // SEMANTIC ERROR: design entity type error (non-VARIABLE)
-                        query.status = "semantic error: synonym arg in Uses/Modifies clause not a VARIABLE";
+                        query.status = "semantic error: synonym as second arg in Uses/Modifies clause not a VARIABLE";
                         return false;
                     }
                 }
@@ -163,7 +163,7 @@ namespace PQL {
                         if (lineNo <= 0) {
                             // SEMANTIC ERROR: stmt number must be positive
                             // Not possible to determine now if stmt number exceeds length of program
-                            query.status = "semantic error: line number in relation clause must be postiive";
+                            query.status = "semantic error: statement line number in relation clause must be postiive";
                             return false;
                         }
                     }
@@ -171,14 +171,14 @@ namespace PQL {
                         auto synonymMapping = synonymTable.find(arg.second);
                         if (synonymMapping == synonymTable.end()) {
                             // SEMANTIC ERROR: synonym referenced in relation clause is undeclared
-                            query.status = "semantic error: undeclared synonym arg in Follows(*)/Parent(*) clause";
+                            query.status = "semantic error: undeclared synonym as first arg in Follows(*)/Parent(*) clause";
                             return false;
                         }
                         else if (synonymMapping->second == DesignEntity::VARIABLE
                             || synonymMapping->second == DesignEntity::CONSTANT
                             || synonymMapping->second == DesignEntity::PROCEDURE) {
                             // SEMANTIC ERROR: design entity type error (non-STATEMENT or subset)
-                            query.status = "semantic error: synonym arg in relation clause not a STATEMENT or sub-type";
+                            query.status = "semantic error: synonym as second arg in relation clause not a STATEMENT or sub-type";
                             return false;
                         }
                     }
@@ -193,12 +193,12 @@ namespace PQL {
                 auto synonymMapping = synonymTable.find(pattern.targetArg.second);
                 if (synonymMapping == synonymTable.end()) {
                     // SEMANTIC ERROR: synonym referenced in pattern clause is undeclared
-                    query.status = "semantic error: undeclared synonym arg used in pattern clause";
+                    query.status = "semantic error: undeclared synonym as first arg in pattern clause";
                     return false;
                 }
                 else if (synonymMapping->second != DesignEntity::VARIABLE) {
                     // SEMANTIC ERROR: design entity type error (non-VARIABLE)
-                    query.status = "semantic error: synonym arg in pattern clause not a VARIABLE";
+                    query.status = "semantic error: synonym as first arg in pattern clause not a VARIABLE";
                     return false;
                 }
             }
@@ -289,14 +289,14 @@ namespace PQL {
                 auto entityMapping = ENTITY_MAP.find(entityName);
                 if (entityMapping == ENTITY_MAP.end()) {
                     // SYNTAX ERROR: unknown design entity
-                    query.status = "syntax error: unrecognised design entity in declaration";
+                    query.status = "syntax error: unrecognised design entity keyword in declaration";
                     return false;
                 }
 
                 auto synonymMapping = synonymTable.find(synonym);
                 if (synonymMapping != synonymTable.end()) {
                     // SEMANTIC ERROR: current synonym has already been declared
-                    query.status = "semantic error: conflicting synonym declaration";
+                    query.status = "semantic error: conflicting synonym declarations";
                     return false;
                 }
 
@@ -408,19 +408,19 @@ namespace PQL {
                 // Validate second argument as an entity reference
                 if (!(QueryUtils::isValidEntityRef(arg2))) {
                     // SYNTAX ERROR: second argument is not a valid entity reference
-                    query.status = "syntax error: invalid entity reference in Uses/Modifies clause";
+                    query.status = "syntax error: invalid entity reference as second arg in Uses/Modifies clause";
                 } else if (QueryUtils::isValidStmtRef(arg1)) {
                     relation = { clause, relationClass, parseStmtRef(arg1), INVALID_ARG, INVALID_ARG, parseEntityRef(arg2) };
                 }
                 else if (QueryUtils::isValidEntityRef(arg1)) {
-                    relation = { 
+                    relation = {
                         clause, relationClass == RelationType::USESS ? RelationType::USESP : RelationType::MODIFIESP,
                         INVALID_ARG, INVALID_ARG, parseEntityRef(arg1), parseEntityRef(arg2)
                     };
                 }
                 else {
                     // SYNTAX ERROR: cannot be interpreted either as statement or entity ref
-                    query.status = "syntax error: invalid first argument in Uses/Modifies clause";
+                    query.status = "syntax error: invalid first arg in Uses/Modifies clause";
                 }
                 break;
             default:
@@ -457,7 +457,7 @@ namespace PQL {
             auto synonymMapping = query.synonymTable.find(synonym);
             if (synonymMapping == query.synonymTable.end()) {
                 // SEMANTIC ERROR: unknown synonym
-                query.status = "semantic error: undeclared synonym in pattern clause";
+                query.status = "semantic error: undeclared synonym for type of pattern clause";
                 return false;
             }
 
@@ -467,7 +467,7 @@ namespace PQL {
             // First argument is always an entity reference, validate it
             if (!QueryUtils::isValidEntityRef(referenceString)) {
                 // SYNTAX ERROR: invalid entity reference
-                query.status = "syntax error: pattern clause has invalid entity reference";
+                query.status = "syntax error: invalid entity reference as first arg in pattern clause";
                 return false;
             }
 
