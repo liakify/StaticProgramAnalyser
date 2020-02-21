@@ -1,17 +1,17 @@
-Procedure SelectFollows {
+procedure SelectFollowsStar {
   read x;
   read x;
-  read x;
+  print x;
   if (x == 0) then {
-    read x;
+    a = a;
     read x;
     while (x > 0) {
       read x;
       read x;   }
-    read x; } else {
+    print x; } else {
     if (x > 0) then {
       read x;     } else {
       read x;     }
     while (x > 0) {
-      read x;    }  }
+      a = a;    }  }
   read x;}
