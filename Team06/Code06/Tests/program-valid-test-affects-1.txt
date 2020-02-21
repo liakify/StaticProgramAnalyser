@@ -1,0 +1,13 @@
+procedure alpha {
+	x = 1;
+	if (i!=2) {
+		x = a + 1;}
+	else {
+		a = b;}
+	a = x; }
+
+
+Affects (1,5)
+true
+5000
+
