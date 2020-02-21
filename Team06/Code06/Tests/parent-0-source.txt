@@ -1,6 +1,6 @@
 procedure SelectParent {
 	read z;
-	if (a == 0) {
+	if (a == 0) then {
 		read x;
 		while (b == 0) {
 			assign = assign; }
