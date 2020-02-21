@@ -1,0 +1,26 @@
+procedure SelectModifies {
+    a = b + b1 / (b2 * (b3 % b4) - b5);
+    print c;
+    read c;
+    if (d == e) then {
+        read f;
+        while (g != h) {
+            read i; 
+            if (c1 == c2) then {
+                print notModified;} else {
+                read nested3thenwelse;}} } else {
+        print j;
+        while (k >= l) {
+            read m; }}
+    while (C1 == c2) {
+        print notModified;
+        if (c1 == c2) then {
+            print notModified; 
+            while (c1 == c2) {
+                read nested3wthenw; }} else {
+            print NotModified }}
+    while ((!(n <= o)) || ((p > q) && (r < s))) {
+        print notModified; }
+    if (c1 == c2) then {
+        print notModified; } else {
+        print notModified; } }
