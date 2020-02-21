@@ -16,7 +16,7 @@ Select s such that Uses(s, "b")
 1 - argument variant: (s, "a") => empty
 stmt s;
 Select s such that Uses(s, "a")
-None
+
 5000
 1 - argument variant: (s, _)
 stmt s;
@@ -31,7 +31,7 @@ b, b1, b2, b3, b4, b5
 1 - argument variant: (1, v) => empty
 variable v;
 Select v such that Uses(2, v)
-None
+
 5000
 1 - argument variant: (1, "a")
 stmt s;
@@ -41,7 +41,7 @@ Select s such that Uses(1, "b")
 1 - argument variant: (1, "a") => empty
 stmt s;
 Select s such that Uses(2, "c")
-None
+
 5000
 1 - argument variant: (1, _)
 stmt s;
@@ -51,7 +51,7 @@ Select s such that Uses(1, _)
 1 - argument variant: (1, _) => empty
 stmt s;
 Select s such that Uses(2, _)
-None
+
 5000
 1 - argument variant: stmtRef variant: print
 print pn; variable v;
@@ -61,7 +61,7 @@ Select pn such that Uses(pn, v)
 1 - argument variant: stmtRef variant: print => empty
 print pn; variable v;
 Select pn such that Uses(pn, "b")
-None
+
 5000
 1 - argument variant: stmtRef variant: if (all if stmts 'Uses' some variable. So no empty-set case)
 if ifs; variable v;
@@ -81,7 +81,7 @@ SelectUses
 1 - unfound variable names
 stmt s;
 Select s such that Uses(s, "notfound")
-None
+
 5000
 1 - unrelated synonyms
 stmt s, s1;
@@ -91,10 +91,10 @@ Select s such that Uses(s1, "b")
 1 - unrelated synonyms => empty
 stmt s, s1;
 Select s such that Uses(s1, "a")
-None
+
 5000
 1 - invalid: semantics (stmtRef = '_' is ambiguous)
 variable v;
 Select v such that Uses(_, v)
-None
+
 5000
