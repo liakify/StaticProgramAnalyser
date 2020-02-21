@@ -51,27 +51,27 @@ Select w
 11 - invalid: syntax (special characters)
 read e9\\3;
 Select e9\\3;
-none
+
 5000
 12 - invalid: syntax (non-existant design entity)
 statement stmt;
 Select stmt
-none
+
 5000
 13 - invalid: syntax (duplicated synonym)
 print p; read p;
 Select p
-none
+
 5000
 14 - invalid: syntax (undeclared synonym)
 stmt s;
 Select p
-none
+
 5000
 15 - invalid: syntax (synonym start with digit)
 stmt 9333;
 Select 9333
-none
+
 5000
 16 - valid: Uppercase synonym
 while UpperW;
