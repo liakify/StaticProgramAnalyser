@@ -1,4 +1,4 @@
-procedure pattern0 {
+procedure SelectPattern {
   a = 0;
   b = 2345678;
   a = bcd;
