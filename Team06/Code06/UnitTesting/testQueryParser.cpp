@@ -11,9 +11,9 @@ namespace UnitTesting {
 	TEST_CLASS(TestQueryParser) {
 	public:
 		string TRIVIAL_QUERY = "constant c; Select c";
-		string MANY_DECLARATIONS_TRIVIAL_QUERY = "while procedure, constant; assign stmt; if print; read variable; assign such; Select such";
-		string SIMPLE_VALID_QUERY = "variable v; if ifs; assign a; Select v such that Parent*(ifs, a) pattern a(v, _)";
-		string COMPLEX_VALID_QUERY = "assign pattern; while Modifies; variable while, constant; Select pattern such that Uses(Modifies, while) pattern pattern(constant, _\"1\"_)";
+		string MANY_DECLARATIONS_TRIVIAL_QUERY = "while procedure, constant; assign stmt; if print; read variable; assign such; Select variable";
+		string SIMPLE_VALID_QUERY = "variable v; if ifs; assign a; Select v such that Parent* (ifs, a) pattern a(v, _)";
+		string COMPLEX_VALID_QUERY = "assign pattern; while Modifies; variable while, constant; Select pattern such that Uses (Modifies, while) pattern pattern(constant, _\"1\"_)";
 
 		// Invalid queries that fail in validateQuerySyntax
 		string EMPTY_QUERY = "";
@@ -31,7 +31,7 @@ namespace UnitTesting {
 		string USES_NON_VARIABLE_ARG_QUERY = "constant c; procedure p; Select a1 such that Uses(p, c)";
 		string INVALID_LINE_NUMBER_QUERY = "stmt s; Select s such that Parent(0, s)";
 		string FOLLOWS_MISSING_SYNONYM_QUERY = "print pn; Select pn such that Follows(rd, pn)";
-		string FOLLOWS_NON_STATEMENT_ARG_QUERY = "stmt s1; procedure p; Select s1 such that Parent*(s1, p)";
+		string FOLLOWS_NON_STATEMENT_ARG_QUERY = "stmt s1; Select s1 such that Parent*(s1, \"function\")";
 		string PATTERN_MISSING_SYNONYM_QUERY = "assign a; Select a pattern a(v, \"x\")";
 		string PATTERN_NON_VARIABLE_ARG_QUERY = "call cl; assign a; Select cl pattern a(cl, _)";
 
