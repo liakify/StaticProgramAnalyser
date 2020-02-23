@@ -51,16 +51,12 @@ namespace UnitTesting {
 		}
 
 		TEST_METHOD(ParseExpressionTest) {
-			Expression exp = parser.parseExpression(VALID_EXP_CONST);
-			Assert::AreEqual(VALID_EXP_CONST, exp.getStr());
-			Expression exp2 = parser.parseExpression(VALID_EXP_VAR);
-			Assert::AreEqual(VALID_EXP_VAR, exp2.getStr());
+			Assert::AreEqual(VALID_EXP_CONST, parser.parseExpression(VALID_EXP_CONST));
+			Assert::AreEqual(VALID_EXP_VAR, parser.parseExpression(VALID_EXP_VAR));
 
 			std::string expected = "((((((x+1)*2)%3)/(zz+9))+10)-(5*y))";
-			Expression exp3 = parser.parseExpression(VALID_EXP);
-			Assert::AreEqual(expected, exp3.getStr());
-			Expression exp4 = parser.parseExpression(VALID_EXP2);
-			Assert::AreEqual(expected, exp4.getStr());
+			Assert::AreEqual(expected, parser.parseExpression(VALID_EXP));
+			Assert::AreEqual(expected, parser.parseExpression(VALID_EXP2));
 		}
 	};
 }
