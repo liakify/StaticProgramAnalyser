@@ -18,7 +18,6 @@ namespace FrontEnd {
 			std::vector<StmtId> sid = sl.getStmtIds();
 			for (size_t j = 0; j < sid.size() - 1; j++) {
 				pkb.followsKB.addFollows(sid[j], sid[j + 1]);
-				Statement* s = pkb.stmtTable.get(sid[j]);
 			}
 		}
 	}
@@ -157,7 +156,7 @@ namespace FrontEnd {
 				IfStmt* ifs = (IfStmt*)s;
 				StmtListId stmtLstId1 = ifs->getThenStmtLstId();
 				StmtListId stmtLstId2 = ifs->getElseStmtLstId();
-				populateUsesKB(i, ifs->getCondExpr().getVarIds());
+				populateModifiesKB(i, ifs->getCondExpr().getVarIds());
 				populateModifiesKB(i, getAllModifies(stmtLstId1));
 				populateModifiesKB(i, getAllModifies(stmtLstId2));
 			}
