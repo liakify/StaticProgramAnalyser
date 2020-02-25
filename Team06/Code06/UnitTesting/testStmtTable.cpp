@@ -14,8 +14,8 @@ namespace UnitTesting
 		VarId VAR_ID = 1;
 		PrintStmt PRINT_STMT = PrintStmt(VAR_ID);
 		ReadStmt READ_STMT = ReadStmt(VAR_ID);
-		Statement STMT_A = PRINT_STMT;
-		Statement STMT_B = READ_STMT;
+		Statement* STMT_A = &PRINT_STMT;
+		Statement* STMT_B = &READ_STMT;
 		StmtId STMT_ID_A = 0;
 		StmtId STMT_ID_B = 1;
 		bool isExceptionThrown = false;

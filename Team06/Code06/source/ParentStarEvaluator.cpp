@@ -101,7 +101,7 @@ namespace PQL {
 				std::unordered_set<StmtId> children = database.parentKB.getAllChildren(arg1);
 				ClauseResult clauseResult;
 				for (StmtId child : children) {
-					if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(child).getType(), synonymTable[arg2])) {
+					if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(child)->getType(), synonymTable[arg2])) {
 						ClauseResultEntry resultEntry;
 						resultEntry[arg2] = std::to_string(child);
 						clauseResult.emplace_back(resultEntry);
@@ -118,7 +118,7 @@ namespace PQL {
 				std::unordered_set<StmtId> parents = database.parentKB.getAllParents(arg2);
 				ClauseResult clauseResult;
 				for (StmtId parent : parents) {
-					if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(parent).getType(), synonymTable[arg1])) {
+					if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(parent)->getType(), synonymTable[arg1])) {
 						ClauseResultEntry resultEntry;
 						resultEntry[arg1] = std::to_string(parent);
 						clauseResult.emplace_back(resultEntry);
@@ -149,7 +149,7 @@ namespace PQL {
 				ClauseResult clauseResult = {};
 				for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
 					if (database.parentKB.getParent(i) != 0) {
-						if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i).getType(), synonymTable[arg2])) {
+						if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i)->getType(), synonymTable[arg2])) {
 							ClauseResultEntry resultEntry;
 							resultEntry[arg2] = std::to_string(i);
 							clauseResult.emplace_back(resultEntry);
@@ -165,7 +165,7 @@ namespace PQL {
 				ClauseResult clauseResult = {};
 				for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
 					if (database.parentKB.getDirectChildren(i).size() > 0) {
-						if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i).getType(), synonymTable[arg1])) {
+						if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i)->getType(), synonymTable[arg1])) {
 							ClauseResultEntry resultEntry;
 							resultEntry[arg1] = std::to_string(i);
 							clauseResult.emplace_back(resultEntry);
@@ -195,8 +195,8 @@ namespace PQL {
 			for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
 				std::unordered_set<StmtId> parents = database.parentKB.getAllParents(i);
 				for (StmtId parent : parents) {
-					if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(parent).getType(), synonymTable[arg1]) &&
-						SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i).getType(), synonymTable[arg2])) {
+					if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(parent)->getType(), synonymTable[arg1]) &&
+						SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i)->getType(), synonymTable[arg2])) {
 						if (!singleSynonym) {
 							ClauseResultEntry resultEntry;
 							resultEntry[arg1] = std::to_string(parent);

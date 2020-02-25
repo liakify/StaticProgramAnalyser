@@ -14,9 +14,9 @@ namespace PKB {
       stmtIdGenerator--;
   }
 
-  StmtId StmtTable::insertStmt(Statement stmt) {
+  StmtId StmtTable::insertStmt(Statement* stmt) {
     idStmtTable.insert(std::make_pair(stmtIdGenerator, stmt));
-    StmtType thisType = stmt.getType();
+    StmtType thisType = stmt->getType();
     StmtId thisId = stmtIdGenerator;
     stmtIdGenerator++;
 
@@ -28,13 +28,13 @@ namespace PKB {
     return thisId;
   }
 
-  void StmtTable::insertStmtAtId(Statement stmt, StmtId id) {
+  void StmtTable::insertStmtAtId(Statement* stmt, StmtId id) {
       try {
-          Statement s = get(id);
+          Statement* s = get(id);
       }
       catch (std::out_of_range&) {
           idStmtTable.insert(std::make_pair(id, stmt));
-          StmtType thisType = stmt.getType();
+          StmtType thisType = stmt->getType();
 
           unordered_set<StmtId> newSet{ id };
           if (!typeIdsTable.try_emplace(thisType, newSet).second) {
@@ -45,7 +45,7 @@ namespace PKB {
       throw std::invalid_argument("ID already exists in StmtTable.");
   }
 
-  Statement StmtTable::get(StmtId stmtId) {
+  Statement* StmtTable::get(StmtId stmtId) {
     return idStmtTable.at(stmtId); // throws out_of_range exception
   }
 

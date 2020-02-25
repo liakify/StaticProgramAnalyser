@@ -49,12 +49,12 @@ namespace FrontEnd {
 		ProcId procedure();
 		StmtListId stmtLst();
 		StmtId stmt();
-		ReadStmt read_stmt();
-		PrintStmt print_stmt();
-		CallStmt call_stmt();
-		WhileStmt while_stmt();
-		IfStmt if_stmt();
-		AssignStmt assign_stmt();
+		ReadStmt* read_stmt();
+		PrintStmt* print_stmt();
+		CallStmt* call_stmt();
+		WhileStmt* while_stmt();
+		IfStmt* if_stmt();
+		AssignStmt* assign_stmt();
 
 		CondExpr cond_expr();
 		CondExpr rel_expr();

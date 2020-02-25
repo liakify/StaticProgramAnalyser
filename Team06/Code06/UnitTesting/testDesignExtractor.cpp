@@ -17,26 +17,26 @@ namespace UnitTesting
 	public:
 		TEST_CLASS_INITIALIZE(setup) {
 			pkb = PKB::PKB();
-			pkb.stmtTable.insertStmt(ReadStmt(1));
-			pkb.stmtTable.insertStmt(ReadStmt(2));
-			pkb.stmtTable.insertStmt(ReadStmt(3));
-			pkb.stmtTable.insertStmt(ReadStmt(4));
-			pkb.stmtTable.insertStmt(ReadStmt(5));
-			pkb.stmtTable.insertStmt(ReadStmt(6));
+			pkb.stmtTable.insertStmt(&ReadStmt(1));
+			pkb.stmtTable.insertStmt(&ReadStmt(2));
+			pkb.stmtTable.insertStmt(&ReadStmt(3));
+			pkb.stmtTable.insertStmt(&ReadStmt(4));
+			pkb.stmtTable.insertStmt(&ReadStmt(5));
+			pkb.stmtTable.insertStmt(&ReadStmt(6));
 			pkb.followsKB.addFollows(1, 2);
 			pkb.followsKB.addFollows(3, 4);
 			pkb.followsKB.addFollows(4, 5);
 			pkb.followsKB.addFollows(2, 6);
 
-			pkb.stmtTable.insertStmt(ReadStmt(7));
-			pkb.stmtTable.insertStmt(ReadStmt(8));
-			pkb.stmtTable.insertStmt(ReadStmt(9));
-			pkb.stmtTable.insertStmt(ReadStmt(10));
-			pkb.stmtTable.insertStmt(ReadStmt(11));
-			pkb.stmtTable.insertStmt(ReadStmt(12));
-			pkb.stmtTable.insertStmt(ReadStmt(13));
-			pkb.stmtTable.insertStmt(ReadStmt(14));
-			pkb.stmtTable.insertStmt(ReadStmt(15));
+			pkb.stmtTable.insertStmt(&ReadStmt(7));
+			pkb.stmtTable.insertStmt(&ReadStmt(8));
+			pkb.stmtTable.insertStmt(&ReadStmt(9));
+			pkb.stmtTable.insertStmt(&ReadStmt(10));
+			pkb.stmtTable.insertStmt(&ReadStmt(11));
+			pkb.stmtTable.insertStmt(&ReadStmt(12));
+			pkb.stmtTable.insertStmt(&ReadStmt(13));
+			pkb.stmtTable.insertStmt(&ReadStmt(14));
+			pkb.stmtTable.insertStmt(&ReadStmt(15));
 			pkb.parentKB.addParent(7, 8);
 			pkb.parentKB.addParent(8, 9);
 			pkb.parentKB.addParent(8, 10);
