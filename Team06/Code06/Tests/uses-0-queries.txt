@@ -68,10 +68,20 @@ if ifs; variable v;
 Select ifs such that Uses(ifs, v)
 4
 5000
+1 - argument variant: stmtRef variant: if - select variables
+if ifs; variable v;
+Select v such that Uses(ifs, v)
+d, e, f, g, h, i, j, k, l, m
+5000
 1 - argument variant: stmtRef variant: while (all while stmts 'Uses' some variable. So no empty-set case)
 while w; variable v;
 Select w such that Uses(w, _)
 6, 9, 11
+5000
+1 - argument variant: stmtRef variant: while - select variables
+while w; variable v;
+Select v such that Uses(w, v)
+g, h, i, k, l, m, n, o, p, q, r, s, t
 5000
 1 - argument variant: stmtRef variant: procedure (TODO: update after Iter. 1)
 procedure p; variable v;
