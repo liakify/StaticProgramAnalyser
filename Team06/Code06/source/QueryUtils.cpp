@@ -49,7 +49,7 @@ namespace PQL {
         // Regex describing an allowed infix arithemtic expression
         // Use an optional capturing group for the underscore and substitute it at the end
         // Ensures symmetric pattern string (both underscores present or absent together)
-        regex VALID_EXPRESSION("^(_?) *\" *(?:(?:[0-9]+)|(?:[A-Za-z][A-Za-z0-9]*)(?: *[\\+\\-\\*\\/\\%] *(?:(?:[0-9]+)|(?:[A-Za-z][A-Za-z0-9]*)))*) *\" *\\1$");
+        regex VALID_EXPRESSION("^(_?) *\" *(?:(?:[0-9]+)|(?:[A-Za-z][A-Za-z0-9]*))(?: *[\\+\\-\\*\\/\\%] *(?:(?:[0-9]+)|(?:[A-Za-z][A-Za-z0-9]*)))* *\" *\\1$");
         smatch pmatch;
 
         if (!regex_search(input, pmatch, VALID_EXPRESSION)) {
