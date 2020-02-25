@@ -324,12 +324,12 @@ namespace FrontEnd {
 		try {
 			if (isExpression) {
 				// Sentinel id value
-				return Expression(name(), -1, VAR);
+				return Expression(name(), -1, ExprType::VAR);
 			}
 			else {
 				VarId id = var_name();
 				VarName name = pkb.varTable.get(id);
-				return Expression(name, id, VAR);
+				return Expression(name, id, ExprType::VAR);
 			}
 		}
 		catch (const invalid_argument&) {
@@ -338,7 +338,7 @@ namespace FrontEnd {
 		try {
 			ConstId id = const_value();
 			ConstValue value = pkb.constTable.get(id);
-			return Expression(value, id, CONST);
+			return Expression(value, id, ExprType::CONST);
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;

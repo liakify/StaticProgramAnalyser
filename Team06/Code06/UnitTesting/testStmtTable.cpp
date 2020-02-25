@@ -33,7 +33,7 @@ namespace UnitTesting
 			}
 			Assert::IsTrue(isExceptionThrown);
 			isExceptionThrown = false;
-			Assert::IsTrue(stmtTable.getStmtsByType(PRINT).empty());
+			Assert::IsTrue(stmtTable.getStmtsByType(StmtType::PRINT).empty());
 		}
 
 		TEST_METHOD(StmtTableFunctions) {
@@ -43,7 +43,7 @@ namespace UnitTesting
 			StmtId stmt_A_id = stmtTable.insertStmt(STMT_A);
 			Assert::AreEqual(stmtTable.size(), 1);
 
-			unordered_set<StmtId> set = stmtTable.getStmtsByType(PRINT);
+			unordered_set<StmtId> set = stmtTable.getStmtsByType(StmtType::PRINT);
 
 			Assert::IsFalse(set.empty());
 			Assert::IsFalse(set.find(stmt_A_id) == set.end());

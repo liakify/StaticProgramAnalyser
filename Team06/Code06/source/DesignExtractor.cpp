@@ -46,12 +46,12 @@ namespace FrontEnd {
 	}
 
 	void DesignExtractor::populateParent() {
-		unordered_set<StmtId> whileSet = pkb.stmtTable.getStmtsByType(WHILE);
+		unordered_set<StmtId> whileSet = pkb.stmtTable.getStmtsByType(StmtType::WHILE);
 		for (StmtId id : whileSet) {
 			WhileStmt* ws = (WhileStmt*)pkb.stmtTable.get(id);
 			populateParentKB(id, ws->getStmtLstId());
 		}
-		unordered_set<StmtId> ifSet = pkb.stmtTable.getStmtsByType(IF);
+		unordered_set<StmtId> ifSet = pkb.stmtTable.getStmtsByType(StmtType::IF);
 		for (StmtId id : ifSet) {
 			IfStmt* ifs = (IfStmt*)pkb.stmtTable.get(id);
 			populateParentKB(id, ifs->getThenStmtLstId());
@@ -93,22 +93,21 @@ namespace FrontEnd {
 		}
 	}
 
-
 	void DesignExtractor::populateUses() {
 		for (StmtId i = 1; i < pkb.stmtTable.size(); i++) {
 			Statement* s = pkb.stmtTable.get(i);
 			StmtType type = s->getType();
-			if (type == PRINT) {
+			if (type == StmtType::PRINT) {
 				PrintStmt* ps = (PrintStmt*)s;
 				pkb.usesKB.addStmtUses(i, ps->getVar());
 			}
-			else if (type == WHILE) {
+			else if (type == StmtType::WHILE) {
 				WhileStmt* ws = (WhileStmt*)s;
 				StmtListId stmtLstId = ws->getStmtLstId();
 				populateUsesKB(i, ws->getCondExpr().getVarIds());
 				populateUsesKB(i, getAllUses(stmtLstId));
 			}
-			else if (type == IF) {
+			else if (type == StmtType::IF) {
 				IfStmt* ifs = (IfStmt*)s;
 				StmtListId stmtLstId1 = ifs->getThenStmtLstId();
 				StmtListId stmtLstId2 = ifs->getElseStmtLstId();
@@ -116,7 +115,7 @@ namespace FrontEnd {
 				populateUsesKB(i, getAllUses(stmtLstId1));
 				populateUsesKB(i, getAllUses(stmtLstId2));
 			}
-			else if (type == ASSIGN) {
+			else if (type == StmtType::ASSIGN) {
 				AssignStmt* as = (AssignStmt*)s;
 				Expression exp = as->getExpr();
 				populateUsesKB(i, exp.getVarIds());
@@ -145,16 +144,16 @@ namespace FrontEnd {
 		for (StmtId i = 1; i < pkb.stmtTable.size(); i++) {
 			Statement* s = pkb.stmtTable.get(i);
 			StmtType type = s->getType();
-			if (type == READ) {
+			if (type == StmtType::READ) {
 				ReadStmt* rs = (ReadStmt*)s;
 				pkb.modifiesKB.addStmtModifies(i, rs->getVar());
 			}
-			else if (type == WHILE) {
+			else if (type == StmtType::WHILE) {
 				WhileStmt* ws = (WhileStmt*)s;
 				StmtListId stmtLstId = ws->getStmtLstId();
 				populateModifiesKB(i, getAllModifies(stmtLstId));
 			}
-			else if (type == IF) {
+			else if (type == StmtType::IF) {
 				IfStmt* ifs = (IfStmt*)s;
 				StmtListId stmtLstId1 = ifs->getThenStmtLstId();
 				StmtListId stmtLstId2 = ifs->getElseStmtLstId();
@@ -162,7 +161,7 @@ namespace FrontEnd {
 				populateModifiesKB(i, getAllModifies(stmtLstId1));
 				populateModifiesKB(i, getAllModifies(stmtLstId2));
 			}
-			else if (type == ASSIGN) {
+			else if (type == StmtType::ASSIGN) {
 				AssignStmt* as = (AssignStmt*)s;
 				Expression exp = as->getExpr();
 				pkb.modifiesKB.addStmtModifies(i, as->getVar());
@@ -188,7 +187,7 @@ namespace FrontEnd {
 	}
 
 	void DesignExtractor::populatePattern() {
-		unordered_set<StmtId> assignSet = pkb.stmtTable.getStmtsByType(ASSIGN);
+		unordered_set<StmtId> assignSet = pkb.stmtTable.getStmtsByType(StmtType::ASSIGN);
 		for (StmtId id : assignSet) {
 			AssignStmt* as = (AssignStmt*)pkb.stmtTable.get(id);
 			Expression exp = as->getExpr();

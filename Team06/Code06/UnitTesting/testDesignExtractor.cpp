@@ -23,11 +23,14 @@ namespace UnitTesting
 			pkb.stmtTable.insertStmt(&ReadStmt(4));
 			pkb.stmtTable.insertStmt(&ReadStmt(5));
 			pkb.stmtTable.insertStmt(&ReadStmt(6));
-			pkb.followsKB.addFollows(1, 2);
-			pkb.followsKB.addFollows(3, 4);
-			pkb.followsKB.addFollows(4, 5);
-			pkb.followsKB.addFollows(2, 6);
 
+			std::vector<StmtId> v1 = { 1,2,6 };
+			pkb.stmtListTable.insertStmtLst(StatementList(v1));
+			std::vector<StmtId> v2 = { 3,4,5 };
+			pkb.stmtListTable.insertStmtLst(StatementList(v2));
+
+			Expression exp = Expression("1", 1, ExprType::CONST);
+			//IfStmt ifs = IfStmt();
 			pkb.stmtTable.insertStmt(&ReadStmt(7));
 			pkb.stmtTable.insertStmt(&ReadStmt(8));
 			pkb.stmtTable.insertStmt(&ReadStmt(9));
@@ -45,6 +48,16 @@ namespace UnitTesting
 			pkb.parentKB.addParent(12, 13);
 			pkb.parentKB.addParent(14, 15);
 			pkb = DE.run(pkb);
+		}
+
+		TEST_METHOD(populateFollows) {
+			Assert::IsTrue(pkb.followsKB.follows(1, 2));
+			Assert::IsTrue(pkb.followsKB.follows(3, 4));
+			Assert::IsTrue(pkb.followsKB.follows(4, 5));
+			Assert::IsTrue(pkb.followsKB.follows(2, 6));
+
+			Assert::IsFalse(pkb.followsKB.follows(1, 6));
+			Assert::IsFalse(pkb.followsKB.follows(3, 5));
 		}
 
 		TEST_METHOD(populateFollowStar) {
