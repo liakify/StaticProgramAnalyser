@@ -75,17 +75,13 @@ namespace FrontEnd {
 		int currentPos = this->pos;
 		try {
 			ReadStmt* readStmt = read_stmt();
-			StmtId stmtId = pkb.stmtTable.insertStmt(readStmt);
-			pkb.modifiesKB.addStmtModifies(stmtId, readStmt->getVar());
-			return stmtId;
+			return pkb.stmtTable.insertStmt(readStmt);
 		} catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		try {
 			PrintStmt* printStmt = print_stmt();
-			StmtId stmtId = pkb.stmtTable.insertStmt(printStmt);
-			pkb.usesKB.addStmtUses(stmtId, printStmt->getVar());
-			return stmtId;
+			return pkb.stmtTable.insertStmt(printStmt);
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
@@ -101,10 +97,6 @@ namespace FrontEnd {
 			StmtId stmtId = pkb.stmtTable.reserveId();
 			WhileStmt* whileStmt = while_stmt();
 			pkb.stmtTable.insertStmtAtId(whileStmt, stmtId);
-			StmtListId stmtLstId = whileStmt->getStmtLstId();
-			populateUsesKB(stmtId, whileStmt->getCondExpr().getVarIds());
-			populateUsesKB(stmtId, getAllUses(stmtLstId));
-			populateModifiesKB(stmtId, getAllModifies(stmtLstId));
 			return stmtId;
 		}
 		catch (const invalid_argument&) {
@@ -115,13 +107,6 @@ namespace FrontEnd {
 			StmtId stmtId = pkb.stmtTable.reserveId();
 			IfStmt* ifStmt = if_stmt();
 			pkb.stmtTable.insertStmtAtId(ifStmt, stmtId);
-			StmtListId stmtLstId1 = ifStmt->getThenStmtLstId();
-			StmtListId stmtLstId2 = ifStmt->getElseStmtLstId();
-			populateUsesKB(stmtId, ifStmt->getCondExpr().getVarIds());
-			populateUsesKB(stmtId, getAllUses(stmtLstId1));
-			populateUsesKB(stmtId, getAllUses(stmtLstId2));
-			populateModifiesKB(stmtId, getAllModifies(stmtLstId1));
-			populateModifiesKB(stmtId, getAllModifies(stmtLstId2));
 			return stmtId;
 		}
 		catch (const invalid_argument&) {
@@ -129,14 +114,7 @@ namespace FrontEnd {
 			pkb.stmtTable.unreserveId();
 		}
 		AssignStmt* assignStmt = assign_stmt();
-		StmtId stmtId = pkb.stmtTable.insertStmt(assignStmt);
-		Expression exp = assignStmt->getExpr();
-		pkb.modifiesKB.addStmtModifies(stmtId, assignStmt->getVar());
-		populateUsesKB(stmtId, exp.getVarIds());
-		populatePatternKB(stmtId, exp);
-		VarName vn = pkb.varTable.get(assignStmt->getVar());
-		pkb.patternKB.addLHSPattern(vn, stmtId);
-		return stmtId;
+		return pkb.stmtTable.insertStmt(assignStmt);
 	}
 
 	ReadStmt* Parser::read_stmt() {
@@ -381,47 +359,5 @@ namespace FrontEnd {
 
 	ConstId Parser::const_value() {
 		return pkb.constTable.insertConst(integer());
-	}
-
-	std::unordered_set<VarId> Parser::getAllUses(StmtListId sid) {
-		std::unordered_set<VarId> result;
-		StatementList sl = pkb.stmtListTable.get(sid);
-		std::vector<StmtId> idList = sl.getStmtIds();
-		for (StmtId id : idList) {
-			std::unordered_set<VarId> set = pkb.usesKB.getAllVarsUsedByStmt(id);
-			result.insert(set.begin(), set.end());
-		}
-		return result;
-	}
-
-	std::unordered_set<VarId> Parser::getAllModifies(StmtListId sid) {
-		std::unordered_set<VarId> result;
-		StatementList sl = pkb.stmtListTable.get(sid);
-		std::vector<StmtId> idList = sl.getStmtIds();
-		for (StmtId id : idList) {
-			std::unordered_set<VarId> set = pkb.modifiesKB.getAllVarsModifiedByStmt(id);
-			result.insert(set.begin(), set.end());
-		}
-		return result;
-	}
-
-	void Parser::populateUsesKB(StmtId stmtId, std::unordered_set<VarId> varSet) {
-		for (VarId id : varSet) {
-			pkb.usesKB.addStmtUses(stmtId, id);
-		}
-	}
-
-	void Parser::populateModifiesKB(StmtId stmtId, std::unordered_set<VarId> varSet) {
-		for (VarId id : varSet) {
-			pkb.modifiesKB.addStmtModifies(stmtId, id);
-		}
-	}
-
-	void Parser::populatePatternKB(StmtId stmtId, Expression exp) {
-		pkb.patternKB.addRHSPattern(exp.getStr(), stmtId);
-		std::unordered_set<Pattern> patterns = exp.getPatterns();
-		for (Pattern p : patterns) {
-			pkb.patternKB.addRHSPattern(p, stmtId);
-		}
 	}
 }
