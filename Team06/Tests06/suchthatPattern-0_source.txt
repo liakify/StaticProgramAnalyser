@@ -1,4 +1,4 @@
-Procedure SelectSuchThatPattern {
+procedure SelectSuchThatPattern {
   print a;
   a = b;
   a = c;
