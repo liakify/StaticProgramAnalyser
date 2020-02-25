@@ -26,12 +26,14 @@ namespace FrontEnd {
 		PKB::PKB parseSimple(string source);
 
 		/**
-		* Parses standalone SIMPLE expressions. PKB remains unmodified.
+		* Parses standalone SIMPLE expressions into a consistent string format.
+		* PKB remains unmodified.
 		* 
 		* @param	exp						SIMPLE expression to be parsed.
+		* @return	std::string				A converted string representation
 		* @throws	std::invalid_argument	if the SIMPLE source has syntax errors.
 		*/
-		Expression parseExpression(string exp);
+		string parseExpression(string exp);
 	private:
 		string src;
 		PKB::PKB pkb;
