@@ -12,12 +12,12 @@ namespace FrontEnd {
 		return this->pkb;
 	}
 
-	Expression Parser::parseExpression(string exp) {
+	string Parser::parseExpression(string exp) {
 		this->pkb = PKB::PKB();
 		this->isExpression = true;
 		this->src = exp;
 		this->pos = 0;
-		return expr();
+		return expr().getStr();
 	}
 
 	string Parser::consume(regex rgx) {
