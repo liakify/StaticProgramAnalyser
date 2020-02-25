@@ -29,8 +29,6 @@ namespace UnitTesting
 			std::vector<StmtId> v2 = { 3,4,5 };
 			pkb.stmtListTable.insertStmtLst(StatementList(v2));
 
-			Expression exp = Expression("1", 1, ExprType::CONST);
-			//IfStmt ifs = IfStmt();
 			pkb.stmtTable.insertStmt(&ReadStmt(7));
 			pkb.stmtTable.insertStmt(&ReadStmt(8));
 			pkb.stmtTable.insertStmt(&ReadStmt(9));
