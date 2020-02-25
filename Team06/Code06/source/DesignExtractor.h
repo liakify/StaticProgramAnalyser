@@ -31,6 +31,9 @@ namespace FrontEnd {
 
 		void populateFollows();
 		void populateFollowStar();
+		void populateParent();
 		void populateParentStar();
+
+		void populateParentKB(StmtId stmtId, StmtListId stmtLstId);
 	};
 }

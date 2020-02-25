@@ -1,10 +1,13 @@
 #include "DesignExtractor.h"
 
+using std::unordered_set;
+
 namespace FrontEnd {
 	PKB::PKB DesignExtractor::run(PKB::PKB& pkb) {
 		this->pkb = pkb;
 		populateFollows();
 		populateFollowStar();
+		populateParent();
 		populateParentStar();
 		return this->pkb;
 	}
@@ -17,6 +20,28 @@ namespace FrontEnd {
 				pkb.followsKB.addFollows(sid[j], sid[j + 1]);
 				Statement* s = pkb.stmtTable.get(sid[j]);
 			}
+		}
+	}
+
+	void DesignExtractor::populateParent() {
+		unordered_set<StmtId> whileSet = pkb.stmtTable.getStmtsByType(WHILE);
+		for (StmtId id : whileSet) {
+			WhileStmt* ws = (WhileStmt*)pkb.stmtTable.get(id);
+			populateParentKB(id, ws->getStmtLstId());
+		}
+		unordered_set<StmtId> ifSet = pkb.stmtTable.getStmtsByType(IF);
+		for (StmtId id : ifSet) {
+			IfStmt* ifs = (IfStmt*)pkb.stmtTable.get(id);
+			populateParentKB(id, ifs->getThenStmtLstId());
+			populateParentKB(id, ifs->getElseStmtLstId());
+		}
+	}
+
+	void DesignExtractor::populateParentKB(StmtId stmtId, StmtListId stmtLstId) {
+		StatementList sl = pkb.stmtListTable.get(stmtLstId);
+		std::vector<StmtId> idList = sl.getStmtIds();
+		for (StmtId id : idList) {
+			pkb.parentKB.addParent(stmtId, id);
 		}
 	}
 

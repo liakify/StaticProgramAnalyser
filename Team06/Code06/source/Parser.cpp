@@ -102,7 +102,6 @@ namespace FrontEnd {
 			WhileStmt* whileStmt = while_stmt();
 			pkb.stmtTable.insertStmtAtId(whileStmt, stmtId);
 			StmtListId stmtLstId = whileStmt->getStmtLstId();
-			populateParentKB(stmtId, stmtLstId);
 			populateUsesKB(stmtId, whileStmt->getCondExpr().getVarIds());
 			populateUsesKB(stmtId, getAllUses(stmtLstId));
 			populateModifiesKB(stmtId, getAllModifies(stmtLstId));
@@ -118,8 +117,6 @@ namespace FrontEnd {
 			pkb.stmtTable.insertStmtAtId(ifStmt, stmtId);
 			StmtListId stmtLstId1 = ifStmt->getThenStmtLstId();
 			StmtListId stmtLstId2 = ifStmt->getElseStmtLstId();
-			populateParentKB(stmtId, stmtLstId1);
-			populateParentKB(stmtId, stmtLstId2);
 			populateUsesKB(stmtId, ifStmt->getCondExpr().getVarIds());
 			populateUsesKB(stmtId, getAllUses(stmtLstId1));
 			populateUsesKB(stmtId, getAllUses(stmtLstId2));
@@ -406,14 +403,6 @@ namespace FrontEnd {
 			result.insert(set.begin(), set.end());
 		}
 		return result;
-	}
-
-	void Parser::populateParentKB(StmtId stmtId, StmtListId stmtLstId) {
-		StatementList sl = pkb.stmtListTable.get(stmtLstId);
-		std::vector<StmtId> idList = sl.getStmtIds();
-		for (StmtId id : idList) {
-			pkb.parentKB.addParent(stmtId, id);
-		}
 	}
 
 	void Parser::populateUsesKB(StmtId stmtId, std::unordered_set<VarId> varSet) {
