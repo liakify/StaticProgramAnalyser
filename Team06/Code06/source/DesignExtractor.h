@@ -4,6 +4,9 @@
 
 #include "Types.h"
 #include "PKB.h"
+#include "Simple.h"
+
+using namespace SIMPLE;
 
 namespace FrontEnd {
 	/**
@@ -26,6 +29,7 @@ namespace FrontEnd {
 	private:
 		PKB::PKB pkb;
 
+		void populateFollows();
 		void populateFollowStar();
 		void populateParentStar();
 	};

@@ -1,6 +1,8 @@
 #include "Parser.h"
 
 using std::invalid_argument;
+using std::regex;
+using std::string;
 
 namespace FrontEnd {
 	PKB::PKB Parser::parseSimple(string src) {
@@ -64,9 +66,6 @@ namespace FrontEnd {
 			} catch (const invalid_argument&) {
 				break;
 			}
-		}
-		for (size_t i = 0; i < statements.size() - 1; i++) {
-			pkb.followsKB.addFollows(statements[i], statements[i + 1]);
 		}
 		StatementList sl = StatementList(statements);
 		return pkb.stmtListTable.insertStmtLst(sl);

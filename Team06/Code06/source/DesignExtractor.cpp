@@ -3,9 +3,21 @@
 namespace FrontEnd {
 	PKB::PKB DesignExtractor::run(PKB::PKB& pkb) {
 		this->pkb = pkb;
+		populateFollows();
 		populateFollowStar();
 		populateParentStar();
 		return this->pkb;
+	}
+
+	void DesignExtractor::populateFollows() {
+		for (int i = 1; i <= pkb.stmtListTable.size(); i++) {
+			StatementList sl = pkb.stmtListTable.get(i);
+			std::vector<StmtId> sid = sl.getStmtIds();
+			for (size_t j = 0; j < sid.size() - 1; j++) {
+				pkb.followsKB.addFollows(sid[j], sid[j + 1]);
+				Statement* s = pkb.stmtTable.get(sid[j]);
+			}
+		}
 	}
 
 	void DesignExtractor::populateFollowStar() {

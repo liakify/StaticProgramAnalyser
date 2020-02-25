@@ -6,8 +6,6 @@
 #include "PKB.h"
 #include "Simple.h"
 
-using std::regex;
-using std::string;
 using namespace SIMPLE;
 
 namespace FrontEnd {
@@ -23,7 +21,7 @@ namespace FrontEnd {
 		* @return	PKB::PKB				A populated PKB instance
 		* @throws	std::invalid_argument	if the SIMPLE source has syntax errors.
 		*/
-		PKB::PKB parseSimple(string source);
+		PKB::PKB parseSimple(std::string source);
 
 		/**
 		* Parses standalone SIMPLE expressions into a consistent string format.
@@ -33,17 +31,17 @@ namespace FrontEnd {
 		* @return	std::string				A converted string representation
 		* @throws	std::invalid_argument	if the SIMPLE source has syntax errors.
 		*/
-		string parseExpression(string exp);
+		std::string parseExpression(std::string exp);
 	private:
-		string src;
+		std::string src;
 		PKB::PKB pkb;
 		size_t pos;
 		bool isExpression;
 
-		string consume(regex rgx);
+		std::string consume(std::regex rgx);
 
-		string name();
-		string integer();
+		std::string name();
+		std::string integer();
 
 		void program();
 		ProcId procedure();
