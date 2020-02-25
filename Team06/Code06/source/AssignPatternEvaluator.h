@@ -16,7 +16,7 @@ namespace PQL {
 		* @return	The result of the evaluation.
 		*/
 		ClauseResult evaluateAssignPatternClause(PKB::PKB& database, PatternClause clause,
-			std::unordered_map<string, DesignEntity>& synonymTable);
+			std::unordered_map<std::string, DesignEntity>& synonymTable);
 
 	}
 }

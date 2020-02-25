@@ -1,5 +1,8 @@
 #pragma once
 
+#include <set>
+#include <sstream>
+
 #include "Types.h"
 
 namespace PQL {

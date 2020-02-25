@@ -1,6 +1,9 @@
 #include "LoggingUtils.h"
 #include "PQL.h"
 
+using std::string;
+using std::list;
+
 namespace PQL {
 
     PQLManager::PQLManager(PKB::PKB& database) 
