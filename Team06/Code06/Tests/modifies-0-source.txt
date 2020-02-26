@@ -18,7 +18,7 @@ procedure SelectModifies {
             print notModified; 
             while (c1 == c2) {
                 read nested3wthenw; }} else {
-            print NotModified }}
+            print NotModified; }}
     while ((!(n <= o)) || ((p > q) && (r < s))) {
         print notModified; }
     if (c1 == c2) then {

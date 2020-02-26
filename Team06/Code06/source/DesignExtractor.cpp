@@ -96,10 +96,11 @@ namespace FrontEnd {
 	}
 
 	void DesignExtractor::populateUses() {
-		for (ProcId i = 1; i < pkb.procTable.size(); i++) {
+		for (ProcId i = 1; i <= pkb.procTable.size(); i++) {
 			Procedure p = pkb.procTable.get(i);
 			StatementList sl = pkb.stmtListTable.get(p.getStmtLstId());
-			for (StmtId id : sl.getStmtIds()) {
+			std::vector<StmtId> idList = sl.getStmtIds();
+			for (StmtId id : idList) {
 				populateStmtUses(id);
 			}
 		}
@@ -152,10 +153,11 @@ namespace FrontEnd {
 	}
 
 	void DesignExtractor::populateModifies() {
-		for (ProcId i = 1; i < pkb.procTable.size(); i++) {
+		for (ProcId i = 1; i <= pkb.procTable.size(); i++) {
 			Procedure p = pkb.procTable.get(i);
 			StatementList sl = pkb.stmtListTable.get(p.getStmtLstId());
-			for (StmtId id : sl.getStmtIds()) {
+			std::vector<StmtId> idList = sl.getStmtIds();
+			for (StmtId id : idList) {
 				populateStmtModifies(id);
 			}
 		}
