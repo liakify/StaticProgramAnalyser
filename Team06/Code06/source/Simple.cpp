@@ -16,14 +16,14 @@ namespace SIMPLE {
 
 	Expression::Expression(std::string name, int id, ExprType type)
 		: left(*this), right(*this), op('\0'), str(name) {
-		if (type == VAR) {
+		if (type == ExprType::VAR) {
 			this->varSet.insert(id);
 			this->patterns.insert("_" + this->str + "_");
-		} else if (type == CONST) {
+		} else if (type == ExprType::CONST) {
 			this->constSet.insert(id);
 			this->patterns.insert("_" + this->str + "_");
 		} else {
-			throw std::invalid_argument("ExprType is not VAR or CONST");
+			throw std::invalid_argument("ExprType is not ExprType::VAR or ExprType::CONST");
 		}
 	}
 
@@ -86,7 +86,7 @@ namespace SIMPLE {
 
 	PrintStmt::PrintStmt(VarId var)
 		: var(var) {
-		this->stmtType = PRINT;
+		this->stmtType = StmtType::PRINT;
 	}
 
 	VarId PrintStmt::getVar() {
@@ -95,7 +95,7 @@ namespace SIMPLE {
 
 	ReadStmt::ReadStmt(VarId var)
 		: var(var) {
-		this->stmtType = READ;
+		this->stmtType = StmtType::READ;
 	}
 	
 	VarId ReadStmt::getVar() {
@@ -104,7 +104,7 @@ namespace SIMPLE {
 
 	IfStmt::IfStmt(CondExpr cond, StmtListId thenStmtLst, StmtListId elseStmtLst)
 		: condExpr(cond), thenStmtLst(thenStmtLst), elseStmtLst(elseStmtLst) {
-		this->stmtType = IF;
+		this->stmtType = StmtType::IF;
 	}
 
 	CondExpr IfStmt::getCondExpr() {
@@ -121,7 +121,7 @@ namespace SIMPLE {
 
 	WhileStmt::WhileStmt(CondExpr cond, StmtListId stmtLst)
 		: condExpr(cond), stmtLst(stmtLst) {
-		this->stmtType = WHILE;
+		this->stmtType = StmtType::WHILE;
 	}
 
 	CondExpr WhileStmt::getCondExpr() {
@@ -134,7 +134,7 @@ namespace SIMPLE {
 
 	CallStmt::CallStmt(ProcName procName)
 		: procName(procName) {
-		this->stmtType = CALL;
+		this->stmtType = StmtType::CALL;
 	}
 
 	ProcName CallStmt::getProc() {
@@ -143,7 +143,7 @@ namespace SIMPLE {
 
 	AssignStmt::AssignStmt(VarId var, Expression expr)
 		: var(var), expr(expr) {
-		this->stmtType = ASSIGN;
+		this->stmtType = StmtType::ASSIGN;
 	}
 
 	VarId AssignStmt::getVar() {
