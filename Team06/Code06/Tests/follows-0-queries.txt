@@ -168,12 +168,12 @@ procedure p; stmt s;
 Select s such that Follows (p, s)
 
 5000
-- invalid: "varName" on LHS
+- invalid: varName on LHS
 stmt s;
 Select s such that Follows ("varName", s)
 
 5000
-- invalid: "varName" on RHS
+- invalid: varName on RHS
 stmt s;
 Select s such that Follows (s, "varName")
 
