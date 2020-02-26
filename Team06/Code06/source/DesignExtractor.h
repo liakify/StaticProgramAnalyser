@@ -41,9 +41,11 @@ namespace FrontEnd {
 		// Helper functions
 		void populateParentKB(StmtId stmtId, StmtListId stmtLstId);
 
+		void populateStmtUses(StmtId id);
 		std::unordered_set<VarId> getAllUses(StmtListId sid);
 		void populateUsesKB(StmtId stmtId, std::unordered_set<VarId> varSet);
 
+		void populateStmtModifies(StmtId id);
 		std::unordered_set<VarId> getAllModifies(StmtListId sid);
 		void populateModifiesKB(StmtId stmtId, std::unordered_set<VarId> varSet);
 
