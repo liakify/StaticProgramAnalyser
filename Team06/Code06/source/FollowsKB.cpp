@@ -3,18 +3,8 @@
 
 void FollowsKB::addFollows(StmtId stmtId1, StmtId stmtId2)
 {
-	if (followsTable.find(stmtId1) == followsTable.end())
-	{
-		followsTable.insert(std::make_pair(stmtId1, followsRS()));
-	}
-
-	if (followsTable.find(stmtId2) == followsTable.end())
-	{
-		followsTable.insert(std::make_pair(stmtId2, followsRS()));
-	}
-
-	followsRS& fRS1 = followsTable.at(stmtId1);
-	followsRS& fRS2 = followsTable.at(stmtId2);
+	followsRS& fRS1 = followsTable[stmtId1];
+	followsRS& fRS2 = followsTable[stmtId2];
 
 	fRS1.follower = stmtId2;
 	fRS2.following = stmtId1;
@@ -25,7 +15,7 @@ bool FollowsKB::follows(StmtId stmtId1, StmtId stmtId2)
 	try {
 		return followsTable.at(stmtId1).follower == stmtId2;
 	}
-	catch (const std::out_of_range & oor) {
+	catch (const std::out_of_range &) {
 		return false;
 	}
 }
@@ -36,7 +26,7 @@ bool FollowsKB::followStar(StmtId stmtId1, StmtId stmtId2)
 		std::unordered_set<StmtId> stmt1Followers = followsTable.at(stmtId1).allFollowers;
 		return stmt1Followers.find(stmtId2) != stmt1Followers.end();
 	}
-	catch (const std::out_of_range & oor) {
+	catch (const std::out_of_range &) {
 		return false;
 	}
 }
@@ -46,7 +36,7 @@ StmtId FollowsKB::getFollower(StmtId stmtId)
 	try {
 		return followsTable.at(stmtId).follower;
 	}
-	catch (const std::out_of_range & oor) {
+	catch (const std::out_of_range &) {
 		return INVALID_STMT_ID;
 	}
 }
@@ -56,7 +46,7 @@ StmtId FollowsKB::getFollowing(StmtId stmtId)
 	try {
 		return followsTable.at(stmtId).following;
 	} 
-	catch (const std::out_of_range & oor) {
+	catch (const std::out_of_range &) {
 		return INVALID_STMT_ID;
 	}
 }
@@ -66,7 +56,7 @@ bool FollowsKB::hasFollower(StmtId stmtId)
 	try {
 		return followsTable.at(stmtId).follower != 0;
 	}
-	catch (const std::out_of_range & oor) {
+	catch (const std::out_of_range &) {
 		return false;
 	}
 }
@@ -76,27 +66,27 @@ bool FollowsKB::isFollowing(StmtId stmtId)
 	try {
 		return followsTable.at(stmtId).following != 0;
 	}
-	catch (const std::out_of_range & oor) {
+	catch (const std::out_of_range &) {
 		return false;
 	}
 }
 
-std::unordered_set<StmtId> FollowsKB::getAllFollowers(StmtId stmtId)
+std::unordered_set<StmtId>& FollowsKB::getAllFollowers(StmtId stmtId)
 {
 	try {
 		return followsTable.at(stmtId).allFollowers;
 	}
-	catch (const std::out_of_range & oor) {
+	catch (const std::out_of_range &) {
 		return {};
 	}
 }
 
-std::unordered_set<StmtId> FollowsKB::getAllFollowing(StmtId stmtId)
+std::unordered_set<StmtId>& FollowsKB::getAllFollowing(StmtId stmtId)
 {
 	try {
 		return followsTable.at(stmtId).allFollowing;
 	}
-	catch (const std::out_of_range & oor) {
+	catch (const std::out_of_range &) {
 		return {};
 	}
 }
@@ -106,7 +96,7 @@ void FollowsKB::setAllFollowers(StmtId stmtId, std::unordered_set<StmtId> follow
 	try {
 		followsTable.at(stmtId).allFollowers = followers;
 	}
-	catch (const std::out_of_range & oor) {
+	catch (const std::out_of_range &) {
 		return;
 	}
 }
@@ -116,7 +106,14 @@ void FollowsKB::setAllFollowing(StmtId stmtId, std::unordered_set<StmtId> follow
 	try {
 		followsTable.at(stmtId).allFollowing = following;
 	}
-	catch (const std::out_of_range & oor) {
+	catch (const std::out_of_range &) {
 		return;
 	}
 }
+
+bool FollowsKB::followsRelationPresent()
+{
+	return followsTable.size() != 0;
+}
+
+
