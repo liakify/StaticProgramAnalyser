@@ -43,7 +43,7 @@ public:
 		Returns unordered_set of child statement IDs for which Parent(stmtId, s) is true.
 		If stmtId is not found or stmtId has direct children, empty set is returned.
 	*/
-	std::unordered_set<StmtId>& getDirectChildren(StmtId stmtId);
+	std::unordered_set<StmtId> getDirectChildren(StmtId stmtId);
 
 	/*
 		Returns TRUE if stmtId has a parent, FALSE otherwise.
@@ -58,12 +58,12 @@ public:
 	/*
 		Returns all statement IDs s for which Parent*(s, stmtId) is true.
 	*/
-	std::unordered_set<StmtId>& getAllParents(StmtId stmtId);
+	std::unordered_set<StmtId> getAllParents(StmtId stmtId);
 
 	/*
 		Returns all statement IDs s for which Parent*(stmtId, s) is true.
 	*/
-	std::unordered_set<StmtId>& getAllChildren(StmtId stmtId);
+	std::unordered_set<StmtId> getAllChildren(StmtId stmtId);
 
 	/*
 		Sets allChildren of stmtId to children

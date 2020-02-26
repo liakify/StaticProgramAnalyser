@@ -42,7 +42,7 @@ StmtId ParentKB::getParent(StmtId stmtId)
 	}
 }
 
-std::unordered_set<StmtId>& ParentKB::getDirectChildren(StmtId stmtId)
+std::unordered_set<StmtId> ParentKB::getDirectChildren(StmtId stmtId)
 {
 	try {
 		return parentTable.at(stmtId).directChildren;
@@ -72,7 +72,7 @@ bool ParentKB::hasDirectChildren(StmtId stmtId)
 	}
 }
 
-std::unordered_set<StmtId>& ParentKB::getAllParents(StmtId stmtId)
+std::unordered_set<StmtId> ParentKB::getAllParents(StmtId stmtId)
 {
 	try {
 		return parentTable.at(stmtId).allParents;
@@ -82,7 +82,7 @@ std::unordered_set<StmtId>& ParentKB::getAllParents(StmtId stmtId)
 	}
 }
 
-std::unordered_set<StmtId>& ParentKB::getAllChildren(StmtId stmtId)
+std::unordered_set<StmtId> ParentKB::getAllChildren(StmtId stmtId)
 {
 	try {
 		return parentTable.at(stmtId).allChildren;

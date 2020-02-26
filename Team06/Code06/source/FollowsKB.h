@@ -58,12 +58,12 @@ public:
 	/*
 		Returns all statement IDs s for which Follows*(stmtId, s) is true.
 	*/
-	std::unordered_set<StmtId>& getAllFollowers(StmtId stmtId);
+	std::unordered_set<StmtId> getAllFollowers(StmtId stmtId);
 
 	/*
 		Returns all statement IDs s for which Follows*(s, stmtId) is true.
 	*/
-	std::unordered_set<StmtId>& getAllFollowing(StmtId stmtId);
+	std::unordered_set<StmtId> getAllFollowing(StmtId stmtId);
 
 	/*
 		Sets allFollowers of stmtId to followers.

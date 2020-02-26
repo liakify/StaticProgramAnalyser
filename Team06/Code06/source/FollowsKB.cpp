@@ -71,7 +71,7 @@ bool FollowsKB::isFollowing(StmtId stmtId)
 	}
 }
 
-std::unordered_set<StmtId>& FollowsKB::getAllFollowers(StmtId stmtId)
+std::unordered_set<StmtId> FollowsKB::getAllFollowers(StmtId stmtId)
 {
 	try {
 		return followsTable.at(stmtId).allFollowers;
@@ -81,7 +81,7 @@ std::unordered_set<StmtId>& FollowsKB::getAllFollowers(StmtId stmtId)
 	}
 }
 
-std::unordered_set<StmtId>& FollowsKB::getAllFollowing(StmtId stmtId)
+std::unordered_set<StmtId> FollowsKB::getAllFollowing(StmtId stmtId)
 {
 	try {
 		return followsTable.at(stmtId).allFollowing;
