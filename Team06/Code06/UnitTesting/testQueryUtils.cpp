@@ -1,6 +1,10 @@
 #include "stdafx.h"
 #include "QueryUtils.h"
 
+using std::pair;
+using std::string;
+using std::vector;
+
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace PQL;
 

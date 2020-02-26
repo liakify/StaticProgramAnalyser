@@ -114,7 +114,7 @@ namespace PQL {
 		* @return	The result of the evaluation.
 		*/
 		ClauseResult evaluateAssignPatternClauseSynWild(PKB::PKB& database, PatternClause& clause,
-			std::unordered_map<string, DesignEntity>& synonymTable) {
+			std::unordered_map<std::string, DesignEntity>& synonymTable) {
 			Synonym arg0 = clause.synonym;
 			Synonym arg1 = clause.getArgs().first.second;
 			
@@ -146,7 +146,7 @@ namespace PQL {
 		* @return	The result of the evaluation.
 		*/
 		ClauseResult evaluateAssignPatternClauseSynPtn(PKB::PKB& database, PatternClause& clause,
-			std::unordered_map<string, DesignEntity>& synonymTable) {
+			std::unordered_map<std::string, DesignEntity>& synonymTable) {
 			Synonym arg0 = clause.synonym;
 			Synonym arg1 = clause.getArgs().first.second;
 			Pattern arg2 = clause.getArgs().second.second;
@@ -179,7 +179,7 @@ namespace PQL {
 		}
 
 		ClauseResult evaluateAssignPatternClause(PKB::PKB& database, PatternClause clause,
-			std::unordered_map<string, DesignEntity>& synonymTable) {
+			std::unordered_map<std::string, DesignEntity>& synonymTable) {
 
 			ArgType argType1 = clause.getArgs().first.first;
 			ArgType argType2 = clause.getArgs().second.first;

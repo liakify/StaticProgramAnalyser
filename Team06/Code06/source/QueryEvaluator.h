@@ -1,8 +1,9 @@
 #pragma once
 
+#include "PQLTypes.h"
 #include "Types.h"
+
 #include "PKB.h"
-#include "PQL.h"
 
 namespace PQL {
 

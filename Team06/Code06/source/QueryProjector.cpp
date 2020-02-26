@@ -1,6 +1,4 @@
 #include "QueryProjector.h"
-#include <set>
-#include <sstream>
 
 namespace PQL {
     
