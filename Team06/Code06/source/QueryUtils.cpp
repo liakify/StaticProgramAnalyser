@@ -1,5 +1,12 @@
 #include "QueryUtils.h"
 
+using std::istringstream;
+using std::pair;
+using std::regex;
+using std::smatch;
+using std::string;
+using std::vector;
+
 namespace PQL {
 
     bool QueryUtils::isInteger(string input) {
