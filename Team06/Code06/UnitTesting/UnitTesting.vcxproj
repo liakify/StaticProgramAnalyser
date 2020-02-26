@@ -165,11 +165,13 @@
     <ClCompile Include="testDesignExtractor.cpp" />
     <ClCompile Include="testPatternKB.cpp" />
     <ClCompile Include="testModifiesKB.cpp" />
+    <ClCompile Include="testQueryParser.cpp" />
     <ClCompile Include="testUsesKB.cpp" />
     <ClCompile Include="testParentKB.cpp" />
     <ClCompile Include="testFollowsKB.cpp" />
     <ClCompile Include="testConstTable.cpp" />
     <ClCompile Include="testParser.cpp" />
+    <ClCompile Include="testQueryUtils.cpp" />
     <ClCompile Include="testSimple.cpp" />
     <ClCompile Include="testStmtListTable.cpp" />
     <ClCompile Include="testStmtTable.cpp" />
