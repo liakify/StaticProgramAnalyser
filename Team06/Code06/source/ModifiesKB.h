@@ -6,10 +6,6 @@
 
 #include "Types.h"
 
-/*
-	TODO: Proc Tables/API
-*/
-
 class ModifiesKB
 {
 public:
