@@ -156,7 +156,6 @@ namespace FrontEnd {
 				IfStmt* ifs = (IfStmt*)s;
 				StmtListId stmtLstId1 = ifs->getThenStmtLstId();
 				StmtListId stmtLstId2 = ifs->getElseStmtLstId();
-				populateModifiesKB(i, ifs->getCondExpr().getVarIds());
 				populateModifiesKB(i, getAllModifies(stmtLstId1));
 				populateModifiesKB(i, getAllModifies(stmtLstId2));
 			}
