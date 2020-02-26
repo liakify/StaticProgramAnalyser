@@ -13,15 +13,25 @@
 class ModifiesKB
 {
 public:
-	void addStmtModifies(StmtId stmtId, VarId var);
+	void addStmtModifies(StmtId stmtId, VarId varId);
 
-	bool stmtModifies(StmtId stmtId, VarId var);
+	bool stmtModifies(StmtId stmtId, VarId varId);
+
+	void addProcModifies(ProcId procId, VarId varId);
+
+	bool procModifies(ProcId procId, VarId varId);
 
 	std::unordered_set<VarId> getAllVarsModifiedByStmt(StmtId stmtId);
 
-	std::unordered_set<StmtId> getAllStmtsModifyVar(VarId var);
+	std::unordered_set<StmtId> getAllStmtsModifyVar(VarId varId);
+	
+	std::unordered_set<VarId> getAllVarsModifiedByProc(ProcId procId);
+
+	std::unordered_set<ProcId> getAllProcModifyVar(VarId varId);
 
 private:
 	std::unordered_map<StmtId, std::unordered_set<VarId>> stmtVarTable;
 	std::unordered_map<VarId, std::unordered_set<StmtId>> varStmtTable;
+	std::unordered_map<ProcId, std::unordered_set<VarId>> procVarTable;
+	std::unordered_map<VarId, std::unordered_set<ProcId>> varProcTable;
 };
