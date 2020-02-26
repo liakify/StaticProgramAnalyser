@@ -1,7 +1,7 @@
 1 - outer statements have no parents
 read r;
 Select r such that Parent (_, 1)
-;
+
 5000
 2 - non-container statements are not parents
 read r;
@@ -21,7 +21,7 @@ Select s1 such that Parent(s1, s2)
 4 - all chilren, both synonym
 stmt s1, s2;
 Select s2 such that Parent(s1, s2)
-3, 5, 7, 8, 11, 13, 14, 16
+3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16
 5000
 5 - all parents, underscore on RHS
 stmt s;
@@ -31,7 +31,7 @@ Select s such that Parent(s, _)
 6 - all chilren, underscore on LHS
 stmt s;
 Select s such that Parent(_, s)
-3, 5, 7, 8, 11, 13, 14, 16
+3, 4, 5, 6, 7, 8, 9, 11, 12, 13, 14, 15, 16
 5000
 7 - no statement can be a parent of itself
 stmt s;
@@ -51,7 +51,7 @@ Select s such that Parent(s, 3)
 - all children (constant synonym)
 stmt s;
 Select s such that Parent (2, s)
-3, 4, 6
+3, 4, 6, 9
 5000
 - true (underscore constant)
 stmt s;
@@ -101,7 +101,7 @@ Select a such that Parent (w, a)
 - (if, read)
 if ifs; read r;
 Select r such that Parent(ifs, r)
-3, 8, 13
+3, 8, 9, 13
 5000
 - (if, assign)
 if ifs; assign a;
@@ -121,7 +121,7 @@ Select w such that Parent (ifs, w)
 - (while, print)
 while w; print pn;
 Select pn such that Parent (w, pn)
-15
+16
 5000
 - invalid: variable on LHS
 variable v; stmt s;
@@ -153,12 +153,12 @@ procedure p; stmt s;
 Select s such that Parent (p, s)
 
 5000
-- invalid: "varName" on LHS
+- invalid: varName on LHS
 stmt s;
 Select s such that Parent ("varName", s)
 
 5000
-- invalid: "varName" on RHS
+- invalid: varName on RHS
 stmt s;
 Select s such that Parent (s, "varName")
 

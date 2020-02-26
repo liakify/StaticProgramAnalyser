@@ -6,13 +6,13 @@ procedure SelectParent {
 			assign = assign; }
 		if (c == 0) then {
 			print x; } else {
-			read x; } }
-	read z;
+			read x; }				} else {
+		read z; }
 	while (d == 0) {
 		read y;
 		if (e == 0) then {
 			read y; } else {
-			assign = assign y; }
+			assign = assign + y; }
 		while (f == 0) {
 			print y; } }
 	read z; }

@@ -1,11 +1,11 @@
 1 - outer statements have no parents
 read r;
 Select r such that Parent* (_, 1)
-;
+
 5000
 2 - non-container statements are not parents
 read r;
-Select r such that Parent* (1, _)
+Select r such that Parent* (23, _)
 
 5000
 3 - non-related 
@@ -21,7 +21,7 @@ Select s1 such that Parent*(s1, s2)
 4 - all chilren, both synonym
 stmt s1, s2;
 Select s2 such that Parent*(s1, s2)
-4, 5, 6, 7, 11, 15, 16, 17, 21, 22, 23
+2, 3, 4, 5, 6, 7, 9, 10, 11, 13, 14, 15, 16, 17, 19, 20, 21, 22, 23
 5000
 5 - all parents, underscore on RHS
 stmt s;
@@ -31,7 +31,7 @@ Select s such that Parent*(s, _)
 6 - all chilren, underscore on LHS
 stmt s;
 Select s such that Parent*(_, s)
-4, 5, 6, 7, 11, 15, 16, 17, 21, 22, 23
+2, 3, 4, 5, 6, 7, 9, 10, 11, 13, 14, 15, 16, 17, 19, 20, 21, 22, 23
 5000
 7 - no statement can be a parent* of itself
 stmt s;
@@ -51,7 +51,7 @@ Select s such that Parent*(s, 4)
 - all children (constant synonym)
 stmt s;
 Select s such that Parent* (2, s)
-3, 4, 5, 6, 7
+3, 4, 5, 6
 5000
 - true (underscore constant)
 stmt s;
@@ -71,7 +71,7 @@ Select s such that Parent*(_, 1)
 - true (constant, constant)
 stmt s;
 Select s such that Parent* (2, 3)
-1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23
 5000
 - false (constant, constant)
 stmt s;
@@ -96,7 +96,7 @@ Select a such that Parent* (w, a)
 - (if, read)
 if ifs; read r;
 Select r such that Parent*(ifs, r)
-1, 2, 3, 12, 13
+4, 7, 16, 17, 23
 5000
 - (if, assign)
 if ifs; assign a;
@@ -111,7 +111,7 @@ Select w such that Parent* (w, ifs)
 - (while, if)
 if ifs; while w;
 Select w such that Parent* (ifs, w)
-12, 13
+14
 5000
 - (while, print)
 while w; print pn;
@@ -148,12 +148,12 @@ procedure p; stmt s;
 Select s such that Parent* (p, s)
 
 5000
-- invalid: "varName" on LHS
+- invalid: varName on LHS
 stmt s;
 Select s such that Parent ("varName", s)
 
 5000
-- invalid: "varName" on RHS
+- invalid: varName on RHS
 stmt s;
 Select s such that Parent (s, "varName")
 
