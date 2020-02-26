@@ -16,7 +16,7 @@ namespace PQL {
 		* @return	The result of the evaluation.
 		*/
 		ClauseResult evaluateUsesClause(PKB::PKB& database, RelationClause clause,
-			unordered_map<string, DesignEntity>& synonymTable);
+			unordered_map<std::string, DesignEntity>& synonymTable);
 
 	}
 }

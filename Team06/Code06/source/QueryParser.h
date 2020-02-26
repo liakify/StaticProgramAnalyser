@@ -4,10 +4,8 @@
 #include <sstream>
 
 #include "PQLTypes.h"
-#include "QueryUtils.h"
 
-using std::regex;
-using std::smatch;
+#include "QueryUtils.h"
 
 namespace PQL {
 
@@ -36,20 +34,20 @@ namespace PQL {
          *  @param      queryString     input PQL query string.
          *  @return     populated Query struct with status message.
          */
-        Query parseQuery(string queryString);
+        Query parseQuery(std::string queryString);
     private:
         int queryCount;
-        bool validateQuerySyntax(Query& query, vector<string> stmts);
+        bool validateQuerySyntax(Query& query, std::vector<std::string> stmts);
         bool validateQuerySemantics(Query& query);
-        vector<string> splitStatements(string queryString);
-        tuple<bool, vector<string>, vector<string>> splitConstraints(Query& query, string queryBodySuffix);
-        bool parseDeclarations(Query& query, vector<string> statements);
-        pair<bool, string> parseQueryTarget(Query& query, string queryBody);
-        bool parseRelationClauses(Query& query, vector<string> relationClauses);
-        bool parsePatternClauses(Query& query, vector<string> patternClauses);
-        pair<ArgType, StmtRef> parseStmtRef(string arg);
-        pair<ArgType, EntityRef> parseEntityRef(string arg);
-        pair<ArgType, Pattern> parsePattern(string arg);
+        std::vector<std::string> splitStatements(std::string queryString);
+        std::tuple<bool, std::vector<std::string>, std::vector<std::string>> splitConstraints(Query& query, std::string queryBodySuffix);
+        bool parseDeclarations(Query& query, std::vector<std::string> statements);
+        std::pair<bool, std::string> parseQueryTarget(Query& query, std::string queryBody);
+        bool parseRelationClauses(Query& query, std::vector<std::string> relationClauses);
+        bool parsePatternClauses(Query& query, std::vector<std::string> patternClauses);
+        std::pair<ArgType, StmtRef> parseStmtRef(std::string arg);
+        std::pair<ArgType, EntityRef> parseEntityRef(std::string arg);
+        std::pair<ArgType, Pattern> parsePattern(std::string arg);
     };
     
 }

@@ -1,16 +1,12 @@
 #pragma once
 
 #include <cassert>
+#include <string>
+#include <tuple>
 #include <unordered_map>
 #include <vector>
 
 #include "Types.h"
-
-using std::pair;
-using std::tuple;
-using std::string;
-using std::unordered_map;
-using std::vector;
 
 // Additional types specific to PQL (Query Processor)
 using StmtRef = std::string;
@@ -76,12 +72,12 @@ namespace PQL {
      *  of a RelationClause or PatternClause instance. Used to denote an argument
      *  that does not apply to that relation or pattern type.
      */
-    const pair<ArgType, string> INVALID_ARG = { ArgType::INVALID, "" };
+    const std::pair<ArgType, std::string> INVALID_ARG = { ArgType::INVALID, "" };
 
     /**
      *  Map from program entity keyword to program entity enum.
      */
-    const unordered_map<string, DesignEntity> ENTITY_MAP {
+    const std::unordered_map<std::string, DesignEntity> ENTITY_MAP {
         {"stmt", DesignEntity::STATEMENT},
         {"read", DesignEntity::READ},
         {"print", DesignEntity::PRINT},
@@ -103,7 +99,7 @@ namespace PQL {
      *  at time of semantic validation by examining the program entity types of
      *  the supplied arguments.
      */
-    const unordered_map<string, RelationType> RELATION_MAP {
+    const std::unordered_map<std::string, RelationType> RELATION_MAP {
         {"Follows", RelationType::FOLLOWS},
         {"Follows*", RelationType::FOLLOWST},
         {"Parent", RelationType::PARENT},
@@ -118,15 +114,15 @@ namespace PQL {
      *  are returned as pairs of ArgType and the argument string.
      */
     struct RelationClause {
-        string clause;
+        std::string clause;
         RelationType type;
         // StatementRef, EntityRef are just strings
         // Use ArgType to determine how to interpret them
-        pair<ArgType, StmtRef> firstStmt;
-        pair<ArgType, StmtRef> secondStmt;
-        pair<ArgType, EntityRef> firstEnt;
-        pair<ArgType, EntityRef> secondEnt;
-        pair<pair<ArgType, string>, pair<ArgType, string>> getArgs() {
+        std::pair<ArgType, StmtRef> firstStmt;
+        std::pair<ArgType, StmtRef> secondStmt;
+        std::pair<ArgType, EntityRef> firstEnt;
+        std::pair<ArgType, EntityRef> secondEnt;
+        std::pair<std::pair<ArgType, std::string>, std::pair<ArgType, std::string>> getArgs() {
             switch (type) {
             case RelationType::FOLLOWS:
             case RelationType::FOLLOWST:
@@ -153,12 +149,12 @@ namespace PQL {
      *  Arguments are returned as pairs of ArgType and the argument string.
      */
     struct PatternClause {
-        string clause;
+        std::string clause;
         PatternType type;
-        string synonym;
-        pair<ArgType, EntityRef> targetArg;
-        pair<ArgType, Pattern> patternArg;
-        pair<pair<ArgType, string>, pair<ArgType, string>> getArgs() {
+        std::string synonym;
+        std::pair<ArgType, EntityRef> targetArg;
+        std::pair<ArgType, Pattern> patternArg;
+        std::pair<std::pair<ArgType, std::string>, std::pair<ArgType, std::string>> getArgs() {
             return { targetArg, patternArg };
         };
     };
@@ -176,12 +172,12 @@ namespace PQL {
      *  Note however that the BOOLEAN return type is not supported yet.
      */
     struct Query {
-        string status;
-        string queryString;
-        vector<string> targetEntities;
-        unordered_map<string, DesignEntity> synonymTable;
-        vector<RelationClause> relations;
-        vector<PatternClause> patterns;
+        std::string status;
+        std::string queryString;
+        std::vector<std::string> targetEntities;
+        std::unordered_map<std::string, DesignEntity> synonymTable;
+        std::vector<RelationClause> relations;
+        std::vector<PatternClause> patterns;
     };
     
 }

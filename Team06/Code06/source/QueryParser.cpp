@@ -1,5 +1,13 @@
 #include "QueryParser.h"
 
+using std::pair;
+using std::regex;
+using std::smatch;
+using std::string;
+using std::tuple;
+using std::unordered_map;
+using std::vector;
+
 namespace PQL {
 
     QueryParser::QueryParser() {

@@ -1,6 +1,9 @@
 #include "stdafx.h"
 #include "QueryParser.h"
 
+using std::string;
+using std::vector;
+
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace PQL;
 
