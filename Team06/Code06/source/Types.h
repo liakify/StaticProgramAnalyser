@@ -4,12 +4,12 @@
 #include <vector>
 #include <unordered_map>
 
-enum StmtType
+enum class StmtType
 {
 	PRINT, READ, IF, WHILE, CALL, ASSIGN
 };
 
-enum ExprType
+enum class ExprType
 {
 	VAR, CONST
 };

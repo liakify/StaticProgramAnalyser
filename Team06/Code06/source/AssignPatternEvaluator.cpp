@@ -37,7 +37,7 @@ namespace PQL {
 			
 			ClauseResult clauseResult;
 			for (StmtId stmt : stmts) {
-				if (database.stmtTable.get(stmt).getType() == StmtType::ASSIGN) {
+				if (database.stmtTable.get(stmt)->getType() == StmtType::ASSIGN) {
 					ClauseResultEntry resultEntry;
 					resultEntry[arg0] = std::to_string(stmt);
 					clauseResult.emplace_back(resultEntry);
@@ -60,7 +60,7 @@ namespace PQL {
 			std::unordered_set<StmtId> stmts = database.patternKB.getLHSPatternStmts(arg1);
 			ClauseResult clauseResult;
 			for (StmtId stmt : stmts) {
-				if (database.stmtTable.get(stmt).getType() == StmtType::ASSIGN) {
+				if (database.stmtTable.get(stmt)->getType() == StmtType::ASSIGN) {
 					ClauseResultEntry resultEntry;
 					resultEntry[arg0] = std::to_string(stmt);
 					clauseResult.emplace_back(resultEntry);
@@ -95,7 +95,7 @@ namespace PQL {
 
 			ClauseResult clauseResult;
 			for (StmtId stmt : stmts) {
-				if (database.stmtTable.get(stmt).getType() == StmtType::ASSIGN) {
+				if (database.stmtTable.get(stmt)->getType() == StmtType::ASSIGN) {
 					ClauseResultEntry resultEntry;
 					resultEntry[arg0] = std::to_string(stmt);
 					clauseResult.emplace_back(resultEntry);
@@ -123,7 +123,7 @@ namespace PQL {
 			// If synonym 'arg1' appeared on LHS, then it must have been modified by the assignment
 			ClauseResult clauseResult;
 			for (StmtId stmt : stmts) {
-				if (database.stmtTable.get(stmt).getType() == StmtType::ASSIGN) {
+				if (database.stmtTable.get(stmt)->getType() == StmtType::ASSIGN) {
 					std::unordered_set<VarId> vars = database.modifiesKB.getAllVarsModifiedByStmt(stmt);
 					for (VarId var : vars) {
 						ClauseResultEntry resultEntry;
@@ -164,7 +164,7 @@ namespace PQL {
 
 			ClauseResult clauseResult;
 			for (StmtId stmt : stmts) {
-				if (database.stmtTable.get(stmt).getType() == StmtType::ASSIGN) {
+				if (database.stmtTable.get(stmt)->getType() == StmtType::ASSIGN) {
 					std::unordered_set<VarId> vars = database.modifiesKB.getAllVarsModifiedByStmt(stmt);
 					for (VarId var : vars) {
 						ClauseResultEntry resultEntry;

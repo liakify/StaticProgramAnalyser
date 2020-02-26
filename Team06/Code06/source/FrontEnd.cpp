@@ -1,5 +1,7 @@
 #include "FrontEnd.h"
 
+using std::string;
+
 namespace FrontEnd {
 	FrontEndManager::FrontEndManager()
 		: parser(Parser()), de(DesignExtractor()) {
