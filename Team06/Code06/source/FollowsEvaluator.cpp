@@ -89,7 +89,7 @@ namespace PQL {
 		* @return	The result of the evaluation.
 		*/
 		ClauseResult evaluateFollowsClauseIntSyn(PKB::PKB& database, RelationClause clause,
-			unordered_map<string, DesignEntity>& synonymTable) {
+			unordered_map<std::string, DesignEntity>& synonymTable) {
 			ArgType argType1 = clause.getArgs().first.first;
 			ArgType argType2 = clause.getArgs().second.first;
 
@@ -144,7 +144,7 @@ namespace PQL {
 		* @return	The result of the evaluation.
 		*/
 		ClauseResult evaluateFollowsClauseWildSyn(PKB::PKB& database, RelationClause clause,
-			unordered_map<string, DesignEntity>& synonymTable) {
+			unordered_map<std::string, DesignEntity>& synonymTable) {
 			ArgType argType1 = clause.getArgs().first.first;
 			ArgType argType2 = clause.getArgs().second.first;
 
@@ -188,7 +188,7 @@ namespace PQL {
 		* @return	The result of the evaluation.
 		*/
 		ClauseResult evaluateFollowsClauseSynSyn(PKB::PKB& database, RelationClause clause,
-			unordered_map<string, DesignEntity>& synonymTable) {
+			unordered_map<std::string, DesignEntity>& synonymTable) {
 			Synonym arg1 = clause.getArgs().first.second;
 			Synonym arg2 = clause.getArgs().second.second;
 
@@ -220,7 +220,7 @@ namespace PQL {
 		}
 
 		ClauseResult evaluateFollowsClause(PKB::PKB& database, RelationClause clause,
-			unordered_map<string, DesignEntity>& synonymTable) {
+			unordered_map<std::string, DesignEntity>& synonymTable) {
 
 			ArgType argType1 = clause.getArgs().first.first;
 			ArgType argType2 = clause.getArgs().second.first;

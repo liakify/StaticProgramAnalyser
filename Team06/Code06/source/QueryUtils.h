@@ -5,26 +5,21 @@
 
 #include "PQLTypes.h"
 
-using std::istringstream;
-using std::regex;
-using std::smatch;
-
 namespace PQL {
 
     /**
-     *  The QueryUtils class is a utility class containing only static methods
-     *  in use by the Query Parser for string validation and manipulation. It
-     *  should NOT be initialised.
+     *  The QueryUtils namespace contains all utility methods in use by the Query
+     *  Parser for string validation and manipulation.
      */
-    class QueryUtils {
-    public:
+    namespace QueryUtils {
+        
         /**
          *  Validates an input string as a valid integer.
          *
          *  @param      input       candidate integer string.
          *  @return     boolean describing if the string is an integer.
          */
-        static bool isInteger(string input);
+        bool isInteger(std::string input);
 
         /**
          *  Validates an input string as a valid identifier or synonym.
@@ -32,7 +27,7 @@ namespace PQL {
          *  @param      input       candidate identifier.
          *  @return     boolean describing if the string is a valid identifier.
          */
-        static bool isValidIdentifier(string input);
+        bool isValidIdentifier(std::string input);
 
         /**
          *  Validates if an input string is a valid statement reference argument.
@@ -40,7 +35,7 @@ namespace PQL {
          *  @param      input       candidate entity reference string.
          *  @return     boolean describing if the string correctly references an entity.
          */
-        static bool isValidStmtRef(string input);
+        bool isValidStmtRef(std::string input);
 
         /**
          *  Validates if an input string is a valid entity reference argument.
@@ -48,7 +43,7 @@ namespace PQL {
          *  @param      input       candidate entity reference string.
          *  @return     boolean describing if the string correctly references an entity.
          */
-        static bool isValidEntityRef(string input);
+        bool isValidEntityRef(std::string input);
 
         /**
          *  Validates if an input string is a valid pattern string.
@@ -56,7 +51,7 @@ namespace PQL {
          *  @param      input       candidate pattern string.
          *  @return     boolean describing if the string forms a valid pattern.
          */
-        static bool isValidPattern(string input);
+        bool isValidPattern(std::string input);
 
         /**
          *  Returns the input string stripped of leading spaces and newline characters.
@@ -64,7 +59,7 @@ namespace PQL {
          *  @param      input       input string to strip.
          *  @return     left-trimmed copy of the input string.
          */
-        static string leftTrim(string input);
+        std::string leftTrim(std::string input);
 
         /**
          *  Returns the input string stripped of trailing spaces and newline characters.
@@ -72,7 +67,7 @@ namespace PQL {
          *  @param      input       input string to strip.
          *  @return     right-trimmed copy of the input string.
          */
-        static string rightTrim(string input);
+        std::string rightTrim(std::string input);
 
         /**
          *  Returns the input string stripped of all leading and trailing spaces and newlines.
@@ -80,7 +75,7 @@ namespace PQL {
          *  @param      input       input string to strip.
          *  @return     left- and right-trimmed copy of the input string.
          */
-        static string trimString(string input);
+        std::string trimString(std::string input);
 
         /**
          *  Strips an input pattern argument string of all whitespaces and quotation marks.
@@ -88,7 +83,7 @@ namespace PQL {
          *  @param      input       input pattern string to strip.
          *  @return     an equivalent pattern string without spaces and quotation marks.
          */
-        static string stripPattern(string input);
+        std::string stripPattern(std::string input);
 
         /**
          *  Splits a string with a given delimiter once, returning a pair of the
@@ -99,7 +94,7 @@ namespace PQL {
          *  @param      delim       delimiting character.
          *  @return     a pair containing the trimmed prefix and suffix strings.
          */
-        static pair<string, string> splitString(string input, char delim);
+        std::pair<std::string, std::string> splitString(std::string input, char delim);
 
         /**
          *  Splits a given input string with a given character as delimiter into trimmed
@@ -109,7 +104,7 @@ namespace PQL {
          *  @param      delim       delimiting character.
          *  @return     a vector containing all trimmed split substrings.
          */
-        static vector<string> tokeniseString(string input, char delim);
+        std::vector<std::string> tokeniseString(std::string input, char delim);
 
         /**
          *  Searches the input string and returns a vector of all strings that match the regular
@@ -119,7 +114,7 @@ namespace PQL {
          *  @param      pattern     regex pattern to match substrings with.
          *  @return     a vector containing all substring matches for the provided pattern.
          */
-        static vector<string> matchAll(string input, string pattern);
+        std::vector<std::string> matchAll(std::string input, std::string pattern);
     };
 
 }
