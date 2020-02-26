@@ -242,8 +242,8 @@ namespace PQL {
     // reaching the end of the query string (i.e. there exists some incorrect syntax)
     // Returns an array of clauses
     tuple<bool, vector<string>, vector<string>> QueryParser::splitConstraints(Query& query, string queryBodySuffix) {
-        regex RELATION_COMPOUND_CLAUSE("^ *such that +[A-Za-z*]+ *\\([\\w,\"\\s]*\\)(?: and +[A-Za-z*]+ *\\([\\w,\"\\s]*\\))*");
-        regex PATTERN_COMPOUND_CLAUSE("^ *pattern +[A-Za-z][A-Za-z0-9]* *\\([\\w,\"\\+\\-\\*\\/\\%\\s]*\\)(?: and +[A-Za-z][A-Za-z0-9]* *\\([\\w,\"\\+\\-\\*\\/\\%\\s]*\\))*");
+        regex RELATION_COMPOUND_CLAUSE("^ *such that +[A-Za-z*]+ *\\([\\w,\"\\s]*\\)(?: +and +[A-Za-z*]+ *\\([\\w,\"\\s]*\\))*");
+        regex PATTERN_COMPOUND_CLAUSE("^ *pattern +[A-Za-z][A-Za-z0-9]* *\\([\\w,\"\\+\\-\\*\\/\\%\\s]*\\)(?: +and +[A-Za-z][A-Za-z0-9]* *\\([\\w,\"\\+\\-\\*\\/\\%\\s]*\\))*");
         smatch ccmatch;
 
         string RELATION_CLAUSE = "[A-Za-z*]+ *\\([\\w,\"\\s]*\\)";
