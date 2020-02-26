@@ -74,29 +74,25 @@ namespace FrontEnd {
 	StmtId Parser::stmt() {
 		int currentPos = this->pos;
 		try {
-			ReadStmt* readStmt = read_stmt();
-			return pkb.stmtTable.insertStmt(readStmt);
+			return pkb.stmtTable.insertStmt(read_stmt());
 		} catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		try {
-			PrintStmt* printStmt = print_stmt();
-			return pkb.stmtTable.insertStmt(printStmt);
+			return pkb.stmtTable.insertStmt(print_stmt());
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		try {
-			CallStmt* callStmt = call_stmt();
-			return pkb.stmtTable.insertStmt(callStmt);
+			return pkb.stmtTable.insertStmt(call_stmt());
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		try {
 			StmtId stmtId = pkb.stmtTable.reserveId();
-			WhileStmt* whileStmt = while_stmt();
-			pkb.stmtTable.insertStmtAtId(whileStmt, stmtId);
+			pkb.stmtTable.insertStmtAtId(while_stmt(), stmtId);
 			return stmtId;
 		}
 		catch (const invalid_argument&) {
@@ -105,16 +101,14 @@ namespace FrontEnd {
 		}
 		try {
 			StmtId stmtId = pkb.stmtTable.reserveId();
-			IfStmt* ifStmt = if_stmt();
-			pkb.stmtTable.insertStmtAtId(ifStmt, stmtId);
+			pkb.stmtTable.insertStmtAtId(if_stmt(), stmtId);
 			return stmtId;
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
 			pkb.stmtTable.unreserveId();
 		}
-		AssignStmt* assignStmt = assign_stmt();
-		return pkb.stmtTable.insertStmt(assignStmt);
+		return pkb.stmtTable.insertStmt(assign_stmt());
 	}
 
 	ReadStmt* Parser::read_stmt() {
