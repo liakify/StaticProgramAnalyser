@@ -8,12 +8,12 @@ stmt s; variable v;
 Select v such that Modifies(s, v)
 a, c, f, i, nested3thenwelse, m, nested3wthenw
 5000
-1 - argument variant: (s, IDENT)
+1 - argument variant: (s, "a")
 stmt s;
 Select s such that Modifies(s, "a")
 1
 5000
-1 - argument variant: (s, IDENT) => empty
+1 - argument variant: (s, "a") => empty
 stmt s;
 Select s such that Modifies(s, "b")
 
@@ -33,12 +33,12 @@ variable v;
 Select v such that Modifies(2, v)
 
 5000
-1 - argument variant: (1, IDENT)
+1 - argument variant: (1, "a")
 stmt s;
 Select s such that Modifies(1, "a")
 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25
 5000
-1 - argument variant: (1, IDENT) => empty
+1 - argument variant: (1, "a") => empty
 stmt s;
 Select s such that Modifies(2, "c")
 

@@ -8,14 +8,14 @@ stmt s; variable v;
 Select v such that Uses(s, v)
 b, b1, b2, b3, b4, b5, c, d, e, f, g, h, i, k, l, m, n, o, p, q, r, s, t
 5000
-1 - argument variant: (s, IDENT)
+1 - argument variant: (s, "a")
 stmt s;
 Select s such that Uses(s, "b")
 1
 5000
-1 - argument variant: (s, IDENT) => empty
+1 - argument variant: (s, "a") => empty
 stmt s;
-Select s such that Uses(s, IDENT)
+Select s such that Uses(s, "a")
 
 5000
 1 - argument variant: (s, _)
@@ -33,12 +33,12 @@ variable v;
 Select v such that Uses(2, v)
 
 5000
-1 - argument variant: (1, IDENT)
+1 - argument variant: (1, "a")
 stmt s;
 Select s such that Uses(1, "b")
 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
 5000
-1 - argument variant: (1, IDENT) => empty
+1 - argument variant: (1, "a") => empty
 stmt s;
 Select s such that Uses(2, "c")
 
@@ -68,20 +68,10 @@ if ifs; variable v;
 Select ifs such that Uses(ifs, v)
 4
 5000
-1 - argument variant: stmtRef variant: if - select variables
-if ifs; variable v;
-Select v such that Uses(ifs, v)
-d, e, f, g, h, i, k, l, m
-5000
 1 - argument variant: stmtRef variant: while (all while stmts 'Uses' some variable. So no empty-set case)
 while w; variable v;
 Select w such that Uses(w, _)
 6, 9, 11
-5000
-1 - argument variant: stmtRef variant: while - select variables
-while w; variable v;
-Select v such that Uses(w, v)
-g, h, i, k, l, m, n, o, p, q, r, s, t
 5000
 1 - argument variant: stmtRef variant: procedure (TODO: update after Iter. 1)
 procedure p; variable v;
