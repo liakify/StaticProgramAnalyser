@@ -31,7 +31,7 @@ namespace SIMPLE {
 		* 
 		* @param	name		Name of the variable or constant
 		* @param	id			ID of the variable or constant as stored in the PKB
-		* @param	ExprType	Type of literal expression, either CONST or VAR
+		* @param	ExprType	Type of literal expression, either ExprType::CONST or ExprType::VAR
 		*/
 		Expression(std::string name, int id, ExprType type);
 

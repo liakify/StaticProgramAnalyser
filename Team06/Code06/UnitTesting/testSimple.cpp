@@ -24,9 +24,9 @@ namespace UnitTesting {
 		std::string PATTERN_2 = "_" + VAR_NAME_2 + "_";
 		std::string PATTERN_3 = "_" + CONST_VALUE + "_";
 
-		Expression varExp = Expression(VAR_NAME_1, VAR_ID_1, VAR);
-		Expression varExp2 = Expression(VAR_NAME_2, VAR_ID_2, VAR);
-		Expression constExp = Expression(CONST_VALUE, CONST_ID, CONST);
+		Expression varExp = Expression(VAR_NAME_1, VAR_ID_1, ExprType::VAR);
+		Expression varExp2 = Expression(VAR_NAME_2, VAR_ID_2, ExprType::VAR);
+		Expression constExp = Expression(CONST_VALUE, CONST_ID, ExprType::CONST);
 		Expression exp = Expression(constExp, varExp, op);
 		Expression exp2 = Expression(varExp2, exp, op);
 
@@ -93,32 +93,32 @@ namespace UnitTesting {
 
 		TEST_METHOD(TestStatements) {
 			PrintStmt PRINT_STMT = PrintStmt(VAR_ID_1);
-			Assert::IsTrue(PRINT == PRINT_STMT.getType());
+			Assert::IsTrue(StmtType::PRINT == PRINT_STMT.getType());
 			Assert::AreEqual(VAR_ID_1, PRINT_STMT.getVar());
 
 			ReadStmt READ_STMT = ReadStmt(VAR_ID_2);
-			Assert::IsTrue(READ == READ_STMT.getType());
+			Assert::IsTrue(StmtType::READ == READ_STMT.getType());
 			Assert::AreEqual(VAR_ID_2, READ_STMT.getVar());
 
 			CallStmt CALL_STMT = CallStmt(PROC_NAME_1);
-			Assert::IsTrue(CALL == CALL_STMT.getType());
+			Assert::IsTrue(StmtType::CALL == CALL_STMT.getType());
 			Assert::AreEqual(PROC_NAME_1, CALL_STMT.getProc());
 
 			IfStmt IF_STMT = IfStmt(cond2, STMTLIST_ID_1, STMTLIST_ID_2);
-			Assert::IsTrue(IF == IF_STMT.getType());
+			Assert::IsTrue(StmtType::IF == IF_STMT.getType());
 			Assert::AreEqual(STMTLIST_ID_1, IF_STMT.getThenStmtLstId());
 			Assert::AreEqual(STMTLIST_ID_2, IF_STMT.getElseStmtLstId());
 			Assert::IsTrue(cond2.getVarIds() == IF_STMT.getCondExpr().getVarIds());
 			Assert::IsTrue(cond2.getConstValues() == IF_STMT.getCondExpr().getConstValues());
 
 			WhileStmt WHILE_STMT = WhileStmt(cond2, STMTLIST_ID_1);
-			Assert::IsTrue(WHILE == WHILE_STMT.getType());
+			Assert::IsTrue(StmtType::WHILE == WHILE_STMT.getType());
 			Assert::AreEqual(STMTLIST_ID_1, WHILE_STMT.getStmtLstId());
 			Assert::IsTrue(cond2.getVarIds() == WHILE_STMT.getCondExpr().getVarIds());
 			Assert::IsTrue(cond2.getConstValues() == WHILE_STMT.getCondExpr().getConstValues());
 
 			AssignStmt ASSIGN_STMT = AssignStmt(VAR_ID_2, exp2);
-			Assert::IsTrue(ASSIGN == ASSIGN_STMT.getType());
+			Assert::IsTrue(StmtType::ASSIGN == ASSIGN_STMT.getType());
 			Assert::AreEqual(VAR_ID_2, ASSIGN_STMT.getVar());
 			Assert::AreEqual(exp2.getStr(), ASSIGN_STMT.getExpr().getStr());
 			Assert::IsTrue(exp2.getVarIds() == ASSIGN_STMT.getExpr().getVarIds());

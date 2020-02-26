@@ -21,7 +21,7 @@ namespace PKB {
    */
   class StmtTable
   {
-    unordered_map<StmtId, Statement> idStmtTable;
+    unordered_map<StmtId, Statement*> idStmtTable;
     unordered_map<StmtType, unordered_set<StmtId>> typeIdsTable;
     StmtId stmtIdGenerator;
 
@@ -32,7 +32,7 @@ namespace PKB {
     /**
      *  Inserts stmt into the StmtTable. Returns the ID of the statement in the StmtTable.
      */
-    StmtId insertStmt(Statement stmt);
+    StmtId insertStmt(Statement* stmt);
 
     /*
     *   Returns a reserved ID to be used for future insertion.
@@ -51,13 +51,13 @@ namespace PKB {
      *  Inserts stmt into the StmtTable at a specified ID.
      *  If the ID already exists, an error is thrown.
      */
-    void insertStmtAtId(Statement stmt, StmtId id);
+    void insertStmtAtId(Statement* stmt, StmtId id);
 
     /**
      *  Returns the statement object at the given ID in the StmtTable. 
      *  Throws an exception if the ID is not found in the table.
      */
-    Statement get(StmtId stmtId);
+    Statement* get(StmtId stmtId);
 
     /**
      *  Returns a list of statement IDs that match the specified statement type.
