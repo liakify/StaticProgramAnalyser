@@ -98,11 +98,8 @@ namespace FrontEnd {
 	void DesignExtractor::populateUses() {
 		for (ProcId i = 1; i <= pkb.procTable.size(); i++) {
 			Procedure p = pkb.procTable.get(i);
-			StatementList sl = pkb.stmtListTable.get(p.getStmtLstId());
-			std::vector<StmtId> idList = sl.getStmtIds();
-			for (StmtId id : idList) {
-				populateStmtUses(id);
-			}
+			StmtListId sid = p.getStmtLstId();
+			populateProcUsesKB(i, getAllUses(sid));
 		}
 	}
 
@@ -116,21 +113,21 @@ namespace FrontEnd {
 		else if (type == StmtType::WHILE) {
 			WhileStmt* ws = (WhileStmt*)s;
 			StmtListId stmtLstId = ws->getStmtLstId();
-			populateUsesKB(id, ws->getCondExpr().getVarIds());
-			populateUsesKB(id, getAllUses(stmtLstId));
+			populateStmtUsesKB(id, ws->getCondExpr().getVarIds());
+			populateStmtUsesKB(id, getAllUses(stmtLstId));
 		}
 		else if (type == StmtType::IF) {
 			IfStmt* ifs = (IfStmt*)s;
 			StmtListId stmtLstId1 = ifs->getThenStmtLstId();
 			StmtListId stmtLstId2 = ifs->getElseStmtLstId();
-			populateUsesKB(id, ifs->getCondExpr().getVarIds());
-			populateUsesKB(id, getAllUses(stmtLstId1));
-			populateUsesKB(id, getAllUses(stmtLstId2));
+			populateStmtUsesKB(id, ifs->getCondExpr().getVarIds());
+			populateStmtUsesKB(id, getAllUses(stmtLstId1));
+			populateStmtUsesKB(id, getAllUses(stmtLstId2));
 		}
 		else if (type == StmtType::ASSIGN) {
 			AssignStmt* as = (AssignStmt*)s;
 			Expression exp = as->getExpr();
-			populateUsesKB(id, exp.getVarIds());
+			populateStmtUsesKB(id, exp.getVarIds());
 		}
 	}
 
@@ -146,20 +143,23 @@ namespace FrontEnd {
 		return result;
 	}
 
-	void DesignExtractor::populateUsesKB(StmtId stmtId, unordered_set<VarId> varSet) {
+	void DesignExtractor::populateStmtUsesKB(StmtId stmtId, unordered_set<VarId>& varSet) {
 		for (VarId id : varSet) {
 			pkb.usesKB.addStmtUses(stmtId, id);
+		}
+	}
+
+	void DesignExtractor::populateProcUsesKB(ProcId procId, unordered_set<VarId>& varSet) {
+		for (VarId id : varSet) {
+			pkb.usesKB.addProcUses(procId, id);
 		}
 	}
 
 	void DesignExtractor::populateModifies() {
 		for (ProcId i = 1; i <= pkb.procTable.size(); i++) {
 			Procedure p = pkb.procTable.get(i);
-			StatementList sl = pkb.stmtListTable.get(p.getStmtLstId());
-			std::vector<StmtId> idList = sl.getStmtIds();
-			for (StmtId id : idList) {
-				populateStmtModifies(id);
-			}
+			StmtListId sid = p.getStmtLstId();
+			populateProcModifiesKB(i, getAllModifies(sid));
 		}
 	}
 
@@ -173,14 +173,14 @@ namespace FrontEnd {
 		else if (type == StmtType::WHILE) {
 			WhileStmt* ws = (WhileStmt*)s;
 			StmtListId stmtLstId = ws->getStmtLstId();
-			populateModifiesKB(id, getAllModifies(stmtLstId));
+			populateStmtModifiesKB(id, getAllModifies(stmtLstId));
 		}
 		else if (type == StmtType::IF) {
 			IfStmt* ifs = (IfStmt*)s;
 			StmtListId stmtLstId1 = ifs->getThenStmtLstId();
 			StmtListId stmtLstId2 = ifs->getElseStmtLstId();
-			populateModifiesKB(id, getAllModifies(stmtLstId1));
-			populateModifiesKB(id, getAllModifies(stmtLstId2));
+			populateStmtModifiesKB(id, getAllModifies(stmtLstId1));
+			populateStmtModifiesKB(id, getAllModifies(stmtLstId2));
 		}
 		else if (type == StmtType::ASSIGN) {
 			AssignStmt* as = (AssignStmt*)s;
@@ -201,9 +201,15 @@ namespace FrontEnd {
 		return result;
 	}
 
-	void DesignExtractor::populateModifiesKB(StmtId stmtId, unordered_set<VarId> varSet) {
+	void DesignExtractor::populateStmtModifiesKB(StmtId stmtId, unordered_set<VarId>& varSet) {
 		for (VarId id : varSet) {
 			pkb.modifiesKB.addStmtModifies(stmtId, id);
+		}
+	}
+
+	void DesignExtractor::populateProcModifiesKB(ProcId procId, unordered_set<VarId>& varSet) {
+		for (VarId id : varSet) {
+			pkb.modifiesKB.addProcModifies(procId, id);
 		}
 	}
 

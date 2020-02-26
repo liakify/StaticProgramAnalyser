@@ -74,29 +74,25 @@ namespace FrontEnd {
 	StmtId Parser::stmt() {
 		int currentPos = this->pos;
 		try {
-			ReadStmt* readStmt = read_stmt();
-			return pkb.stmtTable.insertStmt(readStmt);
+			return pkb.stmtTable.insertStmt(read_stmt());
 		} catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		try {
-			PrintStmt* printStmt = print_stmt();
-			return pkb.stmtTable.insertStmt(printStmt);
+			return pkb.stmtTable.insertStmt(print_stmt());
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		try {
-			CallStmt* callStmt = call_stmt();
-			return pkb.stmtTable.insertStmt(callStmt);
+			return pkb.stmtTable.insertStmt(call_stmt());
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
 		}
 		try {
 			StmtId stmtId = pkb.stmtTable.reserveId();
-			WhileStmt* whileStmt = while_stmt();
-			pkb.stmtTable.insertStmtAtId(whileStmt, stmtId);
+			pkb.stmtTable.insertStmtAtId(while_stmt(), stmtId);
 			return stmtId;
 		}
 		catch (const invalid_argument&) {
@@ -105,40 +101,35 @@ namespace FrontEnd {
 		}
 		try {
 			StmtId stmtId = pkb.stmtTable.reserveId();
-			IfStmt* ifStmt = if_stmt();
-			pkb.stmtTable.insertStmtAtId(ifStmt, stmtId);
+			pkb.stmtTable.insertStmtAtId(if_stmt(), stmtId);
 			return stmtId;
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
 			pkb.stmtTable.unreserveId();
 		}
-		AssignStmt* assignStmt = assign_stmt();
-		return pkb.stmtTable.insertStmt(assignStmt);
+		return pkb.stmtTable.insertStmt(assign_stmt());
 	}
 
 	ReadStmt* Parser::read_stmt() {
 		consume(regex("[\\s]*read[\\s]+"));
 		VarId v = var_name();
 		consume(regex("[\\s]*[;][\\s]*"));
-		ReadStmt* rs = new ReadStmt(v);
-		return rs;
+		return new ReadStmt(v);
 	}
 
 	PrintStmt* Parser::print_stmt() {
 		consume(regex("[\\s]*print[\\s]+"));
 		VarId v = var_name();
 		consume(regex("[\\s]*[;][\\s]*"));
-		PrintStmt* ps = new PrintStmt(v);
-		return ps;
+		return new PrintStmt(v);
 	}
 
 	CallStmt* Parser::call_stmt() {
 		consume(regex("[\\s]*call[\\s]+"));
 		ProcName p = proc_name();
 		consume(regex("[\\s]*[;][\\s]*"));
-		CallStmt* cs = new CallStmt(p);
-		return cs;
+		return new CallStmt(p);
 	}
 
 	WhileStmt* Parser::while_stmt() {
@@ -147,8 +138,7 @@ namespace FrontEnd {
 		consume(regex("[\\s]*[)][\\s]*[{][\\s]*"));
 		StmtListId sl = stmtLst();
 		consume(regex("[\\s]*[}][\\s]*"));
-		WhileStmt* ws = new WhileStmt(cond, sl);
-		return ws;
+		return new WhileStmt(cond, sl);
 	}
 
 	IfStmt* Parser::if_stmt() {
@@ -159,8 +149,7 @@ namespace FrontEnd {
 		consume(regex("[\\s]*[}][\\s]*else[\\s]*[{][\\s]*"));
 		StmtListId elseStmtLst = stmtLst();
 		consume(regex("[\\s]*[}][\\s]*"));
-		IfStmt* ifs = new IfStmt(cond, thenStmtLst, elseStmtLst);
-		return ifs;
+		return new IfStmt(cond, thenStmtLst, elseStmtLst);
 	}
 
 	AssignStmt* Parser::assign_stmt() {
@@ -168,8 +157,7 @@ namespace FrontEnd {
 		consume(regex("[\\s]*[=][\\s]*"));
 		Expression exp = expr();
 		consume(regex("[\\s]*[;][\\s]*"));
-		AssignStmt* as = new AssignStmt(v, exp);
-		return as;
+		return new AssignStmt(v, exp);
 	}
 
 	CondExpr Parser::cond_expr() {
