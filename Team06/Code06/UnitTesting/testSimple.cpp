@@ -40,7 +40,7 @@ namespace UnitTesting {
 			std::unordered_set<std::string> patterns;
 
 			Assert::AreEqual(VAR_NAME_1, varExp.getStr());
-			Assert::IsTrue(varExp.getConstValues() == std::unordered_set<ConstId>());
+			Assert::IsTrue(varExp.getConstIds() == std::unordered_set<ConstId>());
 			varSet.insert(VAR_ID_1);
 			Assert::IsTrue(varExp.getVarIds() == varSet);
 			patterns.insert(PATTERN_1);
@@ -49,7 +49,7 @@ namespace UnitTesting {
 			Assert::AreEqual(CONST_VALUE, constExp.getStr());
 			Assert::IsTrue(constExp.getVarIds() == std::unordered_set<VarId>());
 			constSet.insert(CONST_ID);
-			Assert::IsTrue(constExp.getConstValues() == constSet);
+			Assert::IsTrue(constExp.getConstIds() == constSet);
 			patterns = std::unordered_set<std::string>();
 			patterns.insert(PATTERN_3);
 			Assert::IsTrue(constExp.getPatterns() == patterns);
@@ -58,7 +58,7 @@ namespace UnitTesting {
 			Assert::AreEqual(expStr, exp.getStr());
 			Assert::AreEqual(op, exp.getOp());
 			Assert::IsTrue(exp.getVarIds() == varSet);
-			Assert::IsTrue(exp.getConstValues() == constSet);
+			Assert::IsTrue(exp.getConstIds() == constSet);
 			patterns.insert(PATTERN_1);
 			patterns.insert("_" + expStr + "_");
 			Assert::IsTrue(exp.getPatterns() == patterns);
@@ -67,7 +67,7 @@ namespace UnitTesting {
 				"(" + VAR_NAME_2 + op + "(" + CONST_VALUE + op + VAR_NAME_1 + "))";
 			varSet.insert(VAR_ID_2);
 			Assert::IsTrue(exp2.getVarIds() == varSet);
-			Assert::IsTrue(exp2.getConstValues() == constSet);
+			Assert::IsTrue(exp2.getConstIds() == constSet);
 			patterns.insert(PATTERN_2);
 			patterns.insert("_" + exp2Str + "_");
 			Assert::IsTrue(exp2.getPatterns() == patterns);
@@ -79,16 +79,16 @@ namespace UnitTesting {
 
 			varSet.insert(VAR_ID_2);
 			Assert::IsTrue(cond1.getVarIds() == varSet);
-			Assert::IsTrue(cond1.getConstValues() == constSet);
+			Assert::IsTrue(cond1.getConstIds() == constSet);
 
 			varSet2.insert(VAR_ID_1);
 			constSet.insert(CONST_ID);
 			Assert::IsTrue(cond2.getVarIds() == varSet2);
-			Assert::IsTrue(cond2.getConstValues() == constSet);
+			Assert::IsTrue(cond2.getConstIds() == constSet);
 
 			varSet.insert(VAR_ID_1);
 			Assert::IsTrue(cond3.getVarIds() == varSet);
-			Assert::IsTrue(cond3.getConstValues() == constSet);
+			Assert::IsTrue(cond3.getConstIds() == constSet);
 		}
 
 		TEST_METHOD(TestStatements) {
@@ -109,20 +109,20 @@ namespace UnitTesting {
 			Assert::AreEqual(STMTLIST_ID_1, IF_STMT.getThenStmtLstId());
 			Assert::AreEqual(STMTLIST_ID_2, IF_STMT.getElseStmtLstId());
 			Assert::IsTrue(cond2.getVarIds() == IF_STMT.getCondExpr().getVarIds());
-			Assert::IsTrue(cond2.getConstValues() == IF_STMT.getCondExpr().getConstValues());
+			Assert::IsTrue(cond2.getConstIds() == IF_STMT.getCondExpr().getConstIds());
 
 			WhileStmt WHILE_STMT = WhileStmt(cond2, STMTLIST_ID_1);
 			Assert::IsTrue(StmtType::WHILE == WHILE_STMT.getType());
 			Assert::AreEqual(STMTLIST_ID_1, WHILE_STMT.getStmtLstId());
 			Assert::IsTrue(cond2.getVarIds() == WHILE_STMT.getCondExpr().getVarIds());
-			Assert::IsTrue(cond2.getConstValues() == WHILE_STMT.getCondExpr().getConstValues());
+			Assert::IsTrue(cond2.getConstIds() == WHILE_STMT.getCondExpr().getConstIds());
 
 			AssignStmt ASSIGN_STMT = AssignStmt(VAR_ID_2, exp2);
 			Assert::IsTrue(StmtType::ASSIGN == ASSIGN_STMT.getType());
 			Assert::AreEqual(VAR_ID_2, ASSIGN_STMT.getVar());
 			Assert::AreEqual(exp2.getStr(), ASSIGN_STMT.getExpr().getStr());
 			Assert::IsTrue(exp2.getVarIds() == ASSIGN_STMT.getExpr().getVarIds());
-			Assert::IsTrue(exp2.getConstValues() == ASSIGN_STMT.getExpr().getConstValues());
+			Assert::IsTrue(exp2.getConstIds() == ASSIGN_STMT.getExpr().getConstIds());
 		}
 
 		TEST_METHOD(TestStmtLst) {
