@@ -16,7 +16,7 @@ std::unordered_set<StmtId> PatternKB::getLHSPatternStmts(Pattern pattern)
 	try {
 		return lhsTable.at(pattern);
 	}
-	catch (const std::out_of_range & oor) {
+	catch (const std::out_of_range &) {
 		return {};
 	}
 }
@@ -26,7 +26,7 @@ std::unordered_set<StmtId> PatternKB::getRHSPatternStmts(Pattern pattern)
 	try {
 		return rhsTable.at(pattern);
 	}
-	catch (const std::out_of_range & oor) {
+	catch (const std::out_of_range &) {
 		return {};
 	}
 }

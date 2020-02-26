@@ -66,14 +66,19 @@ public:
 	std::unordered_set<StmtId> getAllFollowing(StmtId stmtId);
 
 	/*
-		Sets allFollowers of stmtId to followers
+		Sets allFollowers of stmtId to followers.
 	*/
 	void setAllFollowers(StmtId stmtId, std::unordered_set<StmtId> followers);
 
 	/*
-		Sets allFollowing of stmtId to following
+		Sets allFollowing of stmtId to following.
 	*/
 	void setAllFollowing(StmtId stmtId, std::unordered_set<StmtId> following);
+
+	/*
+		Returns TRUE if any Follows relation is present, FALSE otherwise.
+	*/
+	bool followsRelationPresent();
 
 private:
 	std::unordered_map<StmtId, followsRS> followsTable;
