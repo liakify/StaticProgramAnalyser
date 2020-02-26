@@ -119,10 +119,8 @@ namespace PQL {
         smatch ssmatch;
 
         while (regex_search(input, ssmatch, INPUT_PATTERN)) {
-            for (auto match : ssmatch) {
-                string token = match.str();
-                matches.push_back(trimString(token));
-            }
+            string token = ssmatch.str();
+            matches.push_back(trimString(token));
             input = ssmatch.suffix().str();
         }
 

@@ -108,7 +108,8 @@ namespace PQL {
 
         /**
          *  Searches the input string and returns a vector of all strings that match the regular
-         *  expression constructed from the input regex pattern.
+         *  expression constructed from the input regex pattern. Does not return any sub-strings
+         *  corresponding to capture groups in the regex.
          *
          *  @param      input       input string to perform regex matching.
          *  @param      pattern     regex pattern to match substrings with.
