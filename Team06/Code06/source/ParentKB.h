@@ -75,6 +75,11 @@ public:
 	*/
 	void setAllParents(StmtId stmtId, std::unordered_set<StmtId> parents);
 
+	/*
+		Returns TRUE if any Parent relation is present, FALSE otherwise.
+	*/
+	bool parentRelationPresent();
+
 private:
 	std::unordered_map<StmtId, parentRS> parentTable;
 };
