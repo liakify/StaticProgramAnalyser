@@ -29,7 +29,7 @@ namespace FrontEnd {
 	private:
 		PKB::PKB pkb;
 
-		// Functions that actually populate the PKB
+		// Functions to be called in run()
 		void populateFollows();
 		void populateFollowStar();
 		void populateParent();
