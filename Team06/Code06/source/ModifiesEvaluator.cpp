@@ -95,7 +95,7 @@ namespace PQL {
 			std::unordered_set<StmtId> modifyingStmts = database.modifiesKB.getAllStmtsModifyVar(arg2);
 			ClauseResult clauseResult;
 			for (StmtId stmt : modifyingStmts) {
-				if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(stmt).getType(), synonymTable[arg1])) {
+				if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(stmt)->getType(), synonymTable[arg1])) {
 					ClauseResultEntry resultEntry;
 					resultEntry[arg1] = std::to_string(stmt);
 					clauseResult.emplace_back(resultEntry);
@@ -123,7 +123,7 @@ namespace PQL {
 			ClauseResult clauseResult = {};
 			for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
 				if (database.modifiesKB.getAllVarsModifiedByStmt(i).size() > 0) {
-					if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i).getType(), synonymTable[arg1])) {
+					if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i)->getType(), synonymTable[arg1])) {
 						ClauseResultEntry resultEntry;
 						resultEntry[arg1] = std::to_string(i);
 						clauseResult.emplace_back(resultEntry);
@@ -148,7 +148,7 @@ namespace PQL {
 
 			ClauseResult clauseResult = {};
 			for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
-				if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i).getType(), synonymTable[arg1])) {
+				if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i)->getType(), synonymTable[arg1])) {
 					std::unordered_set<VarId> modifiedVars = database.modifiesKB.getAllVarsModifiedByStmt(i);
 					for (VarId var : modifiedVars) {
 						ClauseResultEntry resultEntry;

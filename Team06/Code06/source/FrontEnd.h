@@ -24,7 +24,7 @@ namespace FrontEnd {
 		* @return	PKB::PKB				The populated PKB instance
 		* @throws	std::invalid_argument	if the SIMPLE source has syntax errors.
 		*/
-		PKB::PKB parseSimple(string source);
+		PKB::PKB parseSimple(std::string source);
 
 		/**
 		* Parses standalone SIMPLE expressions into a consistent string format.
@@ -33,7 +33,7 @@ namespace FrontEnd {
 		* @return	std::string				A converted string representation
 		* @throws	std::invalid_argument	if the SIMPLE source has syntax errors.
 		*/
-		string parseExpression(string exp);
+		std::string parseExpression(std::string exp);
 	private:
 		Parser parser;
 		DesignExtractor de;

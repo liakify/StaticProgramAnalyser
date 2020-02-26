@@ -103,7 +103,7 @@ namespace PQL {
 					return {};
 				}
 				else {
-					if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(follower).getType(), synonymTable[arg2])) {
+					if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(follower)->getType(), synonymTable[arg2])) {
 						ClauseResultEntry resultEntry;
 						resultEntry[arg2] = std::to_string(follower);
 						return { resultEntry };
@@ -123,7 +123,7 @@ namespace PQL {
 					return {};
 				}
 				else {
-					if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(following).getType(), synonymTable[arg1])) {
+					if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(following)->getType(), synonymTable[arg1])) {
 						ClauseResultEntry resultEntry;
 						resultEntry[arg1] = std::to_string(following);
 						return { resultEntry };
@@ -155,7 +155,7 @@ namespace PQL {
 				ClauseResult clauseResult = {};
 				for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
 					if (database.followsKB.getFollowing(i) != 0 &&
-						SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i).getType(), synonymTable[arg2])) {
+						SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i)->getType(), synonymTable[arg2])) {
 						ClauseResultEntry resultEntry;
 						resultEntry[arg2] = std::to_string(i);
 						clauseResult.emplace_back(resultEntry);
@@ -169,7 +169,7 @@ namespace PQL {
 				ClauseResult clauseResult = {};
 				for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
 					if (database.followsKB.getFollower(i) != 0 &&
-						SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i).getType(), synonymTable[arg1])) {
+						SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i)->getType(), synonymTable[arg1])) {
 						ClauseResultEntry resultEntry;
 						resultEntry[arg1] = std::to_string(i);
 						clauseResult.emplace_back(resultEntry);
@@ -198,8 +198,8 @@ namespace PQL {
 			for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
 				StmtId follower = database.followsKB.getFollower(i);
 				if (follower != 0) {
-					if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i).getType(), synonymTable[arg1]) &&
-						SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(follower).getType(), synonymTable[arg2])) {
+					if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i)->getType(), synonymTable[arg1]) &&
+						SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(follower)->getType(), synonymTable[arg2])) {
 						if (!singleSynonym) {
 							ClauseResultEntry resultEntry;
 							resultEntry[arg1] = std::to_string(i);

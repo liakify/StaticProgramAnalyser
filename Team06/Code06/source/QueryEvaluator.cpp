@@ -97,7 +97,7 @@ namespace PQL {
 				// Statement
 				ClauseResult result;
 				for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
-					if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i).getType(), query.synonymTable[target])) {
+					if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i)->getType(), query.synonymTable[target])) {
 						ClauseResultEntry resultEntry;
 						resultEntry[target] = std::to_string(i);
 						result.emplace_back(resultEntry);
