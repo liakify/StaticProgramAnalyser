@@ -24,7 +24,7 @@ Select s1 such that Modifies(s1, v) pattern a ("a", _)
 2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19
 5000
 6 - case 0b: (related-true, unrelated-false)
-assign a,; stmt s1, s2; variable v;
+assign a; stmt s1, s2; variable v;
 Select s1 such that Parent(s1, 8) pattern a (v, _"notFound"_)
 
 5000
@@ -66,12 +66,12 @@ Select pn such that Follows*(a, pn) pattern a (v, _)
 13 - case 1b2: assign as right argument
 assign a; variable v; print pn;
 Select a such that Follows*(pn, a) pattern a (v, _)
-2, 3, 4
+2, 3, 4, 18
 5000
 14 - case 1b2
 assign a; variable v; print pn;
 Select pn such that Follows*(pn, a) pattern a (v, _)
-1
+1, 5
 5000
 15 - case 1a0: Follows => empty
 assign a; variable v;
@@ -104,12 +104,12 @@ Select ifs such that Parent(ifs, a) pattern a (v, _)
 6
 5000
 21 - case 1c1: limiting pattern
-assign a; if ifs; variable v;
+assign a1; if ifs; variable v;
 Select a1 such that Parent(ifs, a1) pattern a1 ("nested", "patternNoMatch")
 7
 5000
 22 - case 1c1: limiting pattern
-assign a; if ifs; variable v;
+assign a1; if ifs; while w;
 Select w such that Parent(w, a1) pattern a1 ("nested", "patternMatch")
 12
 5000
@@ -176,7 +176,7 @@ b, c, d
 35 - case 1e1
 assign a; variable v1, v2;
 Select v2 such that Uses(a, v1) pattern a (v2, _)
-a, nested, nested2
+a, d, nested, nested2
 5000
 36 - case 1e1: limiting pattern
 assign a; variable v1, v2;
@@ -184,24 +184,24 @@ Select v2 such that Uses(a, v1) pattern a (v2, _"b"_)
 a
 5000
 37 - case 1e2: Connected clauses | Uses | common by variable
-assign a1, a2; variable v1;
+assign a1, a2; variable v;
 Select a1 such that Uses(a1, v) pattern a2(v, _"d"_)
 4, 18
 5000
 38 - case 1e2
-assign a1, a2; variable v1;
+assign a1, a2; variable v;
 Select a2 such that Uses(a1, v) pattern a2(v, _"d"_)
-4, 18
+18
 5000
 39 - case 1e2
 assign a1, a2; variable v1;
-Select v1 such that Uses(a1, v) pattern a2(v, _"d"_)
-a, d
+Select v1 such that Uses(a1, v1) pattern a2(v1, _"d"_)
+d
 5000
 40 - case 1e3: Connected clauses | Uses | common by variable: Uses stmtRef =/= pattern assign stmt number
 assign a; print pn; variable v;
 Select pn such that Uses(pn, v) pattern a(v, _"b"_)
-1, 4
+1, 5
 5000
 41 - case 1e3
 assign a; print pn; variable v;
@@ -224,12 +224,12 @@ Select v such that Uses(a, v) pattern a (v, _)
 d
 5000
 45 - case 1e0: Uses => empty set
-assign a; variablve v;
+assign a; variable v;
 Select a such that Uses(a, "notFound") pattern a (v, _)
 
 5000
 46 - case 1e0: Pattern => empty set
-assign a; variablve v; stmt s;
+assign a; variable v; stmt s;
 Select s such that Uses(s, v) pattern a (v, _"notFound"_)
 
 5000
@@ -255,12 +255,12 @@ Select a1 such that Modifies(a1, v) pattern a2 (v, _)
 5000
 51 - case 1f2
 assign a1, a2; variable v;
-Select v1 such that Modifies(a1, v) pattern a2 (v, _)
+Select v such that Modifies(a1, v) pattern a2 (v, _)
 a, nested, nested2, d
 5000
 52 - case 1f2
 assign a1, a2; variable v;
-Select v2 such that Modifies(a1, v) pattern a2 (v, _)
+Select v such that Modifies(a1, v) pattern a2 (v, _)
 a, nested, nested2, d
 5000
 53 - case 1f3: Connected clauses | Modifies | common by variable: Modifies StmtRef =/= pattern assign stmt number
