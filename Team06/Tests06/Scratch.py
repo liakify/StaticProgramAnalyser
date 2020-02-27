@@ -1,5 +1,5 @@
 answer = ""
-for x in range(1, 51):
+for x in range(34, 49):
   answer += str(x) + ", "
 
 print(answer)
