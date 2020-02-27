@@ -219,7 +219,6 @@ namespace FrontEnd {
 			AssignStmt* as = (AssignStmt*)pkb.stmtTable.get(id);
 			Expression exp = as->getExpr();
 			populatePatternKB(id, exp);
-			VarName vn = pkb.varTable.get(as->getVar());
 		}
 	}
 
