@@ -108,3 +108,13 @@ variable v;
 Select v such that Uses(_, v)
 
 5000
+1 - Select BOOLEAN => false
+
+Select BOOLEAN such that Uses (_, "notfound")
+false
+5000
+1 - Select BOOLEAN => true
+
+Select BOOLEAN such that Uses (_, _)
+true
+5000

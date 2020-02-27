@@ -6,7 +6,7 @@ procedure Select {
 	a = b;
 	c = d;
 	e = 0;
-	F = 1;
+	f = 1;
 	if (e == 0) then {
 		read g; } else {
 		print g; }
@@ -16,4 +16,4 @@ procedure Select {
 	while (i == 0) {
 		read k;	}
 	while (j == 0) {
-		print K; }}
+		print k; }}
