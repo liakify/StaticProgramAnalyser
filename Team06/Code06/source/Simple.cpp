@@ -31,7 +31,7 @@ namespace SIMPLE {
 		return this->varSet;
 	}
 	
-	std::unordered_set<ConstId> Expression::getConstValues() {
+	std::unordered_set<ConstId> Expression::getConstIds() {
 		return this->constSet;
 	}
 
@@ -65,8 +65,8 @@ namespace SIMPLE {
 		this->varSet = std::unordered_set<VarId>(left.getVarIds());
 		std::unordered_set<VarId> temp = std::unordered_set<VarId>(right.getVarIds());
 		this->varSet.insert(temp.begin(), temp.end());
-		this->constSet = std::unordered_set<ConstId>(left.getConstValues());
-		std::unordered_set<ConstId> temp2 = std::unordered_set<ConstId>(right.getConstValues());
+		this->constSet = std::unordered_set<ConstId>(left.getConstIds());
+		std::unordered_set<ConstId> temp2 = std::unordered_set<ConstId>(right.getConstIds());
 		this->constSet.insert(temp2.begin(), temp2.end());
 	}
 
@@ -74,7 +74,7 @@ namespace SIMPLE {
 		return this->varSet;
 	}
 
-	std::unordered_set<ConstId> CondExpr::getConstValues() {
+	std::unordered_set<ConstId> CondExpr::getConstIds() {
 		return this->constSet;
 	}
 

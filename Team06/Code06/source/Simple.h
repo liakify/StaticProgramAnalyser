@@ -43,7 +43,7 @@ namespace SIMPLE {
 		*/
 		std::string getStr();
 		std::unordered_set<VarId> getVarIds();
-		std::unordered_set<ConstId> getConstValues();
+		std::unordered_set<ConstId> getConstIds();
 		std::unordered_set<std::string> getPatterns();
 		char getOp();
 	private:
@@ -68,7 +68,7 @@ namespace SIMPLE {
 		CondExpr(CondExpr left, CondExpr right);
 		CondExpr(Expression left, Expression right);
 		std::unordered_set<VarId> getVarIds();
-		std::unordered_set<ConstId> getConstValues();
+		std::unordered_set<ConstId> getConstIds();
 	private:
 		CondExpr* leftCond;
 		CondExpr* rightCond;
