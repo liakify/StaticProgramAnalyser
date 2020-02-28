@@ -1,4 +1,3 @@
-
  - invalid: argument type
 stmt s;
 Select s such that Calls(1, _)
