@@ -84,13 +84,13 @@ Select ifs such that Pattern a (_, ifs)
 
 5000
  - invalid: argument type
-assign a; assign a;
-Select a such that Pattern a (a, _)
+assign a, a1;
+Select a1 such that Pattern a (a1, _)
 
 5000
  - invalid: argument type
-assign a; assign a;
-Select a such that Pattern a (_, a)
+assign a, a1;
+Select a1 such that Pattern a (_, a1)
 
 5000
  - invalid: argument type
@@ -171,16 +171,6 @@ Select pn such that Pattern pn(_, _)
  - invalid: argument type
 call c;
 Select c such that Pattern c(_, _)
-
-5000
- - invalid: argument type
-while w;
-Select w such that Pattern w(_, _)
-
-5000
- - invalid: argument type
-if ifs;
-Select ifs such that Pattern ifs(_, _)
 
 5000
  - invalid: argument type
