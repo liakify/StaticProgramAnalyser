@@ -242,12 +242,13 @@ namespace PQL {
     // reaching the end of the query string (i.e. there exists some incorrect syntax)
     // Returns an array of clauses
     tuple<bool, vector<string>, vector<string>> QueryParser::splitConstraints(Query& query, string queryBodySuffix) {
-        regex RELATION_COMPOUND_CLAUSE("^ *such that +[A-Za-z*]+ *\\([\\w,\"\\s]*\\)(?: +and +[A-Za-z*]+ *\\([\\w,\"\\s]*\\))*");
-        regex PATTERN_COMPOUND_CLAUSE("^ *pattern +[A-Za-z][A-Za-z0-9]* *\\([\\w,\"\\+\\-\\*\\/\\%\\s]*\\)(?: +and +[A-Za-z][A-Za-z0-9]* *\\([\\w,\"\\+\\-\\*\\/\\%\\s]*\\))*");
-        smatch ccmatch;
-
         string RELATION_CLAUSE = "[A-Za-z*]+ *\\([\\w,\"\\s]*\\)";
-        string PATTERN_CLAUSE = "[A-Za-z][A-Za-z0-9]* *\\([\\w,\"\\+\\-\\*\\/\\%\\s]*\\)";
+        string PATTERN_CLAUSE = "[A-Za-z][A-Za-z0-9]* *\\([\\w\"\\s]+(?:, *(?:_|(?:(_?) *\"[A-Za-z0-9\\(\\)\\+\\-\\*\\/\\%\\s]+\" *\\1)) *)+\\)";
+
+        regex COMPOUND_RELATION_CLAUSE("^ *such that +" + RELATION_CLAUSE + "(?: +and +" + RELATION_CLAUSE + ")*");
+        regex COMPOUND_PATTERN_PREFIX("^ *pattern +[A-Za-z][A-Za-z0-9]* *\\(");
+        regex COMPOUND_PATTERN_CLAUSE("^ *pattern +" + PATTERN_CLAUSE + "(?: +and +" + PATTERN_CLAUSE + ")*");
+        smatch ccmatch;
 
         vector<string> relationClauses;
         vector<string> patternClauses;
@@ -257,11 +258,17 @@ namespace PQL {
 
             // Attempt to consume either a relation or pattern compound clause
             // If this fails, then the query string is synctactically invalid
-            if (regex_search(queryBodySuffix, ccmatch, RELATION_COMPOUND_CLAUSE)) {
+            if (regex_search(queryBodySuffix, ccmatch, COMPOUND_RELATION_CLAUSE)) {
                 vector<string> relations = QueryUtils::matchAll(ccmatch.str(), RELATION_CLAUSE);
                 relationClauses.insert(relationClauses.end(), relations.begin(), relations.end());
             }
-            else if (regex_search(queryBodySuffix, ccmatch, PATTERN_COMPOUND_CLAUSE)) {
+            else if (regex_search(queryBodySuffix, ccmatch, COMPOUND_PATTERN_PREFIX)) {
+                if (!regex_search(queryBodySuffix, ccmatch, COMPOUND_PATTERN_CLAUSE)) {
+                    // SYNTAX ERROR: first arg has zero length or other args violate pattern string syntax
+                    query.status = "syntax error: pattern clause has missing or malformed argument";
+                    return { false, relationClauses, patternClauses };
+                }
+
                 vector<string> patterns = QueryUtils::matchAll(ccmatch.str(), PATTERN_CLAUSE);
                 patternClauses.insert(patternClauses.end(), patterns.begin(), patterns.end());
             }
