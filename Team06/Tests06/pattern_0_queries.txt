@@ -233,11 +233,6 @@ assign a;
 Select a pattern a (v, _"999999"_)
 
 5000
-1 - invalid constants: (_, _0123_)
-assign a; 
-Select a pattern a (v, _"0123"_)
-
-5000
 1 - unrelated synonyms: syn-assign
 assign a, a1; 
 Select a pattern a1 (_, _)
@@ -256,25 +251,5 @@ a, b, bcd, b123, a123, c, x, y, v, z, t, d, e
 1 - unrelated synonyms: entRef => empty
 assign a; variable v, v1;
 Select v pattern a (v1, _"notFound"_)
-
-5000
-1 - invalid: pattern a (_, v)
-assign a; variable v, v1;
-Select v pattern a (_, v1)
-
-5000
-1 - invalid: pattern a(1, _)
-assign a;
-Select a pattern a (1, _)
-
-5000
-1 - invalid: pattern a(_, 1)
-assign a;
-Select a pattern a (1, _)
-
-5000
-1 - invalid: pattern a(1, 1)
-assign a;
-Select a pattern a (1, _)
 
 5000
