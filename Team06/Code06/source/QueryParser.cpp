@@ -35,7 +35,7 @@ namespace PQL {
         bool hasValidTarget;
         string queryBodySuffix;
         tie(hasValidTarget, queryBodySuffix) = parseQueryTarget(query, queryBody);
-        if (!hasValidEntities) return query;
+        if (!hasValidTarget) return query;
 
         bool hasValidClauses;
         vector<string> relationClauses, patternClauses;
