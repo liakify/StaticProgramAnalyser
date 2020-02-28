@@ -1,0 +1,23 @@
+procedure suchthatPattern1 {
+  call P2;
+}
+
+procedure P2 {
+  a = b;
+  while (c1 == c2) {
+    call P3;
+  }
+  if ( c1 == c2) then {
+    call P3;
+  } else {
+    call P4;
+  }
+}
+
+procedure P3 {
+  print a;
+}
+
+procedure P4 {
+  print a;
+}

@@ -15,7 +15,7 @@ Select s1 such that Uses(s2, "b") pattern a (v, _"notFound"_)
 5000
 4 - case 0a: (false, true)
 assign a; stmt s1, s2; variable v;
-Select s1 such that Modifies(s2, "notFound") pattern a (v, _"notFound"_)
+Select s1 such that Modifies(s2, "notFound") pattern a (v, _)
 
 5000
 5 - case 0b: result-cl related to either such-that or pattern clause (related-true, unrelated-true)

@@ -1,0 +1,15 @@
+1 - calls: 0 common synonyms => non-empty
+assign a; procedure p, q;
+Select p such that Calls (p, q) pattern a (_, _)
+suchthatPattern1, P2
+5000
+1 - calls: 0 common synonyms => non-empty
+if ifs; procedure p, q;
+Select p such that Calls* (p, q) pattern if (v, _, _)
+suchthatPattern1, P2
+5000
+1 - calls: 0 common synonyms => non-empty
+procedure p, q; while w;
+Select q such that Calls* (p, q) pattern w (_, _)
+P2, P3, P4
+5000
