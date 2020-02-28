@@ -399,7 +399,7 @@ namespace PQL {
                 // Interpret and validate both arguments as statement references
                 if (!(QueryUtils::isValidStmtRef(arg1) && QueryUtils::isValidStmtRef(arg2))) {
                     // SYNTAX ERROR: at least one argument is not a valid statement reference
-                    query.status = "syntax error: invalid statement reference in relation clause";
+                    query.status = "syntax error: invalid statement reference in Follows(*)/Parent(*) clause";
                 }
                 else {
                     relation = { clause, relationClass, parseStmtRef(arg1), parseStmtRef(arg2), INVALID_ARG, INVALID_ARG };
@@ -429,6 +429,41 @@ namespace PQL {
                 else {
                     // SYNTAX ERROR: cannot be interpreted either as statement or entity ref
                     query.status = "syntax error: invalid first arg in Uses/Modifies clause";
+                }
+                break;
+            case RelationType::CALLS:
+                // Fallthrough
+            case RelationType::CALLST:
+                if (!(QueryUtils::isValidEntityRef(arg1) && QueryUtils::isValidEntityRef(arg2))) {
+                    // SYNTAX ERORR: at least one argument is not a valid entity reference
+                    query.status = "syntax error: invalid entity reference in Calls(*) clause";
+                }
+                else {
+                    relation = { clause, relationClass, INVALID_ARG, INVALID_ARG, parseEntityRef(arg1), parseEntityRef(arg2) };
+                }
+                break;
+            case RelationType::NEXT:
+                // Fallthrough
+            case RelationType::NEXTT:
+                // Interpret and validate both arguments as line references, which are equivalent to statement references
+                if (!(QueryUtils::isValidStmtRef(arg1) && QueryUtils::isValidStmtRef(arg2))) {
+                    // SYNTAX ERROR: at least one argument is not a valid line reference
+                    query.status = "syntax error: invalid line reference in Next(*) clause";
+                }
+                else {
+                    relation = { clause, relationClass, parseStmtRef(arg1), parseStmtRef(arg2), INVALID_ARG, INVALID_ARG };
+                }
+                break;
+            case RelationType::AFFECTS:
+                // Fallthrough
+            case RelationType::AFFECTST:
+                // Interpret and validate both arguments as statement references
+                if (!(QueryUtils::isValidStmtRef(arg1) && QueryUtils::isValidStmtRef(arg2))) {
+                    // SYNTAX ERROR: at least one argument is not a valid statement reference
+                    query.status = "syntax error: invalid statement reference in Affects(*) clause";
+                }
+                else {
+                    relation = { clause, relationClass, parseStmtRef(arg1), parseStmtRef(arg2), INVALID_ARG, INVALID_ARG };
                 }
                 break;
             default:
