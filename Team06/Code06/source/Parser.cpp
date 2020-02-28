@@ -43,7 +43,14 @@ namespace FrontEnd {
 	void Parser::program() {
 		procedure();
 		while (this->pos < src.length()) {
-			procedure();
+			try {
+				procedure();
+			}
+			catch (invalid_argument & e) {
+				if (strcmp(e.what(), "Duplicate procName detected") == 0) {
+					throw e;
+				}
+			}
 		}
 	}
 
