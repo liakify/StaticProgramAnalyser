@@ -36,7 +36,8 @@ enum class DesignEntity {
  *  argument is restricted to the PROCEDURE design entity.
  */
 enum class RelationType {
-    FOLLOWS, FOLLOWST, PARENT, PARENTT, USESS, USESP, MODIFIESS, MODIFIESP
+    FOLLOWS, FOLLOWST, PARENT, PARENTT, USESS, USESP, MODIFIESS, MODIFIESP,
+    CALLS, CALLST, NEXT, NEXTT, AFFECTS, AFFECTST
 };
 
 /**
