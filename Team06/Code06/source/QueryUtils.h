@@ -46,14 +46,6 @@ namespace PQL {
         bool isValidEntityRef(std::string input);
 
         /**
-         *  Validates if an input string is a valid pattern string.
-         *
-         *  @param      input       candidate pattern string.
-         *  @return     boolean describing if the string forms a valid pattern.
-         */
-        bool isValidPattern(std::string input);
-
-        /**
          *  Returns the input string stripped of leading spaces and newline characters.
          *
          *  @param      input       input string to strip.

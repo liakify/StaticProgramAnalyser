@@ -1,5 +1,7 @@
 #include "QueryParser.h"
+#include "Parser.h"
 
+using std::invalid_argument;
 using std::pair;
 using std::regex;
 using std::smatch;
@@ -494,12 +496,15 @@ namespace PQL {
                     // SYNTAX ERROR: incorrect number of arguments
                     query.status = "syntax error: assign pattern does not have two arguments";
                 }
-                else if (!QueryUtils::isValidPattern(args.at(1))) {
-                    // SYNTAX ERROR: invalid pattern string
-                    query.status = "syntax error: assign pattern has invalid pattern string";
-                }
-                else {
+
+                // Attempt to parse the pattern clause with the SPA FE Parser during construction of pattern clause
+                // If it fails, then the pattern string is not a valid infix arithmetic exprresion
+                try {
                     pattern = { clause, PatternType::ASSIGN_PATTERN, synonym, parseEntityRef(referenceString), parsePattern(args.at(1)) };
+                }
+                catch (const invalid_argument & e) {
+                    // SYNTAX ERROR: pattern string is not a valid infix arithmetic expression
+                    query.status = "syntax error: assign pattern has invalid pattern string";
                 }
                 break;
             case DesignEntity::WHILE:
@@ -577,12 +582,16 @@ namespace PQL {
         if (arg == "_") {
             return { ArgType::WILDCARD, arg };
         }
-        else if (arg.at(0) == '_') {
-            // Inclusive pattern string
-            return { ArgType::INCLUSIVE_PATTERN, QueryUtils::stripPattern(arg) };
+
+        string strippedPattern = QueryUtils::stripPattern(arg);
+        if (arg.at(0) == '_') {
+            // Inclusive pattern string - remove leading and trailing underscore
+            strippedPattern = strippedPattern.substr(1, strippedPattern.length() - 2);
+            return { ArgType::INCLUSIVE_PATTERN, FrontEnd::Parser().parseExpression(strippedPattern) };
         }
         else {
-            return { ArgType::EXACT_PATTERN, QueryUtils::stripPattern(arg) };
+            // Exact pattern string
+            return { ArgType::EXACT_PATTERN, FrontEnd::Parser().parseExpression(strippedPattern) };
         }
     }
 

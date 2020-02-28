@@ -17,6 +17,7 @@ namespace UnitTesting {
 		string MANY_DECLARATIONS_TRIVIAL_QUERY = "while procedure, constant; assign stmt; if print; read variable; assign such; Select variable";
 		string SIMPLE_VALID_QUERY = "variable v; if ifs; assign a; Select v such that Parent* (ifs, a) pattern a(v, _)";
 		string COMPLEX_VALID_QUERY = "assign pattern; while Modifies; variable while, constant; Select pattern such that Uses (Modifies, while) pattern pattern(constant, _\"1\"_)";
+		string INFIX_EXPR_PATTERN_QUERY = "assign a; Select a pattern a(\"var\", _\"((p) - (q / 2) % r) * 3 - ((s + t % 5) - u)\"_)";
 
 		// Invalid queries that fail in validateQuerySyntax
 		string EMPTY_QUERY = "";
@@ -65,7 +66,8 @@ namespace UnitTesting {
 		string INVALID_PATTERN_TYPE_QUERY = "call c; Select c pattern c(\"main\", _)";
 
 		vector<string> VALID_QUERIES = {
-			TRIVIAL_QUERY, MANY_DECLARATIONS_TRIVIAL_QUERY, SIMPLE_VALID_QUERY, COMPLEX_VALID_QUERY
+			TRIVIAL_QUERY, MANY_DECLARATIONS_TRIVIAL_QUERY, SIMPLE_VALID_QUERY, COMPLEX_VALID_QUERY,
+			INFIX_EXPR_PATTERN_QUERY
 		};
 
 		// Array containing all invalid queries with a single deviation from the syntax grammar or
