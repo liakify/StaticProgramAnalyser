@@ -133,7 +133,7 @@ namespace PQL {
                     // should be modified to the procedure-variable variant
                     auto synonymMapping = synonymTable.find(relation.firstStmt.second);
                     if (synonymMapping == synonymTable.end()) {
-                        // SEMANTIC ERROR: synonym referenced in relation clause is undeclared
+                        // SEMANTIC ERROR: synonym referenced in Uses/Modifies clause is undeclared
                         query.status = "semantic error: undeclared synonym as first arg in Uses/Modifies clause";
                         return false;
                     }
@@ -150,7 +150,7 @@ namespace PQL {
                 if (relation.secondEnt.first == ArgType::SYNONYM) {
                     auto synonymMapping = synonymTable.find(relation.secondEnt.second);
                     if (synonymMapping == synonymTable.end()) {
-                        // SEMANTIC ERROR: synonym referenced in relation clause is undeclared
+                        // SEMANTIC ERROR: synonym referenced in Uses/Modifies clause is undeclared
                         query.status = "semantic error: undeclared synonym as second arg in Uses/Modifies clause";
                         return false;
                     }
@@ -161,32 +161,53 @@ namespace PQL {
                     }
                 }
             }
+            else if (relationClass == RelationType::CALLS || relationClass == RelationType::CALLST) {
+                // Relation is between procedures only
+                pair<ArgType, string> args[2] = { relation.firstEnt , relation.secondEnt };
+
+                for (auto arg : args) {
+                    if (arg.first == ArgType::SYNONYM) {
+                        auto synonymMapping = synonymTable.find(arg.second);
+                        if (synonymMapping == synonymTable.end()) {
+                            // SEMANTIC ERROR: synonym referenced in Calls(*) clause is undeclared
+                            query.status = "semantic error: undeclared synonym in Calls(*) clause";
+                            return false;
+                        }
+                        else if (synonymMapping->second != DesignEntity::PROCEDURE) {
+                            // SEMANTIC ERROR: design entity type error (non-PROCEDURE)
+                            query.status = "semantic error: synonym in Calls(*) clause not a PROCEDURE";
+                            return false;
+                        }
+                    }
+                }
+            }
             else {
-                // Relation is between statements: FOLLOWS, FOLLOWST, PARENT, PARENTT
+                // Relation is between statements: FOLLOWS, FOLLOWST, PARENT, PARENTT, AFFECTS, AFFECTST
+                // Or relation is between program lines: NEXT, NEXTT (program line equivalent to statement number)
                 pair<ArgType, string> args[2] = { relation.firstStmt , relation.secondStmt };
 
                 for (auto arg : args) {
                     if (arg.first == ArgType::INTEGER) {
                         int lineNo = stoi(arg.second);
                         if (lineNo <= 0) {
-                            // SEMANTIC ERROR: stmt number must be positive
-                            // Not possible to determine now if stmt number exceeds length of program
-                            query.status = "semantic error: statement line number in relation clause must be postiive";
+                            // SEMANTIC ERROR: statement or line number is not positive
+                            // Not possible to determine now if statement or line number exceeds length of program
+                            query.status = "semantic error: statement number in F(*)/P(*)/N(*)/A(*) clause must be postiive";
                             return false;
                         }
                     }
                     else if (arg.first == ArgType::SYNONYM) {
                         auto synonymMapping = synonymTable.find(arg.second);
                         if (synonymMapping == synonymTable.end()) {
-                            // SEMANTIC ERROR: synonym referenced in relation clause is undeclared
-                            query.status = "semantic error: undeclared synonym as first arg in Follows(*)/Parent(*) clause";
+                            // SEMANTIC ERROR: synonym referenced in Follows(*)/Parent(*)/Next(*)/Affects(*) clause is undeclared
+                            query.status = "semantic error: undeclared synonym in F(*)/P(*)/N(*)/A(*) clause";
                             return false;
                         }
                         else if (synonymMapping->second == DesignEntity::VARIABLE
                             || synonymMapping->second == DesignEntity::CONSTANT
                             || synonymMapping->second == DesignEntity::PROCEDURE) {
-                            // SEMANTIC ERROR: design entity type error (non-STATEMENT or subset)
-                            query.status = "semantic error: synonym as second arg in relation clause not a STATEMENT or sub-type";
+                            // SEMANTIC ERROR: design entity type error (not a PROG_LINE, STATEMENT or any of its sub-types)
+                            query.status = "semantic error: synonym in relation clause not a PROG_LINE, STATEMENT or any of its sub-types";
                             return false;
                         }
                     }
