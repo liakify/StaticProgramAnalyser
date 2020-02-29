@@ -60,7 +60,7 @@ namespace PQL {
     // statements in the PQL query
     // Additional validation is performed during parsing of declarations, query body and clauses
     bool QueryParser::validateQuerySyntax(Query& query, vector<string> statements) {
-        if (statements.size() == 0) {
+        if (statements.size() == 1 && statements.at(0) == "") {
             query.status = "syntax error: empty query";
             return false;
         }

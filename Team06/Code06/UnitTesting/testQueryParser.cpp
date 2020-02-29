@@ -49,7 +49,7 @@ namespace UnitTesting {
 		string AMBIGUOUS_WILDCARD_QUERY = "variable v; Select v such that Modifies(_, v)";
 		string USES_MISSING_FIRST_SYNONYM_QUERY = "variable v; Select v such that Uses(ifs, v)";
 		string MODIFIES_MISSING_SECOND_SYNONYM_QUERY = "procedure p; Select p such that Modifies(p, v)";
-		string USES_NON_VARIABLE_ARG_QUERY = "constant c; procedure p; Select a1 such that Uses(p, c)";
+		string USES_NON_VARIABLE_ARG_QUERY = "constant c; prog_line l; Select l such that Uses(l, c)";
 		string INVALID_LINE_NUMBER_QUERY = "stmt s; Select s such that Parent(0, s)";
 		string FOLLOWS_MISSING_FIRST_SYNONYM_QUERY = "print pn; Select pn such that Follows(rd, pn)";
 		string FOLLOWS_NON_STATEMENT_ARG_QUERY = "stmt s1; variable v; Select s1 such that Parent*(s1, v)";
