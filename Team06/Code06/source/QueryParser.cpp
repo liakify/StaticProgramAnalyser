@@ -109,13 +109,12 @@ namespace PQL {
     bool QueryParser::validateQuerySemantics(Query& query) {
         unordered_map<string, DesignEntity> synonymTable = query.synonymTable;
 
+        // If used as a single return type, the special type BOOLEAN is not stored in the
+        // list of target synonyms, but instead indicated by the attribute returnsBool
         for (string target : query.targetEntities) {
             if (synonymTable.find(target) == synonymTable.end()) {
-                // Case 1: single return type (accepts special return type BOOLEAN)
-                if (query.targetEntities.size() == 1 && target == "BOOLEAN") continue;
-                
-                // Case 2: tuple return type (treat BOOLEAN as an identifier)
-                // SEMANTIC ERROR: synonym referenced as query target is undeclared
+                // If used in a tuple, BOOLEAN is treated as a synonym and hence the query is
+                // semantically invalid if it has not been previously declared
                 query.status = "semantic error: undeclared synonym part of query return type";
                 return false;
             }
@@ -339,7 +338,13 @@ namespace PQL {
         if (regex_search(queryBody, tmatch, SINGLE_TARGET)) {
             // Strip leading "Select"
             string targetEntity = QueryUtils::leftTrim(tmatch.str().erase(0, 6));
-            targets.push_back(targetEntity);
+            if (targetEntity == "BOOLEAN") {
+                query.returnsBool = true;
+            }
+            else {
+                query.returnsBool = false;
+                targets.push_back(targetEntity);
+            }
         }
         else if (regex_search(queryBody, tmatch, TUPLE_TARGET)) {
             // Retrieve first match - a string of form "Select <x1, x2, ...>"
@@ -347,6 +352,7 @@ namespace PQL {
             tupleString.pop_back();
 
             // Extract all target entities in the tuple string "x1, x2, ..."
+            query.returnsBool = false;
             targets = QueryUtils::tokeniseString(tupleString, ',');
         }
         else {
@@ -358,7 +364,7 @@ namespace PQL {
         // Extract the suffix of the query body (following the query return types)
         string queryBodySuffix = QueryUtils::leftTrim(tmatch.suffix().str());
 
-        assert(targets.size() >= 1);
+        assert(query.returnsBool || targets.size() >= 1);
         query.targetEntities = targets;
 
         return { true, queryBodySuffix };
