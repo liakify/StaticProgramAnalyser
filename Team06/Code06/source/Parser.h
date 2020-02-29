@@ -36,7 +36,6 @@ namespace FrontEnd {
 		std::string src;
 		PKB::PKB pkb;
 		size_t pos;
-		bool isExpression;
 
 		std::string consume(std::regex rgx);
 

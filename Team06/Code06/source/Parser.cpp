@@ -7,7 +7,6 @@ using std::string;
 namespace FrontEnd {
 	PKB::PKB Parser::parseSimple(string src) {
 		this->pkb = PKB::PKB();
-		this->isExpression = false;
 		this->src = src;
 		this->pos = 0;
 		program();
@@ -19,7 +18,6 @@ namespace FrontEnd {
 
 	string Parser::parseExpression(string exp) {
 		this->pkb = PKB::PKB();
-		this->isExpression = true;
 		this->src = exp;
 		this->pos = 0;
 		string result = expr().getStr();
