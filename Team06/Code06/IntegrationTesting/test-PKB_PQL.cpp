@@ -16,7 +16,7 @@ namespace IntegrationTesting
  	FrontEnd::DesignExtractor DE;
   std::list<std::string> results;
 
-	TEST_CLASS(Test)
+	TEST_CLASS(Test-PKB_PQL)
 	{
     std::string testQuery1 = "stmt s; Select s";
     std::list<std::string> testQueryResult1 = {"1", "2", "3"};
