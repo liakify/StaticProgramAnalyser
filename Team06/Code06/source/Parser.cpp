@@ -11,6 +11,9 @@ namespace FrontEnd {
 		this->src = src;
 		this->pos = 0;
 		program();
+		if (this->pos != src.length()) {
+			throw invalid_argument("Syntax error in SIMPLE source.\n");
+		}
 		return this->pkb;
 	}
 
@@ -19,7 +22,11 @@ namespace FrontEnd {
 		this->isExpression = true;
 		this->src = exp;
 		this->pos = 0;
-		return expr().getStr();
+		string result = expr().getStr();
+		if (this->pos != this->src.length()) {
+			throw invalid_argument("Syntax error in expression.\n");
+		}
+		return result;
 	}
 
 	string Parser::consume(regex rgx) {
@@ -41,9 +48,11 @@ namespace FrontEnd {
 	}
 
 	void Parser::program() {
+		int currentPos = this->pos;
 		procedure();
-		while (this->pos < src.length()) {
+		while (currentPos < this->pos) {
 			try {
+				currentPos = this->pos;
 				procedure();
 			}
 			catch (invalid_argument & e) {
@@ -283,7 +292,6 @@ namespace FrontEnd {
 	}
 
 	Expression Parser::expr() {
-		int currentPos = this->pos;
 		char op;
 		std::stack<Expression> operands;
 		std::stack<char> operators;
@@ -317,15 +325,9 @@ namespace FrontEnd {
 	Expression Parser::factor() {
 		int currentPos = this->pos;
 		try {
-			if (isExpression) {
-				// Sentinel id value
-				return Expression(name(), -1, ExprType::VAR);
-			}
-			else {
-				VarId id = var_name();
-				VarName name = pkb.varTable.get(id);
-				return Expression(name, id, ExprType::VAR);
-			}
+			VarId id = var_name();
+			VarName name = pkb.varTable.get(id);
+			return Expression(name, id, ExprType::VAR);
 		}
 		catch (const invalid_argument&) {
 			this->pos = currentPos;
