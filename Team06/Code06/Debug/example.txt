@@ -1,0 +1,4 @@
+Writing this to a file.
+if mA; 
+
+Select BOOLEANand with mA = _

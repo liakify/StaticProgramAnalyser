@@ -2,6 +2,6 @@ language: cpp
 os: windows
 install:
         - choco install windows-sdk-10-version-1903-all
+        - PowerShell -Command 'Set-ExecutionPolicy -ExecutionPolicy RemoteSigned'
 script:
-        - ./run.bat
-        - ./Team06/Tests06/regression_tests/runAllSysTest.ps1
+        - PowerShell -File ./Team06/Tests06/regression_tests/runAllSysTest.ps1
