@@ -15,7 +15,7 @@ namespace PKB {
       return thisId;
     }
     else {
-      return getProcId(procName);
+        throw std::invalid_argument("Duplicate procName detected");
     }
   }
 
