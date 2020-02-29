@@ -33,7 +33,7 @@ namespace PQL {
 			Synonym arg0 = clause.synonym;
 			Pattern arg2 = clause.getArgs().second.second;
 			
-			std::unordered_set<StmtId> stmts = database.patternKB.getRHSPatternStmts(arg2);
+			std::unordered_set<StmtId> stmts = database.patternKB.getAssignPatternStmts(arg2);
 			
 			ClauseResult clauseResult;
 			for (StmtId stmt : stmts) {
@@ -56,8 +56,9 @@ namespace PQL {
 		ClauseResult evaluateAssignPatternClauseIdWild(PKB::PKB& database, PatternClause& clause) {
 			Synonym arg0 = clause.synonym;
 			VarName arg1 = clause.getArgs().first.second;
+			VarId arg1Id = database.varTable.getVarId(arg1);
 			
-			std::unordered_set<StmtId> stmts = database.patternKB.getLHSPatternStmts(arg1);
+			std::unordered_set<StmtId> stmts = database.modifiesKB.getAllStmtsModifyVar(arg1Id);
 			ClauseResult clauseResult;
 			for (StmtId stmt : stmts) {
 				if (database.stmtTable.get(stmt)->getType() == StmtType::ASSIGN) {
@@ -80,10 +81,11 @@ namespace PQL {
 		ClauseResult evaluateAssignPatternClauseIdPtn(PKB::PKB& database, PatternClause& clause) {
 			Synonym arg0 = clause.synonym;
 			VarName arg1 = clause.getArgs().first.second;
+			VarId arg1Id = database.varTable.getVarId(arg1);
 			Pattern arg2 = clause.getArgs().second.second;
 			
-			std::unordered_set<StmtId> stmts1 = database.patternKB.getLHSPatternStmts(arg1);
-			std::unordered_set<StmtId> stmts2 = database.patternKB.getRHSPatternStmts(arg2);
+			std::unordered_set<StmtId> stmts1 = database.modifiesKB.getAllStmtsModifyVar(arg1Id);
+			std::unordered_set<StmtId> stmts2 = database.patternKB.getAssignPatternStmts(arg2);
 			
 			// Find the intersection
 			std::unordered_set<StmtId> stmts;
@@ -152,7 +154,7 @@ namespace PQL {
 			Pattern arg2 = clause.getArgs().second.second;
 
 			std::unordered_set<StmtId> stmts1 = database.stmtTable.getStmtsByType(StmtType::ASSIGN);
-			std::unordered_set<StmtId> stmts2 = database.patternKB.getRHSPatternStmts(arg2);
+			std::unordered_set<StmtId> stmts2 = database.patternKB.getAssignPatternStmts(arg2);
 
 			// Find the intersection
 			std::unordered_set<StmtId> stmts;

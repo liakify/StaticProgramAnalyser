@@ -219,16 +219,14 @@ namespace FrontEnd {
 			AssignStmt* as = (AssignStmt*)pkb.stmtTable.get(id);
 			Expression exp = as->getExpr();
 			populatePatternKB(id, exp);
-			VarName vn = pkb.varTable.get(as->getVar());
-			pkb.patternKB.addLHSPattern(vn, id);
 		}
 	}
 
 	void DesignExtractor::populatePatternKB(StmtId stmtId, Expression exp) {
-		pkb.patternKB.addRHSPattern(exp.getStr(), stmtId);
+		pkb.patternKB.addAssignPattern(exp.getStr(), stmtId);
 		unordered_set<Pattern> patterns = exp.getPatterns();
 		for (Pattern p : patterns) {
-			pkb.patternKB.addRHSPattern(p, stmtId);
+			pkb.patternKB.addAssignPattern(p, stmtId);
 		}
 	}
 }
