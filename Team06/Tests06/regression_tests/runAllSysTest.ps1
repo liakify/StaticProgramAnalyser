@@ -22,28 +22,27 @@ Try {
     .\Team06\Code06\Debug\AutoTester.exe $regression_test_path$test$source_suffix $regression_test_path$test$query_suffix $regression_test_path$test$output_suffix
     [XML]$output = Get-Content $regression_test_path$test$output_suffix
     
-    foreach ($query in $output.test_results.queries) {
-      # if ($null -eq $query.passed) {
-      #   "SYSTEM TEST FAILED: "
-      #   exit 1
-      # }
-      $query.id
+    foreach ($query in $output.test_results.queries.query) {
+      if ($null -eq $query.passed) {
+        "SYSTEM TEST FAILED: "
+        exit 1
+      }
     }
   }
   
-  .\Team06\Code06\Debug\AutoTester.exe .\Team06\Tests06\modifies_0_source.txt .\Team06\Tests06\modifies_0_queries.txt .\Team06\Tests06\modifies_0_out.xml
-  [XML]$output2 = Get-Content .\Team06\Tests06\modifies_0_out.xml
+  # SAMPLE FAILED TEST CASE (to verify that this works)
+  # .\Team06\Code06\Debug\AutoTester.exe .\Team06\Tests06\modifies_0_source.txt .\Team06\Tests06\modifies_0_queries.txt .\Team06\Tests06\modifies_0_out.xml
+  # [XML]$output2 = Get-Content .\Team06\Tests06\modifies_0_out.xml
   
-  foreach ($query in $output2.test_results.queries) {
-    if ($null -eq $query.passed) {
-      "SYSTEM TEST FAILED: "
-      exit 1
-    }
-  }
+  # foreach ($query in $output2.test_results.queries) {
+  #   if ($null -eq $query.passed) {
+  #     "SYSTEM TEST FAILED: "
+  #     exit 1
+  #   }
+  # }
 }
 Catch {
   exit 1
 }
-
 
 "ALL SYSTEM TESTS PASSED"
