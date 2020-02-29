@@ -9,15 +9,20 @@
 class PatternKB
 {
 public:
-	void addLHSPattern(Pattern pattern, StmtId stmtId);
+	void addAssignPattern(Pattern pattern, StmtId stmtId);
 
-	void addRHSPattern(Pattern pattern, StmtId stmtId);
+	void addIfPattern(VarId varId, StmtId stmtId);
 
-	std::unordered_set<StmtId> getLHSPatternStmts(Pattern pattern);
+	void addWhilePattern(VarId varId, StmtId stmtId);
 
-	std::unordered_set<StmtId> getRHSPatternStmts(Pattern pattern);
+	std::unordered_set<StmtId> getAssignPatternStmts(Pattern pattern);
+
+	std::unordered_set<StmtId> getIfPatternStmts(VarId varId);
+
+	std::unordered_set<StmtId> getWhilePatternStmts(VarId varId);
 
 private:
-	std::unordered_map<Pattern, std::unordered_set<StmtId>> lhsTable;
-	std::unordered_map<Pattern, std::unordered_set<StmtId>> rhsTable;
+	std::unordered_map<Pattern, std::unordered_set<StmtId>> assignTable;
+	std::unordered_map<VarId, std::unordered_set<StmtId>> ifTable;
+	std::unordered_map<VarId, std::unordered_set<StmtId>> whileTable;
 };
