@@ -86,7 +86,7 @@ i, nested3thenwelse, m, nested3wthenw
 1 - argument variant: stmtRef variant: procedure (TODO: update after Iter. 1)
 procedure p; variable v;
 Select p such that Modifies(p, v)
-SelectUses
+SelectModifies
 5000
 1 - unfound variable names
 stmt s;
