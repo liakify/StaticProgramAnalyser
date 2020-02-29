@@ -111,10 +111,17 @@ namespace PQL {
 
         // If used as a single return type, the special type BOOLEAN is not stored in the
         // list of target synonyms, but instead indicated by the attribute returnsBool
+        if (query.returnsBool && synonymTable.find("BOOLEAN") != synonymTable.end()) {
+            // SEMANTIC ERROR: BOOLEAN also declared as synonym - return type becomes ambiguous
+            query.status = "semantic error: ambiguous use of BOOLEAN as both synonym and return type";
+            return false;
+        }
+
         for (string target : query.targetEntities) {
+            // If BOOLEAN is used in a tuple, it is treated as a synonym and hence the query is
+            // semantically invalid if it has not been previously declared
+            // SEMANTIC ERROR: undeclared synonym as single return type or part of tuple return type
             if (synonymTable.find(target) == synonymTable.end()) {
-                // If used in a tuple, BOOLEAN is treated as a synonym and hence the query is
-                // semantically invalid if it has not been previously declared
                 query.status = "semantic error: undeclared synonym part of query return type";
                 return false;
             }
@@ -593,7 +600,7 @@ namespace PQL {
         if (arg.at(0) == '_') {
             // Inclusive pattern string - remove leading and trailing underscore
             strippedPattern = strippedPattern.substr(1, strippedPattern.length() - 2);
-            return { ArgType::INCLUSIVE_PATTERN, FrontEnd::Parser().parseExpression(strippedPattern) };
+            return { ArgType::INCLUSIVE_PATTERN, "_" + FrontEnd::Parser().parseExpression(strippedPattern) + "_" };
         }
         else {
             // Exact pattern string
