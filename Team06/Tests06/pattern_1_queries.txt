@@ -25,112 +25,112 @@ Select a pattern a (1, _)
 5000
  - invalid: argument type
 stmt s; assign a;
-Select s such that Pattern a (s, _)
+Select s such that pattern a (s, _)
 
 5000
  - invalid: argument type
 stmt s; assign a;
-Select s such that Pattern a (_, s)
+Select s such that pattern a (_, s)
 
 5000
  - invalid: argument type
 read r; assign a;
-Select r such that Pattern a (r, _)
+Select r such that pattern a (r, _)
 
 5000
  - invalid: argument type
 read r; assign a;
-Select r such that Pattern a (_, r)
+Select r such that pattern a (_, r)
 
 5000
  - invalid: argument type
 print pn; assign a;
-Select pn such that Pattern a (pn, _)
+Select pn such that pattern a (pn, _)
 
 5000
  - invalid: argument type
 print pn; assign a;
-Select pn such that Pattern a (_, pn)
+Select pn such that pattern a (_, pn)
 
 5000
  - invalid: argument type
 call c; assign a;
-Select c such that Pattern a (c, _)
+Select c such that pattern a (c, _)
 
 5000
  - invalid: argument type
 call c; assign a;
-Select c such that Pattern a (_, c)
+Select c such that pattern a (_, c)
 
 5000
  - invalid: argument type
 while w; assign a;
-Select w such that Pattern a (w, _)
+Select w such that pattern a (w, _)
 
 5000
  - invalid: argument type
 while w; assign a;
-Select w such that Pattern a (_, w)
+Select w such that pattern a (_, w)
 
 5000
  - invalid: argument type
 if ifs; assign a;
-Select ifs such that Pattern a (ifs, _)
+Select ifs such that pattern a (ifs, _)
 
 5000
  - invalid: argument type
 if ifs; assign a;
-Select ifs such that Pattern a (_, ifs)
+Select ifs such that pattern a (_, ifs)
 
 5000
  - invalid: argument type
 assign a, a1;
-Select a1 such that Pattern a (a1, _)
+Select a1 such that pattern a (a1, _)
 
 5000
  - invalid: argument type
 assign a, a1;
-Select a1 such that Pattern a (_, a1)
+Select a1 such that pattern a (_, a1)
 
 5000
  - invalid: argument type
 variable v; assign a;
-Select v such that Pattern a (v, _)
+Select v such that pattern a (v, _)
 
 5000
  - invalid: argument type
 variable v; assign a;
-Select v such that Pattern a (_, v)
+Select v such that pattern a (_, v)
 
 5000
  - invalid: argument type
 constant cn; assign a;
-Select cn such that Pattern a (cn, _)
+Select cn such that pattern a (cn, _)
 
 5000
  - invalid: argument type
 constant cn; assign a;
-Select cn such that Pattern a (_, cn)
+Select cn such that pattern a (_, cn)
 
 5000
  - invalid: argument type
 procedure p; assign a;
-Select p such that Pattern a (p, _)
+Select p such that pattern a (p, _)
 
 5000
  - invalid: argument type
 procedure p; assign a;
-Select p such that Pattern a (_, p)
+Select p such that pattern a (_, p)
 
 5000
  - invalid: argument type
 prog_line pl; assign a;
-Select pl such that Pattern a (pl, _)
+Select pl such that pattern a (pl, _)
 
 5000
  - invalid: argument type
 prog_line pl; assign a;
-Select pl such that Pattern a (_, pl)
+Select pl such that pattern a (_, pl)
 
 5000
 1 - invalid: (DIGIT, _)
@@ -155,46 +155,46 @@ Select a pattern a (_, 1)
 5000
  - invalid: argument type
 stmt s;
-Select s such that Pattern s(_, _)
+Select s such that pattern s(_, _)
 
 5000
  - invalid: argument type
 read r;
-Select r such that Pattern r(_, _)
+Select r such that pattern r(_, _)
 
 5000
  - invalid: argument type
 print pn;
-Select pn such that Pattern pn(_, _)
+Select pn such that pattern pn(_, _)
 
 5000
  - invalid: argument type
 call c;
-Select c such that Pattern c(_, _)
+Select c such that pattern c(_, _)
 
 5000
  - invalid: argument type
 assign a;
-Select a such that Pattern a(_, _)
+Select a such that pattern a(_, _)
 
 5000
  - invalid: argument type
 variable v;
-Select v such that Pattern v(_, _)
+Select v such that pattern v(_, _)
 
 5000
  - invalid: argument type
 constant cn;
-Select cn such that Pattern cn(_, _)
+Select cn such that pattern cn(_, _)
 
 5000
  - invalid: argument type
 procedure p;
-Select p such that Pattern p(_, _)
+Select p such that pattern p(_, _)
 
 5000
  - invalid: argument type
 prog_line pl;
-Select pl such that Pattern pl(_, _)
+Select pl such that pattern pl(_, _)
 
 5000
