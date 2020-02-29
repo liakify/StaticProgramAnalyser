@@ -13,7 +13,9 @@ namespace UnitTesting
 		ProcName PROC_NAME_A = "p";
 		ProcName PROC_NAME_B = "X_WYS";
 		StmtListId STMTLST_ID = 2;
+		StmtListId STMTLST_ID2 = 3;
 		Procedure PROC_A = Procedure(PROC_NAME_A, STMTLST_ID);
+		Procedure PROC_B = Procedure(PROC_NAME_A, STMTLST_ID2);
 		ProcId PROC_ID_A = 0;
 		ProcId PROC_ID_B = 1;
 		bool isExceptionThrown = false;
@@ -38,6 +40,10 @@ namespace UnitTesting
 			PKB::ProcTable procTable;
 
 			ProcId insertProcResult = procTable.insertProc(PROC_A);
+			Assert::AreEqual(procTable.size(), 1);
+
+			//Duplicate procName
+			Assert::ExpectException<std::invalid_argument>([this, &procTable] {procTable.insertProc(PROC_B); });
 			Assert::AreEqual(procTable.size(), 1);
 
 			ProcId a = procTable.getProcId(PROC_NAME_A);

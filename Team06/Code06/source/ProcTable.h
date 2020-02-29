@@ -29,10 +29,11 @@ namespace PKB {
 
     /**
      *  If proc is not in the ProcTable, proc is inserted into the ProcTable. 
-     *  Else, the table remains unchanged.
+     *  Else, an exception is thrown.
      *  
      *  @param      Procedure proc to insert
      *  @return     ID of the procedure in the ProcTable. 
+     *  @throws     std::invalid_argument if procName already exists
      */
     ProcId insertProc(Procedure proc);
 

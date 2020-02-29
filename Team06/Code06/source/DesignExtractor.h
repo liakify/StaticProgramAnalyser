@@ -29,7 +29,7 @@ namespace FrontEnd {
 	private:
 		PKB::PKB pkb;
 
-		// Functions that actually populate the PKB
+		// Functions to be called in run()
 		void populateFollows();
 		void populateFollowStar();
 		void populateParent();
@@ -41,11 +41,15 @@ namespace FrontEnd {
 		// Helper functions
 		void populateParentKB(StmtId stmtId, StmtListId stmtLstId);
 
+		void populateStmtUses(StmtId id);
 		std::unordered_set<VarId> getAllUses(StmtListId sid);
-		void populateUsesKB(StmtId stmtId, std::unordered_set<VarId> varSet);
+		void populateStmtUsesKB(StmtId stmtId, std::unordered_set<VarId>& varSet);
+		void populateProcUsesKB(ProcId procId, std::unordered_set<VarId>& varSet);
 
+		void populateStmtModifies(StmtId id);
 		std::unordered_set<VarId> getAllModifies(StmtListId sid);
-		void populateModifiesKB(StmtId stmtId, std::unordered_set<VarId> varSet);
+		void populateStmtModifiesKB(StmtId stmtId, std::unordered_set<VarId>& varSet);
+		void populateProcModifiesKB(ProcId procId, std::unordered_set<VarId>& varSet);
 
 		void populatePatternKB(StmtId stmtId, Expression exp);
 	};
