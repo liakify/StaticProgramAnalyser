@@ -331,8 +331,8 @@ namespace PQL {
     pair<bool, string> QueryParser::parseQueryTarget(Query& query, string queryBody) {
         vector<string> targets;
 
-        regex SINGLE_TARGET("Select +[A-Za-z][A-Za-z0-9]*(?! *,)");
-        regex TUPLE_TARGET("Select +< *[A-Za-z][A-Za-z0-9]*( *, *[A-Za-z][A-Za-z0-9]*)+ *>(?! *,)");
+        regex SINGLE_TARGET("^Select +[A-Za-z][A-Za-z0-9]*(?= *$| (?! *,))");
+        regex TUPLE_TARGET("^Select +< *[A-Za-z][A-Za-z0-9]*( *, *[A-Za-z][A-Za-z0-9]*)* *>(?= *$| (?! *,))");
         smatch tmatch;
 
         // Attempt to match a single return type, otherwise match a tuple return type
@@ -502,7 +502,7 @@ namespace PQL {
                 try {
                     pattern = { clause, PatternType::ASSIGN_PATTERN, synonym, parseEntityRef(referenceString), parsePattern(args.at(1)) };
                 }
-                catch (const invalid_argument & e) {
+                catch (const invalid_argument& e) {
                     // SYNTAX ERROR: pattern string is not a valid infix arithmetic expression
                     query.status = "syntax error: assign pattern has invalid pattern string";
                 }
@@ -523,7 +523,7 @@ namespace PQL {
             case DesignEntity::IF:
                 if (args.size() != 3) {
                     // SYNTAX ERROR: incorrect number of arguments
-                    query.status = "syntax error: if pattern does not have two arguments";
+                    query.status = "syntax error: if pattern does not have three arguments";
                 }
                 else if (args.at(1) != "_" || args.at(2) != "_") {
                     // SYNTAX ERROR: unallowed argument for while pattern clause
