@@ -4,4 +4,5 @@ install:
         - choco install windows-sdk-10-version-1903-all
         - PowerShell -Command 'Set-ExecutionPolicy -ExecutionPolicy RemoteSigned'
 script:
+        - ./run.bat
         - PowerShell -File ./Team06/Tests06/regression_tests/runAllSysTest.ps1
