@@ -13,32 +13,17 @@ namespace IntegrationTesting
 
 	TEST_CLASS(Test-FrontEnd_PKB)
 	{
-    std::string src = "procedure p{x = 7; y = 2; if(x>y) then {z = x + a;} else {print y;} read y; }";
+    std::string src = "procedure p{x=7; y=2; if(x>y) then {z=x+a;} else {print y;} read y; }";
 
-    std::unordered_set<VarName> allVars;
-    allVars.insert("x");
-    allVars.insert("y");
-    allVars.insert("z");
-    allVars.insert("a");
+    std::unordered_set<VarName> allVars = std::unordered_set<VarName>({"x", "y", "z", "a"});
 
-    std::unordered_set<VarName> allModifiedVars;
-    allModifiedVars.insert("x");
-    allModifiedVars.insert("y");
-    allModifiedVars.insert("z");
+    std::unordered_set<VarName> allModifiedVars = std::unordered_set<VarName>({"x", "y", "z"});
 
-    std::unordered_set<StmtId> allModifiedStmts;
-    allModifiedStmts.insert(1);
-    allModifiedStmts.insert(2);
-    allModifiedStmts.insert(4);
+    std::unordered_set<StmtId> allModifiedStmts = std::unordered_set<StmtId>({1, 2, 4});
 
-    std::unordered_set<VarName> allUsedVars;
-    allUsedVars.insert("x");
-    allUsedVars.insert("y");
-    allUsedVars.insert("a");
+    std::unordered_set<VarName> allUsedVars = std::unordered_set<VarName>({"x", "y", "a"});
 
-    std::unordered_set<StmtId> allUsedStmts;
-    allUsedStmts.insert(4);
-    allUsedStmts.insert(5);
+    std::unordered_set<StmtId> allUsedStmts = std::unordered_set<StmtId>({4, 5});
 
     std::list<std::string> allConstants = {"7", "2"};
 
@@ -149,6 +134,16 @@ namespace IntegrationTesting
       }
       CollectionAssert::AreEqual(usedVarNames, allUsedVars);
       CollectionAssert::AreEqual(usedStmtIds, allUsedStmts);
+
+      CollectionAssert::AreEqual(pkb.patternKB.getLHSPatternStmts("x"), std::unordered_set<StmtId>({1, 3}));
+      CollectionAssert::AreEqual(pkb.patternKB.getLHSPatternStmts("y"), std::unordered_set<StmtId>({2}));
+      CollectionAssert::AreEqual(pkb.patternKB.getLHSPatternStmts("z"), std::unordered_set<StmtId>({4}));
+      CollectionAssert::AreEqual(pkb.patternKB.getLHSPatternStmts("print"), std::unordered_set<StmtId>({5}));
+      CollectionAssert::AreEqual(pkb.patternKB.getLHSPatternStmts("read"), std::unordered_set<StmtId>({6}));
+      CollectionAssert::AreEqual(pkb.patternKB.getRHSPatternStmts("7"), std::unordered_set<StmtId>({1}));
+      CollectionAssert::AreEqual(pkb.patternKB.getRHSPatternStmts("2"), std::unordered_set<StmtId>({2}));
+      CollectionAssert::AreEqual(pkb.patternKB.getRHSPatternStmts("y"), std::unordered_set<StmtId>({3, 5, 6}));
+      CollectionAssert::AreEqual(pkb.patternKB.getRHSPatternStmts("x+a"), std::unordered_set<StmtId>({4}));
 		}
 
 	};
