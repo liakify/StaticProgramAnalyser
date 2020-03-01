@@ -25,7 +25,7 @@ TestWrapper::TestWrapper() {
 void TestWrapper::parse(std::string filename) {
 	// Create input file stream and char iterator
     std::ifstream ifs(filename);
-    std::string program((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());;
+    std::string program((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());
     try {
         this->pkb = frontEnd.parseSimple(program);
     }

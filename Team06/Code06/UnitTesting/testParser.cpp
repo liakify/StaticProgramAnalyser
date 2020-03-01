@@ -19,6 +19,9 @@ namespace UnitTesting {
 			"proc ",
 			"procedure p{}",
 			"procedure p{read 1;}",
+			"procedure p{1x = 1;}",
+			"procedure p{x = 1;} asdf",
+			"procedure p{x = 1;} procedure p{y = 2;} ",
 			"Procedure p{x = c+3;  while((x<4) && (x/3 == 4)) {print x;} }",
 			"procedure pee{while((x<4) && (x/3 == 4)) {} }",
 			"procedure pee{while(x<4 && x/3 == 4) {e=2;} }",
@@ -34,6 +37,7 @@ namespace UnitTesting {
 		std::string VALID_EXP = "(x+1)*2%3/(zz+9)+10-5*y";
 		std::string VALID_EXP2 = "(  ( x+1)*2%3/( zz+ 9)  +10 -(5*y))";
 		std::string INVALID_EXP = "(x+1)*2%3/(zz+9)+10-5*";
+		std::string INVALID_EXP2 = "1x";
 		FrontEnd::Parser parser = FrontEnd::Parser();
 
 		TEST_METHOD(ParseSimpleTest) {
@@ -57,6 +61,9 @@ namespace UnitTesting {
 			std::string expected = "((((((x+1)*2)%3)/(zz+9))+10)-(5*y))";
 			Assert::AreEqual(expected, parser.parseExpression(VALID_EXP));
 			Assert::AreEqual(expected, parser.parseExpression(VALID_EXP2));
+
+			Assert::ExpectException<std::invalid_argument>([this] {parser.parseExpression(INVALID_EXP); });
+			Assert::ExpectException<std::invalid_argument>([this] {parser.parseExpression(INVALID_EXP2); });
 		}
 	};
 }
