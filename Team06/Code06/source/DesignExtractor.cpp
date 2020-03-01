@@ -193,7 +193,6 @@ namespace FrontEnd {
 	}
 
 	void DesignExtractor::populateModifies() {
-		//
 		for (ProcId i = 1; i <= pkb.procTable.size(); i++) {
 			Procedure p = pkb.procTable.get(i);
 			StmtListId sid = p.getStmtLstId();
