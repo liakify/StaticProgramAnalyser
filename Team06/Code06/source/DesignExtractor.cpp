@@ -5,6 +5,8 @@ using std::unordered_set;
 namespace FrontEnd {
 	PKB::PKB DesignExtractor::run(PKB::PKB& pkb) {
 		this->pkb = pkb;
+		populateCalls();
+		populateCallStar();
 		populateFollows();
 		populateFollowStar();
 		populateParent();
@@ -13,6 +15,31 @@ namespace FrontEnd {
 		populateModifies();
 		populatePattern();
 		return this->pkb;
+	}
+
+	void DesignExtractor::populateCalls() {
+		for (ProcId i = 1; i <= pkb.procTable.size(); i++) {
+			StmtListId slid = pkb.procTable.get(i).getStmtLstId();
+			std::vector<StmtId> idList = pkb.stmtListTable.get(slid).getStmtIds();
+			for (StmtId id : idList) {
+				Statement* s = pkb.stmtTable.get(id);
+				if (s->getType() != StmtType::CALL) {
+					continue;
+				}
+				CallStmt* cs = (CallStmt*)s;
+				ProcId calledId = pkb.procTable.getProcId(cs->getProc());
+				if (calledId == i || calledId == -1) { // Recursive call OR ProcId not found
+					throw std::invalid_argument("Invalid procedure call detected.\n");
+				}
+				//pkb.callsKB.addCalls(i, calledId);
+			}
+		}
+	}
+
+	void DesignExtractor::populateCallStar() {
+		// TODO: Ensure this part can detect cyclic proc calls and throw exception.
+		// If this part fails to detect cyclic calls the subsequent DE parts
+		// will go into an infinite cycle
 	}
 
 	void DesignExtractor::populateFollows() {
@@ -129,6 +156,16 @@ namespace FrontEnd {
 			Expression exp = as->getExpr();
 			populateStmtUsesKB(id, exp.getVarIds());
 		}
+		else if (type == StmtType::CALL) {
+			CallStmt* cs = (CallStmt*)s;
+			ProcId pid = pkb.procTable.getProcId(cs->getProc());
+			StmtListId stmtLstId = pkb.procTable.get(pid).getStmtLstId();
+			
+			// Depending on the DAG of the procedure calls, can potentially be very inefficient
+			// Possible to optimize performance of this by using DP
+			// i.e. cache result of getAllUses(StmtLstId)
+			populateStmtUsesKB(id, getAllUses(stmtLstId));
+		}
 	}
 
 	unordered_set<VarId> DesignExtractor::getAllUses(StmtListId sid) {
@@ -156,6 +193,7 @@ namespace FrontEnd {
 	}
 
 	void DesignExtractor::populateModifies() {
+		//
 		for (ProcId i = 1; i <= pkb.procTable.size(); i++) {
 			Procedure p = pkb.procTable.get(i);
 			StmtListId sid = p.getStmtLstId();
@@ -186,6 +224,16 @@ namespace FrontEnd {
 			AssignStmt* as = (AssignStmt*)s;
 			Expression exp = as->getExpr();
 			pkb.modifiesKB.addStmtModifies(id, as->getVar());
+		}
+		else if (type == StmtType::CALL) {
+			CallStmt* cs = (CallStmt*)s;
+			ProcId pid = pkb.procTable.getProcId(cs->getProc());
+			StmtListId stmtLstId = pkb.procTable.get(pid).getStmtLstId();
+
+			// Depending on the DAG of the procedure calls, can potentially be very inefficient
+			// Possible to optimize performance of this by using DP
+			// i.e. cache result of getAllModifies(StmtLstId)
+			populateStmtModifiesKB(id, getAllModifies(stmtLstId));
 		}
 	}
 

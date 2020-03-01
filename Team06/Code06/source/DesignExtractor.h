@@ -30,6 +30,8 @@ namespace FrontEnd {
 		PKB::PKB pkb;
 
 		// Functions to be called in run()
+		void populateCalls();
+		void populateCallStar();
 		void populateFollows();
 		void populateFollowStar();
 		void populateParent();
