@@ -138,8 +138,6 @@ namespace IntegrationTesting
       CollectionAssert::AreEqual(pkb.patternKB.getLHSPatternStmts("x"), std::unordered_set<StmtId>({1, 3}));
       CollectionAssert::AreEqual(pkb.patternKB.getLHSPatternStmts("y"), std::unordered_set<StmtId>({2}));
       CollectionAssert::AreEqual(pkb.patternKB.getLHSPatternStmts("z"), std::unordered_set<StmtId>({4}));
-      CollectionAssert::AreEqual(pkb.patternKB.getLHSPatternStmts("print"), std::unordered_set<StmtId>({5}));
-      CollectionAssert::AreEqual(pkb.patternKB.getLHSPatternStmts("read"), std::unordered_set<StmtId>({6}));
       CollectionAssert::AreEqual(pkb.patternKB.getRHSPatternStmts("7"), std::unordered_set<StmtId>({1}));
       CollectionAssert::AreEqual(pkb.patternKB.getRHSPatternStmts("2"), std::unordered_set<StmtId>({2}));
       CollectionAssert::AreEqual(pkb.patternKB.getRHSPatternStmts("y"), std::unordered_set<StmtId>({3, 5, 6}));
