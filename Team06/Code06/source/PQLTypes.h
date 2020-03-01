@@ -106,7 +106,13 @@ namespace PQL {
         {"Parent", RelationType::PARENT},
         {"Parent*", RelationType::PARENTT},
         {"Uses", RelationType::USESS},
-        {"Modifies", RelationType::MODIFIESS}
+        {"Modifies", RelationType::MODIFIESS},
+        {"Calls", RelationType::CALLS},
+        {"Calls*", RelationType::CALLST},
+        {"Next", RelationType::NEXT},
+        {"Next*", RelationType::NEXTT},
+        {"Affects", RelationType::AFFECTS},
+        {"Affects*", RelationType::AFFECTST}
     };
 
     /**
