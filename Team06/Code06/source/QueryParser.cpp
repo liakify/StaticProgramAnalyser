@@ -1,5 +1,7 @@
 #include "QueryParser.h"
+#include "Parser.h"
 
+using std::invalid_argument;
 using std::pair;
 using std::regex;
 using std::smatch;
@@ -35,7 +37,7 @@ namespace PQL {
         bool hasValidTarget;
         string queryBodySuffix;
         tie(hasValidTarget, queryBodySuffix) = parseQueryTarget(query, queryBody);
-        if (!hasValidEntities) return query;
+        if (!hasValidTarget) return query;
 
         bool hasValidClauses;
         vector<string> relationClauses, patternClauses;
@@ -58,7 +60,7 @@ namespace PQL {
     // statements in the PQL query
     // Additional validation is performed during parsing of declarations, query body and clauses
     bool QueryParser::validateQuerySyntax(Query& query, vector<string> statements) {
-        if (statements.size() == 0) {
+        if (statements.size() == 1 && statements.at(0) == "") {
             query.status = "syntax error: empty query";
             return false;
         }
@@ -107,13 +109,19 @@ namespace PQL {
     bool QueryParser::validateQuerySemantics(Query& query) {
         unordered_map<string, DesignEntity> synonymTable = query.synonymTable;
 
+        // If used as a single return type, the special type BOOLEAN is not stored in the
+        // list of target synonyms, but instead indicated by the attribute returnsBool
+        if (query.returnsBool && synonymTable.find("BOOLEAN") != synonymTable.end()) {
+            // SEMANTIC ERROR: BOOLEAN also declared as synonym - return type becomes ambiguous
+            query.status = "semantic error: ambiguous use of BOOLEAN as both synonym and return type";
+            return false;
+        }
+
         for (string target : query.targetEntities) {
+            // If BOOLEAN is used in a tuple, it is treated as a synonym and hence the query is
+            // semantically invalid if it has not been previously declared
+            // SEMANTIC ERROR: undeclared synonym as single return type or part of tuple return type
             if (synonymTable.find(target) == synonymTable.end()) {
-                // Case 1: single return type (accepts special return type BOOLEAN)
-                if (query.targetEntities.size() == 1 && target == "BOOLEAN") continue;
-                
-                // Case 2: tuple return type (treat BOOLEAN as an identifier)
-                // SEMANTIC ERROR: synonym referenced as query target is undeclared
                 query.status = "semantic error: undeclared synonym part of query return type";
                 return false;
             }
@@ -263,12 +271,13 @@ namespace PQL {
     // reaching the end of the query string (i.e. there exists some incorrect syntax)
     // Returns an array of clauses
     tuple<bool, vector<string>, vector<string>> QueryParser::splitConstraints(Query& query, string queryBodySuffix) {
-        regex RELATION_COMPOUND_CLAUSE("^ *such that +[A-Za-z*]+ *\\([\\w,\"\\s]*\\)(?: and +[A-Za-z*]+ *\\([\\w,\"\\s]*\\))*");
-        regex PATTERN_COMPOUND_CLAUSE("^ *pattern +[A-Za-z][A-Za-z0-9]* *\\([\\w,\"\\+\\-\\*\\/\\%\\s]*\\)(?: and +[A-Za-z][A-Za-z0-9]* *\\([\\w,\"\\+\\-\\*\\/\\%\\s]*\\))*");
-        smatch ccmatch;
-
         string RELATION_CLAUSE = "[A-Za-z*]+ *\\([\\w,\"\\s]*\\)";
-        string PATTERN_CLAUSE = "[A-Za-z][A-Za-z0-9]* *\\([\\w,\"\\+\\-\\*\\/\\%\\s]*\\)";
+        string PATTERN_CLAUSE = "[A-Za-z][A-Za-z0-9]* *\\([\\w\"\\s]+(?:, *(?:_|(?:(_?) *\"[A-Za-z0-9\\(\\)\\+\\-\\*\\/\\%\\s]+\" *\\1)) *)+\\)";
+
+        regex COMPOUND_RELATION_CLAUSE("^ *such that +" + RELATION_CLAUSE + "(?: +and +" + RELATION_CLAUSE + ")*");
+        regex COMPOUND_PATTERN_PREFIX("^ *pattern +[A-Za-z][A-Za-z0-9]* *\\(");
+        regex COMPOUND_PATTERN_CLAUSE("^ *pattern +" + PATTERN_CLAUSE + "(?: +and +" + PATTERN_CLAUSE + ")*");
+        smatch ccmatch;
 
         vector<string> relationClauses;
         vector<string> patternClauses;
@@ -278,11 +287,17 @@ namespace PQL {
 
             // Attempt to consume either a relation or pattern compound clause
             // If this fails, then the query string is synctactically invalid
-            if (regex_search(queryBodySuffix, ccmatch, RELATION_COMPOUND_CLAUSE)) {
+            if (regex_search(queryBodySuffix, ccmatch, COMPOUND_RELATION_CLAUSE)) {
                 vector<string> relations = QueryUtils::matchAll(ccmatch.str(), RELATION_CLAUSE);
                 relationClauses.insert(relationClauses.end(), relations.begin(), relations.end());
             }
-            else if (regex_search(queryBodySuffix, ccmatch, PATTERN_COMPOUND_CLAUSE)) {
+            else if (regex_search(queryBodySuffix, ccmatch, COMPOUND_PATTERN_PREFIX)) {
+                if (!regex_search(queryBodySuffix, ccmatch, COMPOUND_PATTERN_CLAUSE)) {
+                    // SYNTAX ERROR: first arg has zero length or other args violate pattern string syntax
+                    query.status = "syntax error: pattern clause has missing or malformed argument";
+                    return { false, relationClauses, patternClauses };
+                }
+
                 vector<string> patterns = QueryUtils::matchAll(ccmatch.str(), PATTERN_CLAUSE);
                 patternClauses.insert(patternClauses.end(), patterns.begin(), patterns.end());
             }
@@ -343,15 +358,21 @@ namespace PQL {
     pair<bool, string> QueryParser::parseQueryTarget(Query& query, string queryBody) {
         vector<string> targets;
 
-        regex SINGLE_TARGET("Select +[A-Za-z][A-Za-z0-9]*(?! *,)");
-        regex TUPLE_TARGET("Select +< *[A-Za-z][A-Za-z0-9]*( *, *[A-Za-z][A-Za-z0-9]*)+ *>(?! *,)");
+        regex SINGLE_TARGET("^Select +[A-Za-z][A-Za-z0-9]*(?= *$| (?! *,))");
+        regex TUPLE_TARGET("^Select +< *[A-Za-z][A-Za-z0-9]*( *, *[A-Za-z][A-Za-z0-9]*)* *>(?= *$| (?! *,))");
         smatch tmatch;
 
         // Attempt to match a single return type, otherwise match a tuple return type
         if (regex_search(queryBody, tmatch, SINGLE_TARGET)) {
             // Strip leading "Select"
             string targetEntity = QueryUtils::leftTrim(tmatch.str().erase(0, 6));
-            targets.push_back(targetEntity);
+            if (targetEntity == "BOOLEAN") {
+                query.returnsBool = true;
+            }
+            else {
+                query.returnsBool = false;
+                targets.push_back(targetEntity);
+            }
         }
         else if (regex_search(queryBody, tmatch, TUPLE_TARGET)) {
             // Retrieve first match - a string of form "Select <x1, x2, ...>"
@@ -359,6 +380,7 @@ namespace PQL {
             tupleString.pop_back();
 
             // Extract all target entities in the tuple string "x1, x2, ..."
+            query.returnsBool = false;
             targets = QueryUtils::tokeniseString(tupleString, ',');
         }
         else {
@@ -370,7 +392,7 @@ namespace PQL {
         // Extract the suffix of the query body (following the query return types)
         string queryBodySuffix = QueryUtils::leftTrim(tmatch.suffix().str());
 
-        assert(targets.size() >= 1);
+        assert(query.returnsBool || targets.size() >= 1);
         query.targetEntities = targets;
 
         return { true, queryBodySuffix };
@@ -543,12 +565,15 @@ namespace PQL {
                     // SYNTAX ERROR: incorrect number of arguments
                     query.status = "syntax error: assign pattern does not have two arguments";
                 }
-                else if (!QueryUtils::isValidPattern(args.at(1))) {
-                    // SYNTAX ERROR: invalid pattern string
-                    query.status = "syntax error: assign pattern has invalid pattern string";
-                }
-                else {
+
+                // Attempt to parse the pattern clause with the SPA FE Parser during construction of pattern clause
+                // If it fails, then the pattern string is not a valid infix arithmetic exprresion
+                try {
                     pattern = { clause, PatternType::ASSIGN_PATTERN, synonym, parseEntityRef(referenceString), parsePattern(args.at(1)) };
+                }
+                catch (const invalid_argument& e) {
+                    // SYNTAX ERROR: pattern string is not a valid infix arithmetic expression
+                    query.status = "syntax error: assign pattern has invalid pattern string";
                 }
                 break;
             case DesignEntity::WHILE:
@@ -567,7 +592,7 @@ namespace PQL {
             case DesignEntity::IF:
                 if (args.size() != 3) {
                     // SYNTAX ERROR: incorrect number of arguments
-                    query.status = "syntax error: if pattern does not have two arguments";
+                    query.status = "syntax error: if pattern does not have three arguments";
                 }
                 else if (args.at(1) != "_" || args.at(2) != "_") {
                     // SYNTAX ERROR: unallowed argument for while pattern clause
@@ -626,12 +651,16 @@ namespace PQL {
         if (arg == "_") {
             return { ArgType::WILDCARD, arg };
         }
-        else if (arg.at(0) == '_') {
-            // Inclusive pattern string
-            return { ArgType::INCLUSIVE_PATTERN, QueryUtils::stripPattern(arg) };
+
+        string strippedPattern = QueryUtils::stripPattern(arg);
+        if (arg.at(0) == '_') {
+            // Inclusive pattern string - remove leading and trailing underscore
+            strippedPattern = strippedPattern.substr(1, strippedPattern.length() - 2);
+            return { ArgType::INCLUSIVE_PATTERN, "_" + FrontEnd::Parser().parseExpression(strippedPattern) + "_" };
         }
         else {
-            return { ArgType::EXACT_PATTERN, QueryUtils::stripPattern(arg) };
+            // Exact pattern string
+            return { ArgType::EXACT_PATTERN, FrontEnd::Parser().parseExpression(strippedPattern) };
         }
     }
 
