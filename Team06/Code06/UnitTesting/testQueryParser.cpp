@@ -15,7 +15,8 @@ namespace UnitTesting {
 	public:
 		// All valid queries
 		string TRIVIAL_QUERY = "constant Select; Select Select";
-		string TRIVIAL_MANY_DECLARATIONS_QUERY = "while procedure, constant; assign stmt; if print; read variable; assign such; Select variable";
+		string TRIVIAL_BOOLEAN_QUERY = "Select BOOLEAN";
+		string TRIVIAL_MANY_DECLARATIONS_QUERY = "while procedure, constant; assign call; if print; read variable; call such; Select variable";
 		string TRIVIAL_ONE_TUPLE_QUERY = "prog_line l; Select <l>";
 		string TRIVIAL_TUPLE_QUERY = "procedure p; variable BOOLEAN; Select <p, BOOLEAN> such that Modifies (p, BOOLEAN)";
 		string SIMPLE_CONSTANTS_QUERY = "assign a; Select a such that Follows*(4, 9) pattern a(\"x\", _\"(0)\"_)";
@@ -26,8 +27,14 @@ namespace UnitTesting {
 		string COMPLEX_PATTERN_STRING_QUERY = "assign a; Select a pattern a(\"var\", _\"((p) - (q / 2) % r) * 3 - ((s + t % 5) - u) + v / 7\"_)";
 		string CHAINED_BOOLEAN_QUERY = "Select BOOLEAN such that Parent*(16, 25) and Uses(\"main\", \"i\") and Modifies(25, \"i\")";
 		string CHAINED_ALL_PATTERNS_QUERY = "while w; assign a; if ifs; variable v; Select <a, v> pattern ifs(v, _, _) and a(\"x\", _) pattern w(v, _)";
-		string CHAINED_ALL_RELATIONS_QUERY = "prog_line l; variable v; if ifs; read r; Select <l, r, v> such that Follows(l, ifs) and Parent*(ifs, r) such that Uses(ifs, v) and Modifies(r, v)";
-		string MIXED_CHAINED_CLAUSES_QUERY = "assign a; procedure p; variable v1, v2; while w; if ifs; prog_line l; Select <p, w, a> pattern a(v1, \"0\") and w(v1, _) such that Follows*(a, ifs) pattern ifs(v2, _, _) such that Modifies(p, v2) and Parent(ifs, l) and Uses(l, v1)";
+		string CHAINED_BASIC_RELATIONS_QUERY = "prog_line l; variable v; if ifs; read rd; Select <l, rd, v> such that Follows(l, ifs) and Parent*(ifs, rd) such that Uses(ifs, v) and Modifies(rd, v)";
+		string CHAINED_MIXED_CLAUSES_QUERY = "assign a; procedure p; variable v1, v2; while w; if ifs; prog_line l; Select <p, w, a> pattern a(v1, \"0\") and w(v1, _) such that Follows*(a, ifs) pattern ifs(v2, _, _) such that Modifies(p, v2) and Parent(ifs, l) and Uses(l, v1)";
+		string CHAINED_CALLS_QUERY = "procedure p, q; Select <p, q> such that Calls(\"main\", p) and Calls*(p, q) and Calls(q, _)";
+		string CHAINED_NEXT_QUERY = "prog_line l; call cl; Select <l, cl> such that Next*(_, l) and Next(l, cl) and Next*(cl, 25)";
+		string CHAINED_AFFECTS_QUERY = "stmt s; assign a; Select <s, a> such that Affects*(1, s) and Affects*(a, s) and Affects(s, _)";
+		string CHAINED_STMT_PROG_LINE_QUERY = "stmt s; prog_line l1, l2; variable v; Select <l1, v> such that Parent*(l1, s) and Next*(s, l2) and Affects(l2, l1) and Uses(l1, v) and Modifies(l1, _)";
+		string CHAINED_ADV_RELATIONS_QUERY = "prog_line l; call cl; assign a; variable v; Select <l, a, v> such that Uses(\"error\", v) and Modifies(a, v) such that Affects(l, a) and Next*(a, cl) and Calls*(_, \"error\")";
+		string CHAINED_ALL_RELATIONS_QUERY = "procedure p; stmt s; prog_line l; call cl; assign a; variable v; Select <p, v> such that Calls(_, p) and Uses(p, v) and Parent(s, cl) and Modifies(cl, v) and Follows*(cl, l) and Next(l, a) and Affects*(a, a)";
 
 		// Invalid queries that fail in validateQuerySyntax
 		string EMPTY_QUERY = "";
@@ -50,9 +57,14 @@ namespace UnitTesting {
 		string USES_MISSING_FIRST_SYNONYM_QUERY = "variable v; Select v such that Uses(ifs, v)";
 		string MODIFIES_MISSING_SECOND_SYNONYM_QUERY = "procedure p; Select p such that Modifies(p, v)";
 		string USES_NON_VARIABLE_ARG_QUERY = "constant c; prog_line l; Select l such that Uses(l, c)";
-		string INVALID_LINE_NUMBER_QUERY = "stmt s; Select s such that Parent(0, s)";
-		string FOLLOWS_MISSING_FIRST_SYNONYM_QUERY = "print pn; Select pn such that Follows(rd, pn)";
-		string FOLLOWS_NON_STATEMENT_ARG_QUERY = "stmt s1; variable v; Select s1 such that Parent*(s1, v)";
+		string CALLS_MISSING_SYNONYM_QUERY = "Select BOOLEAN such that Calls(p, _)";
+		string CALLS_NON_PROCEDURE_ARG_QUERY = "call cl; Select cl such that Calls*(\"main\", cl)";
+		string INVALID_STMT_NUMBER_QUERY = "stmt s; Select s such that Parent(0, s)";
+		string INVALID_PROG_LINE_QUERY = "prog_line l; Select l such that Next*(0, l)";
+		string FOLLOWS_MISSING_SYNONYM_QUERY = "print pn; Select pn such that Follows(rd, pn)";
+		string PARENT_NON_STMT_ARG_QUERY = "variable v; Select BOOLEAN such that Parent*(_, v)";
+		string NEXT_MISSING_SYNONYM_QUERY = "prog_line l1; Select l1 such that Next(l1, l2)";
+		string AFFECTS_NON_STMT_ARG_QUERY = "constant c; Select c such that Affects*(69, c)";
 		string PATTERN_MISSING_SYNONYM_QUERY = "assign a; Select a pattern a(v, \"x\")";
 		string PATTERN_NON_VARIABLE_ARG_QUERY = "call cl; assign a; Select cl pattern a(cl, _)";
 
@@ -85,10 +97,13 @@ namespace UnitTesting {
 		string INVALID_RELATION_KEYWORD_QUERY = "read rd; print pn; Select s1 such that Folows(rd, pn)";
 		string INVALID_RELATION_TYPE_QUERY = "procedure p, q; Select p such that Recurses(p, q)";
 		string INCORRECT_RELATION_NUM_ARGS_QUERY = "stmt s1, s2, s3; Select s1 such that Parent(s1, s2, s3)";
-		string FOLLOWS_NON_STATEMENT_REF_ARG_QUERY = "Select BOOLEAN such that Follows*(\"32\", 30)";
-		string PARENT_NON_STATEMENT_REF_ARG_QUERY = "Select BOOLEAN such that Parent*(3203, __private)";
+		string FOLLOWS_NON_STMT_REF_ARG_QUERY = "Select BOOLEAN such that Follows*(\"32\", 30)";
+		string PARENT_NON_STMT_REF_ARG_QUERY = "Select BOOLEAN such that Parent*(3203, __private)";
 		string USES_INVALID_SECOND_ARG_QUERY = "assign a; Select a such that Uses(a, 420)";
 		string MODIFIES_INVALID_FIRST_ARG_QUERY = "read rd; variable v; Select rd such that Modifies(\"2\", v)";
+		string CALLS_NON_ENTITY_REF_ARG_QUERY = "procedure p; Select p such that Calls*(p, __)";
+		string NEXT_NON_LINE_REF_ARG_QUERY = "Select BOOLEAN such that Next(1231, \"tough\")";
+		string AFFECTS_NON_STMT_REF_QUERY = "assign a; Select a such that Affects*(a, 1_024)";
 
 		// Invalid queries that fail in parsePatternClauses
 		string PATTERN_UNDECLARED_SYNONYM_QUERY = "variable v; Select v pattern a(v, _)";
@@ -104,10 +119,13 @@ namespace UnitTesting {
 		string INVALID_PATTERN_TYPE_QUERY = "call c; Select c pattern c(\"main\", _)";
 
 		vector<string> VALID_QUERIES = {
-			TRIVIAL_QUERY, TRIVIAL_MANY_DECLARATIONS_QUERY, TRIVIAL_TUPLE_QUERY, TRIVIAL_ONE_TUPLE_QUERY,
-			SIMPLE_CONSTANTS_QUERY, SIMPLE_VALID_QUERY, SIMPLE_VALID_BOOLEAN_QUERY, SIMPLE_PATTERN_STRING_QUERY,
+			TRIVIAL_QUERY, TRIVIAL_BOOLEAN_QUERY, TRIVIAL_MANY_DECLARATIONS_QUERY,
+			TRIVIAL_TUPLE_QUERY, TRIVIAL_ONE_TUPLE_QUERY, SIMPLE_CONSTANTS_QUERY,
+			SIMPLE_VALID_QUERY, SIMPLE_VALID_BOOLEAN_QUERY, SIMPLE_PATTERN_STRING_QUERY,
 			COMPLEX_VALID_QUERY, COMPLEX_PATTERN_STRING_QUERY, CHAINED_BOOLEAN_QUERY,
-			CHAINED_ALL_PATTERNS_QUERY, CHAINED_ALL_RELATIONS_QUERY, MIXED_CHAINED_CLAUSES_QUERY
+			CHAINED_ALL_PATTERNS_QUERY, CHAINED_BASIC_RELATIONS_QUERY, CHAINED_MIXED_CLAUSES_QUERY,
+			CHAINED_CALLS_QUERY, CHAINED_NEXT_QUERY, CHAINED_AFFECTS_QUERY,
+			CHAINED_STMT_PROG_LINE_QUERY, CHAINED_ADV_RELATIONS_QUERY, CHAINED_ALL_RELATIONS_QUERY
 		};
 
 		// Array containing all invalid queries with a single deviation from the syntax grammar or
@@ -121,9 +139,12 @@ namespace UnitTesting {
 			MISSING_RETURN_TYPE_SYNONYM_QUERY, INCORRECT_BOOLEAN_KEYWORD_QUERY,
 			MISSING_BOOLEAN_IN_TUPLE_QUERY, MISSING_SYNONYM_IN_TUPLE_QUERY,
 			AMBIGUOUS_BOOLEAN_QUERY, AMBIGUOUS_WILDCARD_QUERY,
-			USES_MISSING_FIRST_SYNONYM_QUERY, MODIFIES_MISSING_SECOND_SYNONYM_QUERY,
-			USES_NON_VARIABLE_ARG_QUERY, INVALID_LINE_NUMBER_QUERY, FOLLOWS_MISSING_FIRST_SYNONYM_QUERY,
-			FOLLOWS_NON_STATEMENT_ARG_QUERY, PATTERN_MISSING_SYNONYM_QUERY, PATTERN_NON_VARIABLE_ARG_QUERY,
+			USES_MISSING_FIRST_SYNONYM_QUERY, MODIFIES_MISSING_SECOND_SYNONYM_QUERY, USES_NON_VARIABLE_ARG_QUERY,
+			CALLS_MISSING_SYNONYM_QUERY, CALLS_NON_PROCEDURE_ARG_QUERY,
+			INVALID_STMT_NUMBER_QUERY, INVALID_PROG_LINE_QUERY,
+			FOLLOWS_MISSING_SYNONYM_QUERY, PARENT_NON_STMT_ARG_QUERY,
+			NEXT_MISSING_SYNONYM_QUERY, AFFECTS_NON_STMT_ARG_QUERY,
+			PATTERN_MISSING_SYNONYM_QUERY, PATTERN_NON_VARIABLE_ARG_QUERY,
 			// splitConstraints
 			INCORRECT_RELATION_KEYWORD_QUERY, INCORRECT_PATTERN_KEYWORD_QUERY,
 			PATTERN_INVALID_SYNTAX_QUERY, PATTERN_TOO_FEW_ARGS_QUERY,
@@ -137,8 +158,9 @@ namespace UnitTesting {
 			INVALID_TUPLE_DELIMITER_QUERY, INVALID_TYPE_IN_TUPLE_QUERY, INVALID_SINGLE_WITH_TUPLE_QUERY,
 			// parseRelationClauses
 			INVALID_RELATION_TYPE_QUERY, INVALID_RELATION_KEYWORD_QUERY, INCORRECT_RELATION_NUM_ARGS_QUERY,
-			FOLLOWS_NON_STATEMENT_REF_ARG_QUERY, PARENT_NON_STATEMENT_REF_ARG_QUERY,
+			FOLLOWS_NON_STMT_REF_ARG_QUERY, PARENT_NON_STMT_REF_ARG_QUERY,
 			USES_INVALID_SECOND_ARG_QUERY, MODIFIES_INVALID_FIRST_ARG_QUERY,
+			CALLS_NON_ENTITY_REF_ARG_QUERY, NEXT_NON_LINE_REF_ARG_QUERY, AFFECTS_NON_STMT_REF_QUERY,
 			// parsePatternClauses
 			PATTERN_UNDECLARED_SYNONYM_QUERY, PATTERN_NON_ENTITY_REF_ARG_QUERY,
 			PATTERN_ASSIGN_TOO_MANY_ARGS_QUERY, PATTERN_STRING_INVALID_NAME_QUERY,
