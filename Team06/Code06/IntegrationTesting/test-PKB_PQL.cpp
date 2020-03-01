@@ -21,9 +21,9 @@ namespace IntegrationTesting
     std::string testQuery1 = "stmt s; Select s";
     std::list<std::string> testQueryResult1 = {"1", "2", "3"};
     std::string testQuery2 = "stmt s; Select s such that Follows(1, s)";
-    std::list<std::string> testQueryResult1 = {"2"};
-    std::string testQuery2 = "stmt s; Select s such that Parent(2, s)";
-    std::list<std::string> testQueryResult1 = {"3"};
+    std::list<std::string> testQueryResult2 = {"2"};
+    std::string testQuery3 = "stmt s; Select s such that Parent(2, s)";
+    std::list<std::string> testQueryResult3 = {"3"};
 
 	public:
 		TEST_CLASS_INITIALIZE(setup) {
