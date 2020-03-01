@@ -160,15 +160,6 @@ namespace UnitTesting {
 			}
 		}
 
-		TEST_METHOD(isValidPattern) {
-			for (auto input : VALID_PATTERNS) {
-				Assert::IsTrue(QueryUtils::isValidPattern(input));
-			}
-			for (auto input : INVALID_PATTERNS) {
-				Assert::IsFalse(QueryUtils::isValidPattern(input));
-			}
-		}
-
 		TEST_METHOD(trimMethods) {
 			for (auto testcase : LEFT_TRIM_TESTS) {
 				Assert::IsTrue(QueryUtils::leftTrim(testcase.first) == testcase.second);
