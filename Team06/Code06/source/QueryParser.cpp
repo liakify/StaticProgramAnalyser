@@ -1,6 +1,7 @@
 #include "QueryParser.h"
 #include "Parser.h"
 
+using std::find;
 using std::invalid_argument;
 using std::pair;
 using std::regex;
@@ -153,6 +154,18 @@ namespace PQL {
                         relation.firstEnt = relation.firstStmt;
                         relation.firstStmt = INVALID_ARG;
                     }
+                    else if (relationClass == RelationType::USESS &&
+                        find(NON_USES.begin(), NON_USES.end(), synonymMapping->second) != NON_USES.end()) {
+                        // SEMANTIC ERROR: design entity type error (not a STMT, ASSIGN, IF, WHILE, CALL or PRINT)
+                        query.status = "semantic error: relation not defined for synonym as first arg in Uses clause";
+                        return false;
+                    }
+                    else if (relationClass == RelationType::MODIFIESS &&
+                        find(NON_MODIFIES.begin(), NON_MODIFIES.end(), synonymMapping->second) != NON_MODIFIES.end()) {
+                        // SEMANTIC ERROR: design entity type error (not a STMT, ASSIGN, IF, WHILE, CALL or READ)
+                        query.status = "semantic error: relation not defined for synonym as first arg in Modifies clause";
+                        return false;
+                    }
                 }
 
                 if (relation.secondEnt.first == ArgType::SYNONYM) {
@@ -191,7 +204,7 @@ namespace PQL {
             }
             else {
                 // Relation is between statements: FOLLOWS, FOLLOWST, PARENT, PARENTT, AFFECTS, AFFECTST
-                // Or relation is between program lines: NEXT, NEXTT (program line equivalent to statement number)
+                // Or relation is between program lines: NEXT, NEXTT (program line equivalent to stmt number)
                 pair<ArgType, string> args[2] = { relation.firstStmt , relation.secondStmt };
 
                 for (auto arg : args) {
@@ -211,11 +224,15 @@ namespace PQL {
                             query.status = "semantic error: undeclared synonym in F(*)/P(*)/N(*)/A(*) clause";
                             return false;
                         }
-                        else if (synonymMapping->second == DesignEntity::VARIABLE
-                            || synonymMapping->second == DesignEntity::CONSTANT
-                            || synonymMapping->second == DesignEntity::PROCEDURE) {
-                            // SEMANTIC ERROR: design entity type error (not a PROG_LINE, STATEMENT or any of its sub-types)
-                            query.status = "semantic error: synonym in relation clause not a PROG_LINE, STATEMENT or any of its sub-types";
+                        else if ((relationClass == RelationType::AFFECTS || relationClass == RelationType::AFFECTST) &&
+                            find(NON_AFFECTS.begin(), NON_AFFECTS.end(), synonymMapping->second) != NON_AFFECTS.end()) {
+                            // SEMANTIC ERROR: design entity type error (not an ASSIGN or a super-type STMT or PROG_LINE)
+                            query.status = "semantic error: synonym in Affects(*) clause not an ASSIGN or its super-types";
+                            return false;
+                        }
+                        else if (find(NON_STMTS.begin(), NON_STMTS.end(), synonymMapping->second) != NON_STMTS.end()) {
+                            // SEMANTIC ERROR: design entity type error (not a STMT or any of its subtypes)
+                            query.status = "semantic error: relation not defined for synonym as first arg in Uses clause";
                             return false;
                         }
                     }

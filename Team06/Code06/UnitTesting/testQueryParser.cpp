@@ -55,16 +55,19 @@ namespace UnitTesting {
 		string AMBIGUOUS_BOOLEAN_QUERY = "stmt BOOLEAN; Select BOOLEAN such that Uses(BOOLEAN, _)";
 		string AMBIGUOUS_WILDCARD_QUERY = "variable v; Select v such that Modifies(_, v)";
 		string USES_MISSING_FIRST_SYNONYM_QUERY = "variable v; Select v such that Uses(ifs, v)";
+		string USES_UNDEFINED_RELATION_QUERY = "read rd; Select BOOLEAN such that Uses(rd, \"var\")";
+		string MODIFIES_UNDEFINED_RELATION_QUERY = "print pn; Select pn such that Modifies(pn, _)";
 		string MODIFIES_MISSING_SECOND_SYNONYM_QUERY = "procedure p; Select p such that Modifies(p, v)";
 		string USES_NON_VARIABLE_ARG_QUERY = "constant c; prog_line l; Select l such that Uses(l, c)";
 		string CALLS_MISSING_SYNONYM_QUERY = "Select BOOLEAN such that Calls(p, _)";
 		string CALLS_NON_PROCEDURE_ARG_QUERY = "call cl; Select cl such that Calls*(\"main\", cl)";
-		string INVALID_STMT_NUMBER_QUERY = "stmt s; Select s such that Parent(0, s)";
+		string INVALID_STMT_NUMBER_QUERY = "stmt s; Select s such that Follows(0, s)";
 		string INVALID_PROG_LINE_QUERY = "prog_line l; Select l such that Next*(0, l)";
 		string FOLLOWS_MISSING_SYNONYM_QUERY = "print pn; Select pn such that Follows(rd, pn)";
-		string PARENT_NON_STMT_ARG_QUERY = "variable v; Select BOOLEAN such that Parent*(_, v)";
 		string NEXT_MISSING_SYNONYM_QUERY = "prog_line l1; Select l1 such that Next(l1, l2)";
-		string AFFECTS_NON_STMT_ARG_QUERY = "constant c; Select c such that Affects*(69, c)";
+		string AFFECTS_NON_ASSIGN_ARG_QUERY = "read rd; Select rd such that Affects*(rd, 69)";
+		string PARENT_NON_STMT_ARG_QUERY = "variable v; Select BOOLEAN such that Parent*(_, v)";
+		string NEXT_NON_STMT_ARG_QUERY = "constant c; Select c such that Next(c, 42)";
 		string PATTERN_MISSING_SYNONYM_QUERY = "assign a; Select a pattern a(v, \"x\")";
 		string PATTERN_NON_VARIABLE_ARG_QUERY = "call cl; assign a; Select cl pattern a(cl, _)";
 
@@ -138,12 +141,13 @@ namespace UnitTesting {
 			// validateQuerySemantics
 			MISSING_RETURN_TYPE_SYNONYM_QUERY, INCORRECT_BOOLEAN_KEYWORD_QUERY,
 			MISSING_BOOLEAN_IN_TUPLE_QUERY, MISSING_SYNONYM_IN_TUPLE_QUERY,
-			AMBIGUOUS_BOOLEAN_QUERY, AMBIGUOUS_WILDCARD_QUERY,
-			USES_MISSING_FIRST_SYNONYM_QUERY, MODIFIES_MISSING_SECOND_SYNONYM_QUERY, USES_NON_VARIABLE_ARG_QUERY,
+			AMBIGUOUS_BOOLEAN_QUERY, AMBIGUOUS_WILDCARD_QUERY, USES_MISSING_FIRST_SYNONYM_QUERY,
+			USES_UNDEFINED_RELATION_QUERY, MODIFIES_UNDEFINED_RELATION_QUERY,
+			MODIFIES_MISSING_SECOND_SYNONYM_QUERY, USES_NON_VARIABLE_ARG_QUERY,
 			CALLS_MISSING_SYNONYM_QUERY, CALLS_NON_PROCEDURE_ARG_QUERY,
 			INVALID_STMT_NUMBER_QUERY, INVALID_PROG_LINE_QUERY,
-			FOLLOWS_MISSING_SYNONYM_QUERY, PARENT_NON_STMT_ARG_QUERY,
-			NEXT_MISSING_SYNONYM_QUERY, AFFECTS_NON_STMT_ARG_QUERY,
+			FOLLOWS_MISSING_SYNONYM_QUERY, NEXT_MISSING_SYNONYM_QUERY,
+			AFFECTS_NON_ASSIGN_ARG_QUERY, PARENT_NON_STMT_ARG_QUERY, NEXT_NON_STMT_ARG_QUERY,
 			PATTERN_MISSING_SYNONYM_QUERY, PATTERN_NON_VARIABLE_ARG_QUERY,
 			// splitConstraints
 			INCORRECT_RELATION_KEYWORD_QUERY, INCORRECT_PATTERN_KEYWORD_QUERY,
