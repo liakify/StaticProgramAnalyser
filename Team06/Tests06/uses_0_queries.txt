@@ -83,10 +83,50 @@ while w; variable v;
 Select v such that Uses(w, v)
 g, h, i, k, l, m, n, o, p, q, r, s, t
 5000
-1 - argument variant: stmtRef variant: procedure (TODO: update after Iter. 1)
+1 - argument variant: stmtRef variant: call
+call c; variable v;
+Select c such that Uses(c, v)
+14, 17, 20
+5000
+1 - argument variant: stmtRef variant: call - indirect modifications captured
+call c; variable v;
+Select v such that Uses(14, v)
+v, c1, c2, c3, c4, w, y
+5000
+1 - argument variant: stmtRef variant: procedure
+procedure p; variable v;
+Select p such that Uses(p, v)
+SelectUses, Calls3, Calls4, Calls5
+5000
+1 - argument variant: stmtRef variant: procedure
+procedure p; variable v;
+Select p such that Uses(p, "v")
+SelectUses, Calls3
+5000
+1 - argument variant: stmtRef variant: procedure
 procedure p; variable v;
 Select p such that Uses(p, _)
-SelectUses
+SelectUses, Calls3, Calls4, Calls5
+5000
+ - direct and indirect procedure modifies
+variable v;
+Select v such that Uses("Calls3", v)
+v, c1, c2, c3, c4, w, y
+5000
+ - direct and indirect procedure modifies
+variable v;
+Select BOOLEAN such that Uses("SelectUses", "v")
+true
+5000
+ - direct procedure modifies => empty
+variable v;
+Select v such that Uses("Calls2", v)
+
+5000
+ - direct and indirect procedure modifies
+variable v;
+Select BOOLEAN such that Uses("Calls2", _)
+false
 5000
 1 - unfound variable names
 stmt s;

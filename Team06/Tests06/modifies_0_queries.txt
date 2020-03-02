@@ -36,7 +36,7 @@ Select v such that Modifies(2, v)
 1 - argument variant: (1, IDENT)
 stmt s;
 Select s such that Modifies(1, "a")
-1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33
 5000
 1 - argument variant: (1, IDENT) => empty
 stmt s;
@@ -46,7 +46,7 @@ Select s such that Modifies(2, "c")
 1 - argument variant: (1, _)
 stmt s;
 Select s such that Modifies(1, _)
-1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33
 5000
 1 - argument variant: (1, _) => empty
 stmt s;
@@ -83,10 +83,50 @@ while w; variable v;
 Select v such that Modifies(w, v)
 i, nested3thenwelse, m, nested3wthenw
 5000
-1 - argument variant: stmtRef variant: procedure (TODO: update after Iter. 1)
+1 - argument variant: stmtRef variant: call
+call c; variable v;
+Select c such that Modifies(c, v)
+26, 29
+5000
+1 - argument variant: stmtRef variant: call - indirect modifications captured
+call c; variable v;
+Select v such that Modifies(26, v)
+t, v
+5000
+1 - argument variant: stmtRef variant: procedure
 procedure p; variable v;
 Select p such that Modifies(p, v)
-SelectModifies
+SelectModifies, Calls2, Calls4
+5000
+1 - argument variant: stmtRef variant: procedure
+procedure p; variable v;
+Select p such that Modifies(p, "v")
+SelectModifies, Calls2, Calls4
+5000
+1 - argument variant: stmtRef variant: procedure
+procedure p; variable v;
+Select p such that Modifies(p, _)
+SelectModifies, Calls2, Calls4
+5000
+ - direct and indirect procedure modifies
+variable v;
+Select v such that Modifies("Calls2", v)
+t, v
+5000
+ - direct and indirect procedure modifies
+variable v;
+Select BOOLEAN such that Modifies("SelectModifies", "t")
+true
+5000
+ - direct procedure modifies => empty
+variable v;
+Select v such that Modifies("Calls3", v)
+
+5000
+ - direct and indirect procedure modifies
+variable v;
+Select BOOLEAN such that Modifies("Calls3", _)
+false
 5000
 1 - unfound variable names
 stmt s;
@@ -96,7 +136,7 @@ Select s such that Modifies(s, "notfound")
 1 - unrelated synonyms
 stmt s, s1;
 Select s such that Modifies(s1, "a")
-1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33
 5000
 1 - unrelated synonyms => empty
 stmt s, s1;

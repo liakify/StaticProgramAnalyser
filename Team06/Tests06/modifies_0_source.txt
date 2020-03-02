@@ -23,4 +23,15 @@ procedure SelectModifies {
         print notModified; }
     if (c1 == c2) then {
         print notModified; } else {
-        print notModified; } }
+        print notModified; } 
+    call Calls2; 
+    call Calls3; }
+procedure Calls2 {
+    read t; 
+    call Calls4; }
+procedure Calls3 {
+    print u; }
+procedure Calls4 {
+    if (c1 == c2) then {
+        read v; } else {
+        print w; }}
