@@ -105,7 +105,7 @@ namespace FrontEnd {
 			dfsFromRoot(root, visited);
 		}
 
-		std::vector<ProcId> visited(numProc + 1);
+		std::fill(visited.begin(), visited.end(), 0);
 		std::unordered_set<ProcId> leaves = pkb.callsKB.getLeaves();
 		for (const auto& leaf : leaves) {
 			dfsFromLeaf(leaf, visited);
