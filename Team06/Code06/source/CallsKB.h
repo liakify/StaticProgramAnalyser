@@ -42,34 +42,24 @@ public:
 	std::unordered_set<ProcId> getLeaves();
 
 	/*
-		Returns all direct callees of p
+		Returns a reference to directCallees/directCallers of p for NodeType SUCCESSOR and PREDECESSOR respectively
 	*/
-	std::unordered_set<ProcId>& getDirectCallees(ProcId p);
+	std::unordered_set<ProcId>& getDirectNodes(ProcId p, NodeType type);
 
 	/*
-		Returns all direct callers of p
+		Returns a reference to allCallees/allCallers of p for NodeType SUCCESSOR and PREDECESSOR respectively
 	*/
-	std::unordered_set<ProcId>& getDirectCallers(ProcId p);
+	std::unordered_set<ProcId>& getAllNodes(ProcId p, NodeType type);
 
 	/*
-		Returns allCallees of p
+		Adds proc to allCallees/allCallers of p for NodeType SUCCESSOR and PREDECESSOR respectively
 	*/
-	std::unordered_set<ProcId>& getAllCallees(ProcId p);
+	void addToAll(ProcId p, ProcId proc, NodeType type);
 
 	/*
-		Returns allCallees of p1
+		Adds procs to allCallees/allCallers of p for NodeType SUCCESSOR and PREDECESSOR respectively
 	*/
-	std::unordered_set<ProcId>& getAllCallers(ProcId p);
-
-	/*
-		Adds callees to allCallees of p
-	*/
-	void setAllCallees(ProcId p, std::unordered_set<ProcId>& callees);
-
-	/*
-		Adds callers to allCallers of p
-	*/
-	void setAllCallers(ProcId p, std::unordered_set<ProcId>& callers);
+	void addToAll(ProcId p, std::unordered_set<ProcId>& procs, NodeType type);
 
 private:
 	std::unordered_map<ProcId, callsRS> callsTable;

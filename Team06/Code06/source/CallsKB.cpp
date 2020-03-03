@@ -34,8 +34,7 @@ bool CallsKB::callStar(ProcId p1, ProcId p2) {
 	}
 }
 
-std::unordered_set<ProcId> CallsKB::getRoots()
-{
+std::unordered_set<ProcId> CallsKB::getRoots() {
 	std::unordered_set<ProcId> roots;
 
 	for (auto it = callsTable.begin(); it != callsTable.end(); ++it) {
@@ -48,8 +47,7 @@ std::unordered_set<ProcId> CallsKB::getRoots()
 	return roots;
 }
 
-std::unordered_set<ProcId> CallsKB::getLeaves()
-{
+std::unordered_set<ProcId> CallsKB::getLeaves() {
 	std::unordered_set<ProcId> leaves;
 
 	for (auto it = callsTable.begin(); it != callsTable.end(); ++it) {
@@ -62,54 +60,50 @@ std::unordered_set<ProcId> CallsKB::getLeaves()
 	return leaves;
 }
 
-std::unordered_set<ProcId>& CallsKB::getDirectCallees(ProcId p)
+std::unordered_set<ProcId>& CallsKB::getDirectNodes(ProcId p, NodeType type)
 {
 	try {
-		return callsTable.at(p).directCallees;
+		if (type == NodeType::SUCCESSOR) {
+			return callsTable.at(p).directCallees;
+		}
+		else {
+			return callsTable.at(p).directCallers;
+		}
 	}
 	catch (const std::out_of_range&) {
 		return callsTable[-1].directCallees;
 	}
 }
 
-std::unordered_set<ProcId>& CallsKB::getDirectCallers(ProcId p)
+std::unordered_set<ProcId>& CallsKB::getAllNodes(ProcId p, NodeType type)
 {
 	try {
-		return callsTable.at(p).directCallers;
-	}
-	catch (const std::out_of_range&) {
-		return callsTable[-1].directCallers;
-	}
-}
-
-std::unordered_set<ProcId>& CallsKB::getAllCallees(ProcId p)
-{
-	try {
-		return callsTable.at(p).allCallees;
-	}
-	catch (const std::out_of_range&) {
-		return callsTable[-1].allCallees;
-	}
-}
-
-std::unordered_set<ProcId>& CallsKB::getAllCallers(ProcId p)
-{
-	try {
-		return callsTable.at(p).allCallers;
+		if (type == NodeType::SUCCESSOR) {
+			return callsTable.at(p).allCallees;
+		}
+		else {
+			return callsTable.at(p).allCallers;
+		}
 	}
 	catch (const std::out_of_range&) {
 		return callsTable[-1].allCallers;
 	}
 }
 
-void CallsKB::setAllCallees(ProcId p, std::unordered_set<ProcId>& callees) {
-	for (const auto& callee : callees) {
-		callsTable.at(p).allCallees.insert(callee);
+void CallsKB::addToAll(ProcId p, ProcId proc, NodeType type) {
+	if (type == NodeType::SUCCESSOR) {
+		callsTable.at(p).allCallees.insert(proc);
+	}
+	else {
+		callsTable.at(p).allCallers.insert(proc);
 	}
 }
 
-void CallsKB::setAllCallers(ProcId p, std::unordered_set<ProcId>& callers) {
-	for (const auto& caller : callers) {
-		callsTable.at(p).allCallers.insert(caller);
+void CallsKB::addToAll(ProcId p, std::unordered_set<ProcId>& procs, NodeType type) {
+	if (type == NodeType::SUCCESSOR) {
+		callsTable.at(p).allCallees.insert(procs.begin(), procs.end());
+	}
+	else {
+		callsTable.at(p).allCallers.insert(procs.begin(), procs.end());
 	}
 }
