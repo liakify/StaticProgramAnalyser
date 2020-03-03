@@ -5,10 +5,11 @@
 namespace SPA {
 	namespace LoggingUtils {
 		enum class Level {
-			DEBUG, ERROR
+			DEBUG, INFO, ERROR
 		};
 
 		void LogDebugMessage(std::string format, ...);
+		void LogInfoMessage(std::string format, ...);
 		void LogErrorMessage(std::string format, ...);
 
 	}

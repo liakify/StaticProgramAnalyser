@@ -199,18 +199,12 @@ namespace PQL {
 			return ParentStarEvaluator::evaluateParentStarClause(this->database, relationClause, synonymTable);
 			break;
 		case RelationType::MODIFIESS:
+		case RelationType::MODIFIESP:
 			return ModifiesEvaluator::evaluateModifiesClause(this->database, relationClause, synonymTable);
 			break;
-		case RelationType::MODIFIESP:
-			SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluateRelationClause: MODIFIESP not implemented!\n");
-			return {};
-			break;
 		case RelationType::USESS:
-			return UsesEvaluator::evaluateUsesClause(this->database, relationClause, synonymTable);
-			break;
 		case RelationType::USESP:
-			SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluateRelationClause: USESP not implemented!\n");
-			return {};
+			return UsesEvaluator::evaluateUsesClause(this->database, relationClause, synonymTable);
 			break;
 		default:
 			SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluateRelationClause: Unknown relation type %d\n", relationClause.type);

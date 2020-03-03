@@ -1,32 +1,47 @@
 #include "PatternKB.h"
 #include <stdexcept>
 
-void PatternKB::addLHSPattern(Pattern pattern, StmtId stmtId)
+void PatternKB::addAssignPattern(Pattern pattern, StmtId stmtId)
 {
-	lhsTable[pattern].insert(stmtId);
+	assignTable[pattern].insert(stmtId);
 }
 
-void PatternKB::addRHSPattern(Pattern pattern, StmtId stmtId)
+void PatternKB::addIfPattern(VarId varId, StmtId stmtId)
 {
-	rhsTable[pattern].insert(stmtId);
+	ifTable[varId].insert(stmtId);
 }
 
-std::unordered_set<StmtId> PatternKB::getLHSPatternStmts(Pattern pattern)
+void PatternKB::addWhilePattern(VarId varId, StmtId stmtId)
+{
+	whileTable[varId].insert(stmtId);
+}
+
+std::unordered_set<StmtId> PatternKB::getAssignPatternStmts(Pattern pattern)
 {
 	try {
-		return lhsTable.at(pattern);
+		return assignTable.at(pattern);
 	}
 	catch (const std::out_of_range &) {
 		return {};
 	}
 }
 
-std::unordered_set<StmtId> PatternKB::getRHSPatternStmts(Pattern pattern)
+std::unordered_set<StmtId> PatternKB::getIfPatternStmts(VarId varId)
 {
 	try {
-		return rhsTable.at(pattern);
+		return ifTable.at(varId);
 	}
-	catch (const std::out_of_range &) {
+	catch (const std::out_of_range&) {
+		return {};
+	}
+}
+
+std::unordered_set<StmtId> PatternKB::getWhilePatternStmts(VarId varId)
+{
+	try {
+		return whileTable.at(varId);
+	}
+	catch (const std::out_of_range&) {
 		return {};
 	}
 }
