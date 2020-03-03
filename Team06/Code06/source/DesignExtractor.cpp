@@ -272,7 +272,7 @@ namespace FrontEnd {
 
 		for (const auto& dirCaller : pkb.callsKB.getDirectCallers(leaf)) {
 			if (visited[dirCaller] == 0) {
-				dfsFromRoot(dirCaller, visited);
+				dfsFromLeaf(dirCaller, visited);
 			}
 			pkb.callsKB.setAllCallers(leaf, pkb.callsKB.getAllCallers(dirCaller));
 		}
