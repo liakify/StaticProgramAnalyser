@@ -1,0 +1,5 @@
+1 - returns empty
+
+Select BOOLEAN;
+
+5000

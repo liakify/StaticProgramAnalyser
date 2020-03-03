@@ -7,7 +7,7 @@ $regression_test_path = '.\Team06\Tests06\regression_tests\'
 $list_of_test_files = @(
   # SAMPLE FAILED TEST CASE (to verify that this works)
   # '..\modifies_0',
-  'select_0_1',
+'select_0_1',
 'follows_0',
 'followsStar_0',
 'parent_0',
@@ -16,6 +16,20 @@ $list_of_test_files = @(
 'uses_0_1',
 'pattern_0_1',
 'suchthatPattern_0_1'
+# '..\invalid_simple\simple_CondAsFalse',
+# '..\invalid_simple\simple_CondAsTrue',
+# '..\invalid_simple\simple_cyclicCalls',
+# '..\invalid_simple\simple_digitWithZero',
+# '..\invalid_simple\simple_logicExprNoBracket',
+# '..\invalid_simple\simple_logicExprNotInCond',
+# '..\invalid_simple\simple_nonDigitConstant',
+# '..\invalid_simple\simple_nonExistProcCall',
+# '..\invalid_simple\simple_printTwoVariables',
+# '..\invalid_simple\simple_printXPrintY',
+# '..\invalid_simple\simple_procSameName',
+# '..\invalid_simple\simple_varSameName',
+# '..\invalid_simple\simple_selfCalls',
+# '..\valid_simple\simple_procNameEqualVarName'
 )
 
 Try {
