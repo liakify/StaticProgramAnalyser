@@ -34,8 +34,7 @@ bool CallsKB::callStar(ProcId p1, ProcId p2) {
 	}
 }
 
-std::unordered_set<ProcId>& CallsKB::getDirectNodes(ProcId p, NodeType type)
-{
+std::unordered_set<ProcId>& CallsKB::getDirectNodes(ProcId p, NodeType type) {
 	try {
 		if (type == NodeType::SUCCESSOR) {
 			return callsTable.at(p).directCallees;
@@ -49,8 +48,7 @@ std::unordered_set<ProcId>& CallsKB::getDirectNodes(ProcId p, NodeType type)
 	}
 }
 
-std::unordered_set<ProcId>& CallsKB::getAllNodes(ProcId p, NodeType type)
-{
+std::unordered_set<ProcId>& CallsKB::getAllNodes(ProcId p, NodeType type) {
 	try {
 		if (type == NodeType::SUCCESSOR) {
 			return callsTable.at(p).allCallees;
