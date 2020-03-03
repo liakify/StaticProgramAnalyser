@@ -95,6 +95,22 @@ namespace FrontEnd {
 		}
 	}
 
+	void DesignExtractor::populateCallStar() {
+		int numProc = pkb.procTable.size();
+		
+		std::vector<ProcId> visited(numProc + 1);
+		std::unordered_set<ProcId> roots = pkb.callsKB.getRoots();
+		for (const auto& root : roots) {
+			dfsFromRoot(root, visited);
+		}
+
+		std::vector<ProcId> visited(numProc + 1);
+		std::unordered_set<ProcId> leaves = pkb.callsKB.getLeaves();
+		for (const auto& leaf : leaves) {
+			dfsFromLeaf(leaf, visited);
+		}
+	}
+
 	void DesignExtractor::populateUses() {
 		for (ProcId i = 1; i <= pkb.procTable.size(); i++) {
 			Procedure p = pkb.procTable.get(i);
@@ -228,5 +244,39 @@ namespace FrontEnd {
 		for (Pattern p : patterns) {
 			pkb.patternKB.addAssignPattern(p, stmtId);
 		}
+	}
+
+	void DesignExtractor::dfsFromRoot(ProcId root, std::vector<ProcId>& visited) {
+		if (visited[root] == -1) {
+			throw std::domain_error("Cycle Detected");
+		}
+		
+		visited[root] = -1;
+
+		for (const auto& dirCallee : pkb.callsKB.getDirectCallees(root)) {
+			if (visited[dirCallee] == 0) {
+				dfsFromRoot(dirCallee, visited);
+			}
+			pkb.callsKB.setAllCallees(root, pkb.callsKB.getAllCallees(dirCallee));
+		}
+
+		visited[root] = 1;
+	}
+
+	void DesignExtractor::dfsFromLeaf(ProcId leaf, std::vector<ProcId>& visited) {
+		if (visited[leaf] == -1) {
+			throw std::domain_error("Cycle Detected");
+		}
+
+		visited[leaf] = -1;
+
+		for (const auto& dirCaller : pkb.callsKB.getDirectCallers(leaf)) {
+			if (visited[dirCaller] == 0) {
+				dfsFromRoot(dirCaller, visited);
+			}
+			pkb.callsKB.setAllCallers(leaf, pkb.callsKB.getAllCallers(dirCaller));
+		}
+
+		visited[leaf] = 1;
 	}
 }

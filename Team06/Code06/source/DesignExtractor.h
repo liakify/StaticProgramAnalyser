@@ -6,6 +6,8 @@
 #include "PKB.h"
 #include "Simple.h"
 
+#include <stdexcept>
+
 using namespace SIMPLE;
 
 namespace FrontEnd {
@@ -34,6 +36,7 @@ namespace FrontEnd {
 		void populateFollowStar();
 		void populateParent();
 		void populateParentStar();
+		void populateCallStar();
 		void populateUses();
 		void populateModifies();
 		void populatePattern();
@@ -52,5 +55,8 @@ namespace FrontEnd {
 		void populateProcModifiesKB(ProcId procId, std::unordered_set<VarId>& varSet);
 
 		void populatePatternKB(StmtId stmtId, Expression exp);
+
+		void dfsFromRoot(ProcId root, std::vector<ProcId>& visited);
+		void dfsFromLeaf(ProcId leaf, std::vector<ProcId>& visited);
 	};
 }
