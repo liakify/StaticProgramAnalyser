@@ -34,32 +34,6 @@ bool CallsKB::callStar(ProcId p1, ProcId p2) {
 	}
 }
 
-std::unordered_set<ProcId> CallsKB::getRoots() {
-	std::unordered_set<ProcId> roots;
-
-	for (auto it = callsTable.begin(); it != callsTable.end(); ++it) {
-		callsRS callsStruct = it->second;
-		if (callsStruct.directCallers.size() == 0) {
-			roots.insert(it->first);
-		}
-	}
-
-	return roots;
-}
-
-std::unordered_set<ProcId> CallsKB::getLeaves() {
-	std::unordered_set<ProcId> leaves;
-
-	for (auto it = callsTable.begin(); it != callsTable.end(); ++it) {
-		callsRS callsStruct = it->second;
-		if (callsStruct.directCallees.size() == 0) {
-			leaves.insert(it->first);
-		}
-	}
-
-	return leaves;
-}
-
 std::unordered_set<ProcId>& CallsKB::getDirectNodes(ProcId p, NodeType type)
 {
 	try {

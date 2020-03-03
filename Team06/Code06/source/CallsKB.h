@@ -32,16 +32,6 @@ public:
 	bool callStar(ProcId p1, ProcId p2);
 
 	/*
-		Returns all ProcId with no callers
-	*/
-	std::unordered_set<ProcId> getRoots();
-
-	/*
-		Returns all ProcId with no callees
-	*/
-	std::unordered_set<ProcId> getLeaves();
-
-	/*
 		Returns a reference to directCallees/directCallers of p for NodeType SUCCESSOR and PREDECESSOR respectively
 	*/
 	std::unordered_set<ProcId>& getDirectNodes(ProcId p, NodeType type);

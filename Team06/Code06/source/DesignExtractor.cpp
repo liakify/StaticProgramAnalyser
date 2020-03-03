@@ -97,18 +97,21 @@ namespace FrontEnd {
 	}
 
 	void DesignExtractor::populateCallStar() {
-		int numProc = pkb.procTable.size();
-		
-		std::vector<ProcId> visited(numProc + 1);
-		std::unordered_set<ProcId> roots = pkb.callsKB.getRoots();
-		for (const auto& root : roots) {
-			callStarDFS(root, visited, NodeType::SUCCESSOR);
-		}
+		try {
+			int numProc = pkb.procTable.size();
 
-		std::fill(visited.begin(), visited.end(), 0);
-		std::unordered_set<ProcId> leaves = pkb.callsKB.getLeaves();
-		for (const auto& leaf : leaves) {
-			callStarDFS(leaf, visited, NodeType::PREDECESSOR);
+			std::vector<ProcId> visited(numProc + 1);
+			for (int p = 1; p <= numProc; p++) {
+				callStarDFS(p, visited, NodeType::SUCCESSOR);
+			}
+
+			std::fill(visited.begin(), visited.end(), 0);
+			for (int p = 1; p <= numProc; p++) {
+				callStarDFS(p, visited, NodeType::PREDECESSOR);
+			}
+		}
+		catch (const std::domain_error&) {
+			throw;
 		}
 	}
 
