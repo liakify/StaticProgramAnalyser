@@ -14,6 +14,11 @@ enum class ExprType
 	VAR, CONST
 };
 
+enum class NodeType
+{
+	PREDECESSOR, SUCCESSOR
+};
+
 using VarName = std::string;
 using VarId = int;
 
