@@ -37,17 +37,18 @@ for de in designEntities:
   # query += "\n"
   # query += "5000"
 
-  query = comment_invalid_args + '\n'
-  query += de + ' ' + designEntities[de] + '; assign a;' + '\n'
-  query += sel + designEntities[de] + ' ' + suchthat + 'Pattern a ' + '('+ designEntities[de] + ', _)' + '\n'
-  query += "\n"
-  query += "5000" + '\n'
-  query += comment_invalid_args + '\n'
-  query += de + ' ' + designEntities[de] + '; assign a;' + '\n'
-  query += sel + designEntities[de] + ' ' + suchthat + 'Pattern a ' + '(_, '+ designEntities[de] + ')' + '\n'
-  query += "\n"
-  query += "5000"
-  print(query)
+  if (de != 'variable'):
+    query = comment_invalid_args + '\n'
+    query += de + ' ' + designEntities[de] + '; if ifs;' + '\n'
+    query += sel + designEntities[de] + ' ' + suchthat + 'pattern ifs ' + '('+ designEntities[de] + ', _, _)' + '\n'
+    query += "\n"
+    # query += "5000" + '\n'
+    # query += comment_invalid_args + '\n'
+    # query += de + ' ' + designEntities[de] + '; if ifs;' + '\n'
+    # query += sel + designEntities[de] + ' ' + suchthat + 'pattern ifs ' + '(_, '+ designEntities[de] + ')' + '\n'
+    # query += "\n"
+    query += "5000"
+    print(query)
 
 
 # answer = ""

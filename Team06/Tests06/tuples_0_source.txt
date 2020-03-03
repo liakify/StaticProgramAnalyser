@@ -10,9 +10,9 @@ procedure Tuples {
         while (k >= l) {
             print m; }}
     while ((!(n <= o)) || ((p > q) && (r < s))) {
-        print t; }}
+        print t; }
     call Tuples2;
-
+}
 procedure Tuples2 {
     read a;
 }

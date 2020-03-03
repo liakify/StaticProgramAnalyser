@@ -35,285 +35,285 @@ Select ifs such that Modifies(s, "b") pattern ifs (v, _, _)
 5000
 8 - case 1ifs: Connected clauses | Follows | assign
 if ifs; variable v;
-Select ifs such that Follows(ifs) pattern ifs (v, _, _)
+Select ifs such that Follows(ifs, s) pattern ifs (v, _, _)
 
 5000
-9ifs2 case 1ifs
+9 - case 1a1: 
 if ifs; variable v;
-Selec such that Follows(ifs) patter (v, _, _)
+Select such that Follows(ifs) pattern ifs (v, _, _)
 
 5000
-1ifs2- case 1ifs: limiting pattern
+10 - case 1a1: limiting pattern
 if ifs; 
-Select ifs such that Follows(ifs) patter ("a2", _, _)
+Select ifs such that Follows(ifs) pattern ifs ("a2", _, _)
 6
 5000
-1ifs2- case 1ifs: limiting pattern
+11 - case 1a1: limiting pattern
 if ifs; 
-Selec such that Follows(ifs) patter ("a2", _, _)
+Select such that Follows(ifs) pattern ifs ("a2", _, _)
 
 5000
-1ifs2- case 1a0: Follows => empty
+12 - case 1a0: Follows => empty
 if ifs; variable v;
 Select ifs such that Follows(ifs, 1) pattern ifs (v, _)
 
 5000
-16 - case 1a0: pattern => empty
+13 - case 1a0: pattern => empty
 if ifs; stmt s;
 Select ifs such that Follows(ifs, s) pattern ifs ("notFound",_, _)
 
 5000
-12 - case 1b1: Connected clauses | Follows* | assign as left argument
+14 - case 1b1: Connected clauses | Follows* | assign as left argument
 if ifs; variable v; read r;
 Select ifs such that Follows*(ifs, r) pattern ifs (v, _, _)
 
 5000
-13 - case 1b1
+15 - case 1b1
 if ifs; variable v; read r;
 Select r such that Follows*(ifs, r) pattern ifs (v, _, _)
 22
 5000
-13 - case 1b2: assign as right argument
+16 - case 1b2: assign as right argument
 if ifs; variable v; print pn;
 Select ifs such that Follows*(pn, ifs) pattern ifs (v, _, _)
 6, 9, 12
 5000
-14 - case 1b2
+17 - case 1b2
 if ifs; variable v; print pn;
 Select pn such that Follows*(pn, ifs) pattern ifs (v, _, _)
 1, 5
 5000
-17 - case 1b0: Follows* => empty
+18 - case 1b0: Follows* => empty
 if ifs; variable v;
 Select ifs such that Follows* (ifs, 1) pattern ifs (v, _, _)
 
 5000
-18 - case 1b0: pattern => empty
+19 - case 1b0: pattern => empty
 if ifs; stmt s;
 Select ifs such that Follows*(ifs, s) pattern ifs ("notFound", _, _)
 
 5000
-19 - case 1c1: Connected clauses | Parent | if on LHS
+20 - case 1c1: Connected clauses | Parent | if on LHS
 if ifs; variable v;
 Select ifs such that Parent(ifs, s) pattern ifs (v, _, _)
 
 5000
-19 - case 1c1: swapping result-cl
+21 - case 1c1: swapping result-cl
 if ifs; variable v;
 Select s such that Parent(ifs, s) pattern ifs (v, _, _)
 
 5000
-19 - case 1c1: limiting pattern
+22 - case 1c1: limiting pattern
 if ifs; variable v;
 Select ifs such that Parent(ifs, s) pattern ifs ("a2", _, _)
 9
 5000
-21 - case 1c1: limiting pattern
+23 - case 1c1: limiting pattern
 if ifs; 
-Select s such that Parent(ifs, s) pattern ("a2", _, _)
+Select s such that Parent(ifs, s) pattern ifs ("a2", _, _)
 10, 11
 5000
-19 - case 1c2: Connected clauses | Parent | if on RHS
+24 - case 1c2: Connected clauses | Parent | if on RHS
 if ifs; variable v;
 Select ifs such that Parent(s, ifs) pattern ifs (v, _, _)
 
 5000
-19 - case 1c2: swapping result-cl
+25 - case 1c2: swapping result-cl
 if ifs; variable v;
 Select s such that Parent(s, ifs) pattern ifs (v, _, _)
 
 5000
-19 - case 1c2: limiting pattern
+26 - case 1c2: limiting pattern
 if ifs; variable v;
 Select ifs such that Parent(s, ifs) pattern ifs ("c3", _, _)
 24
 5000
-21 - case 1c2: limiting pattern
+27 - case 1c2: limiting pattern
 if ifs; 
-Select s such that Parent(s, ifs) pattern ("c3", _, _)
+Select s such that Parent(s, ifs) pattern ifs ("c3", _, _)
 22
 5000
-27 - case 1c0: Parent => empty
+28 - case 1c0: Parent => empty
 if ifs; variable v;
 Select ifs such that Parent (1, ifs) pattern ifs (v, _, _)
 
 5000
-28 - case 1c0: pattern => empty
+29 - case 1c0: pattern => empty
 if ifs;
 Select ifs such that Parent (_, _) pattern ifs ("notFound", _, _)
 
 5000
-23 - case 1d1: Connected clauses | Parent* | ifs on LHS
+30 - case 1d1: Connected clauses | Parent* | ifs on LHS
 if ifs; variable v; stmt s;
 Select ifs such that Parent*(ifs, s) pattern ifs (v, _, _)
 
 5000
-24 - case 1d1
+31 - case 1d1
 if ifs; stmt s; variable v;
 Select s such that Parent*(ifs, s) pattern ifs (v, _, _)
 
 5000
-25 - case 1d1: limiting pattern
+32 - case 1d1: limiting pattern
 if ifs; stmt s; variable v;
 Select ifs such that Parent*(ifs, s) pattern ifs ("ifs", _, _)
 7
 5000
-23 - case 1d2: Connected clauses | Parent* | ifs on LHS
+33 - case 1d2: Connected clauses | Parent* | ifs on LHS
 if ifs; variable v; stmt s;
 Select ifs such that Parifs2t*(s, ifs) pattern ifs (v, _, _)
 
 5000
-24 - case 1d2
+34 - case 1d2
 if ifs; stmt s; variable v;
 Select s such that Parent*(s, ifs) pattern ifs (v, _, _)
 
 5000
-25 - case 1d2: limiting pattern
+35 - case 1d2: limiting pattern
 if ifs; stmt s; variable v;
 Select ifs such that Parent*(s, ifs) pattern ifs ("a2", _, _)
 19
 5000
-29 - case 1d0: Parent* => empty
+36 - case 1d0: Parent* => empty
 if ifs; variable v;
 Select ifs such that Parent* (1, a) pattern ifs (v, _)
 
 5000
-30 - case 1d0: pattern => empty
+37 - case 1d0: pattern => empty
 if ifs;
 Select ifs such that Parent* (_, _) pattern ifs ("notFound", "notFound")
 
 5000
-31 - case 1e1: Connected clauses | Uses | common by if
+38 - case 1e1: Connected clauses | Uses | common by if
 if ifs; variable v1, v2;
 Select ifs such that Uses(ifs, v1) pattern ifs (v2, _, _)
 
 5000
-31 - case 1e1
+39 - case 1e1
 if ifs; variable v1, v2;
 Select v1 such that Uses(ifs, v1) pattern ifs (v2, _, _)
 
 5000
-35 - case 1e1
+40 - case 1e1
 if ifs; variable v1, v2;
 Select v2 such that Uses(ifs, v1) pattern ifs (v2, _, _)
 
 5000
-33 - case 1e1
+41 - case 1e1
 if ifs; variable v;
 Select ifs such that Uses(ifs, "patternMatch") pattern ifs (v, _, _)
 
 5000
-34 - case 1e1
+42 - case 1e1
 if ifs; variable v;
 Select v such that Uses(ifs, v) pattern ifs ("a3", _, _)
 
 5000
-32 - case 1e1
+43 - case 1e1
 if ifs; variable v;
 Select ifs such that Uses(ifs, "patternMatch") pattern ifs ("a3", _, _)
 
 5000
-37 - case 1e2: Connected clauses | Uses | common by variable
+44 - case 1e2: Connected clauses | Uses | common by variable
 if ifs1, ifs2; variable v;
 Select ifs1 such that Uses(ifs1, v) pattern ifs2(v, _, _)
 
 5000
-38 - case 1e2
+45 - case 1e2
 if ifs1, ifs2; variable v;
 Select ifs2 such that Uses(ifs1, v) pattern ifs2(v, _, _)
 
 5000
-39 - case 1e2
+46 - case 1e2
 if ifs1, ifs2; variable v;
 Select v such that Uses(ifs1, v) pattern ifs2(v, _, _)
 
 5000
-40 - case 1e3: Connected clauses | Uses | common by variable: Uses stmtRef =/= pattern assign stmt number
+47 - case 1e3: Connected clauses | Uses | common by variable: Uses stmtRef =/= pattern assign stmt number
 if ifs; print pn; variable v;
 Select pn such that Uses(pn, v) pattern ifs(v, _, _)
 5
 5000
-43 - case 1e4: Connected clauses | Uses | common by both assign and variable
+48 - case 1e4: Connected clauses | Uses | common by both assign and variable
 if ifs; variable v;
 Select ifs such that Uses(ifs, v) pattern ifs (v, _, _)
 
 5000
-44 - case 1e4
+49 - case 1e4
 if ifs; variable v;
 Select v such that Uses(ifs, v) pattern ifs (v, _. _)
 
 5000
-45 - case 1e0: Uses => empty set
+50 - case 1e0: Uses => empty set
 if ifs; variable v;
 Select ifs such that Uses(ifs, "notFound") pattern ifs (v, _, _)
 
 5000
-46 - case 1e0: Pattern => empty set
+51 - case 1e0: Pattern => empty set
 if ifs; variable v; stmt s;
 Select s such that Uses(s, v) pattern ifs ("notFound", _, _)
 
 5000
-47 - case 1f1: Connected clauses | Modifies | common by if
+52 - case 1f1: Connected clauses | Modifies | common by if
 if ifs; variable v1, v2;
 Select ifs such that Modifies(ifs, v1) pattern ifs (v2, _, _)
 
 5000
-48 - case 1f1
+53 - case 1f1
 if ifs; variable v1, v2;
 Select v1 such that Modifies(ifs, v1) pattern ifs (v2, _, _)
 
 5000
-49 - case 1f1
+54 - case 1f1
 if ifs; variable v1, v2;
 Select v2 such that Modifies(ifs, v1) pattern ifs (v2, _, _)
 
 5000
-50 - case 1f2: Connected clauses | Modifies | common by variable
+55 - case 1f2: Connected clauses | Modifies | common by variable
 if ifs1, ifs2; variable v;
 Select ifs1 such that Modifies(ifs1, v) pattern ifs2 (v, _, _)
 
 5000
-51 - case 1f2
+56 - case 1f2
 if ifs1, ifs2; variable v;
 Select ifs2 such that Modifies(ifs1, v) pattern ifs2 (v, _, _)
 
 5000
-52 - case 1f2
+57 - case 1f2
 if ifs1, ifs2; variable v;
 Select v such that Modifies(ifs1, v) pattern ifs2 (v, _, _)
 
 5000
-53 - case 1f3: Connected clauses | Modifies | common by variable: Modifies StmtRef =/= pattern assign stmt number
+58 - case 1f3: Connected clauses | Modifies | common by variable: Modifies StmtRef =/= pattern assign stmt number
 read r; variable v; if ifs;
 Select r such that Modifies(r, v) pattern ifs (v, _, _)
 
 5000
-54 - case 1f3
+59 - case 1f3
 read r; variable v; if ifs;
 Select v such that Modifies(r, v) pattern ifs (v, _, _)
 
 5000
-55 - case 1f3
+60 - case 1f3
 read r; variable v; if ifs;
 Select ifs such that Modifies(r, v) pattern ifs (v, _, _)
 
 5000
-56 - case 1f4: Connected clauses | Modifies | common by if and variable
+61 - case 1f4: Connected clauses | Modifies | common by if and variable
 if ifs; variable v;
 Select ifs such that Modifies(ifs, v) pattern ifs (v, _)
 
 5000
-57 - case 1f4
+62 - case 1f4
 if ifs; variable v;
 Select v such that Modifies(ifs, v) pattern ifs (v, _)
 
 5000
-58 - case 1f0: Modifes => empty set
+63 - case 1f0: Modifes => empty set
 if ifs; variable v;
 Select ifs such that Modifies(ifs, "notFound") pattern ifs (v, _, _)
 
 5000
-59 - case 1f0: pattern => empty set
+64 - case 1f0: pattern => empty set
 if ifs; variable v;
 Select ifs such that Modifies(ifs, v) pattern ifs ("notFound", _, _)
 

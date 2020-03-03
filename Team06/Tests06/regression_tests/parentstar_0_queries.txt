@@ -18,157 +18,157 @@ stmt s1, s2;
 Select s1 such that Parent*(s1, s2)
 1, 2, 3, 8, 9, 10, 12, 13, 14, 18, 19, 20
 5000
-4 - all chilren, both synonym
+5 - all chilren, both synonym
 stmt s1, s2;
 Select s2 such that Parent*(s1, s2)
 2, 3, 4, 5, 6, 7, 9, 10, 11, 13, 14, 15, 16, 17, 19, 20, 21, 22, 23
 5000
-5 - all parents, underscore on RHS
+6 - all parents, underscore on RHS
 stmt s;
 Select s such that Parent*(s, _)
 1, 2, 3, 8, 9, 10, 12, 13, 14, 18, 19, 20
 5000
-6 - all chilren, underscore on LHS
+7 - all chilren, underscore on LHS
 stmt s;
 Select s such that Parent*(_, s)
 2, 3, 4, 5, 6, 7, 9, 10, 11, 13, 14, 15, 16, 17, 19, 20, 21, 22, 23
 5000
-7 - no statement can be a parent* of itself
+8 - no statement can be a parent* of itself
 stmt s;
 Select s such that Parent*(s, s)
 
 5000
-7 - all statments, underscore, underscore
+9 - all statments, underscore, underscore
 stmt s;
 Select s such that Parent*(_, _)
 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23
 5000
-- all parents (synonym constant)
+10
 stmt s;
 Select s such that Parent*(s, 4)
 1, 2, 3
 5000
-- all children (constant synonym)
+11
 stmt s;
 Select s such that Parent* (2, s)
 3, 4, 5, 6
 5000
-- true (underscore constant)
+12
 stmt s;
 Select s such that Parent*(_, 3)
 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23
 5000
-- true (constant underscore)
+13
 stmt s;
 Select s such that Parent*(2, _)
 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23
 5000
-- false (constant underscore)
+14
 stmt s;
 Select s such that Parent*(_, 1)
 
 5000
-- true (constant, constant)
+15
 stmt s;
 Select s such that Parent* (2, 3)
 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23
 5000
-- false (constant, constant)
+16
 stmt s;
 Select s such that Parent* (2, 1)
 
 5000
-- false (1, 1) - same stmt
+17 - same stmt
 stmt s;
 Select s such that Parent* (1, 1)
 
 5000
-- false (read, stmt)
+18
 read r; stmt s;
 Select s such that Parent*(r, s)
 
 5000
-- (while, assign)
+19
 while w; assign a;
 Select a such that Parent* (w, a)
 21
 5000
-- (if, read)
+20
 if ifs; read r;
 Select r such that Parent*(ifs, r)
 4, 7, 16, 17, 23
 5000
-- (if, assign)
+21
 if ifs; assign a;
 Select ifs such that Parent* (ifs, a)
 1, 2, 3, 19, 20
 5000
-- (if, while)
+22
 if ifs; while w;
 Select w such that Parent* (w, ifs)
 18
 5000
-- (while, if)
+23
 if ifs; while w;
 Select w such that Parent* (ifs, w)
 14
 5000
-- (while, print)
+24
 while w; print pn;
 Select pn such that Parent* (w, pn)
 15, 22
 5000
-- invalid: variable on LHS
+25
 variable v; stmt s;
 Select s such that Parent* (v, s)
 
 5000
-- invalid: variable on RHS
+26
 variable v; stmt s;
 Select s such that Parent* (s, v)
 
 5000
-- invalid: constant on LHS
+27
 constant c; stmt s;
 Select s such that Parent* (c, s)
 
 5000
-- invalid: constant on RHS
+28
 constant c; stmt s;
 Select s such that Parent* (s, c)
 
 5000
-- invalid: procedure on LHS
+29
 procedure p; stmt s;
 Select s such that Parent* (p, s)
 
 5000
-- invalid: procedure on RHS
+30
 procedure p; stmt s;
 Select s such that Parent* (p, s)
 
 5000
-- invalid: varName on LHS
+31
 stmt s;
 Select s such that Parent ("varName", s)
 
 5000
-- invalid: varName on RHS
+32
 stmt s;
 Select s such that Parent (s, "varName")
 
 5000
-- invalid: negative on LHS
+33
 stmt s;
 Select s such that Parent* (-1, 1)
 
 5000
-- invalid: negative on RHS
+34
 stmt s;
 Select s such that Parent* (1, -1)
 
 5000
-- invalid: negative on both sides
+35
 stmt s;
 Select s such that Parent* (-1, -1)
 

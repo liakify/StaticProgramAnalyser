@@ -3,17 +3,17 @@ assign a;
 Select a pattern a (_, _"0"_)
 1
 5000
-1 - pattern a(IDENT, INTEGER)
+2 - pattern a(IDENT, INTEGER)
 assign a;
 Select a pattern a ("a", "0")
 1
 5000
-1 - pattern a(_, _INTEGER_) - many digits
+3 - pattern a(_, _INTEGER_) - many digits
 assign a;
 Select a pattern a (_, _"2345678"_)
 2
 5000
-1 - pattern a(_, _NAME_) with many letters
+4 - pattern a(_, _NAME_) with many letters
 assign a;
 Select a pattern a (_, _"bcd"_)
 3
@@ -23,117 +23,117 @@ assign a;
 Select a pattern a (_, _"b123"_)
 4
 5000
-1 - pattern a(IDENT, _) 
+6 - pattern a(IDENT, _) 
 assign a;
 Select a pattern a ("b", _)
 2
 5000
-1 - pattern a(IDENT, _) - variable with digits
+7 - pattern a(IDENT, _) - variable with digits
 assign a;
 Select a pattern a ("a123", _)
 5
 5000
-1 - RHS: bracketed number
+8 - RHS: bracketed number
 assign a;
 Select a pattern a (_, _"1"_)
 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 21, 26, 27, 28, 29, 30
 5000
-1 - RHS: bracketed variable, with many brackets
+9 - RHS: bracketed variable, with many brackets
 assign a;
 Select a pattern a (_, _"a"_)
 22, 23, 24, 25, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48
 5000
-1 - Argument variant: (_, _)
+10 - Argument variant: (_, _)
 assign a;
 Select a pattern a (_, _)
 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51
 5000
-1 - Argument variant: (v, _)
+11 - Argument variant: (v, _)
 assign a; variable v;
 Select a pattern a (v, _)
 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51
 5000
-1 - Argument variant: (v, _) - select v
+12 - Argument variant: (v, _) - select v
 assign a; variable v;
 Select v pattern a (v, _)
 a, b, a123
 5000
-1 - Argument variant: (v, _NAME_)
+13 - Argument variant: (v, _NAME_)
 assign a; variable v;
 Select a pattern a (v, _"bcd"_)
 3
 5000
-1 - Argument variant: (v, _NAME_) - select v
+14 - Argument variant: (v, _NAME_) - select v
 assign a; variable v;
 Select v pattern a (v, _"b"_)
 a123, a
 5000
-1 - Argument variant: (v, _INTEGER_)
+15 - Argument variant: (v, _INTEGER_)
 assign a; variable v;
 Select a pattern a (v, _"2345678"_)
 2
 5000
-1 - Argument variant: (v, _INTEGER_) - select v
+16 - Argument variant: (v, _INTEGER_) - select v
 assign a; variable v;
 Select v pattern a (v, _"1"_)
 a
 5000
-1 - unfound variable names: (NAMEnotfound, _)
+17 - unfound variable names: (NAMEnotfound, _)
 assign a; 
 Select a pattern a ("notFound", _)
 
 5000
-1 - unfound variable names: (_, _IDENTnotfound_)
+18 - unfound variable names: (_, _IDENTnotfound_)
 assign a; 
 Select a pattern a (v, _"notFound"_)
 
 5000
-1 - unfound constants: 
+19 - unfound constants: 
 assign a; 
 Select a pattern a (v, _"999999"_)
 
 5000
-1 - invalid constants: (_, _0123_)
+20 - invalid constants: (_, _0123_)
 assign a; 
 Select a pattern a (v, _"0123"_)
 
 5000
-1 - unrelated synonyms: syn-assign
+21 - unrelated synonyms: syn-assign
 assign a, a1; 
 Select a pattern a1 (_, _)
 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51
 5000
-1 - unrelated synonyms: syn-assign => empty
+22 - unrelated synonyms: syn-assign => empty
 assign a, a1; 
 Select a pattern a1 ("c", _)
 
 5000
-1 - unrelated synonyms: entRef
+23 - unrelated synonyms: entRef
 assign a; variable v, v1;
 Select v pattern a (v1, _"0"_)
 a, b, bcd, b123, a123, c, x, y, v, z, t, d, e
 5000
-1 - unrelated synonyms: entRef => empty
+24 - unrelated synonyms: entRef => empty
 assign a; variable v, v1;
 Select v pattern a (v1, _"notFound"_)
 
 5000
-1 - invalid: pattern a (_, v)
+25 - invalid: pattern a (_, v)
 assign a; variable v, v1;
 Select v pattern a (_, v1)
 
 5000
-1 - invalid: pattern a(1, _)
+26 - invalid: pattern a(1, _)
 assign a;
 Select a pattern a (1, _)
 
 5000
-1 - invalid: pattern a(_, 1)
+27 - invalid: pattern a(_, 1)
 assign a;
 Select a pattern a (1, _)
 
 5000
-1 - invalid: pattern a(1, 1)
+28 - invalid: pattern a(1, 1)
 assign a;
 Select a pattern a (1, _)
 
