@@ -102,13 +102,13 @@ namespace FrontEnd {
 		std::vector<ProcId> visited(numProc + 1);
 		std::unordered_set<ProcId> roots = pkb.callsKB.getRoots();
 		for (const auto& root : roots) {
-			dfsFromRoot(root, visited);
+			callStarDFS(root, visited, NodeType::SUCCESSOR);
 		}
 
 		std::fill(visited.begin(), visited.end(), 0);
 		std::unordered_set<ProcId> leaves = pkb.callsKB.getLeaves();
 		for (const auto& leaf : leaves) {
-			dfsFromLeaf(leaf, visited);
+			callStarDFS(leaf, visited, NodeType::PREDECESSOR);
 		}
 	}
 
@@ -247,37 +247,23 @@ namespace FrontEnd {
 		}
 	}
 
-	void DesignExtractor::dfsFromRoot(ProcId root, std::vector<ProcId>& visited) {
-		if (visited[root] == -1) {
-			throw std::domain_error("Cycle Detected");
-		}
-		
+	void DesignExtractor::callStarDFS(ProcId root, std::vector<ProcId>& visited, NodeType type) {
 		visited[root] = -1;
 
-		for (const auto& dirCallee : pkb.callsKB.getDirectCallees(root)) {
-			if (visited[dirCallee] == 0) {
-				dfsFromRoot(dirCallee, visited);
+		std::unordered_set<ProcId> directSet = pkb.callsKB.getDirectNodes(root, type);
+
+		for (const auto& dirNode : directSet) {
+			if (visited[dirNode] == -1) {
+				throw std::domain_error("Cycle Detected");
 			}
-			pkb.callsKB.setAllCallees(root, pkb.callsKB.getAllCallees(dirCallee));
+			if (visited[dirNode] == 0) {
+				callStarDFS(dirNode, visited, type);
+			}
+
+			pkb.callsKB.addToAll(root, dirNode, type);
+			pkb.callsKB.addToAll(root, pkb.callsKB.getAllNodes(dirNode, type), type);
 		}
 
 		visited[root] = 1;
-	}
-
-	void DesignExtractor::dfsFromLeaf(ProcId leaf, std::vector<ProcId>& visited) {
-		if (visited[leaf] == -1) {
-			throw std::domain_error("Cycle Detected");
-		}
-
-		visited[leaf] = -1;
-
-		for (const auto& dirCaller : pkb.callsKB.getDirectCallers(leaf)) {
-			if (visited[dirCaller] == 0) {
-				dfsFromLeaf(dirCaller, visited);
-			}
-			pkb.callsKB.setAllCallers(leaf, pkb.callsKB.getAllCallers(dirCaller));
-		}
-
-		visited[leaf] = 1;
 	}
 }

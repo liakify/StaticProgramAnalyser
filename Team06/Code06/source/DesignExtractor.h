@@ -5,6 +5,7 @@
 #include "Types.h"
 #include "PKB.h"
 #include "Simple.h"
+#include "Constants.h"
 
 #include <stdexcept>
 
@@ -56,7 +57,6 @@ namespace FrontEnd {
 
 		void populatePatternKB(StmtId stmtId, Expression exp);
 
-		void dfsFromRoot(ProcId root, std::vector<ProcId>& visited);
-		void dfsFromLeaf(ProcId leaf, std::vector<ProcId>& visited);
+		void callStarDFS(ProcId root, std::vector<ProcId>& visited, NodeType type);
 	};
 }
