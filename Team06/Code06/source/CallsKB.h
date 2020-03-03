@@ -52,7 +52,7 @@ public:
 	std::unordered_set<ProcId>& getDirectCallers(ProcId p);
 
 	/*
-		Returns allCallees of p1
+		Returns allCallees of p
 	*/
 	std::unordered_set<ProcId>& getAllCallees(ProcId p);
 
@@ -67,7 +67,7 @@ public:
 	void setAllCallees(ProcId p, std::unordered_set<ProcId>& callees);
 
 	/*
-		Adds callees to allCallees of p
+		Adds callers to allCallers of p
 	*/
 	void setAllCallers(ProcId p, std::unordered_set<ProcId>& callers);
 
