@@ -34,12 +34,12 @@ public:
 	/*
 		Returns all ProcId with no callers
 	*/
-	std::unordered_set<ProcId>& getRoots();
+	std::unordered_set<ProcId> getRoots();
 
 	/*
 		Returns all ProcId with no callees
 	*/
-	std::unordered_set<ProcId>& getLeaves();
+	std::unordered_set<ProcId> getLeaves();
 
 	/*
 		Returns all direct callees of p

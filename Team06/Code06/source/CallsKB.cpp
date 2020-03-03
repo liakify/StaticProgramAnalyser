@@ -34,7 +34,7 @@ bool CallsKB::callStar(ProcId p1, ProcId p2) {
 	}
 }
 
-std::unordered_set<ProcId>& CallsKB::getRoots()
+std::unordered_set<ProcId> CallsKB::getRoots()
 {
 	std::unordered_set<ProcId> roots;
 
@@ -48,7 +48,7 @@ std::unordered_set<ProcId>& CallsKB::getRoots()
 	return roots;
 }
 
-std::unordered_set<ProcId>& CallsKB::getLeaves()
+std::unordered_set<ProcId> CallsKB::getLeaves()
 {
 	std::unordered_set<ProcId> leaves;
 
