@@ -102,12 +102,16 @@ namespace FrontEnd {
 
 			std::vector<ProcId> visited(numProc + 1);
 			for (int p = 1; p <= numProc; p++) {
-				callStarDFS(p, visited, NodeType::SUCCESSOR);
+				if (visited[p] == 0) {
+					callStarDFS(p, visited, NodeType::SUCCESSOR);
+				}
 			}
 
 			std::fill(visited.begin(), visited.end(), 0);
 			for (int p = 1; p <= numProc; p++) {
-				callStarDFS(p, visited, NodeType::PREDECESSOR);
+				if (visited[p] == 0) {
+					callStarDFS(p, visited, NodeType::PREDECESSOR);
+				}
 			}
 		}
 		catch (const std::domain_error&) {
