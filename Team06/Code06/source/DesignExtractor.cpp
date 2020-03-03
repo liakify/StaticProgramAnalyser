@@ -9,6 +9,7 @@ namespace FrontEnd {
 		populateFollowStar();
 		populateParent();
 		populateParentStar();
+		populateCallStar();
 		populateUses();
 		populateModifies();
 		populatePattern();
