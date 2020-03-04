@@ -99,14 +99,21 @@ namespace FrontEnd {
 	void DesignExtractor::populateCallStar() {
 		try {
 			int numProc = pkb.procTable.size();
-
+			
+			/*
+				0 indicates unvisited, 
+				-1 indicates visited in current dfs call path, 
+				1 indicates visited and fully processed
+			*/
 			std::vector<ProcId> visited(numProc + 1);
+			// Populate allCallees for every proc
 			for (int p = 1; p <= numProc; p++) {
 				if (visited[p] == 0) {
 					callStarDFS(p, visited, NodeType::SUCCESSOR);
 				}
 			}
 
+			// Populate allCallers for every proc
 			std::fill(visited.begin(), visited.end(), 0);
 			for (int p = 1; p <= numProc; p++) {
 				if (visited[p] == 0) {
