@@ -14,7 +14,8 @@ $list_of_test_files = @(
 'parentStar_0',
 'modifies_0_1',
 'uses_0_1',
-'pattern_0_1',
+'pattern_0',
+'pattern_1',
 'suchthatPattern_0_1'
 # '..\invalid_simple\simple_CondAsFalse',
 # '..\invalid_simple\simple_CondAsTrue',
