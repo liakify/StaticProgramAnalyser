@@ -1,0 +1,95 @@
+1 - arg variant: (v, _)
+variable v; while w;
+Select v pattern w (v, _)
+b, d, f
+5000
+2 - arg variant: (v, _) - select w
+variable v; while w;
+Select w pattern w (v, _)
+4, 10, 15
+5000
+3 - arg variant: (_, _)
+variable v; while w;
+Select w pattern w (_, _)
+4, 10, 15
+5000
+4 - arg variant: (IDENT, _)
+variable v; while w;
+Select w pattern w ("f", _)
+15
+5000
+5 - arg variant: (IDENTnotFound, _) => none
+variable v; while w;
+Select w pattern w ("notFound", _)
+
+5000
+6 - invalid: argument type
+while w;
+Select w such that pattern w (_)
+
+5000
+7 - invalid: argument type
+while w;
+Select w such that pattern w (v, _, _)
+
+5000
+8 - invalid: argument type
+while w;
+Select w such that pattern w (_, v)
+
+5000
+9 - invalid: argument type
+while w;
+Select w such that pattern w (1, _)
+
+5000
+10 - invalid: argument type
+stmt s; while w;
+Select s such that pattern w (s, _)
+
+5000
+11 - invalid: argument type
+read r; while w;
+Select r such that pattern w (r, _)
+
+5000
+12 - invalid: argument type
+print pn; while w;
+Select pn such that pattern w (pn, _)
+
+5000
+13 - invalid: argument type
+call c; while w;
+Select c such that pattern w (c, _)
+
+5000
+14 - invalid: argument type
+while w, w1;
+Select w1 such that pattern w (w1, _)
+
+5000
+15 - invalid: argument type
+while w; if ifs;
+Select ifs such that pattern w (ifs, _)
+
+5000
+16 - invalid: argument type
+assign a; while w;
+Select a such that pattern w (a, _)
+
+5000
+17 - invalid: argument type
+constant cn; while w;
+Select cn such that pattern w (cn, _)
+
+5000
+18 - invalid: argument type
+procedure p; while w;
+Select p such that pattern w (p, _)
+
+5000
+19 - invalid: argument type
+prog_line pl; while w;
+Select pl such that pattern w (pl, _)
+
+5000

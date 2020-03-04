@@ -32,7 +32,7 @@
 # *.lib
 
 # Executables
-*.exe
+# *.exe				(To run AutoTester on travis)
 *.out
 *.app
 
@@ -83,6 +83,8 @@ mono_crash.*
 
 # Build results
 [Dd]ebug/
+# (for automated testing)
+!*/Code06/Debug
 [Dd]ebugPublic/
 [Rr]elease/
 [Rr]eleases/
@@ -414,3 +416,7 @@ MigrationBackup/
 # End of https://www.gitignore.io/api/c++,windows,visualstudio
 /Team00/Code00/SPA/AST_structure.h
 /Team06/Code06/Tests/out.xml
+/Team06/Code06/Tests/parentStar-0-out.xml
+/Team06/Code06/Tests/parent-0-out.xml
+/Team06/Code06/Tests/follows-0-out.xml
+*.xml

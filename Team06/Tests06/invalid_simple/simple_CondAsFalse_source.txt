@@ -1,0 +1,7 @@
+procedure Proc {
+  if (false ) then {
+    read r;
+  } else {
+    read w;
+  }
+}
