@@ -1,5 +1,5 @@
 1 - returns empty
 
-select BOOLEAN;
+Select BOOLEAN
 
 5000

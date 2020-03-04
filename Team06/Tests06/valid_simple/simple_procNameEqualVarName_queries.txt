@@ -1,5 +1,5 @@
 1 - valid simple
 
-Select BOOLEAN;
+Select BOOLEAN
 true
 5000
