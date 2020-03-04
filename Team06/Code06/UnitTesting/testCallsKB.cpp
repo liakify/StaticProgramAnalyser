@@ -12,21 +12,23 @@ namespace UnitTesting
 	TEST_CLASS(TestCallsKB)
 	{
 	public:
+		std::unordered_set<ProcId> emptyResult;
+		
 		TEST_CLASS_INITIALIZE(setup) {
 			cKB.addCalls(1, 2);
 			cKB.addCalls(2, 3);
 			cKB.addToAll(1, std::unordered_set<ProcId>{2, 3}, NodeType::SUCCESSOR);
 			cKB.addToAll(2, 3, NodeType::SUCCESSOR);
 			cKB.addToAll(2, 1, NodeType::PREDECESSOR);
-			cKB.addToAll(3, std::unordered_set<ProcId>{ 1, 2 }, NodeType::PREDECESSOR);
+			cKB.addToAll(3, std::unordered_set<ProcId>{1, 2}, NodeType::PREDECESSOR);
 		}
 
 		TEST_METHOD(addCalls) {
 			Assert::IsTrue(cKB.getDirectNodes(1, NodeType::SUCCESSOR) == std::unordered_set<ProcId>{2});
 			Assert::IsTrue(cKB.getDirectNodes(2, NodeType::SUCCESSOR) == std::unordered_set<ProcId>{3});
-			Assert::IsTrue(cKB.getDirectNodes(3, NodeType::SUCCESSOR) == std::unordered_set<ProcId>{});
+			Assert::IsTrue(cKB.getDirectNodes(3, NodeType::SUCCESSOR) == emptyResult);
 
-			Assert::IsTrue(cKB.getDirectNodes(1, NodeType::PREDECESSOR) == std::unordered_set<ProcId>{});
+			Assert::IsTrue(cKB.getDirectNodes(1, NodeType::PREDECESSOR) == emptyResult);
 			Assert::IsTrue(cKB.getDirectNodes(2, NodeType::PREDECESSOR) == std::unordered_set<ProcId>{1});
 			Assert::IsTrue(cKB.getDirectNodes(3, NodeType::PREDECESSOR) == std::unordered_set<ProcId>{2});
 		}
@@ -60,23 +62,23 @@ namespace UnitTesting
 		}
 
 		TEST_METHOD(getDirectNodes) {
-			Assert::IsTrue(cKB.getDirectNodes(0, NodeType::SUCCESSOR) == std::unordered_set<ProcId>{});
-			Assert::IsTrue(cKB.getDirectNodes(4, NodeType::SUCCESSOR) == std::unordered_set<ProcId>{});
-			Assert::IsTrue(cKB.getDirectNodes(-1, NodeType::SUCCESSOR) == std::unordered_set<ProcId>{});
+			Assert::IsTrue(cKB.getDirectNodes(0, NodeType::SUCCESSOR) == emptyResult);
+			Assert::IsTrue(cKB.getDirectNodes(4, NodeType::SUCCESSOR) == emptyResult);
+			Assert::IsTrue(cKB.getDirectNodes(-1, NodeType::SUCCESSOR) == emptyResult);
 
-			Assert::IsTrue(cKB.getDirectNodes(0, NodeType::PREDECESSOR) == std::unordered_set<ProcId>{});
-			Assert::IsTrue(cKB.getDirectNodes(4, NodeType::PREDECESSOR) == std::unordered_set<ProcId>{});
-			Assert::IsTrue(cKB.getDirectNodes(-1, NodeType::PREDECESSOR) == std::unordered_set<ProcId>{});
+			Assert::IsTrue(cKB.getDirectNodes(0, NodeType::PREDECESSOR) == emptyResult);
+			Assert::IsTrue(cKB.getDirectNodes(4, NodeType::PREDECESSOR) == emptyResult);
+			Assert::IsTrue(cKB.getDirectNodes(-1, NodeType::PREDECESSOR) == emptyResult);
 		}
 
 		TEST_METHOD(getAllNodes) {
-			Assert::IsTrue(cKB.getAllNodes(0, NodeType::SUCCESSOR) == std::unordered_set<ProcId>{});
-			Assert::IsTrue(cKB.getAllNodes(4, NodeType::SUCCESSOR) == std::unordered_set<ProcId>{});
-			Assert::IsTrue(cKB.getAllNodes(-1, NodeType::SUCCESSOR) == std::unordered_set<ProcId>{});
+			Assert::IsTrue(cKB.getAllNodes(0, NodeType::SUCCESSOR) == emptyResult);
+			Assert::IsTrue(cKB.getAllNodes(4, NodeType::SUCCESSOR) == emptyResult);
+			Assert::IsTrue(cKB.getAllNodes(-1, NodeType::SUCCESSOR) == emptyResult);
 
-			Assert::IsTrue(cKB.getAllNodes(0, NodeType::PREDECESSOR) == std::unordered_set<ProcId>{});
-			Assert::IsTrue(cKB.getAllNodes(4, NodeType::PREDECESSOR) == std::unordered_set<ProcId>{});
-			Assert::IsTrue(cKB.getAllNodes(-1, NodeType::PREDECESSOR) == std::unordered_set<ProcId>{});
+			Assert::IsTrue(cKB.getAllNodes(0, NodeType::PREDECESSOR) == emptyResult);
+			Assert::IsTrue(cKB.getAllNodes(4, NodeType::PREDECESSOR) == emptyResult);
+			Assert::IsTrue(cKB.getAllNodes(-1, NodeType::PREDECESSOR) == emptyResult);
 		}
 
 		TEST_METHOD(addToAll_single) {
