@@ -17,6 +17,6 @@ procedure Select {
 		read k;	}
 	while (j == 0) {
 		print K; 
-		calls Calls2; }}
-procedure Calls2{
+		call Calls2; }}
+procedure Calls2 {
 	print l; }

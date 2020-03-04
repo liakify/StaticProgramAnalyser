@@ -126,7 +126,7 @@ Select a pattern a (_, _"b+b"_)
 26 - Left Associativity: +
 assign a;
 Select a pattern a (_, _"b + c"_)
-36
+36, 50
 5000
 27 - Left Associativity: -
 assign a;
@@ -161,7 +161,7 @@ Select a pattern a (_, _"x * y % v - z / t"_)
 33 - operator precedence with 1 nesting lvl
 assign a;
 Select a pattern a (_, _"b + c"_)
-50
+50, 36
 5000
 34 - operator precedence with 1 nesting lvl
 assign a;
@@ -171,11 +171,11 @@ Select a pattern a (_, _"c * d"_)
 35 - operator precedence with 1 nesting lvl
 assign a;
 Select a pattern a (_, _"(b + c) * d"_)
-
+50
 5000
 36 - operator precedence with 2 nesting lvls
 assign a;
-Select a pattern a (_, _"b / ((c - d) % e "_)
+Select a pattern a (_, _"b / ((c - d) % e )"_)
 51
 5000
 37 - operator precedence with 2 nesting lvls
