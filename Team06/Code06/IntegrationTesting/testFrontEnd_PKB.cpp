@@ -10,7 +10,6 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 namespace IntegrationTesting {
 
 	PKB::PKB pkb;
-	FrontEnd::FrontEndManager frontEnd = FrontEnd::FrontEndManager();
 
 	TEST_CLASS(TestFrontEnd_PKB) {
 	public:
@@ -39,6 +38,7 @@ namespace IntegrationTesting {
 
 	TEST_CLASS_INITIALIZE(setup) {
 		try {
+			FrontEnd::FrontEndManager frontEnd = FrontEnd::FrontEndManager();
 			pkb = PKB::PKB();
 			std::string src = "procedure p{x=7; y=2; if(x>y) then {z=x+a;} else {print y;} read y; }";
 			pkb = frontEnd.parseSimple(src);
@@ -122,38 +122,26 @@ namespace IntegrationTesting {
 
 		std::unordered_set<VarId> modifiedVarIds = pkb.modifiesKB.getAllVarsModifiedByProc(pkb.procTable.getProcId(procedureName));
 		std::unordered_set<VarName> modifiedVarNames;
-		std::unordered_set<StmtId> modifiedStmtIds;
 		for (auto itr = modifiedVarIds.begin(); itr != modifiedVarIds.end(); itr++) {
 			modifiedVarNames.insert(pkb.varTable.get(*itr));
-			std::unordered_set<StmtId> modifiedStmts = pkb.modifiesKB.getAllStmtsModifyVar(*itr);
-			for (auto itr = modifiedStmts.begin(); itr != modifiedStmts.end(); itr++) {
-				modifiedStmtIds.insert(*itr);
-			}
 		}
 		Assert::IsTrue(modifiedVarNames == allModifiedVars);
-		Assert::IsTrue(modifiedStmtIds == allModifiedStmts);
 
 		std::unordered_set<VarId> usedVarIds = pkb.usesKB.getAllVarsUsedByProc(pkb.procTable.getProcId(procedureName));
 		std::unordered_set<VarName> usedVarNames;
-		std::unordered_set<StmtId> usedStmtIds;
 		for (auto itr = usedVarIds.begin(); itr != usedVarIds.end(); itr++) {
 			usedVarNames.insert(pkb.varTable.get(*itr));
-			std::unordered_set<StmtId> usedStmts = pkb.usesKB.getAllStmtsUsingVar(*itr);
-			for (auto itr = usedStmts.begin(); itr != usedStmts.end(); itr++) {
-				usedStmtIds.insert(*itr);
-			}
 		}
 		Assert::IsTrue(usedVarNames == allUsedVars);
-		Assert::IsTrue(usedStmtIds == allUsedStmts);
 
-		Assert::IsTrue(pkb.patternKB.getAssignPatternStmts("x") == std::unordered_set<StmtId>({ 1, 4 }));
-		Assert::IsTrue(pkb.patternKB.getAssignPatternStmts("y") == std::unordered_set<StmtId>({ 2 }));
-		Assert::IsTrue(pkb.patternKB.getAssignPatternStmts("z") == std::unordered_set<StmtId>({ 4 }));
+		Assert::IsTrue(pkb.patternKB.getAssignPatternStmts("x") == std::unordered_set<StmtId>({}));
+		Assert::IsTrue(pkb.patternKB.getAssignPatternStmts("y") == std::unordered_set<StmtId>({}));
+		Assert::IsTrue(pkb.patternKB.getAssignPatternStmts("z") == std::unordered_set<StmtId>({}));
 		Assert::IsTrue(pkb.patternKB.getAssignPatternStmts("7") == std::unordered_set<StmtId>({ 1 }));
 		Assert::IsTrue(pkb.patternKB.getAssignPatternStmts("2") == std::unordered_set<StmtId>({ 2 }));
-		Assert::IsTrue(pkb.patternKB.getAssignPatternStmts("x+a") == std::unordered_set<StmtId>({ 4 }));
-		Assert::IsTrue(pkb.patternKB.getIfPatternStmts(pkb.varTable.getVarId("x")) == std::unordered_set<StmtId>({ 3 }));
-		Assert::IsTrue(pkb.patternKB.getIfPatternStmts(pkb.varTable.getVarId("y")) == std::unordered_set<StmtId>({ 3 }));
+		Assert::IsTrue(pkb.patternKB.getAssignPatternStmts("x+a") == std::unordered_set<StmtId>({}));
+		Assert::IsTrue(pkb.patternKB.getIfPatternStmts(pkb.varTable.getVarId("x")).size() == 0);
+		Assert::IsTrue(pkb.patternKB.getIfPatternStmts(pkb.varTable.getVarId("y")).size() == 0);
 	}
 	};
 }
