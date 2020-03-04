@@ -19,6 +19,8 @@ namespace UnitTesting
 	TEST_CLASS(TestDesignExtractor_callStar)
 	{
 	public:
+		wchar_t* message = L"CycleDetected";
+
 		TEST_CLASS_INITIALIZE(setup) {
 			// Valid SIMPLE
 			pkbCallStar = PKB::PKB();
@@ -95,25 +97,21 @@ namespace UnitTesting
 
 		TEST_METHOD(populateCallStar_pkbRecursive) {
 			auto lambda = [] { pkbRecursive = DE_callStar.run(pkbRecursive); };
-			wchar_t* message = L"CycleDetected";
 			Assert::ExpectException<std::domain_error>(lambda, message);
 		}
 
 		TEST_METHOD(populateCallStar_pkbCyclic) {
 			auto lambda = [] { pkbCyclic = DE_callStar.run(pkbCyclic); };
-			wchar_t* message = L"CycleDetected";
 			Assert::ExpectException<std::domain_error>(lambda, message);
 		}
 
 		TEST_METHOD(populateCallStar_pkbNormalAndRecursive) {
 			auto lambda = [] { pkbNormalAndRecursive = DE_callStar.run(pkbNormalAndRecursive); };
-			wchar_t* message = L"CycleDetected";
 			Assert::ExpectException<std::domain_error>(lambda, message);
 		}
 
 		TEST_METHOD(populateCallStar_pkbNormalAndCyclic) {
 			auto lambda = [] { pkbNormalAndCyclic = DE_callStar.run(pkbNormalAndCyclic); };
-			wchar_t* message = L"CycleDetected";
 			Assert::ExpectException<std::domain_error>(lambda, message);
 		}
 	};
