@@ -1,0 +1,5 @@
+1 - valid simple
+
+Select BOOLEAN
+true
+5000

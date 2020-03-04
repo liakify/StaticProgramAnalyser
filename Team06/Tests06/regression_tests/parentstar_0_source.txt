@@ -1,0 +1,24 @@
+procedure SelectParentStar {
+	if (a == 0) then {
+		if (b == 0) then {
+			if (c == 0) then {
+				read x;} else {
+				assign = assign;}} else {
+			print x;}} else {
+		read x;}
+	while (a == 0) {
+		while (b == 0) {
+			while (c == 0) {
+				read x;}}}
+	if (a == 0) then {
+		if (b == 0) then {
+			while (c == 0) {
+				 print x;}} else {
+			read x;}} else {
+		read x;}
+	while (a == 0) {
+		if (b == 0) then {
+			if (c == 0) then {
+				assign = assign;} else {
+			  print x;}} else {
+		read x;}}}

@@ -1,0 +1,65 @@
+1 - arg variant (p, q)
+procedure p, q;
+Select p such that Calls (p, q)
+SelectCalls, Calls2
+5000
+2 - arg variant (p, q): select q
+procedure p, q;
+Select q such that Calls (p, q)
+Calls2, Calls3, Calls4
+5000
+3 - arg variant (p, _)
+procedure p;
+Select p such that Calls (p, _)
+SelectCalls, Calls2;
+5000
+4 - arg variant (p, IDENT)
+procedure p;
+Select p such that Calls (p, "Calls2")
+SelectCalls
+5000
+5 - arg variant (_, q)
+procedure q;
+Select q such that Calls (_, q)
+Calls2, Calls3, Calls4
+5000
+6 - arg variant (_, IDENT)
+print pn;
+Select pn such that Calls (_, "Calls3")
+7, 8
+5000
+7 - arg variant (_, notFound) => none
+print pn;
+Select pn such that Calls (_, "notFound")
+
+5000
+8 - invalid: procedure calling itself => none
+print pn;
+Select pn such that Calls ("Calls4", "Calls4")
+
+5000
+9 - arg variant (IDENT, q)
+procedure q;
+Select q such that Calls ("Calls2", q)
+Calls3, Calls4
+5000
+10 - arg variant (IDENT, q) => none
+procedure q;
+Select q such that Calls ("Calls3", q)
+none
+5000
+11 - arg variant (IDENT, _)
+variable v;
+Select v such that Calls ("Calls2", _)
+c1, c2, a
+5000
+12 - arg variant (IDENT, IDENT)
+
+Select BOOLEAN such that Calls ("SelectCalls", "Calls2")
+true
+5000
+13 - arg variant (IDENT, IDENT) => false (indirect calling)
+
+Select BOOLEAN such that Calls ("SelectCalls", "Calls3")
+false
+5000
