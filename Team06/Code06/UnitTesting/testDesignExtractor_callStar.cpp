@@ -19,7 +19,7 @@ namespace UnitTesting
 	TEST_CLASS(TestDesignExtractor_callStar)
 	{
 	public:
-		wchar_t* message = L"CycleDetected";
+		wchar_t* message = L"Cycle Detected";
 
 		TEST_CLASS_INITIALIZE(setup) {
 			// Valid SIMPLE
