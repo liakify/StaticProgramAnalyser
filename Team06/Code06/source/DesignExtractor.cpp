@@ -106,7 +106,6 @@ namespace FrontEnd {
 				1 indicates visited and fully processed
 			*/
 			std::vector<ProcId> visited(numProc + 1);
-			
 			// Populate allCallees for every proc
 			processCallStar(numProc, visited, NodeType::SUCCESSOR);
 
