@@ -8,6 +8,7 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 namespace UnitTesting
 {
 	CallsKB cKB;
+	CallsKB ckbEmpty;
 
 	TEST_CLASS(TestCallsKB)
 	{
@@ -89,6 +90,40 @@ namespace UnitTesting
 		TEST_METHOD(addToAll_many) {
 			Assert::IsTrue(cKB.getAllNodes(1, NodeType::SUCCESSOR) == std::unordered_set<ProcId>{2, 3});
 			Assert::IsTrue(cKB.getAllNodes(3, NodeType::PREDECESSOR) == std::unordered_set<ProcId>{1, 2});
+		}
+
+		TEST_METHOD(hasCallee) {
+			Assert::IsTrue(cKB.hasCallee(1));
+			Assert::IsTrue(cKB.hasCallee(2));
+			Assert::IsFalse(cKB.hasCallee(3));
+
+			Assert::IsFalse(cKB.hasCallee(0));
+			Assert::IsFalse(cKB.hasCallee(-1));
+			Assert::IsFalse(cKB.hasCallee(4));
+		}
+
+		TEST_METHOD(hasCaller) {
+			Assert::IsFalse(cKB.hasCaller(1));
+			Assert::IsTrue(cKB.hasCaller(2));
+			Assert::IsTrue(cKB.hasCaller(3));
+
+			Assert::IsFalse(cKB.hasCaller(0));
+			Assert::IsFalse(cKB.hasCaller(-1));
+			Assert::IsFalse(cKB.hasCaller(4));
+		}
+
+		TEST_METHOD(hasCallsRelation) {
+			Assert::IsTrue(cKB.hasCallsRelation());
+
+			Assert::IsFalse(ckbEmpty.hasCallsRelation());
+		}
+
+		TEST_METHOD(getAllCallers) {
+			Assert::IsTrue(cKB.getAllCallers() == std::unordered_set<ProcId>{1, 2});
+		}
+
+		TEST_METHOD(getAllCallees) {
+			Assert::IsTrue(cKB.getAllCallees() == std::unordered_set<ProcId>{2, 3});
 		}
 	};
 }
