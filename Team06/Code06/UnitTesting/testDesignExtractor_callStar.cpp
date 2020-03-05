@@ -68,11 +68,11 @@ namespace UnitTesting
 
 			/* 
 				Valid SIMPLE. Calls form X-shaped DAG
-				d	b
+				d   b
 				 \ /
 				  a
 				 / \
-				c	e
+				c   e
 			*/
 			pkbX = PKB::PKB();
 			pkbX.procTable.insertProc(PROC_A);
@@ -101,9 +101,9 @@ namespace UnitTesting
 
 			/* 
 				Valid SIMPLE. Calls form diamond-shaped DAG
-					2
+				    2
 				   / \
-				  1	  4
+				  1   4
 				   \ /
 				    3
 			*/
