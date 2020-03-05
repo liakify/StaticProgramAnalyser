@@ -12,6 +12,9 @@ void CallsKB::addCalls(ProcId p1, ProcId p2) {
 
 	cRS1.directCallees.insert(p2);
 	cRS2.directCallers.insert(p1);
+
+	allProcCallers.insert(p1);
+	allProcCallees.insert(p2);
 }
 
 bool CallsKB::calls(ProcId p1, ProcId p2) {
@@ -78,4 +81,39 @@ void CallsKB::addToAll(ProcId p, std::unordered_set<ProcId>& procs, NodeType typ
 	else {
 		callsTable.at(p).allCallers.insert(procs.begin(), procs.end());
 	}
+}
+
+bool CallsKB::hasCallee(ProcId p)
+{
+	try {
+		return callsTable.at(p).directCallees.size() != 0;
+	}
+	catch (const std::out_of_range&) {
+		return false;
+	}
+}
+
+bool CallsKB::hasCaller(ProcId p)
+{
+	try {
+		return callsTable.at(p).directCallers.size() != 0;
+	}
+	catch (const std::out_of_range&) {
+		return false;
+	}
+}
+
+bool CallsKB::hasCallsRelation()
+{
+	return callsTable.size() > 1;
+}
+
+std::unordered_set<ProcId>& CallsKB::getAllCallers()
+{
+	return allProcCallers;
+}
+
+std::unordered_set<ProcId>& CallsKB::getAllCallees()
+{
+	return allProcCallees;
 }

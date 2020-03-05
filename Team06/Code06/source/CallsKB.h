@@ -51,7 +51,35 @@ public:
 	*/
 	void addToAll(ProcId p, std::unordered_set<ProcId>& procs, NodeType type);
 
+	/*
+		Returns TRUE if directCallee of p is non-empty, FALSE otherwise
+	*/
+	bool hasCallee(ProcId p);
+
+	/*
+		Returns TRUE if directCaller of p is non-empty, FALSE otherwise
+	*/
+	bool hasCaller(ProcId p);
+
+	/*
+		Returns TRUE if a Calls relation exists, FALSE otherwise
+	*/
+	bool hasCallsRelation();
+
+	/*
+		Returns all procedures that call another procedure
+	*/
+	std::unordered_set<ProcId>& getAllCallers();
+
+	/*
+		Returns all procedures called by another procedure
+	*/
+	std::unordered_set<ProcId>& getAllCallees();
+
 private:
 	std::unordered_map<ProcId, callsRS> callsTable;
+
+	std::unordered_set<ProcId> allProcCallers;
+	std::unordered_set<ProcId> allProcCallees;
 };
 

@@ -113,8 +113,8 @@ namespace FrontEnd {
 				}
 			}
 
-			// Populate allCallers for every proc
 			std::fill(visited.begin(), visited.end(), 0);
+			// Populate allCallers for every proc
 			for (int p = 1; p <= numProc; p++) {
 				if (visited[p] == 0) {
 					callStarDFS(p, visited, NodeType::PREDECESSOR);
