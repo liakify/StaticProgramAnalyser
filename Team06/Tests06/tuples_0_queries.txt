@@ -1,0 +1,170 @@
+1 - Select tuple with 1 element: stmt
+stmt s;
+Select <s>;
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14
+5000
+2 - Select tuple with 1 element: read
+read r;
+Select <r>;
+2, 8, 14
+5000
+3 - Select tuple with 1 element: print
+print pn;
+Select <pn>;
+3, 5, 7, 10, 12
+5000
+4 - Select tuple with 1 element: while
+while w;
+Select <w>;
+6, 9, 11
+5000
+5 - Select tuple with 1 element: if
+if ifs;
+Select <ifs>;
+4
+5000
+6 - Select tuple with 1 element: assign
+assign a;
+Select <a>;
+1
+5000
+7 - Select tuple with 1 element: constant
+constant c;
+Select <c>;
+456, 123
+5000
+8 - Select tuple with 1 element: variable
+variable v;
+Select <v>;
+a, b, b1, b2, b3, b4, b5, c, d, e, f, g, h, i, k, l, m, n, o, p, q, r, s, t
+5000
+9 - Select tuple with 1 element: procedure
+procedure p;
+Select <p>;
+Tuples, Tuples2
+5000
+10 - Select tuple with 1 element: prog_line
+prog_line pl;
+Select <pl>;
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14
+5000
+11 - Select tuple with 1 element: call
+call c;
+Select <c>;
+13
+5000
+12 - Select tuple no common synonym => true
+stmt s, s1, s2;
+Select <s> such that Follows(s1, s2);
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14
+5000
+13 - Select tuple no common synonym => false
+stmt s;
+Select <s> such that Follows(_, 1);
+
+5000
+14 - Select tuple 1 common synonym: repeated synonym
+procedure p;
+Select <p, p>
+Tuples Tuples, Tuples2 Tuples 2
+5000
+15 - Select tuple 1 common synonym: select LHS
+stmt s1, s2;
+Select <s1> such that Parent (s1, s2);
+4, 6, 9, 11
+5000
+16 - Select tuple 1 common synonym: select RHS
+stmt s1, s2;
+Select <s2> such that Parent (s1, s2);
+5, 6, 7, 8, 9, 10, 12
+5000
+17 - Select tuple 1 common synonym => false
+stmt s;
+Select <s> such that Parent* (1, s);
+
+5000
+18 - Select tuple 2 common synonyms: stmtRef, entRef
+print pn; variable v;
+Select <pn, v> such that Uses (pn, v);
+3 c, 5 f, 7 i, 10 m, 12 t
+5000
+19 - Select tuple 2 common synonyms: stmtRef, entRef | reverse order
+read r; variable v;
+Select <v, r> such that Uses (r, v);
+c 2, 8 j, 14 a
+5000
+20 - Select tuple 2 common synonyms: stmtRef, stmtRef
+stmt s1, s2;
+Select <s1, s2> such that Follows(s1, s2);
+1 2, 2 3, 3 4, 5 6, 8 9, 4 11
+5000
+21 - Select tuple 2 common synonyms: stmtRef, stmtRef | reverse order
+stmt s2, s1;
+Select <s2, s1> such that Parent (s1, s2);
+5 4, 6 4, 8 4, 9 4, 7 6, 10 9, 12 11
+5000
+22 - Select tuple 2 common synonyms: pattern syn-assign
+assign a; variable v;
+Select <a, v> pattern a (v, _);
+1 a
+5000
+23 - Select tuple 2 common synonyms: pattern syn-if
+if ifs; variable v;
+Select <ifs, v> pattern ifs (v, _, _);
+4 d, 4 e
+5000
+24 - Select tuple 2 common synonyms: pattern syn-while
+while w; variable v;
+Select <v, w> pattern w (v, _);
+g 6, h 6, k 9, l 9, n 11, o 11, p 11, q 11, r 11, s 11
+5000
+25 - Select tuple 0 common synonyms: 2-elem-tuple
+read r; if ifs;
+Select <r, ifs> such that Calls (_, _)
+2 4, 14 4
+5000
+26 - Select tuple 2 common synonyms: 3-elem tuple
+if ifs; variable v; assign a;
+Select <ifs, v, a> pattern ifs (v, _, _);
+4 d 1, 4 e 1
+5000
+27 - Select tuples 1 common synonym: 3-elem tuple
+procedure p; print pn; assign a
+Select <p, pn, a> such that Calls (p, _)
+Tuples 3 1, Tuples 5 1, Tuples 7 1, Tuples 10 1, Tuples 12 1
+5000
+28 - Select tuple 2 common synonyms: 3-elem tuple
+if ifs; variable v; assign a;
+Select <ifs, a, v> pattern ifs (v, _, _);
+4 1 d, 4 1 e
+5000
+29 - Select tuple 2 common synonyms: 4-elem tuple
+if ifs; variable v; assign a; procedure p;
+Select <ifs, v, a, p> pattern ifs (v, _, _);
+4 d 1 Tuples, 4 e 1 Tuples, 4 d 1 Tuples2, 4 e 1 Tuples2
+5000
+30 - invalid: Select <BOOLEAN>
+
+Select <BOOLEAN>
+
+5000
+31 - invalid: Select <1>
+
+Select <1>
+
+5000
+32 - invalid: Select <_>
+
+Select <_>
+
+5000
+33 - invalid: Select <"c">
+
+Select <"c">
+
+5000
+34 - invalid: Select <s, "c">
+stmt s;
+Select <s, "c">
+
+5000

@@ -30,11 +30,21 @@ Team 6's implementation of a Static Program Analyzer (SPA) for the SIMPLE progra
     ./AutoTester.exe <SIMPLE_FILE> <QUERY_FILE> <OUTPUT_FILE>
     ```
     - The output will be generated as `<OUTPUT_FILE>.xml` which may be viewed in the Mozilla Firefox browser.
-3. Manual testing may be conducted with the GUI by running the executable `Gui.exe`
+
+Alternatively, 
+
+1. Navigate to root folder
+2. Edit runAllSysTest.ps1
+3. Include the test prefix (eg. `..\calls_0`. The `..\` is needed for tests not in the `\regression_tests` directory) for the test you want and comment out the rest , 
+4. type in cmd:
+`powershell .\runAllSysTest.ps1`
+Outputs are in the `.\Team06\Test06` folder or the corresponding subfolder
+
+NOTE: Manual testing may be conducted with the GUI by running the executable `Gui.exe`
 
 ### Automated Testing (CI)
 
-TBD. Current consideratons: Bash scripts with VSTS or Travis CI with Windows environment
+Currently done with Travis CI and powershell scripting
 
 ## Contribution Standards
 
