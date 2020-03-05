@@ -56,6 +56,7 @@ namespace FrontEnd {
 
 		void populatePatternKB(StmtId stmtId, Expression exp);
 
+		void processCallStar(int numProc, std::vector<ProcId>& visited, NodeType type);
 		void callStarDFS(ProcId root, std::vector<ProcId>& visited, NodeType type);
 	};
 }

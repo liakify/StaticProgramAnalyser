@@ -106,20 +106,13 @@ namespace FrontEnd {
 				1 indicates visited and fully processed
 			*/
 			std::vector<ProcId> visited(numProc + 1);
+			
 			// Populate allCallees for every proc
-			for (int p = 1; p <= numProc; p++) {
-				if (visited[p] == 0) {
-					callStarDFS(p, visited, NodeType::SUCCESSOR);
-				}
-			}
+			processCallStar(numProc, visited, NodeType::SUCCESSOR);
 
 			std::fill(visited.begin(), visited.end(), 0);
 			// Populate allCallers for every proc
-			for (int p = 1; p <= numProc; p++) {
-				if (visited[p] == 0) {
-					callStarDFS(p, visited, NodeType::PREDECESSOR);
-				}
-			}
+			processCallStar(numProc, visited, NodeType::PREDECESSOR);
 		}
 		catch (const std::domain_error&) {
 			throw;
@@ -258,6 +251,14 @@ namespace FrontEnd {
 		unordered_set<Pattern> patterns = exp.getPatterns();
 		for (Pattern p : patterns) {
 			pkb.patternKB.addAssignPattern(p, stmtId);
+		}
+	}
+
+	void DesignExtractor::processCallStar(int numProc, std::vector<int>& visited, NodeType type) {
+		for (int p = 1; p <= numProc; p++) {
+			if (visited[p] == 0) {
+				callStarDFS(p, visited, type);
+			}
 		}
 	}
 
