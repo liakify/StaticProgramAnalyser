@@ -49,7 +49,7 @@ namespace UnitTesting
 			Statement* READ_1 = &ReadStmt(1);
 			Statement* READ_2 = &ReadStmt(2);
 
-			// Valid SIMPLE
+			// Valid SIMPLE: 1 -> 2 -> 3
 			pkbCallStar = PKB::PKB();
 			pkbCallStar.procTable.insertProc(PROC_A);
 			pkbCallStar.procTable.insertProc(PROC_B);
@@ -99,7 +99,14 @@ namespace UnitTesting
 			pkbX.callsKB.addCalls(1, 5);
 			pkbX = DE_callStar.run(pkbX);
 
-			// Valid SIMPLE. Calls form diamond-shaped DAG
+			/* 
+				Valid SIMPLE. Calls form diamond-shaped DAG
+					2
+				   / \
+				  1	  4
+				   \ /
+				    3
+			*/
 			pkbDiamond = PKB::PKB();
 			pkbDiamond.procTable.insertProc(PROC_A);
 			pkbDiamond.procTable.insertProc(PROC_B);
