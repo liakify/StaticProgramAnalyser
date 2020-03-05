@@ -36,7 +36,8 @@ enum class DesignEntity {
  *  argument is restricted to the PROCEDURE design entity.
  */
 enum class RelationType {
-    FOLLOWS, FOLLOWST, PARENT, PARENTT, USESS, USESP, MODIFIESS, MODIFIESP
+    FOLLOWS, FOLLOWST, PARENT, PARENTT, USESS, USESP, MODIFIESS, MODIFIESP,
+    CALLS, CALLST, NEXT, NEXTT, AFFECTS, AFFECTST
 };
 
 /**
@@ -75,6 +76,41 @@ namespace PQL {
     const std::pair<ArgType, std::string> INVALID_ARG = { ArgType::INVALID, "" };
 
     /**
+     *  Vector of invalid design entity types as arguments for the relations
+     *  Follows(*), Parent(*), Next(*).
+     */
+    const std::vector<DesignEntity> NON_STMTS = {
+        DesignEntity::CONSTANT, DesignEntity::PROCEDURE, DesignEntity::VARIABLE
+    };
+
+    /**
+     *  Vector of invalid design entity types as the first argument for the
+     *  statement variant of the Uses relation.
+     */
+    const std::vector<DesignEntity> NON_USES = {
+        DesignEntity::CONSTANT, DesignEntity::PROCEDURE,
+        DesignEntity::READ, DesignEntity::VARIABLE
+    };
+
+    /**
+     *  Vector of invalid design entity types as the first argument for the
+     *  statement variant of the Modifies relation.
+     */
+    const std::vector<DesignEntity> NON_MODIFIES = {
+        DesignEntity::CONSTANT, DesignEntity::PRINT,
+        DesignEntity::PROCEDURE, DesignEntity::VARIABLE
+    };
+
+    /**
+     *  Vector of invalid design entity types as arguments for the Affects(*) relation.
+     */
+    const std::vector<DesignEntity> NON_AFFECTS = {
+        DesignEntity::CALL, DesignEntity::CONSTANT, DesignEntity::IF,
+        DesignEntity::PRINT, DesignEntity::PROCEDURE, DesignEntity::READ,
+        DesignEntity::VARIABLE, DesignEntity::WHILE
+    };
+
+    /**
      *  Map from program entity keyword to program entity enum.
      */
     const std::unordered_map<std::string, DesignEntity> ENTITY_MAP {
@@ -105,7 +141,13 @@ namespace PQL {
         {"Parent", RelationType::PARENT},
         {"Parent*", RelationType::PARENTT},
         {"Uses", RelationType::USESS},
-        {"Modifies", RelationType::MODIFIESS}
+        {"Modifies", RelationType::MODIFIESS},
+        {"Calls", RelationType::CALLS},
+        {"Calls*", RelationType::CALLST},
+        {"Next", RelationType::NEXT},
+        {"Next*", RelationType::NEXTT},
+        {"Affects", RelationType::AFFECTS},
+        {"Affects*", RelationType::AFFECTST}
     };
 
     /**

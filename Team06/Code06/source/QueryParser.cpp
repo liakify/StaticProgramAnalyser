@@ -1,6 +1,7 @@
 #include "QueryParser.h"
 #include "Parser.h"
 
+using std::find;
 using std::invalid_argument;
 using std::pair;
 using std::regex;
@@ -141,7 +142,7 @@ namespace PQL {
                     // should be modified to the procedure-variable variant
                     auto synonymMapping = synonymTable.find(relation.firstStmt.second);
                     if (synonymMapping == synonymTable.end()) {
-                        // SEMANTIC ERROR: synonym referenced in relation clause is undeclared
+                        // SEMANTIC ERROR: synonym referenced in Uses/Modifies clause is undeclared
                         query.status = "semantic error: undeclared synonym as first arg in Uses/Modifies clause";
                         return false;
                     }
@@ -153,12 +154,24 @@ namespace PQL {
                         relation.firstEnt = relation.firstStmt;
                         relation.firstStmt = INVALID_ARG;
                     }
+                    else if (relationClass == RelationType::USESS &&
+                        find(NON_USES.begin(), NON_USES.end(), synonymMapping->second) != NON_USES.end()) {
+                        // SEMANTIC ERROR: design entity type error (not a STMT, ASSIGN, IF, WHILE, CALL or PRINT)
+                        query.status = "semantic error: relation not defined for synonym as first arg in Uses clause";
+                        return false;
+                    }
+                    else if (relationClass == RelationType::MODIFIESS &&
+                        find(NON_MODIFIES.begin(), NON_MODIFIES.end(), synonymMapping->second) != NON_MODIFIES.end()) {
+                        // SEMANTIC ERROR: design entity type error (not a STMT, ASSIGN, IF, WHILE, CALL or READ)
+                        query.status = "semantic error: relation not defined for synonym as first arg in Modifies clause";
+                        return false;
+                    }
                 }
 
                 if (relation.secondEnt.first == ArgType::SYNONYM) {
                     auto synonymMapping = synonymTable.find(relation.secondEnt.second);
                     if (synonymMapping == synonymTable.end()) {
-                        // SEMANTIC ERROR: synonym referenced in relation clause is undeclared
+                        // SEMANTIC ERROR: synonym referenced in Uses/Modifies clause is undeclared
                         query.status = "semantic error: undeclared synonym as second arg in Uses/Modifies clause";
                         return false;
                     }
@@ -169,32 +182,57 @@ namespace PQL {
                     }
                 }
             }
+            else if (relationClass == RelationType::CALLS || relationClass == RelationType::CALLST) {
+                // Relation is between procedures only
+                pair<ArgType, string> args[2] = { relation.firstEnt , relation.secondEnt };
+
+                for (auto arg : args) {
+                    if (arg.first == ArgType::SYNONYM) {
+                        auto synonymMapping = synonymTable.find(arg.second);
+                        if (synonymMapping == synonymTable.end()) {
+                            // SEMANTIC ERROR: synonym referenced in Calls(*) clause is undeclared
+                            query.status = "semantic error: undeclared synonym in Calls(*) clause";
+                            return false;
+                        }
+                        else if (synonymMapping->second != DesignEntity::PROCEDURE) {
+                            // SEMANTIC ERROR: design entity type error (non-PROCEDURE)
+                            query.status = "semantic error: synonym in Calls(*) clause not a PROCEDURE";
+                            return false;
+                        }
+                    }
+                }
+            }
             else {
-                // Relation is between statements: FOLLOWS, FOLLOWST, PARENT, PARENTT
+                // Relation is between statements: FOLLOWS, FOLLOWST, PARENT, PARENTT, AFFECTS, AFFECTST
+                // Or relation is between program lines: NEXT, NEXTT (program line equivalent to stmt number)
                 pair<ArgType, string> args[2] = { relation.firstStmt , relation.secondStmt };
 
                 for (auto arg : args) {
                     if (arg.first == ArgType::INTEGER) {
                         int lineNo = stoi(arg.second);
                         if (lineNo <= 0) {
-                            // SEMANTIC ERROR: stmt number must be positive
-                            // Not possible to determine now if stmt number exceeds length of program
-                            query.status = "semantic error: statement line number in relation clause must be postiive";
+                            // SEMANTIC ERROR: statement or line number is not positive
+                            // Not possible to determine now if statement or line number exceeds length of program
+                            query.status = "semantic error: statement number in F(*)/P(*)/N(*)/A(*) clause must be postiive";
                             return false;
                         }
                     }
                     else if (arg.first == ArgType::SYNONYM) {
                         auto synonymMapping = synonymTable.find(arg.second);
                         if (synonymMapping == synonymTable.end()) {
-                            // SEMANTIC ERROR: synonym referenced in relation clause is undeclared
-                            query.status = "semantic error: undeclared synonym as first arg in Follows(*)/Parent(*) clause";
+                            // SEMANTIC ERROR: synonym referenced in Follows(*)/Parent(*)/Next(*)/Affects(*) clause is undeclared
+                            query.status = "semantic error: undeclared synonym in F(*)/P(*)/N(*)/A(*) clause";
                             return false;
                         }
-                        else if (synonymMapping->second == DesignEntity::VARIABLE
-                            || synonymMapping->second == DesignEntity::CONSTANT
-                            || synonymMapping->second == DesignEntity::PROCEDURE) {
-                            // SEMANTIC ERROR: design entity type error (non-STATEMENT or subset)
-                            query.status = "semantic error: synonym as second arg in relation clause not a STATEMENT or sub-type";
+                        else if ((relationClass == RelationType::AFFECTS || relationClass == RelationType::AFFECTST) &&
+                            find(NON_AFFECTS.begin(), NON_AFFECTS.end(), synonymMapping->second) != NON_AFFECTS.end()) {
+                            // SEMANTIC ERROR: design entity type error (not an ASSIGN or a super-type STMT or PROG_LINE)
+                            query.status = "semantic error: synonym in Affects(*) clause not an ASSIGN or its super-types";
+                            return false;
+                        }
+                        else if (find(NON_STMTS.begin(), NON_STMTS.end(), synonymMapping->second) != NON_STMTS.end()) {
+                            // SEMANTIC ERROR: design entity type error (not a STMT or any of its subtypes)
+                            query.status = "semantic error: relation not defined for synonym as first arg in Uses clause";
                             return false;
                         }
                     }
@@ -421,7 +459,7 @@ namespace PQL {
                 // Interpret and validate both arguments as statement references
                 if (!(QueryUtils::isValidStmtRef(arg1) && QueryUtils::isValidStmtRef(arg2))) {
                     // SYNTAX ERROR: at least one argument is not a valid statement reference
-                    query.status = "syntax error: invalid statement reference in relation clause";
+                    query.status = "syntax error: invalid statement reference in Follows(*)/Parent(*) clause";
                 }
                 else {
                     relation = { clause, relationClass, parseStmtRef(arg1), parseStmtRef(arg2), INVALID_ARG, INVALID_ARG };
@@ -451,6 +489,41 @@ namespace PQL {
                 else {
                     // SYNTAX ERROR: cannot be interpreted either as statement or entity ref
                     query.status = "syntax error: invalid first arg in Uses/Modifies clause";
+                }
+                break;
+            case RelationType::CALLS:
+                // Fallthrough
+            case RelationType::CALLST:
+                if (!(QueryUtils::isValidEntityRef(arg1) && QueryUtils::isValidEntityRef(arg2))) {
+                    // SYNTAX ERORR: at least one argument is not a valid entity reference
+                    query.status = "syntax error: invalid entity reference in Calls(*) clause";
+                }
+                else {
+                    relation = { clause, relationClass, INVALID_ARG, INVALID_ARG, parseEntityRef(arg1), parseEntityRef(arg2) };
+                }
+                break;
+            case RelationType::NEXT:
+                // Fallthrough
+            case RelationType::NEXTT:
+                // Interpret and validate both arguments as line references, which are equivalent to statement references
+                if (!(QueryUtils::isValidStmtRef(arg1) && QueryUtils::isValidStmtRef(arg2))) {
+                    // SYNTAX ERROR: at least one argument is not a valid line reference
+                    query.status = "syntax error: invalid line reference in Next(*) clause";
+                }
+                else {
+                    relation = { clause, relationClass, parseStmtRef(arg1), parseStmtRef(arg2), INVALID_ARG, INVALID_ARG };
+                }
+                break;
+            case RelationType::AFFECTS:
+                // Fallthrough
+            case RelationType::AFFECTST:
+                // Interpret and validate both arguments as statement references
+                if (!(QueryUtils::isValidStmtRef(arg1) && QueryUtils::isValidStmtRef(arg2))) {
+                    // SYNTAX ERROR: at least one argument is not a valid statement reference
+                    query.status = "syntax error: invalid statement reference in Affects(*) clause";
+                }
+                else {
+                    relation = { clause, relationClass, parseStmtRef(arg1), parseStmtRef(arg2), INVALID_ARG, INVALID_ARG };
                 }
                 break;
             default:
