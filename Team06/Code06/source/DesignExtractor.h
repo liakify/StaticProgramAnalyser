@@ -5,7 +5,6 @@
 #include "Types.h"
 #include "PKB.h"
 #include "Simple.h"
-#include "Constants.h"
 
 #include <stdexcept>
 

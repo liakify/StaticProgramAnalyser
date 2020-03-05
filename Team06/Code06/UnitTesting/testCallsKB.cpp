@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 #include "CallsKB.h"
-#include "Constants.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
