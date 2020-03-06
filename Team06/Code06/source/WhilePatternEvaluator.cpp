@@ -5,7 +5,7 @@ namespace PQL {
 	namespace WhilePatternEvaluator {
 
 		/**
-		* Evaluates a single while pattern clause on the given PKB where the inputs is wildcards.
+		* Evaluates a single while pattern clause on the given PKB where the inputs is one wildcard.
 		*
 		* @param	database	The PKB to evaluate the clause on.
 		* @return	The result of the evaluation.
