@@ -46,7 +46,7 @@ namespace PQL {
 	}
 
 	ClauseResult QueryEvaluator::extractQueryResults(Query &query, ClauseResult& combinedResult) {
-		// Iteration 1: Only one target entity
+		
 		if (combinedResult.empty()) {
 			SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::extractQueryResults: Empty Result!\n");
 			return {};

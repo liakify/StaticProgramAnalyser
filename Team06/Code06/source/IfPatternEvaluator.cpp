@@ -61,8 +61,19 @@ namespace PQL {
 			Synonym arg0 = clause.synonym;
 			Synonym arg1 = clause.getArgs().first.second;
 
-			// TODO
 			ClauseResult clauseResult;
+
+			std::unordered_set<StmtId> stmts = database.stmtTable.getStmtsByType(StmtType::IF);
+			for (StmtId stmt : stmts) {
+				SIMPLE::IfStmt* ifStmt = (SIMPLE::IfStmt*)database.stmtTable.get(stmt);
+				std::unordered_set<VarId> vars = ifStmt->getCondExpr().getVarIds();
+				for (VarId var : vars) {
+					ClauseResultEntry resultEntry;
+					resultEntry[arg0] = std::to_string(stmt);
+					resultEntry[arg1] = database.varTable.get(var);
+					clauseResult.emplace_back(resultEntry);
+				}
+			}
 
 			return clauseResult;
 		}
