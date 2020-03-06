@@ -9,7 +9,7 @@ del Team06/Code06/StartupSPASolution.sln
 wget --no-check-certificate http://infocommsociety.com/~zhijian/cs3203/StartupSPASolution.sln
 move StartupSPASolution.sln Team06\Code06\
 mkdir "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\x64\"
-wget --no-check-certificate http://infocommsociety.com/~zhijian/cs3203/Microsoft.IntelliTrace.Profiler.dll -O "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\x64\Microsoft.IntelliTrace.Profiler.dll\"
+wget --no-check-certificate -P "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\Common7\IDE\CommonExtensions\Microsoft\IntelliTrace\x64\" http://infocommsociety.com/~zhijian/cs3203/Microsoft.IntelliTrace.Profiler.dll
 
 cmd.exe /c ""C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\MSBuild\15.0\Bin\MSBuild.exe" "Team06/Code06/StartupSPASolution.sln" "/p:PlatformToolset=v141" "/p:UseEnv=true" "/p:Configuration=Debug" "/p:Platform=Win32" "/verbosity:minimal""
 
