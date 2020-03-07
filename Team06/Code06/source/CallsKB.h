@@ -4,6 +4,7 @@
 #include "unordered_map"
 
 #include "Types.h"
+#include "Constants.h"
 
 struct callsRS {
 	std::unordered_set<ProcId> directCallers;
@@ -14,8 +15,6 @@ struct callsRS {
 
 class CallsKB {
 public:
-	CallsKB();
-
 	/*
 	*	Adds Calls(p1, p2) to the callsTable where p1 directly calls p2
 	*/
@@ -34,12 +33,12 @@ public:
 	/*
 		Returns a reference to directCallees/directCallers of p for NodeType SUCCESSOR and PREDECESSOR respectively
 	*/
-	std::unordered_set<ProcId>& getDirectNodes(ProcId p, NodeType type);
+	const std::unordered_set<ProcId>& getDirectNodes(ProcId p, NodeType type);
 
 	/*
 		Returns a reference to allCallees/allCallers of p for NodeType SUCCESSOR and PREDECESSOR respectively
 	*/
-	std::unordered_set<ProcId>& getAllNodes(ProcId p, NodeType type);
+	const std::unordered_set<ProcId>& getAllNodes(ProcId p, NodeType type);
 
 	/*
 		Adds proc to allCallees/allCallers of p for NodeType SUCCESSOR and PREDECESSOR respectively
@@ -49,7 +48,7 @@ public:
 	/*
 		Adds procs to allCallees/allCallers of p for NodeType SUCCESSOR and PREDECESSOR respectively
 	*/
-	void addToAll(ProcId p, std::unordered_set<ProcId>& procs, NodeType type);
+	void addToAll(ProcId p, const std::unordered_set<ProcId>& procs, NodeType type);
 
 	/*
 		Returns TRUE if directCallee of p is non-empty, FALSE otherwise
@@ -69,12 +68,12 @@ public:
 	/*
 		Returns all procedures that call another procedure
 	*/
-	std::unordered_set<ProcId>& getAllCallers();
+	const std::unordered_set<ProcId>& getAllCallers();
 
 	/*
 		Returns all procedures called by another procedure
 	*/
-	std::unordered_set<ProcId>& getAllCallees();
+	const std::unordered_set<ProcId>& getAllCallees();
 
 private:
 	std::unordered_map<ProcId, callsRS> callsTable;
