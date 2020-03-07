@@ -1,5 +1,8 @@
 #include "QueryParser.h"
+#include "Parser.h"
 
+using std::find;
+using std::invalid_argument;
 using std::pair;
 using std::regex;
 using std::smatch;
@@ -35,7 +38,7 @@ namespace PQL {
         bool hasValidTarget;
         string queryBodySuffix;
         tie(hasValidTarget, queryBodySuffix) = parseQueryTarget(query, queryBody);
-        if (!hasValidEntities) return query;
+        if (!hasValidTarget) return query;
 
         bool hasValidClauses;
         vector<string> relationClauses, patternClauses;
@@ -58,7 +61,7 @@ namespace PQL {
     // statements in the PQL query
     // Additional validation is performed during parsing of declarations, query body and clauses
     bool QueryParser::validateQuerySyntax(Query& query, vector<string> statements) {
-        if (statements.size() == 0) {
+        if (statements.size() == 1 && statements.at(0) == "") {
             query.status = "syntax error: empty query";
             return false;
         }
@@ -107,13 +110,19 @@ namespace PQL {
     bool QueryParser::validateQuerySemantics(Query& query) {
         unordered_map<string, DesignEntity> synonymTable = query.synonymTable;
 
+        // If used as a single return type, the special type BOOLEAN is not stored in the
+        // list of target synonyms, but instead indicated by the attribute returnsBool
+        if (query.returnsBool && synonymTable.find("BOOLEAN") != synonymTable.end()) {
+            // SEMANTIC ERROR: BOOLEAN also declared as synonym - return type becomes ambiguous
+            query.status = "semantic error: ambiguous use of BOOLEAN as both synonym and return type";
+            return false;
+        }
+
         for (string target : query.targetEntities) {
+            // If BOOLEAN is used in a tuple, it is treated as a synonym and hence the query is
+            // semantically invalid if it has not been previously declared
+            // SEMANTIC ERROR: undeclared synonym as single return type or part of tuple return type
             if (synonymTable.find(target) == synonymTable.end()) {
-                // Case 1: single return type (accepts special return type BOOLEAN)
-                if (query.targetEntities.size() == 1 && target == "BOOLEAN") continue;
-                
-                // Case 2: tuple return type (treat BOOLEAN as an identifier)
-                // SEMANTIC ERROR: synonym referenced as query target is undeclared
                 query.status = "semantic error: undeclared synonym part of query return type";
                 return false;
             }
@@ -133,7 +142,7 @@ namespace PQL {
                     // should be modified to the procedure-variable variant
                     auto synonymMapping = synonymTable.find(relation.firstStmt.second);
                     if (synonymMapping == synonymTable.end()) {
-                        // SEMANTIC ERROR: synonym referenced in relation clause is undeclared
+                        // SEMANTIC ERROR: synonym referenced in Uses/Modifies clause is undeclared
                         query.status = "semantic error: undeclared synonym as first arg in Uses/Modifies clause";
                         return false;
                     }
@@ -145,12 +154,24 @@ namespace PQL {
                         relation.firstEnt = relation.firstStmt;
                         relation.firstStmt = INVALID_ARG;
                     }
+                    else if (relationClass == RelationType::USESS &&
+                        find(NON_USES.begin(), NON_USES.end(), synonymMapping->second) != NON_USES.end()) {
+                        // SEMANTIC ERROR: design entity type error (not a STMT, ASSIGN, IF, WHILE, CALL or PRINT)
+                        query.status = "semantic error: relation not defined for synonym as first arg in Uses clause";
+                        return false;
+                    }
+                    else if (relationClass == RelationType::MODIFIESS &&
+                        find(NON_MODIFIES.begin(), NON_MODIFIES.end(), synonymMapping->second) != NON_MODIFIES.end()) {
+                        // SEMANTIC ERROR: design entity type error (not a STMT, ASSIGN, IF, WHILE, CALL or READ)
+                        query.status = "semantic error: relation not defined for synonym as first arg in Modifies clause";
+                        return false;
+                    }
                 }
 
                 if (relation.secondEnt.first == ArgType::SYNONYM) {
                     auto synonymMapping = synonymTable.find(relation.secondEnt.second);
                     if (synonymMapping == synonymTable.end()) {
-                        // SEMANTIC ERROR: synonym referenced in relation clause is undeclared
+                        // SEMANTIC ERROR: synonym referenced in Uses/Modifies clause is undeclared
                         query.status = "semantic error: undeclared synonym as second arg in Uses/Modifies clause";
                         return false;
                     }
@@ -161,32 +182,57 @@ namespace PQL {
                     }
                 }
             }
+            else if (relationClass == RelationType::CALLS || relationClass == RelationType::CALLST) {
+                // Relation is between procedures only
+                pair<ArgType, string> args[2] = { relation.firstEnt , relation.secondEnt };
+
+                for (auto arg : args) {
+                    if (arg.first == ArgType::SYNONYM) {
+                        auto synonymMapping = synonymTable.find(arg.second);
+                        if (synonymMapping == synonymTable.end()) {
+                            // SEMANTIC ERROR: synonym referenced in Calls(*) clause is undeclared
+                            query.status = "semantic error: undeclared synonym in Calls(*) clause";
+                            return false;
+                        }
+                        else if (synonymMapping->second != DesignEntity::PROCEDURE) {
+                            // SEMANTIC ERROR: design entity type error (non-PROCEDURE)
+                            query.status = "semantic error: synonym in Calls(*) clause not a PROCEDURE";
+                            return false;
+                        }
+                    }
+                }
+            }
             else {
-                // Relation is between statements: FOLLOWS, FOLLOWST, PARENT, PARENTT
+                // Relation is between statements: FOLLOWS, FOLLOWST, PARENT, PARENTT, AFFECTS, AFFECTST
+                // Or relation is between program lines: NEXT, NEXTT (program line equivalent to stmt number)
                 pair<ArgType, string> args[2] = { relation.firstStmt , relation.secondStmt };
 
                 for (auto arg : args) {
                     if (arg.first == ArgType::INTEGER) {
                         int lineNo = stoi(arg.second);
                         if (lineNo <= 0) {
-                            // SEMANTIC ERROR: stmt number must be positive
-                            // Not possible to determine now if stmt number exceeds length of program
-                            query.status = "semantic error: statement line number in relation clause must be postiive";
+                            // SEMANTIC ERROR: statement or line number is not positive
+                            // Not possible to determine now if statement or line number exceeds length of program
+                            query.status = "semantic error: statement number in F(*)/P(*)/N(*)/A(*) clause must be postiive";
                             return false;
                         }
                     }
                     else if (arg.first == ArgType::SYNONYM) {
                         auto synonymMapping = synonymTable.find(arg.second);
                         if (synonymMapping == synonymTable.end()) {
-                            // SEMANTIC ERROR: synonym referenced in relation clause is undeclared
-                            query.status = "semantic error: undeclared synonym as first arg in Follows(*)/Parent(*) clause";
+                            // SEMANTIC ERROR: synonym referenced in Follows(*)/Parent(*)/Next(*)/Affects(*) clause is undeclared
+                            query.status = "semantic error: undeclared synonym in F(*)/P(*)/N(*)/A(*) clause";
                             return false;
                         }
-                        else if (synonymMapping->second == DesignEntity::VARIABLE
-                            || synonymMapping->second == DesignEntity::CONSTANT
-                            || synonymMapping->second == DesignEntity::PROCEDURE) {
-                            // SEMANTIC ERROR: design entity type error (non-STATEMENT or subset)
-                            query.status = "semantic error: synonym as second arg in relation clause not a STATEMENT or sub-type";
+                        else if ((relationClass == RelationType::AFFECTS || relationClass == RelationType::AFFECTST) &&
+                            find(NON_AFFECTS.begin(), NON_AFFECTS.end(), synonymMapping->second) != NON_AFFECTS.end()) {
+                            // SEMANTIC ERROR: design entity type error (not an ASSIGN or a super-type STMT or PROG_LINE)
+                            query.status = "semantic error: synonym in Affects(*) clause not an ASSIGN or its super-types";
+                            return false;
+                        }
+                        else if (find(NON_STMTS.begin(), NON_STMTS.end(), synonymMapping->second) != NON_STMTS.end()) {
+                            // SEMANTIC ERROR: design entity type error (not a STMT or any of its subtypes)
+                            query.status = "semantic error: relation not defined for synonym as first arg in Uses clause";
                             return false;
                         }
                     }
@@ -242,12 +288,13 @@ namespace PQL {
     // reaching the end of the query string (i.e. there exists some incorrect syntax)
     // Returns an array of clauses
     tuple<bool, vector<string>, vector<string>> QueryParser::splitConstraints(Query& query, string queryBodySuffix) {
-        regex RELATION_COMPOUND_CLAUSE("^ *such that +[A-Za-z*]+ *\\([\\w,\"\\s]*\\)(?: and +[A-Za-z*]+ *\\([\\w,\"\\s]*\\))*");
-        regex PATTERN_COMPOUND_CLAUSE("^ *pattern +[A-Za-z][A-Za-z0-9]* *\\([\\w,\"\\+\\-\\*\\/\\%\\s]*\\)(?: and +[A-Za-z][A-Za-z0-9]* *\\([\\w,\"\\+\\-\\*\\/\\%\\s]*\\))*");
-        smatch ccmatch;
-
         string RELATION_CLAUSE = "[A-Za-z*]+ *\\([\\w,\"\\s]*\\)";
-        string PATTERN_CLAUSE = "[A-Za-z][A-Za-z0-9]* *\\([\\w,\"\\+\\-\\*\\/\\%\\s]*\\)";
+        string PATTERN_CLAUSE = "[A-Za-z][A-Za-z0-9]* *\\([\\w\"\\s]+(?:, *(?:_|(?:(_?) *\"[A-Za-z0-9\\(\\)\\+\\-\\*\\/\\%\\s]+\" *\\1)) *)+\\)";
+
+        regex COMPOUND_RELATION_CLAUSE("^ *such that +" + RELATION_CLAUSE + "(?: +and +" + RELATION_CLAUSE + ")*");
+        regex COMPOUND_PATTERN_PREFIX("^ *pattern +[A-Za-z][A-Za-z0-9]* *\\(");
+        regex COMPOUND_PATTERN_CLAUSE("^ *pattern +" + PATTERN_CLAUSE + "(?: +and +" + PATTERN_CLAUSE + ")*");
+        smatch ccmatch;
 
         vector<string> relationClauses;
         vector<string> patternClauses;
@@ -257,11 +304,17 @@ namespace PQL {
 
             // Attempt to consume either a relation or pattern compound clause
             // If this fails, then the query string is synctactically invalid
-            if (regex_search(queryBodySuffix, ccmatch, RELATION_COMPOUND_CLAUSE)) {
+            if (regex_search(queryBodySuffix, ccmatch, COMPOUND_RELATION_CLAUSE)) {
                 vector<string> relations = QueryUtils::matchAll(ccmatch.str(), RELATION_CLAUSE);
                 relationClauses.insert(relationClauses.end(), relations.begin(), relations.end());
             }
-            else if (regex_search(queryBodySuffix, ccmatch, PATTERN_COMPOUND_CLAUSE)) {
+            else if (regex_search(queryBodySuffix, ccmatch, COMPOUND_PATTERN_PREFIX)) {
+                if (!regex_search(queryBodySuffix, ccmatch, COMPOUND_PATTERN_CLAUSE)) {
+                    // SYNTAX ERROR: first arg has zero length or other args violate pattern string syntax
+                    query.status = "syntax error: pattern clause has missing or malformed argument";
+                    return { false, relationClauses, patternClauses };
+                }
+
                 vector<string> patterns = QueryUtils::matchAll(ccmatch.str(), PATTERN_CLAUSE);
                 patternClauses.insert(patternClauses.end(), patterns.begin(), patterns.end());
             }
@@ -322,15 +375,21 @@ namespace PQL {
     pair<bool, string> QueryParser::parseQueryTarget(Query& query, string queryBody) {
         vector<string> targets;
 
-        regex SINGLE_TARGET("Select +[A-Za-z][A-Za-z0-9]*(?! *,)");
-        regex TUPLE_TARGET("Select +< *[A-Za-z][A-Za-z0-9]*( *, *[A-Za-z][A-Za-z0-9]*)+ *>(?! *,)");
+        regex SINGLE_TARGET("^Select +[A-Za-z][A-Za-z0-9]*(?= *$| (?! *,))");
+        regex TUPLE_TARGET("^Select +< *[A-Za-z][A-Za-z0-9]*( *, *[A-Za-z][A-Za-z0-9]*)* *>(?= *$| (?! *,))");
         smatch tmatch;
 
         // Attempt to match a single return type, otherwise match a tuple return type
         if (regex_search(queryBody, tmatch, SINGLE_TARGET)) {
             // Strip leading "Select"
             string targetEntity = QueryUtils::leftTrim(tmatch.str().erase(0, 6));
-            targets.push_back(targetEntity);
+            if (targetEntity == "BOOLEAN") {
+                query.returnsBool = true;
+            }
+            else {
+                query.returnsBool = false;
+                targets.push_back(targetEntity);
+            }
         }
         else if (regex_search(queryBody, tmatch, TUPLE_TARGET)) {
             // Retrieve first match - a string of form "Select <x1, x2, ...>"
@@ -338,6 +397,7 @@ namespace PQL {
             tupleString.pop_back();
 
             // Extract all target entities in the tuple string "x1, x2, ..."
+            query.returnsBool = false;
             targets = QueryUtils::tokeniseString(tupleString, ',');
         }
         else {
@@ -349,7 +409,7 @@ namespace PQL {
         // Extract the suffix of the query body (following the query return types)
         string queryBodySuffix = QueryUtils::leftTrim(tmatch.suffix().str());
 
-        assert(targets.size() >= 1);
+        assert(query.returnsBool || targets.size() >= 1);
         query.targetEntities = targets;
 
         return { true, queryBodySuffix };
@@ -399,7 +459,7 @@ namespace PQL {
                 // Interpret and validate both arguments as statement references
                 if (!(QueryUtils::isValidStmtRef(arg1) && QueryUtils::isValidStmtRef(arg2))) {
                     // SYNTAX ERROR: at least one argument is not a valid statement reference
-                    query.status = "syntax error: invalid statement reference in relation clause";
+                    query.status = "syntax error: invalid statement reference in Follows(*)/Parent(*) clause";
                 }
                 else {
                     relation = { clause, relationClass, parseStmtRef(arg1), parseStmtRef(arg2), INVALID_ARG, INVALID_ARG };
@@ -429,6 +489,41 @@ namespace PQL {
                 else {
                     // SYNTAX ERROR: cannot be interpreted either as statement or entity ref
                     query.status = "syntax error: invalid first arg in Uses/Modifies clause";
+                }
+                break;
+            case RelationType::CALLS:
+                // Fallthrough
+            case RelationType::CALLST:
+                if (!(QueryUtils::isValidEntityRef(arg1) && QueryUtils::isValidEntityRef(arg2))) {
+                    // SYNTAX ERORR: at least one argument is not a valid entity reference
+                    query.status = "syntax error: invalid entity reference in Calls(*) clause";
+                }
+                else {
+                    relation = { clause, relationClass, INVALID_ARG, INVALID_ARG, parseEntityRef(arg1), parseEntityRef(arg2) };
+                }
+                break;
+            case RelationType::NEXT:
+                // Fallthrough
+            case RelationType::NEXTT:
+                // Interpret and validate both arguments as line references, which are equivalent to statement references
+                if (!(QueryUtils::isValidStmtRef(arg1) && QueryUtils::isValidStmtRef(arg2))) {
+                    // SYNTAX ERROR: at least one argument is not a valid line reference
+                    query.status = "syntax error: invalid line reference in Next(*) clause";
+                }
+                else {
+                    relation = { clause, relationClass, parseStmtRef(arg1), parseStmtRef(arg2), INVALID_ARG, INVALID_ARG };
+                }
+                break;
+            case RelationType::AFFECTS:
+                // Fallthrough
+            case RelationType::AFFECTST:
+                // Interpret and validate both arguments as statement references
+                if (!(QueryUtils::isValidStmtRef(arg1) && QueryUtils::isValidStmtRef(arg2))) {
+                    // SYNTAX ERROR: at least one argument is not a valid statement reference
+                    query.status = "syntax error: invalid statement reference in Affects(*) clause";
+                }
+                else {
+                    relation = { clause, relationClass, parseStmtRef(arg1), parseStmtRef(arg2), INVALID_ARG, INVALID_ARG };
                 }
                 break;
             default:
@@ -487,12 +582,15 @@ namespace PQL {
                     // SYNTAX ERROR: incorrect number of arguments
                     query.status = "syntax error: assign pattern does not have two arguments";
                 }
-                else if (!QueryUtils::isValidPattern(args.at(1))) {
-                    // SYNTAX ERROR: invalid pattern string
-                    query.status = "syntax error: assign pattern has invalid pattern string";
-                }
-                else {
+
+                // Attempt to parse the pattern clause with the SPA FE Parser during construction of pattern clause
+                // If it fails, then the pattern string is not a valid infix arithmetic exprresion
+                try {
                     pattern = { clause, PatternType::ASSIGN_PATTERN, synonym, parseEntityRef(referenceString), parsePattern(args.at(1)) };
+                }
+                catch (const invalid_argument& e) {
+                    // SYNTAX ERROR: pattern string is not a valid infix arithmetic expression
+                    query.status = "syntax error: assign pattern has invalid pattern string";
                 }
                 break;
             case DesignEntity::WHILE:
@@ -511,7 +609,7 @@ namespace PQL {
             case DesignEntity::IF:
                 if (args.size() != 3) {
                     // SYNTAX ERROR: incorrect number of arguments
-                    query.status = "syntax error: if pattern does not have two arguments";
+                    query.status = "syntax error: if pattern does not have three arguments";
                 }
                 else if (args.at(1) != "_" || args.at(2) != "_") {
                     // SYNTAX ERROR: unallowed argument for while pattern clause
@@ -570,12 +668,16 @@ namespace PQL {
         if (arg == "_") {
             return { ArgType::WILDCARD, arg };
         }
-        else if (arg.at(0) == '_') {
-            // Inclusive pattern string
-            return { ArgType::INCLUSIVE_PATTERN, QueryUtils::stripPattern(arg) };
+
+        string strippedPattern = QueryUtils::stripPattern(arg);
+        if (arg.at(0) == '_') {
+            // Inclusive pattern string - remove leading and trailing underscore
+            strippedPattern = strippedPattern.substr(1, strippedPattern.length() - 2);
+            return { ArgType::INCLUSIVE_PATTERN, "_" + FrontEnd::Parser().parseExpression(strippedPattern) + "_" };
         }
         else {
-            return { ArgType::EXACT_PATTERN, QueryUtils::stripPattern(arg) };
+            // Exact pattern string
+            return { ArgType::EXACT_PATTERN, FrontEnd::Parser().parseExpression(strippedPattern) };
         }
     }
 

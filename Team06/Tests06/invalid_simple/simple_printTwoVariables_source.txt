@@ -1,0 +1,3 @@
+procedure Proc {
+  print x y;
+}

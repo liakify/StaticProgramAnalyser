@@ -1,0 +1,20 @@
+22 - BOOLEAN: true by default
+
+Select BOOLEAN
+true
+5000
+23 - invalid: syntax (select constant)
+
+Select 1
+
+5000
+24 - invalid: syntax (select quoted expression)
+
+Select "expr"
+
+5000
+25 - invalid: syntax (select underscore)
+
+Select _
+
+5000

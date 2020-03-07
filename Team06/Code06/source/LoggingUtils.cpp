@@ -14,6 +14,9 @@ namespace SPA {
 			case LoggingUtils::Level::DEBUG:
 				std::cout << "[DEBUG] " << buffer << std::endl;
 				break;
+			case LoggingUtils::Level::INFO:
+				std::cout << "[INFO] " << buffer << std::endl;
+				break;
 			case LoggingUtils::Level::ERROR:
 				std::cout << "[ERROR] " << buffer << std::endl;
 				break;
@@ -26,6 +29,12 @@ namespace SPA {
 			va_start(params, format);
 			Log(Level::DEBUG, format, params);
 #endif
+		}
+
+		void LogInfoMessage(std::string format, ...) {
+			std::va_list params;
+			va_start(params, format);
+			Log(Level::INFO, format, params);
 		}
 
 		void LogErrorMessage(std::string format, ...) {

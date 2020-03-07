@@ -1,0 +1,20 @@
+procedure SelectSuchThatPattern {
+  print a;
+  a = b;
+  a = c;
+  a = d;
+  print a;
+  if (c1 == c2) then {
+    nested = patternNoMatch; } else {
+    nested = patternMatch;}
+  if (c1 == c2) then {
+    read noAssignment; } else {
+    read noAssignment; }
+  while (c1 == c2) {
+    nested = patternMatch; 
+    while (c3 == c4) {
+      nested2 = patternMatch; }}
+  while (c1 == c2) {
+    read noAssignment; }
+  d = d;
+  read a; }
