@@ -5,6 +5,7 @@
 #include <unordered_set>
 
 #include "Types.h"
+#include "Constants.h"
 
 class PatternKB
 {
@@ -15,11 +16,11 @@ public:
 
 	void addWhilePattern(VarId varId, StmtId stmtId);
 
-	std::unordered_set<StmtId> getAssignPatternStmts(Pattern pattern);
+	const std::unordered_set<StmtId>& getAssignPatternStmts(Pattern pattern);
 
-	std::unordered_set<StmtId> getIfPatternStmts(VarId varId);
+	const std::unordered_set<StmtId>& getIfPatternStmts(VarId varId);
 
-	std::unordered_set<StmtId> getWhilePatternStmts(VarId varId);
+	const std::unordered_set<StmtId>& getWhilePatternStmts(VarId varId);
 
 private:
 	std::unordered_map<Pattern, std::unordered_set<StmtId>> assignTable;

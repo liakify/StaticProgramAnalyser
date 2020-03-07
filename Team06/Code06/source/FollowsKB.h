@@ -58,12 +58,12 @@ public:
 	/*
 		Returns all statement IDs s for which Follows*(stmtId, s) is true.
 	*/
-	std::unordered_set<StmtId> getAllFollowers(StmtId stmtId);
+	const std::unordered_set<StmtId>& getAllFollowers(StmtId stmtId);
 
 	/*
 		Returns all statement IDs s for which Follows*(s, stmtId) is true.
 	*/
-	std::unordered_set<StmtId> getAllFollowing(StmtId stmtId);
+	const std::unordered_set<StmtId>& getAllFollowing(StmtId stmtId);
 
 	/*
 		Sets allFollowers of stmtId to followers.
@@ -78,7 +78,7 @@ public:
 	/*
 		Returns TRUE if any Follows relation is present, FALSE otherwise.
 	*/
-	bool followsRelationPresent();
+	bool hasFollowsRelation();
 
 private:
 	std::unordered_map<StmtId, followsRS> followsTable;
