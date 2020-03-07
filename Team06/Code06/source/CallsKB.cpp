@@ -1,11 +1,6 @@
 #include "CallsKB.h"
 #include <stdexcept>
 
-CallsKB::CallsKB()
-	: callsTable{ {-1, callsRS()} } {
-
-}
-
 void CallsKB::addCalls(ProcId p1, ProcId p2) {
 	callsRS& cRS1 = callsTable[p1];
 	callsRS& cRS2 = callsTable[p2];
@@ -37,7 +32,7 @@ bool CallsKB::callStar(ProcId p1, ProcId p2) {
 	}
 }
 
-std::unordered_set<ProcId>& CallsKB::getDirectNodes(ProcId p, NodeType type) {
+const std::unordered_set<ProcId>& CallsKB::getDirectNodes(ProcId p, NodeType type) {
 	try {
 		if (type == NodeType::SUCCESSOR) {
 			return callsTable.at(p).directCallees;
@@ -47,11 +42,11 @@ std::unordered_set<ProcId>& CallsKB::getDirectNodes(ProcId p, NodeType type) {
 		}
 	}
 	catch (const std::out_of_range&) {
-		return callsTable[-1].directCallees;
+		return EMPTY_RESULT;
 	}
 }
 
-std::unordered_set<ProcId>& CallsKB::getAllNodes(ProcId p, NodeType type) {
+const std::unordered_set<ProcId>& CallsKB::getAllNodes(ProcId p, NodeType type) {
 	try {
 		if (type == NodeType::SUCCESSOR) {
 			return callsTable.at(p).allCallees;
@@ -61,7 +56,7 @@ std::unordered_set<ProcId>& CallsKB::getAllNodes(ProcId p, NodeType type) {
 		}
 	}
 	catch (const std::out_of_range&) {
-		return callsTable[-1].allCallers;
+		return EMPTY_RESULT;
 	}
 }
 
@@ -74,7 +69,7 @@ void CallsKB::addToAll(ProcId p, ProcId proc, NodeType type) {
 	}
 }
 
-void CallsKB::addToAll(ProcId p, std::unordered_set<ProcId>& procs, NodeType type) {
+void CallsKB::addToAll(ProcId p, const std::unordered_set<ProcId>& procs, NodeType type) {
 	if (type == NodeType::SUCCESSOR) {
 		callsTable.at(p).allCallees.insert(procs.begin(), procs.end());
 	}
@@ -105,15 +100,15 @@ bool CallsKB::hasCaller(ProcId p)
 
 bool CallsKB::hasCallsRelation()
 {
-	return callsTable.size() > 1;
+	return callsTable.size() != 0;
 }
 
-std::unordered_set<ProcId>& CallsKB::getAllCallers()
+const std::unordered_set<ProcId>& CallsKB::getAllCallers()
 {
 	return allProcCallers;
 }
 
-std::unordered_set<ProcId>& CallsKB::getAllCallees()
+const std::unordered_set<ProcId>& CallsKB::getAllCallees()
 {
 	return allProcCallees;
 }
