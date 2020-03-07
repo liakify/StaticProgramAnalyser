@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\source\CallsKB.cpp" />
     <ClCompile Include="..\source\ConstTable.cpp" />
     <ClCompile Include="..\source\AssignPatternEvaluator.cpp" />
     <ClCompile Include="..\source\DesignExtractor.cpp" />
@@ -44,6 +45,7 @@
     <ClCompile Include="..\source\WhilePatternEvaluator.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\source\CallsKB.h" />
     <ClInclude Include="..\source\ConstTable.h" />
     <ClInclude Include="..\source\Constants.h" />
     <ClInclude Include="..\source\AssignPatternEvaluator.h" />
