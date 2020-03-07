@@ -5,6 +5,7 @@
 #include <unordered_set>
 
 #include "Types.h"
+#include "Constants.h"
 
 class ModifiesKB
 {
@@ -17,13 +18,13 @@ public:
 
 	bool procModifies(ProcId procId, VarId varId);
 
-	std::unordered_set<VarId> getAllVarsModifiedByStmt(StmtId stmtId);
+	const std::unordered_set<VarId>& getAllVarsModifiedByStmt(StmtId stmtId);
 
-	std::unordered_set<StmtId> getAllStmtsModifyVar(VarId varId);
-	
-	std::unordered_set<VarId> getAllVarsModifiedByProc(ProcId procId);
-
-	std::unordered_set<ProcId> getAllProcModifyVar(VarId varId);
+	const std::unordered_set<StmtId>& getAllStmtsModifyVar(VarId varId);
+ 
+	const std::unordered_set<VarId>& getAllVarsModifiedByProc(ProcId procId);
+ 
+	const std::unordered_set<ProcId>& getAllProcModifyVar(VarId varId);
 
 private:
 	std::unordered_map<StmtId, std::unordered_set<VarId>> stmtVarTable;
