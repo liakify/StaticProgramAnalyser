@@ -206,6 +206,24 @@ namespace PQL {
 		case RelationType::USESP:
 			return UsesEvaluator::evaluateUsesClause(this->database, relationClause, synonymTable);
 			break;
+		case RelationType::CALLS:
+			SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluateRelationClause: Calls relationship not implemented!");
+			break;
+		case RelationType::CALLST:
+			SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluateRelationClause: Calls* relationship not implemented!");
+			break;
+		case RelationType::NEXT:
+			SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluateRelationClause: Next relationship not implemented!");
+			break;
+		case RelationType::NEXTT:
+			SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluateRelationClause: Next* relationship not implemented!");
+			break;
+		case RelationType::AFFECTS:
+			SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluateRelationClause: Affects relationship not implemented!");
+			break;
+		case RelationType::AFFECTST:
+			SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluateRelationClause: Affects* relationship not implemented!");
+			break;
 		default:
 			SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluateRelationClause: Unknown relation type %d\n", relationClause.type);
 			return {};
