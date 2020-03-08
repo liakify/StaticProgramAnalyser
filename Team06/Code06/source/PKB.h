@@ -13,6 +13,7 @@
 #include "UsesKB.h"
 #include "ModifiesKB.h"
 #include "PatternKB.h"
+#include "NextKB.h"
 
 namespace PKB {
 
@@ -34,5 +35,6 @@ namespace PKB {
     UsesKB usesKB;
     ModifiesKB modifiesKB;
     PatternKB patternKB;
+    NextKB nextKB;
   };
 }
