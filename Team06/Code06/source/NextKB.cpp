@@ -1,7 +1,7 @@
 #include "NextKB.h"
 #include <stdexcept>
 
-void NextKB::addStmtControlFlow(StmtId stmtId1, StmtId stmtId2)
+void NextKB::addNext(StmtId stmtId1, StmtId stmtId2)
 {
     nextRS& nRS1 = controlFlowGraph[stmtId1];
     nextRS& nRS2 = controlFlowGraph[stmtId2];

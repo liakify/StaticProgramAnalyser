@@ -18,7 +18,7 @@ public:
     /*
 		Adds Next(stmtId1, stmtId2) relation to controlFlowGraph.
 	*/
-	void addStmtControlFlow(StmtId stmtId1, StmtId stmtId2);
+	void addNext(StmtId stmtId1, StmtId stmtId2);
 
     /*
 		Returns TRUE if Next(stmtId1, stmtId2) is true, FALSE otherwise.
