@@ -84,7 +84,7 @@ mono_crash.*
 # Build results
 [Dd]ebug/
 # (for automated testing)
-!*/Code06/Debug
+!*/Code06/Debug/Autotester.exe
 [Dd]ebugPublic/
 [Rr]elease/
 [Rr]eleases/
