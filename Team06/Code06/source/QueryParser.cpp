@@ -591,6 +591,7 @@ namespace PQL {
                     pattern = { clause, PatternType::ASSIGN_PATTERN, synonym, parseEntityRef(referenceString), parsePattern(args.at(1)) };
                 }
                 catch (const invalid_argument& e) {
+                    (void) e;
                     // SYNTAX ERROR: pattern string is not a valid infix arithmetic expression
                     query.status = SYNTAX_ERR_ASSIGN_PATTERN_INVALID_PATTERN;
                 }
