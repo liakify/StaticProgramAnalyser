@@ -66,7 +66,7 @@ namespace PQL {
             return false;
         }
 
-        regex VALID_DECLARATION("^[A-Za-z]\\w* +[A-Za-z][A-Za-z0-9]*( *, *[A-Za-z][A-Za-z0-9]*)*$");
+        regex VALID_DECLARATION("^[A-Za-z]\\w*\\s+[A-Za-z][A-Za-z0-9]*(\\s*,\\s*[A-Za-z][A-Za-z0-9]*)*$");
         smatch dmatch;
 
         // Validate each declaration (first N - 1 statements) satisfy
@@ -81,7 +81,7 @@ namespace PQL {
         }
 
         // Validate structure of query body (last statement)
-        regex VALID_QUERY_BODY("^Select [\\w<>\\(\\),\"\\+\\-\\*\\/\\% ]+(?!;)$");
+        regex VALID_QUERY_BODY("^Select\\s[\\w<>\\(\\),\"\\+\\-\\*\\/\\%\\s]+(?!;)$");
         smatch qbmatch;
 
         if (!regex_search(statements.at(numDeclarations), qbmatch, VALID_QUERY_BODY)) {
@@ -90,8 +90,8 @@ namespace PQL {
         }
 
         // Check if syntax violations occur from use of clause keywords and connectives
-        regex INVALID_REPEATED_RELATION("and +such that");
-        regex INVALID_REPEATED_PATTERN("and +pattern");
+        regex INVALID_REPEATED_RELATION("and\\s+such\\s+that");
+        regex INVALID_REPEATED_PATTERN("and\\s+pattern");
         smatch rmatch;
 
         if (regex_search(statements.at(numDeclarations), rmatch, INVALID_REPEATED_RELATION)
@@ -268,11 +268,9 @@ namespace PQL {
         smatch stmatch;
 
         while (regex_search(queryString, stmatch, DECLARATION)) {
-            for (auto token : stmatch) {
-                string stmt = token.str();
-                stmt.pop_back();
-                statements.push_back(QueryUtils::trimString(stmt));
-            }
+            string stmt = stmatch.str();
+            stmt.pop_back();
+            statements.push_back(QueryUtils::trimString(stmt));
             queryString = stmatch.suffix().str();
         }
 
@@ -288,12 +286,12 @@ namespace PQL {
     // reaching the end of the query string (i.e. there exists some incorrect syntax)
     // Returns an array of clauses
     tuple<bool, vector<string>, vector<string>> QueryParser::splitClauses(Query& query, string queryBodySuffix) {
-        string RELATION_CLAUSE = "[A-Za-z*]+ *\\([\\w,\"\\s]*\\)";
-        string PATTERN_CLAUSE = "[A-Za-z][A-Za-z0-9]* *\\([\\w\"\\s]+(?:, *(?:_|(?:(_?) *\"[A-Za-z0-9\\(\\)\\+\\-\\*\\/\\%\\s]+\" *\\1)) *)+\\)";
+        string RELATION_CLAUSE = "[A-Za-z*]+\\s*\\([\\w,\"\\s]*\\)";
+        string PATTERN_CLAUSE = "[A-Za-z][A-Za-z0-9]*\\s*\\([\\w\"\\s]+(?:,\\s*(?:_|(?:(_?)\\s*\"[A-Za-z0-9\\(\\)\\+\\-\\*\\/\\%\\s]+\"\\s*\\1))\\s*)+\\)";
 
-        regex COMPOUND_RELATION_CLAUSE("^ *such that +" + RELATION_CLAUSE + "(?: +and +" + RELATION_CLAUSE + ")*");
-        regex COMPOUND_PATTERN_PREFIX("^ *pattern +[A-Za-z][A-Za-z0-9]* *\\(");
-        regex COMPOUND_PATTERN_CLAUSE("^ *pattern +" + PATTERN_CLAUSE + "(?: +and +" + PATTERN_CLAUSE + ")*");
+        regex COMPOUND_RELATION_CLAUSE("^ *such\\s+that\\s+" + RELATION_CLAUSE + "(?:\\s+and\\s+" + RELATION_CLAUSE + ")*");
+        regex COMPOUND_PATTERN_PREFIX("^ *pattern\\s+[A-Za-z][A-Za-z0-9]*\\s*\\(");
+        regex COMPOUND_PATTERN_CLAUSE("^ *pattern\\s+" + PATTERN_CLAUSE + "(?:\\s+and\\s+" + PATTERN_CLAUSE + ")*");
         smatch ccmatch;
 
         vector<string> relationClauses;
@@ -301,7 +299,6 @@ namespace PQL {
 
         // Continue consuming compound clauses until the end of the query
         while (queryBodySuffix.length() > 0) {
-
             // Attempt to consume either a relation or pattern compound clause
             // If this fails, then the query string is synctactically invalid
             if (regex_search(queryBodySuffix, ccmatch, COMPOUND_RELATION_CLAUSE)) {
@@ -333,14 +330,17 @@ namespace PQL {
     bool QueryParser::parseDeclarations(Query& query, vector<string> statements) {
         unordered_map<string, DesignEntity> synonymTable;
 
+        regex DECLARATION_KEYWORD("^[A-Za-z]\\w*(?=\\s)");
+        smatch kmatch;
+
         // Parse first N - 1 statements, i.e. exclude query body
         for (unsigned int i = 0; i < statements.size() - 1; i++) {
             string stmt = statements.at(i);
 
             // Each declaration is a string of form "<entity-name> <synonym>(, <synonym>)*"
-            pair<string, string> splitPair = QueryUtils::splitString(stmt, ' ');
-            string entityName = splitPair.first;
-            string synonymString = splitPair.second;
+            assert(regex_search(stmt, kmatch, DECLARATION_KEYWORD));
+            string entityName = kmatch.str();
+            string synonymString = kmatch.suffix().str();
 
             vector<string> synonyms = QueryUtils::tokeniseString(synonymString, ',');
 
@@ -375,8 +375,8 @@ namespace PQL {
     pair<bool, string> QueryParser::parseQueryTarget(Query& query, string queryBody) {
         vector<string> targets;
 
-        regex SINGLE_TARGET("^Select +[A-Za-z][A-Za-z0-9]*(?= *$| (?! *,))");
-        regex TUPLE_TARGET("^Select +< *[A-Za-z][A-Za-z0-9]*( *, *[A-Za-z][A-Za-z0-9]*)* *>(?= *$| (?! *,))");
+        regex SINGLE_TARGET("^Select\\s+[A-Za-z][A-Za-z0-9]*(?=\\s*$|\\s(?!\\s*,))");
+        regex TUPLE_TARGET("^Select\\s+<\\s*[A-Za-z][A-Za-z0-9]*(\\s*,\\s*[A-Za-z][A-Za-z0-9]*)*\\s*>(?=\\s*$|\\s(?!\\s*,))");
         smatch tmatch;
 
         // Attempt to match a single return type, otherwise match a tuple return type
@@ -393,6 +393,8 @@ namespace PQL {
         }
         else if (regex_search(queryBody, tmatch, TUPLE_TARGET)) {
             // Retrieve first match - a string of form "Select <x1, x2, ...>"
+            // Then strip leading "Select"
+            string targetTuple = QueryUtils::leftTrim(tmatch.str().erase(0, 6));
             string tupleString = QueryUtils::splitString(tmatch.str(), '<').second;
             tupleString.pop_back();
 
