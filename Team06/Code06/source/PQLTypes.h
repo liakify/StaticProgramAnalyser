@@ -70,8 +70,8 @@ namespace PQL {
 
     /**
      *  All status messages in use by the Query Parser during query parsing and
-     *  validation of a PQL query. All but the OK error message indicate either
-     *  a syntax or semantic error with the query.
+     *  validation of a PQL query. All but the OK and SUCCESS messages indicate
+     *  either a syntax or semantic error with the query.
      */
     const std::string OK = "ok";
     const std::string SUCCESS = "success";
