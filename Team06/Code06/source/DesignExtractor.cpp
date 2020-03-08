@@ -5,13 +5,8 @@ using std::unordered_set;
 namespace FrontEnd {
 	PKB::PKB DesignExtractor::run(PKB::PKB& pkb) {
 		this->pkb = pkb;
-		try {
-			populateCalls();
-			populateCallStar();
-		}
-		catch (const std::domain_error & e) {
-			throw std::invalid_argument(e.what());
-		}
+		populateCalls();
+		populateCallStar();
 		populateFollows();
 		populateFollowStar();
 		populateParent();
@@ -34,7 +29,7 @@ namespace FrontEnd {
 				CallStmt* cs = (CallStmt*)s;
 				ProcId calledId = pkb.procTable.getProcId(cs->getProc());
 				if (calledId == -1) { // ProcId not found
-					throw std::domain_error("Invalid procedure call detected");
+					throw std::invalid_argument("Invalid procedure call detected");
 				}
 				pkb.callsKB.addCalls(i, calledId);
 			}
@@ -42,25 +37,20 @@ namespace FrontEnd {
 	}
 
 	void DesignExtractor::populateCallStar() {
-		try {
-			int numProc = pkb.procTable.size();
+		int numProc = pkb.procTable.size();
 
-			/*
-				0 indicates unvisited,
-				-1 indicates visited in current dfs call path,
-				1 indicates visited and fully processed
-			*/
-			std::vector<ProcId> visited(numProc + 1);
-			// Populate allCallees for every proc
-			processCallStar(numProc, visited, NodeType::SUCCESSOR);
+		/*
+			0 indicates unvisited,
+			-1 indicates visited in current dfs call path,
+			1 indicates visited and fully processed
+		*/
+		std::vector<ProcId> visited(numProc + 1);
+		// Populate allCallees for every proc
+		processCallStar(numProc, visited, NodeType::SUCCESSOR);
 
-			std::fill(visited.begin(), visited.end(), 0);
-			// Populate allCallers for every proc
-			processCallStar(numProc, visited, NodeType::PREDECESSOR);
-		}
-		catch (const std::domain_error& e) {
-			throw e;
-		}
+		std::fill(visited.begin(), visited.end(), 0);
+		// Populate allCallers for every proc
+		processCallStar(numProc, visited, NodeType::PREDECESSOR);
 	}
 	
 	void DesignExtractor::processCallStar(int numProc, std::vector<int>& visited, NodeType type) {
@@ -78,7 +68,7 @@ namespace FrontEnd {
 
 		for (const auto& dirNode : directSet) {
 			if (visited[dirNode] == -1) {
-				throw std::domain_error("Cycle Detected");
+				throw std::invalid_argument("Cycle Detected");
 			}
 			if (visited[dirNode] == 0) {
 				callStarDFS(dirNode, visited, type);
