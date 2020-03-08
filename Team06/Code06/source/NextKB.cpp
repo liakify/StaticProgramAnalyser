@@ -66,6 +66,22 @@ std::vector<StmtId> NextKB::getAllStmtsNext(StmtId stmtId)
 	}
 }
 
+std::vector<StmtId> NextKB::getAllStmtsPreviousStar(StmtId stmtId)
+{
+    try {
+        std::vector<StmtId> result;
+        for(auto itr = controlFlowGraph.at[stmtId].allDirectPrevious.begin(); itr != controlFlowGraph.at[stmtId].allDirectPrevious.end(); itr ++) {
+            result.emplace_back(itr -> first);
+            std::vector<StmtId> subresult = getAllStmtsPreviousStar(itr -> first);
+            result.insert(result.end(), subresult.begin(), subresult.end());
+        }
+        return result;
+    }
+    catch (const std::out_of_range &) {
+		return {};
+	}
+}
+
 std::vector<StmtId> NextKB::getAllStmtsNextStar(StmtId stmtId)
 {
     try {

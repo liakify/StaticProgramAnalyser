@@ -41,6 +41,11 @@ public:
     std::vector<StmtId> getAllStmtsNext(StmtId stmtId);
 
     /*
+		Returns all statement IDs for which Next*(s, stmtId) is true.
+	*/
+    std::vector<StmtId> getAllStmtsPreviousStar(StmtId stmtId);
+
+    /*
 		Returns all statement IDs for which Next*(stmtId, s) is true.
 	*/
 	std::vector<StmtId> getAllStmtsNextStar(StmtId stmtId);
