@@ -21,6 +21,7 @@
     <ClCompile Include="..\source\FollowsKB.cpp" />
     <ClCompile Include="..\source\FollowsStarEvaluator.cpp" />
     <ClCompile Include="..\source\FrontEnd.cpp" />
+    <ClCompile Include="..\source\IfPatternEvaluator.cpp" />
     <ClCompile Include="..\source\LoggingUtils.cpp" />
     <ClCompile Include="..\source\ModifiesEvaluator.cpp" />
     <ClCompile Include="..\source\ParentEvaluator.cpp" />
@@ -43,6 +44,7 @@
     <ClCompile Include="..\source\UsesKB.cpp" />
     <ClCompile Include="..\source\ModifiesKB.cpp" />
     <ClCompile Include="..\source\PatternKB.cpp" />
+    <ClCompile Include="..\source\WhilePatternEvaluator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\CallsEvaluator.h" />
@@ -55,6 +57,7 @@
     <ClInclude Include="..\source\FollowsKB.h" />
     <ClInclude Include="..\source\FollowsStarEvaluator.h" />
     <ClInclude Include="..\source\FrontEnd.h" />
+    <ClInclude Include="..\source\IfPatternEvaluator.h" />
     <ClInclude Include="..\source\LoggingUtils.h" />
     <ClInclude Include="..\source\ModifiesEvaluator.h" />
     <ClInclude Include="..\source\ParentEvaluator.h" />
@@ -81,6 +84,7 @@
     <ClInclude Include="..\source\ModifiesKB.h" />
     <ClInclude Include="..\source\PatternKB.h" />
     <ClInclude Include="..\source\DesignExtractor.h" />
+    <ClInclude Include="..\source\WhilePatternEvaluator.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
