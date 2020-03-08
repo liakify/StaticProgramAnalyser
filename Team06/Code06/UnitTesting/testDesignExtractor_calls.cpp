@@ -9,6 +9,39 @@ using namespace SIMPLE;
 
 namespace UnitTesting
 {
+	Procedure PROC_A = Procedure("a", 1);
+	Procedure PROC_B = Procedure("b", 2);
+	Procedure PROC_C = Procedure("c", 3);
+	Procedure PROC_D = Procedure("d", 4);
+	Procedure PROC_E = Procedure("e", 5);
+	Procedure PROC_F = Procedure("f", 6);
+
+	StatementList sl1 = StatementList(std::vector<StmtId>{1});
+	StatementList sl2 = StatementList(std::vector<StmtId>{2});
+	StatementList sl3 = StatementList(std::vector<StmtId>{3});
+	StatementList sl4 = StatementList(std::vector<StmtId>{4});
+	StatementList sl5 = StatementList(std::vector<StmtId>{5});
+	StatementList sl6 = StatementList(std::vector<StmtId>{6});
+	StatementList sl7 = StatementList(std::vector<StmtId>{1, 2});
+	StatementList sl8 = StatementList(std::vector<StmtId>{2, 3});
+
+	CallStmt ca("a");
+	Statement* CALL_A = &ca;
+	CallStmt cb("b");
+	Statement* CALL_B = &cb;
+	CallStmt cc("c");
+	Statement* CALL_C = &cc;
+	CallStmt cd("d");
+	Statement* CALL_D = &cd;
+	CallStmt ce("e");
+	Statement* CALL_E = &ce;
+	CallStmt cf("f");
+	Statement* CALL_F = &cf;
+	ReadStmt r1(1);
+	Statement* READ_1 = &r1;
+	ReadStmt r2(2);
+	Statement* READ_2 = &r2;
+
 	PKB::PKB pkbCallStar;
 	PKB::PKB pkbX;
 	PKB::PKB pkbDiamond;
@@ -18,46 +51,13 @@ namespace UnitTesting
 	PKB::PKB pkbNormalAndCyclic;
 	FrontEnd::DesignExtractor DE_callStar;
 
-	TEST_CLASS(TestDesignExtractor_callStar)
+	TEST_CLASS(TestDesignExtractor_calls)
 	{
 	public:
 		wchar_t* message = L"Cycle Detected";
 		std::unordered_set<ProcId> emptyResult;
 
 		TEST_CLASS_INITIALIZE(setup) {
-			Procedure PROC_A = Procedure("a", 1);
-			Procedure PROC_B = Procedure("b", 2);
-			Procedure PROC_C = Procedure("c", 3);
-			Procedure PROC_D = Procedure("d", 4);
-			Procedure PROC_E = Procedure("e", 5);
-			Procedure PROC_F = Procedure("f", 6);
-
-			StatementList sl1 = StatementList(std::vector<StmtId>{1});
-			StatementList sl2 = StatementList(std::vector<StmtId>{2});
-			StatementList sl3 = StatementList(std::vector<StmtId>{3});
-			StatementList sl4 = StatementList(std::vector<StmtId>{4});
-			StatementList sl5 = StatementList(std::vector<StmtId>{5});
-			StatementList sl6 = StatementList(std::vector<StmtId>{6});
-			StatementList sl7 = StatementList(std::vector<StmtId>{1, 2});
-			StatementList sl8 = StatementList(std::vector<StmtId>{2, 3});
-
-			CallStmt ca("a");
-			Statement* CALL_A = &ca;
-			CallStmt cb("b");
-			Statement* CALL_B = &cb;
-			CallStmt cc("c");
-			Statement* CALL_C = &cc;
-			CallStmt cd("d");
-			Statement* CALL_D = &cd;
-			CallStmt ce("e");
-			Statement* CALL_E = &ce;
-			CallStmt cf("f");
-			Statement* CALL_F = &cf;
-			ReadStmt r1(1);
-			Statement* READ_1 = &r1;
-			ReadStmt r2(2);
-			Statement* READ_2 = &r2;
-
 			// Valid SIMPLE: 1 -> 2 -> 3
 			pkbCallStar = PKB::PKB();
 			pkbCallStar.procTable.insertProc(PROC_A);
@@ -70,9 +70,7 @@ namespace UnitTesting
 			pkbCallStar.stmtListTable.insertStmtLst(sl2);
 			pkbCallStar.stmtTable.insertStmt(READ_1);
 			pkbCallStar.stmtListTable.insertStmtLst(sl3);
-			
-			pkbCallStar.callsKB.addCalls(1, 2);
-			pkbCallStar.callsKB.addCalls(2, 3);
+
 			pkbCallStar = DE_callStar.run(pkbCallStar);
 
 			/* 
@@ -102,10 +100,6 @@ namespace UnitTesting
 			pkbX.stmtTable.insertStmt(READ_2);
 			pkbX.stmtListTable.insertStmtLst(sl6);
 
-			pkbX.callsKB.addCalls(4, 1);
-			pkbX.callsKB.addCalls(2, 1);
-			pkbX.callsKB.addCalls(1, 3);
-			pkbX.callsKB.addCalls(1, 5);
 			pkbX = DE_callStar.run(pkbX);
 
 			/* 
@@ -132,10 +126,6 @@ namespace UnitTesting
 			pkbDiamond.stmtTable.insertStmt(CALL_C);
 			pkbDiamond.stmtListTable.insertStmtLst(sl5);
 
-			pkbDiamond.callsKB.addCalls(2, 1);
-			pkbDiamond.callsKB.addCalls(2, 4);
-			pkbDiamond.callsKB.addCalls(1, 3);
-			pkbDiamond.callsKB.addCalls(4, 3);
 			pkbDiamond = DE_callStar.run(pkbDiamond);
 
 			// Recursive call in SIMPLE
@@ -143,7 +133,6 @@ namespace UnitTesting
 			pkbRecursive.stmtTable.insertStmt(CALL_A);
 			pkbRecursive.stmtListTable.insertStmtLst(sl1);
 			pkbRecursive.procTable.insertProc(PROC_A);
-			pkbRecursive.callsKB.addCalls(1, 1);
 
 			// Cyclic call in SIMPLE
 			pkbCyclic = PKB::PKB();
@@ -158,17 +147,12 @@ namespace UnitTesting
 			pkbCyclic.stmtTable.insertStmt(CALL_A);
 			pkbCyclic.stmtListTable.insertStmtLst(sl3);
 
-			pkbCyclic.callsKB.addCalls(1, 2);
-			pkbCyclic.callsKB.addCalls(2, 3);
-			pkbCyclic.callsKB.addCalls(3, 1);
-
 			// Valid DAG and recursive call in SIMPLE
 			pkbNormalAndRecursive = PKB::PKB();
 
 			pkbNormalAndRecursive.stmtTable.insertStmt(CALL_A);
 			pkbNormalAndRecursive.stmtListTable.insertStmtLst(sl1);
 			pkbNormalAndRecursive.procTable.insertProc(PROC_A);
-			pkbNormalAndRecursive.callsKB.addCalls(1, 1);
 			
 			pkbNormalAndRecursive.stmtTable.insertStmt(CALL_C);
 			pkbNormalAndRecursive.stmtListTable.insertStmtLst(sl2);
@@ -180,8 +164,6 @@ namespace UnitTesting
 			pkbNormalAndRecursive.procTable.insertProc(PROC_B);
 			pkbNormalAndRecursive.procTable.insertProc(PROC_C);
 			pkbNormalAndRecursive.procTable.insertProc(PROC_D);
-			pkbNormalAndRecursive.callsKB.addCalls(2, 3);
-			pkbNormalAndRecursive.callsKB.addCalls(3, 4);
 
 			// Valid DAG and cyclic call in SIMPLE
 			pkbNormalAndCyclic = PKB::PKB();
@@ -195,8 +177,6 @@ namespace UnitTesting
 			pkbNormalAndCyclic.procTable.insertProc(PROC_A);
 			pkbNormalAndCyclic.procTable.insertProc(PROC_B);
 			pkbNormalAndCyclic.procTable.insertProc(PROC_C);
-			pkbNormalAndCyclic.callsKB.addCalls(1, 2);
-			pkbNormalAndCyclic.callsKB.addCalls(2, 3);
 
 			pkbNormalAndCyclic.stmtTable.insertStmt(CALL_E);
 			pkbNormalAndCyclic.stmtListTable.insertStmtLst(sl4);
@@ -208,9 +188,6 @@ namespace UnitTesting
 			pkbNormalAndCyclic.procTable.insertProc(PROC_D);
 			pkbNormalAndCyclic.procTable.insertProc(PROC_E);
 			pkbNormalAndCyclic.procTable.insertProc(PROC_F);
-			pkbNormalAndCyclic.callsKB.addCalls(4, 5);
-			pkbNormalAndCyclic.callsKB.addCalls(5, 6);
-			pkbNormalAndCyclic.callsKB.addCalls(6, 4);
 		}
 
 		TEST_METHOD(populateCallStar_pkbCallStar) {
