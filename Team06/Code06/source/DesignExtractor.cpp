@@ -11,6 +11,7 @@ namespace FrontEnd {
 		populateFollowStar();
 		populateParent();
 		populateParentStar();
+		populateCallStar();
 		populateUses();
 		populateModifies();
 		populatePattern();
@@ -119,6 +120,28 @@ namespace FrontEnd {
 				parents.insert(parentId);
 				pkb.parentKB.setAllParents(stmtId, parents);
 			}
+		}
+	}
+
+	void DesignExtractor::populateCallStar() {
+		try {
+			int numProc = pkb.procTable.size();
+			
+			/*
+				0 indicates unvisited, 
+				-1 indicates visited in current dfs call path, 
+				1 indicates visited and fully processed
+			*/
+			std::vector<ProcId> visited(numProc + 1);
+			// Populate allCallees for every proc
+			processCallStar(numProc, visited, NodeType::SUCCESSOR);
+
+			std::fill(visited.begin(), visited.end(), 0);
+			// Populate allCallers for every proc
+			processCallStar(numProc, visited, NodeType::PREDECESSOR);
+		}
+		catch (const std::domain_error&) {
+			throw;
 		}
 	}
 
@@ -275,5 +298,33 @@ namespace FrontEnd {
 		for (Pattern p : patterns) {
 			pkb.patternKB.addAssignPattern(p, stmtId);
 		}
+	}
+
+	void DesignExtractor::processCallStar(int numProc, std::vector<int>& visited, NodeType type) {
+		for (int p = 1; p <= numProc; p++) {
+			if (visited[p] == 0) {
+				callStarDFS(p, visited, type);
+			}
+		}
+	}
+
+	void DesignExtractor::callStarDFS(ProcId root, std::vector<ProcId>& visited, NodeType type) {
+		visited[root] = -1;
+
+		std::unordered_set<ProcId> directSet = pkb.callsKB.getDirectNodes(root, type);
+
+		for (const auto& dirNode : directSet) {
+			if (visited[dirNode] == -1) {
+				throw std::domain_error("Cycle Detected");
+			}
+			if (visited[dirNode] == 0) {
+				callStarDFS(dirNode, visited, type);
+			}
+
+			pkb.callsKB.addToAll(root, dirNode, type);
+			pkb.callsKB.addToAll(root, pkb.callsKB.getAllNodes(dirNode, type), type);
+		}
+
+		visited[root] = 1;
 	}
 }

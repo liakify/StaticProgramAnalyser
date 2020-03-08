@@ -16,32 +16,32 @@ void PatternKB::addWhilePattern(VarId varId, StmtId stmtId)
 	whileTable[varId].insert(stmtId);
 }
 
-std::unordered_set<StmtId> PatternKB::getAssignPatternStmts(Pattern pattern)
+const std::unordered_set<StmtId>& PatternKB::getAssignPatternStmts(Pattern pattern)
 {
 	try {
 		return assignTable.at(pattern);
 	}
 	catch (const std::out_of_range &) {
-		return {};
+		return EMPTY_RESULT;
 	}
 }
 
-std::unordered_set<StmtId> PatternKB::getIfPatternStmts(VarId varId)
+const std::unordered_set<StmtId>& PatternKB::getIfPatternStmts(VarId varId)
 {
 	try {
 		return ifTable.at(varId);
 	}
 	catch (const std::out_of_range&) {
-		return {};
+		return EMPTY_RESULT;
 	}
 }
 
-std::unordered_set<StmtId> PatternKB::getWhilePatternStmts(VarId varId)
+const std::unordered_set<StmtId>& PatternKB::getWhilePatternStmts(VarId varId)
 {
 	try {
 		return whileTable.at(varId);
 	}
 	catch (const std::out_of_range&) {
-		return {};
+		return EMPTY_RESULT;
 	}
 }
