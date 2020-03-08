@@ -38,7 +38,6 @@ namespace FrontEnd {
 		void populateFollowStar();
 		void populateParent();
 		void populateParentStar();
-		void populateCallStar();
 		void populateUses();
 		void populateModifies();
 		void populatePattern();

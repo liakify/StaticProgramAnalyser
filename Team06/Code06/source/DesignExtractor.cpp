@@ -5,13 +5,17 @@ using std::unordered_set;
 namespace FrontEnd {
 	PKB::PKB DesignExtractor::run(PKB::PKB& pkb) {
 		this->pkb = pkb;
-		populateCalls();
-		populateCallStar();
+		try {
+			populateCalls();
+			populateCallStar();
+		}
+		catch (const std::domain_error & e) {
+			throw std::invalid_argument(e.what());
+		}
 		populateFollows();
 		populateFollowStar();
 		populateParent();
 		populateParentStar();
-		populateCallStar();
 		populateUses();
 		populateModifies();
 		populatePattern();
@@ -29,18 +33,62 @@ namespace FrontEnd {
 				}
 				CallStmt* cs = (CallStmt*)s;
 				ProcId calledId = pkb.procTable.getProcId(cs->getProc());
-				if (calledId == i || calledId == -1) { // Recursive call OR ProcId not found
-					throw std::invalid_argument("Invalid procedure call detected.\n");
+				if (calledId == -1) { // ProcId not found
+					throw std::domain_error("Invalid procedure call detected");
 				}
-				//pkb.callsKB.addCalls(i, calledId);
+				pkb.callsKB.addCalls(i, calledId);
 			}
 		}
 	}
 
 	void DesignExtractor::populateCallStar() {
-		// TODO: Ensure this part can detect cyclic proc calls and throw exception.
-		// If this part fails to detect cyclic calls the subsequent DE parts
-		// will go into an infinite cycle
+		try {
+			int numProc = pkb.procTable.size();
+
+			/*
+				0 indicates unvisited,
+				-1 indicates visited in current dfs call path,
+				1 indicates visited and fully processed
+			*/
+			std::vector<ProcId> visited(numProc + 1);
+			// Populate allCallees for every proc
+			processCallStar(numProc, visited, NodeType::SUCCESSOR);
+
+			std::fill(visited.begin(), visited.end(), 0);
+			// Populate allCallers for every proc
+			processCallStar(numProc, visited, NodeType::PREDECESSOR);
+		}
+		catch (const std::domain_error& e) {
+			throw e;
+		}
+	}
+	
+	void DesignExtractor::processCallStar(int numProc, std::vector<int>& visited, NodeType type) {
+		for (int p = 1; p <= numProc; p++) {
+			if (visited[p] == 0) {
+				callStarDFS(p, visited, type);
+			}
+		}
+	}
+
+	void DesignExtractor::callStarDFS(ProcId root, std::vector<ProcId>& visited, NodeType type) {
+		visited[root] = -1;
+
+		std::unordered_set<ProcId> directSet = pkb.callsKB.getDirectNodes(root, type);
+
+		for (const auto& dirNode : directSet) {
+			if (visited[dirNode] == -1) {
+				throw std::domain_error("Cycle Detected");
+			}
+			if (visited[dirNode] == 0) {
+				callStarDFS(dirNode, visited, type);
+			}
+
+			pkb.callsKB.addToAll(root, dirNode, type);
+			pkb.callsKB.addToAll(root, pkb.callsKB.getAllNodes(dirNode, type), type);
+		}
+
+		visited[root] = 1;
 	}
 
 	void DesignExtractor::populateFollows() {
@@ -120,28 +168,6 @@ namespace FrontEnd {
 				parents.insert(parentId);
 				pkb.parentKB.setAllParents(stmtId, parents);
 			}
-		}
-	}
-
-	void DesignExtractor::populateCallStar() {
-		try {
-			int numProc = pkb.procTable.size();
-			
-			/*
-				0 indicates unvisited, 
-				-1 indicates visited in current dfs call path, 
-				1 indicates visited and fully processed
-			*/
-			std::vector<ProcId> visited(numProc + 1);
-			// Populate allCallees for every proc
-			processCallStar(numProc, visited, NodeType::SUCCESSOR);
-
-			std::fill(visited.begin(), visited.end(), 0);
-			// Populate allCallers for every proc
-			processCallStar(numProc, visited, NodeType::PREDECESSOR);
-		}
-		catch (const std::domain_error&) {
-			throw;
 		}
 	}
 
@@ -298,33 +324,5 @@ namespace FrontEnd {
 		for (Pattern p : patterns) {
 			pkb.patternKB.addAssignPattern(p, stmtId);
 		}
-	}
-
-	void DesignExtractor::processCallStar(int numProc, std::vector<int>& visited, NodeType type) {
-		for (int p = 1; p <= numProc; p++) {
-			if (visited[p] == 0) {
-				callStarDFS(p, visited, type);
-			}
-		}
-	}
-
-	void DesignExtractor::callStarDFS(ProcId root, std::vector<ProcId>& visited, NodeType type) {
-		visited[root] = -1;
-
-		std::unordered_set<ProcId> directSet = pkb.callsKB.getDirectNodes(root, type);
-
-		for (const auto& dirNode : directSet) {
-			if (visited[dirNode] == -1) {
-				throw std::domain_error("Cycle Detected");
-			}
-			if (visited[dirNode] == 0) {
-				callStarDFS(dirNode, visited, type);
-			}
-
-			pkb.callsKB.addToAll(root, dirNode, type);
-			pkb.callsKB.addToAll(root, pkb.callsKB.getAllNodes(dirNode, type), type);
-		}
-
-		visited[root] = 1;
 	}
 }

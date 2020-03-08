@@ -41,13 +41,22 @@ namespace UnitTesting
 			StatementList sl7 = StatementList(std::vector<StmtId>{1, 2});
 			StatementList sl8 = StatementList(std::vector<StmtId>{2, 3});
 
-			Statement* CALL_A = &CallStmt("a");
-			Statement* CALL_B = &CallStmt("b");
-			Statement* CALL_C = &CallStmt("c");
-			Statement* CALL_D = &CallStmt("d");
-			Statement* CALL_E = &CallStmt("e");
-			Statement* READ_1 = &ReadStmt(1);
-			Statement* READ_2 = &ReadStmt(2);
+			CallStmt ca("a");
+			Statement* CALL_A = &ca;
+			CallStmt cb("b");
+			Statement* CALL_B = &cb;
+			CallStmt cc("c");
+			Statement* CALL_C = &cc;
+			CallStmt cd("d");
+			Statement* CALL_D = &cd;
+			CallStmt ce("e");
+			Statement* CALL_E = &ce;
+			CallStmt cf("f");
+			Statement* CALL_F = &cf;
+			ReadStmt r1(1);
+			Statement* READ_1 = &r1;
+			ReadStmt r2(2);
+			Statement* READ_2 = &r2;
 
 			// Valid SIMPLE: 1 -> 2 -> 3
 			pkbCallStar = PKB::PKB();
@@ -131,6 +140,8 @@ namespace UnitTesting
 
 			// Recursive call in SIMPLE
 			pkbRecursive = PKB::PKB();
+			pkbRecursive.stmtTable.insertStmt(CALL_A);
+			pkbRecursive.stmtListTable.insertStmtLst(sl1);
 			pkbRecursive.procTable.insertProc(PROC_A);
 			pkbRecursive.callsKB.addCalls(1, 1);
 
@@ -139,14 +150,33 @@ namespace UnitTesting
 			pkbCyclic.procTable.insertProc(PROC_A);
 			pkbCyclic.procTable.insertProc(PROC_B);
 			pkbCyclic.procTable.insertProc(PROC_C);
+
+			pkbCyclic.stmtTable.insertStmt(CALL_B);
+			pkbCyclic.stmtListTable.insertStmtLst(sl1);
+			pkbCyclic.stmtTable.insertStmt(CALL_C);
+			pkbCyclic.stmtListTable.insertStmtLst(sl2);
+			pkbCyclic.stmtTable.insertStmt(CALL_A);
+			pkbCyclic.stmtListTable.insertStmtLst(sl3);
+
 			pkbCyclic.callsKB.addCalls(1, 2);
 			pkbCyclic.callsKB.addCalls(2, 3);
 			pkbCyclic.callsKB.addCalls(3, 1);
 
 			// Valid DAG and recursive call in SIMPLE
 			pkbNormalAndRecursive = PKB::PKB();
+
+			pkbNormalAndRecursive.stmtTable.insertStmt(CALL_A);
+			pkbNormalAndRecursive.stmtListTable.insertStmtLst(sl1);
 			pkbNormalAndRecursive.procTable.insertProc(PROC_A);
 			pkbNormalAndRecursive.callsKB.addCalls(1, 1);
+			
+			pkbNormalAndRecursive.stmtTable.insertStmt(CALL_C);
+			pkbNormalAndRecursive.stmtListTable.insertStmtLst(sl2);
+			pkbNormalAndRecursive.stmtTable.insertStmt(CALL_D);
+			pkbNormalAndRecursive.stmtListTable.insertStmtLst(sl3);
+			pkbNormalAndRecursive.stmtTable.insertStmt(READ_1);
+			pkbNormalAndRecursive.stmtListTable.insertStmtLst(sl4);
+
 			pkbNormalAndRecursive.procTable.insertProc(PROC_B);
 			pkbNormalAndRecursive.procTable.insertProc(PROC_C);
 			pkbNormalAndRecursive.procTable.insertProc(PROC_D);
@@ -155,11 +185,26 @@ namespace UnitTesting
 
 			// Valid DAG and cyclic call in SIMPLE
 			pkbNormalAndCyclic = PKB::PKB();
+			pkbNormalAndCyclic.stmtTable.insertStmt(CALL_B);
+			pkbNormalAndCyclic.stmtListTable.insertStmtLst(sl1);
+			pkbNormalAndCyclic.stmtTable.insertStmt(CALL_C);
+			pkbNormalAndCyclic.stmtListTable.insertStmtLst(sl2);
+			pkbNormalAndCyclic.stmtTable.insertStmt(READ_1);
+			pkbNormalAndCyclic.stmtListTable.insertStmtLst(sl3);
+
 			pkbNormalAndCyclic.procTable.insertProc(PROC_A);
 			pkbNormalAndCyclic.procTable.insertProc(PROC_B);
 			pkbNormalAndCyclic.procTable.insertProc(PROC_C);
 			pkbNormalAndCyclic.callsKB.addCalls(1, 2);
 			pkbNormalAndCyclic.callsKB.addCalls(2, 3);
+
+			pkbNormalAndCyclic.stmtTable.insertStmt(CALL_E);
+			pkbNormalAndCyclic.stmtListTable.insertStmtLst(sl4);
+			pkbNormalAndCyclic.stmtTable.insertStmt(CALL_F);
+			pkbNormalAndCyclic.stmtListTable.insertStmtLst(sl5);
+			pkbNormalAndCyclic.stmtTable.insertStmt(CALL_D);
+			pkbNormalAndCyclic.stmtListTable.insertStmtLst(sl6);
+
 			pkbNormalAndCyclic.procTable.insertProc(PROC_D);
 			pkbNormalAndCyclic.procTable.insertProc(PROC_E);
 			pkbNormalAndCyclic.procTable.insertProc(PROC_F);
@@ -240,22 +285,22 @@ namespace UnitTesting
 
 		TEST_METHOD(populateCallStar_pkbRecursive) {
 			auto lambda = [] { pkbRecursive = DE_callStar.run(pkbRecursive); };
-			Assert::ExpectException<std::domain_error>(lambda, message);
+			Assert::ExpectException<std::invalid_argument>(lambda, message);
 		}
 
 		TEST_METHOD(populateCallStar_pkbCyclic) {
 			auto lambda = [] { pkbCyclic = DE_callStar.run(pkbCyclic); };
-			Assert::ExpectException<std::domain_error>(lambda, message);
+			Assert::ExpectException<std::invalid_argument>(lambda, message);
 		}
 
 		TEST_METHOD(populateCallStar_pkbNormalAndRecursive) {
 			auto lambda = [] { pkbNormalAndRecursive = DE_callStar.run(pkbNormalAndRecursive); };
-			Assert::ExpectException<std::domain_error>(lambda, message);
+			Assert::ExpectException<std::invalid_argument>(lambda, message);
 		}
 
 		TEST_METHOD(populateCallStar_pkbNormalAndCyclic) {
 			auto lambda = [] { pkbNormalAndCyclic = DE_callStar.run(pkbNormalAndCyclic); };
-			Assert::ExpectException<std::domain_error>(lambda, message);
+			Assert::ExpectException<std::invalid_argument>(lambda, message);
 		}
 	};
 }
