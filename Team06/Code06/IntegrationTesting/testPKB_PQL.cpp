@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
-#include "DesignExtractor.h"
 #include "PQL.h"
 #include "Simple.h"
 
@@ -12,7 +11,6 @@ using namespace SIMPLE;
 
 namespace IntegrationTesting {
     PQL::PQLManager pql = PQL::PQLManager(PKB::PKB());
-    FrontEnd::DesignExtractor DE;
     std::list<string> results;
 
     TEST_CLASS(TestPKB_PQL) {
@@ -26,7 +24,6 @@ namespace IntegrationTesting {
         pkb.stmtTable.insertStmt(&ReadStmt(2));
         pkb.stmtTable.insertStmt(&ReadStmt(3));
         pkb.parentKB.addParent(2, 3);
-        pkb = DE.run(pkb);
         pql = PQL::PQLManager(pkb);
     }
 
