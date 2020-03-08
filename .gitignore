@@ -32,7 +32,7 @@
 # *.lib
 
 # Executables
-# *.exe				(To run AutoTester on travis)
+*.exe
 *.out
 *.app
 
@@ -83,8 +83,6 @@ mono_crash.*
 
 # Build results
 [Dd]ebug/
-# (for automated testing)
-!*/Code06/Debug/Autotester.exe
 [Dd]ebugPublic/
 [Rr]elease/
 [Rr]eleases/
