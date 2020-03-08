@@ -49,12 +49,14 @@ namespace UnitTesting
 	PKB::PKB pkbCyclic;
 	PKB::PKB pkbNormalAndRecursive;
 	PKB::PKB pkbNormalAndCyclic;
+	PKB::PKB pkbInvalidProcCall;
 	FrontEnd::DesignExtractor DE_callStar;
 
 	TEST_CLASS(TestDesignExtractor_calls)
 	{
 	public:
 		wchar_t* message = L"Cycle Detected";
+		wchar_t* message2 = L"Invalid procedure call detected";
 		std::unordered_set<ProcId> emptyResult;
 
 		TEST_CLASS_INITIALIZE(setup) {
@@ -188,6 +190,16 @@ namespace UnitTesting
 			pkbNormalAndCyclic.procTable.insertProc(PROC_D);
 			pkbNormalAndCyclic.procTable.insertProc(PROC_E);
 			pkbNormalAndCyclic.procTable.insertProc(PROC_F);
+
+			// Invalid procedure call to non-existent procedure
+			pkbInvalidProcCall = PKB::PKB();
+			pkbInvalidProcCall.stmtTable.insertStmt(CALL_B);
+			pkbInvalidProcCall.stmtTable.insertStmt(CALL_C);
+			pkbInvalidProcCall.stmtListTable.insertStmtLst(sl7);
+			pkbInvalidProcCall.procTable.insertProc(PROC_A);
+			pkbInvalidProcCall.stmtTable.insertStmt(READ_1);
+			pkbInvalidProcCall.stmtListTable.insertStmtLst(sl3);
+			pkbInvalidProcCall.procTable.insertProc(PROC_B);
 		}
 
 		TEST_METHOD(populateCallStar_pkbCallStar) {
@@ -278,6 +290,12 @@ namespace UnitTesting
 		TEST_METHOD(populateCallStar_pkbNormalAndCyclic) {
 			auto lambda = [] { pkbNormalAndCyclic = DE_callStar.run(pkbNormalAndCyclic); };
 			Assert::ExpectException<std::invalid_argument>(lambda, message);
+		}
+
+
+		TEST_METHOD(populateCallStar_pkbInvalidProcCall) {
+			auto lambda = [] { pkbInvalidProcCall = DE_callStar.run(pkbInvalidProcCall); };
+			Assert::ExpectException<std::invalid_argument>(lambda, message2);
 		}
 	};
 }
