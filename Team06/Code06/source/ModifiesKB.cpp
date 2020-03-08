@@ -35,42 +35,42 @@ bool ModifiesKB::procModifies(ProcId procId, VarId varId)
 	}
 }
 
-std::unordered_set<VarId> ModifiesKB::getAllVarsModifiedByStmt(StmtId stmtId)
+const std::unordered_set<VarId>& ModifiesKB::getAllVarsModifiedByStmt(StmtId stmtId)
 {
 	try {
 		return stmtVarTable.at(stmtId);
 	}
 	catch (const std::out_of_range &) {
-		return {};
+		return EMPTY_RESULT;
 	}
 }
 
-std::unordered_set<StmtId> ModifiesKB::getAllStmtsModifyVar(VarId varId)
+const std::unordered_set<StmtId>& ModifiesKB::getAllStmtsModifyVar(VarId varId)
 {
 	try {
 		return varStmtTable.at(varId);
 	}
 	catch (const std::out_of_range &) {
-		return {};
+		return EMPTY_RESULT;
 	}
 }
 
-std::unordered_set<VarId> ModifiesKB::getAllVarsModifiedByProc(ProcId procId)
+const std::unordered_set<VarId>& ModifiesKB::getAllVarsModifiedByProc(ProcId procId)
 {
 	try {
 		return procVarTable.at(procId);
 	}
 	catch (const std::out_of_range&) {
-		return {};
+		return EMPTY_RESULT;
 	}
 }
 
-std::unordered_set<ProcId> ModifiesKB::getAllProcModifyVar(VarId varId)
+const std::unordered_set<ProcId>& ModifiesKB::getAllProcModifyVar(VarId varId)
 {
 	try {
 		return varProcTable.at(varId);
 	}
 	catch (const std::out_of_range&) {
-		return {};
+		return EMPTY_RESULT;
 	}
 }

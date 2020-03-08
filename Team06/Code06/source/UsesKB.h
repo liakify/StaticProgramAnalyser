@@ -5,6 +5,7 @@
 #include <unordered_set>
 
 #include "Types.h"
+#include "Constants.h"
 
 class UsesKB
 {
@@ -17,13 +18,13 @@ public:
 
 	bool procUses(ProcId procId, VarId varId);
 
-	std::unordered_set<VarId> getAllVarsUsedByStmt(StmtId stmtId);
+	const std::unordered_set<VarId>& getAllVarsUsedByStmt(StmtId stmtId);
 
-	std::unordered_set<StmtId> getAllStmtsUsingVar(VarId varId);
+	const std::unordered_set<StmtId>& getAllStmtsUsingVar(VarId varId);
 
-	std::unordered_set<VarId> getAllVarsUsedByProc(ProcId procId);
+	const std::unordered_set<VarId>& getAllVarsUsedByProc(ProcId procId);
 
-	std::unordered_set<ProcId> getAllProcUsingVar(VarId varId);
+	const std::unordered_set<ProcId>& getAllProcUsingVar(VarId varId);
 
 private:
 	std::unordered_map<StmtId, std::unordered_set<VarId>> stmtVarTable;

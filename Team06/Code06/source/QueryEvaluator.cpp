@@ -1,6 +1,7 @@
 #include "AssignPatternEvaluator.h"
 #include "FollowsEvaluator.h"
 #include "FollowsStarEvaluator.h"
+#include "IfPatternEvaluator.h"
 #include "LoggingUtils.h"
 #include "ModifiesEvaluator.h"
 #include "ParentEvaluator.h"
@@ -8,6 +9,7 @@
 #include "QueryEvaluator.h"
 #include "UsesEvaluator.h"
 #include "TypeUtils.h"
+#include "WhilePatternEvaluator.h"
 
 namespace PQL {
 	
@@ -46,7 +48,7 @@ namespace PQL {
 	}
 
 	ClauseResult QueryEvaluator::extractQueryResults(Query &query, ClauseResult& combinedResult) {
-		// Iteration 1: Only one target entity
+		
 		if (combinedResult.empty()) {
 			SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::extractQueryResults: Empty Result!\n");
 			return {};
@@ -220,12 +222,10 @@ namespace PQL {
 			return AssignPatternEvaluator::evaluateAssignPatternClause(this->database, patternClause, synonymTable);
 			break;
 		case PatternType::IF_PATTERN:
-			SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluatePatternClause: Evaluator for IF_PATTERN pattern type not implemented!");
-			return {};
+			return IfPatternEvaluator::evaluateIfPatternClause(this->database, patternClause, synonymTable);
 			break;
 		case PatternType::WHILE_PATTERN:
-			SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluatePatternClause: Evaluator for WHILE_PATTERN pattern type not implemented!");
-			return {};
+			return WhilePatternEvaluator::evaluateWhilePatternClause(this->database, patternClause, synonymTable);
 			break;
 		default:
 			SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluatePatternClause: Unknown pattern type %d\n", patternClause.type);

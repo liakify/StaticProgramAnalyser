@@ -14,6 +14,7 @@
 #include "ModifiesKB.h"
 #include "PatternKB.h"
 #include "NextKB.h"
+#include "CallsKB.h"
 
 namespace PKB {
 
@@ -32,6 +33,7 @@ namespace PKB {
     StmtTable stmtTable;
     FollowsKB followsKB;
     ParentKB parentKB;
+    CallsKB callsKB;
     UsesKB usesKB;
     ModifiesKB modifiesKB;
     PatternKB patternKB;
