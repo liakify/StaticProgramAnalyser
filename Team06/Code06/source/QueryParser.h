@@ -41,7 +41,7 @@ namespace PQL {
         bool validateQuerySyntax(Query& query, std::vector<std::string> stmts);
         bool validateQuerySemantics(Query& query);
         std::vector<std::string> splitStatements(std::string queryString);
-        std::tuple<bool, std::vector<std::string>, std::vector<std::string>> splitConstraints(Query& query, std::string queryBodySuffix);
+        std::tuple<bool, std::vector<std::string>, std::vector<std::string>> splitClauses(Query& query, std::string queryBodySuffix);
         bool parseDeclarations(Query& query, std::vector<std::string> statements);
         std::pair<bool, std::string> parseQueryTarget(Query& query, std::string queryBody);
         bool parseRelationClauses(Query& query, std::vector<std::string> relationClauses);
