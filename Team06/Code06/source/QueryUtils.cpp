@@ -36,7 +36,7 @@ namespace PQL {
     bool QueryUtils::isValidEntityRef(string input) {
         if (input.find('\"') != string::npos) {
             // String contains a " - interpret literally as variable name
-            regex VALID_ENTITY_REFERENCE("^\" *[A-Za-z][A-Za-z0-9]* *\"$");
+            regex VALID_ENTITY_REFERENCE("^\"\\s*[A-Za-z][A-Za-z0-9]*\\s*\"$");
             smatch ematch;
 
             // Entity reference is not a string of form "<identifier>"
@@ -49,11 +49,11 @@ namespace PQL {
     }
 
     string QueryUtils::leftTrim(string input) {
-        return input.erase(0, input.find_first_not_of(" \n\r"));
+        return input.erase(0, input.find_first_not_of(" \t\f\v\n\r"));
     }
 
     string QueryUtils::rightTrim(string input) {
-        return input.erase(input.find_last_not_of(" \n\r") + 1);
+        return input.erase(input.find_last_not_of(" \t\f\v\n\r") + 1);
     }
 
     string QueryUtils::trimString(string input) {
@@ -61,7 +61,7 @@ namespace PQL {
     }
 
     string QueryUtils::stripPattern(string input) {
-        regex STRIP_TARGET("[ \"]");
+        regex STRIP_TARGET("[\\s\"]");
         smatch cmatch;
 
         return regex_replace(input, STRIP_TARGET, "");
