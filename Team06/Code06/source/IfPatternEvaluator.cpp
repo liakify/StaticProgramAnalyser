@@ -16,8 +16,7 @@ namespace PQL {
                 ClauseResultEntry resultEntry;
                 resultEntry["_RESULT"] = "TRUE";
                 return { resultEntry };
-            }
-            else {
+            } else {
                 return {};
             }
         }
@@ -86,16 +85,13 @@ namespace PQL {
             if (argType1 == ArgType::WILDCARD) {
                 // 1 wildcard
                 return evaluateIfPatternClauseWild(database);
-            }
-            else if (argType1 == ArgType::IDENTIFIER) {
+            } else if (argType1 == ArgType::IDENTIFIER) {
                 // 1 identifier
                 return evaluateIfPatternClauseId(database, clause, synonymTable);
-            }
-            else if (argType1 == ArgType::SYNONYM) {
+            } else if (argType1 == ArgType::SYNONYM) {
                 // 1 synonym
                 return evaluateIfPatternClauseSyn(database, clause, synonymTable);
-            }
-            else {
+            } else {
                 SPA::LoggingUtils::LogErrorMessage("IfPatternEvaluator::evaluateIfPatternClause: Invalid ArgTypes for If Pattern clause. argType1 = %d\n", argType1);
                 return {};
             }

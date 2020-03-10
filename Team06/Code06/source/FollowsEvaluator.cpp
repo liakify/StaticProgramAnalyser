@@ -20,8 +20,7 @@ namespace PQL {
                 ClauseResultEntry resultEntry;
                 resultEntry["_RESULT"] = "TRUE";
                 return { resultEntry };
-            }
-            else {
+            } else {
                 return {};
             }
         }
@@ -61,20 +60,17 @@ namespace PQL {
                     ClauseResultEntry resultEntry;
                     resultEntry["_RESULT"] = "TRUE";
                     return { resultEntry };
-                }
-                else {
+                } else {
                     return {};
                 }
-            }
-            else {
+            } else {
                 // Case 2: Wildcard, Integer
                 StmtId arg2 = std::stoi(clause.getArgs().second.second);
                 if (database.followsKB.getFollowing(arg2) != 0) {
                     ClauseResultEntry resultEntry;
                     resultEntry["_RESULT"] = "TRUE";
                     return { resultEntry };
-                }
-                else {
+                } else {
                     return {};
                 }
             }
@@ -101,19 +97,16 @@ namespace PQL {
                 StmtId follower = database.followsKB.getFollower(arg1);
                 if (follower == 0) {
                     return {};
-                }
-                else {
+                } else {
                     if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(follower)->getType(), synonymTable[arg2])) {
                         ClauseResultEntry resultEntry;
                         resultEntry[arg2] = std::to_string(follower);
                         return { resultEntry };
-                    }
-                    else {
+                    } else {
                         return {};
                     }
                 }
-            }
-            else {
+            } else {
                 // Case 2: Synonym, Integer
                 Synonym arg1 = clause.getArgs().first.second;
                 StmtId arg2 = std::stoi(clause.getArgs().second.second);
@@ -121,14 +114,12 @@ namespace PQL {
                 StmtId following = database.followsKB.getFollowing(arg2);
                 if (following == 0) {
                     return {};
-                }
-                else {
+                } else {
                     if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(following)->getType(), synonymTable[arg1])) {
                         ClauseResultEntry resultEntry;
                         resultEntry[arg1] = std::to_string(following);
                         return { resultEntry };
-                    }
-                    else {
+                    } else {
                         return {};
                     }
                 }
@@ -162,8 +153,7 @@ namespace PQL {
                     }
                 }
                 return clauseResult;
-            }
-            else {
+            } else {
                 Synonym arg1 = clause.getArgs().first.second;
                 // Case 2: Synonym, Wildcard
                 ClauseResult clauseResult = {};
@@ -205,8 +195,7 @@ namespace PQL {
                             resultEntry[arg1] = std::to_string(i);
                             resultEntry[arg2] = std::to_string(follower);
                             clauseResult.emplace_back(resultEntry);
-                        }
-                        else {
+                        } else {
                             if (i == follower) {
                                 ClauseResultEntry resultEntry;
                                 resultEntry[arg1] = std::to_string(i);
@@ -228,31 +217,25 @@ namespace PQL {
             if (argType1 == ArgType::INTEGER && argType2 == ArgType::INTEGER) {
                 // Two statement numbers supplied
                 return evaluateFollowsClauseIntInt(database, clause);
-            }
-            else if (argType1 == ArgType::WILDCARD && argType2 == ArgType::WILDCARD) {
+            } else if (argType1 == ArgType::WILDCARD && argType2 == ArgType::WILDCARD) {
                 // Two wildcards supplied
                 return evaluateFollowsClauseWildWild(database);
-            }
-            else if (argType1 == ArgType::INTEGER && argType2 == ArgType::WILDCARD ||
+            } else if (argType1 == ArgType::INTEGER && argType2 == ArgType::WILDCARD ||
                 argType1 == ArgType::WILDCARD && argType2 == ArgType::INTEGER) {
                 // One statement number, one wildcard supplied
                 return evaluateFollowsClauseIntWild(database, clause);
-            }
-            else if (argType1 == ArgType::INTEGER && argType2 == ArgType::SYNONYM ||
+            } else if (argType1 == ArgType::INTEGER && argType2 == ArgType::SYNONYM ||
                 argType1 == ArgType::SYNONYM && argType2 == ArgType::INTEGER) {
                 // One statement number, one synonym
                 return evaluateFollowsClauseIntSyn(database, clause, synonymTable);
-            }
-            else if (argType1 == ArgType::WILDCARD && argType2 == ArgType::SYNONYM ||
+            } else if (argType1 == ArgType::WILDCARD && argType2 == ArgType::SYNONYM ||
                 argType1 == ArgType::SYNONYM && argType2 == ArgType::WILDCARD) {
                 // One synonym, one wildcard
                 return evaluateFollowsClauseWildSyn(database, clause, synonymTable);
-            }
-            else if (argType1 == ArgType::SYNONYM && argType2 == ArgType::SYNONYM) {
+            } else if (argType1 == ArgType::SYNONYM && argType2 == ArgType::SYNONYM) {
                 // Two synonyms
                 return evaluateFollowsClauseSynSyn(database, clause, synonymTable);
-            }
-            else {
+            } else {
                 SPA::LoggingUtils::LogErrorMessage("FollowsEvaluator::evaluateFollowsClause: Invalid ArgTypes for Follows clause. argType1 = %d, argType2 = %d\n", argType1, argType2);
                 return {};
             }

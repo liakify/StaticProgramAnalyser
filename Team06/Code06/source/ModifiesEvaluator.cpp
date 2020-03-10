@@ -24,12 +24,10 @@ namespace PQL {
                     ClauseResultEntry resultEntry;
                     resultEntry["_RESULT"] = "TRUE";
                     return { resultEntry };
-                }
-                else {
+                } else {
                     return {};
                 }
-            }
-            else {
+            } else {
                 // Case 2: Procedure name provided
                 ProcId arg1 = database.procTable.getProcId(clause.getArgs().first.second);
                 VarId arg2 = database.varTable.getVarId(clause.getArgs().second.second);
@@ -38,8 +36,7 @@ namespace PQL {
                     ClauseResultEntry resultEntry;
                     resultEntry["_RESULT"] = "TRUE";
                     return { resultEntry };
-                }
-                else {
+                } else {
                     return {};
                 }
             }
@@ -63,20 +60,17 @@ namespace PQL {
                     ClauseResultEntry resultEntry;
                     resultEntry["_RESULT"] = "TRUE";
                     return { resultEntry };
-                }
-                else {
+                } else {
                     return {};
                 }
-            }
-            else {
+            } else {
                 // Case 2: Procedure name provided
                 ProcId arg1 = database.procTable.getProcId(clause.getArgs().first.second);
                 if (database.modifiesKB.getAllVarsModifiedByProc(arg1).size() > 0) {
                     ClauseResultEntry resultEntry;
                     resultEntry["_RESULT"] = "TRUE";
                     return { resultEntry };
-                }
-                else {
+                } else {
                     return {};
                 }
             }
@@ -108,8 +102,7 @@ namespace PQL {
                     clauseResult.emplace_back(resultEntry);
                 }
                 return clauseResult;
-            }
-            else {
+            } else {
                 // Case 2: Procedure name
                 ProcId arg1 = database.procTable.getProcId(clause.getArgs().first.second);
                 Synonym arg2 = clause.getArgs().second.second;
@@ -150,8 +143,7 @@ namespace PQL {
                     clauseResult.emplace_back(resultEntry);
                 }
                 return clauseResult;
-            }
-            else {
+            } else {
                 // Case 2: Synonym is a statement
                 std::unordered_set<StmtId> modifyingStmts = database.modifiesKB.getAllStmtsModifyVar(arg2);
                 ClauseResult clauseResult;
@@ -190,8 +182,7 @@ namespace PQL {
                     }
                 }
                 return clauseResult;
-            }
-            else {
+            } else {
                 // Case 2: Synonym is a statement
                 ClauseResult clauseResult = {};
                 for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
@@ -232,8 +223,7 @@ namespace PQL {
                     }
                 }
                 return clauseResult;
-            }
-            else {
+            } else {
                 ClauseResult clauseResult = {};
                 for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
                     if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i)->getType(), synonymTable[arg1])) {
@@ -259,28 +249,22 @@ namespace PQL {
             if ((argType1 == ArgType::INTEGER || argType1 == ArgType::IDENTIFIER) && argType2 == ArgType::IDENTIFIER) {
                 // One statement number/procedure name, one identifier supplied
                 return evaluateModifiesClauseIntIdId(database, clause);
-            }
-            else if ((argType1 == ArgType::INTEGER || argType1 == ArgType::IDENTIFIER) && argType2 == ArgType::WILDCARD) {
+            } else if ((argType1 == ArgType::INTEGER || argType1 == ArgType::IDENTIFIER) && argType2 == ArgType::WILDCARD) {
                 // One statement number/procedure name, one wildcard supplied
                 return evaluateModifiesClauseIntIdWild(database, clause);
-            }
-            else if ((argType1 == ArgType::INTEGER || argType1 == ArgType::IDENTIFIER) && argType2 == ArgType::SYNONYM) {
+            } else if ((argType1 == ArgType::INTEGER || argType1 == ArgType::IDENTIFIER) && argType2 == ArgType::SYNONYM) {
                 // One statement number/procedure name, one synonym
                 return evaluateModifiesClauseIntIdSyn(database, clause, synonymTable);
-            }
-            else if (argType1 == ArgType::SYNONYM && argType2 == ArgType::IDENTIFIER) {
+            } else if (argType1 == ArgType::SYNONYM && argType2 == ArgType::IDENTIFIER) {
                 // One synonym, one identifier
                 return evaluateModifiesClauseSynId(database, clause, synonymTable);
-            }
-            else if (argType1 == ArgType::SYNONYM && argType2 == ArgType::WILDCARD) {
+            } else if (argType1 == ArgType::SYNONYM && argType2 == ArgType::WILDCARD) {
                 // One synonym, one wildcard
                 return evaluateModifiesClauseSynWild(database, clause, synonymTable);
-            }
-            else if (argType1 == ArgType::SYNONYM && argType2 == ArgType::SYNONYM) {
+            } else if (argType1 == ArgType::SYNONYM && argType2 == ArgType::SYNONYM) {
                 // Two synonyms
                 return evaluateModifiesClauseSynSyn(database, clause, synonymTable);
-            }
-            else {
+            } else {
                 SPA::LoggingUtils::LogErrorMessage("ModifiesEvaluator::evaluateModifiesClause: Invalid ArgTypes for Modifies clause. argType1 = %d, argType2 = %d\n", argType1, argType2);
                 return {};
             }
