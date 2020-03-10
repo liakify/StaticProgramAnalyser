@@ -6,17 +6,17 @@
 
 enum class StmtType
 {
-	PRINT, READ, IF, WHILE, CALL, ASSIGN
+    PRINT, READ, IF, WHILE, CALL, ASSIGN
 };
 
 enum class ExprType
 {
-	VAR, CONST
+    VAR, CONST
 };
 
 enum class NodeType
 {
-	PREDECESSOR, SUCCESSOR
+    PREDECESSOR, SUCCESSOR
 };
 
 using VarName = std::string;
