@@ -16,7 +16,7 @@ namespace PQL {
 
         // Validate then parse PQL query string into its query struct representation
         Query query = this->parser.parseQuery(queryString);
-        if (query.status != "success") {
+        if (query.status != SUCCESS) {
             // Terminate early if parsing or validation failed
             SPA::LoggingUtils::LogErrorMessage(query.status);
             return;

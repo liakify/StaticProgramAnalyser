@@ -1,4 +1,6 @@
 #include "AssignPatternEvaluator.h"
+#include "CallsEvaluator.h"
+#include "CallsStarEvaluator.h"
 #include "FollowsEvaluator.h"
 #include "FollowsStarEvaluator.h"
 #include "IfPatternEvaluator.h"
@@ -207,6 +209,24 @@ namespace PQL {
 		case RelationType::USESS:
 		case RelationType::USESP:
 			return UsesEvaluator::evaluateUsesClause(this->database, relationClause, synonymTable);
+			break;
+		case RelationType::CALLS:
+			return CallsEvaluator::evaluateCallsClause(this->database, relationClause, synonymTable);
+			break;
+		case RelationType::CALLST:
+			return CallsStarEvaluator::evaluateCallsStarClause(this->database, relationClause, synonymTable);
+			break;
+		case RelationType::NEXT:
+			SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluateRelationClause: Next relationship not implemented!");
+			break;
+		case RelationType::NEXTT:
+			SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluateRelationClause: Next* relationship not implemented!");
+			break;
+		case RelationType::AFFECTS:
+			SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluateRelationClause: Affects relationship not implemented!");
+			break;
+		case RelationType::AFFECTST:
+			SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluateRelationClause: Affects* relationship not implemented!");
 			break;
 		default:
 			SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluateRelationClause: Unknown relation type %d\n", relationClause.type);

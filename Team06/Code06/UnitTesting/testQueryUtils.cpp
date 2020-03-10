@@ -18,13 +18,13 @@ namespace UnitTesting {
 		vector<string> INVALID_INTEGERS = { EMPTY_STRING, "-1", "3216 ", " 3217", "20 40", "0xF" };
 
 		vector<string> VALID_IDENTIFIERS = { "A", "fOr", "softwareEng1n33r1ng", "CS3203" };
-		vector<string> INVALID_IDENTIFIERS = { EMPTY_STRING, "1", "3203S", " Give", "us ", "A+", "thank you", "xoxo_team6" };
+		vector<string> INVALID_IDENTIFIERS = { EMPTY_STRING, "1", "3203S", " Give", "us ", "an\r", "A+", "thank you", "xoxo_team6" };
 
 		vector<string> VALID_STMT_REFS = { "_" , "3281", "dAmYtH" };
-		vector<string> INVALID_STMT_REFS = { EMPTY_STRING, "-65536", "2040S" };
+		vector<string> INVALID_STMT_REFS = { EMPTY_STRING, " 369", "-65536", "2040S" };
 
 		vector<string> VALID_ENTITY_REFS = { "_", "synonym", "\"quotes\"", "\"  varQuotes \"" };
-		vector<string> INVALID_ENTITY_REFS = { EMPTY_STRING, "1", "1231S", " space ", "\"noEnd", "noStart\"", "\"\"dupes\"\"", "\"expr + 1\"" };
+		vector<string> INVALID_ENTITY_REFS = { EMPTY_STRING, "1", "1231S", " space", "tabs\t" "\"noEnd", "noStart\"", "\"\"dupes\"\"", "\"expr + 1\"" };
 
 		vector<string> VALID_PATTERNS = {
 			// Wildcard pattern
@@ -37,7 +37,10 @@ namespace UnitTesting {
 			"  \"frontSpace\"", "\"backSpace\" ", "  \"both\" ", "\"420+69\"", "\" starts+here  \"", "\"fib/1 + 1*   two  - Thr33   \"",
 			// Inclusive patterns with variably spaced expressions
 			"_ \"leftOnly\"_", "_\"rightOnly\" _", "_ \"b0th / S1des\" _", "_ \" 3230 %   D *c - b+a\"  _"
+			// Patterns with different whitespace characters
+			"_\"\tinside\r\n\"_", "\n \"outside\"\t\r", "\f \r\"\tx -\vy\f%\rz\n\"\v\n \t"
 		};
+
 		vector<string> INVALID_PATTERNS = {
 			// Missing or unmatched quotation marks
 			EMPTY_STRING, "3 + 5 - 7", "_b * b - 4 * A * c", "\"noClosing % quotation", "_missing * start\"_"
@@ -67,7 +70,8 @@ namespace UnitTesting {
 			{ "right ", "right " },
 			{ " multiple words", "multiple words" },
 			{ "\n\rlineBreaks", "lineBreaks" },
-			{ "\r left & right \n", "left & right \n" }
+			{ "\r left & right \n", "left & right \n" },
+			{ " \t\f\v\n\rall whitespaces \t\f\v\n\r", "all whitespaces \t\f\v\n\r" }
 		};
 
 		vector<pair<string, string>> RIGHT_TRIM_TESTS = {
@@ -78,14 +82,16 @@ namespace UnitTesting {
 			{ " left ", " left" },
 			{ "split tokens  ", "split tokens" },
 			{ "lineBreaks\n\r", "lineBreaks" },
-			{ "\r left and right \n", "\r left and right" }
+			{ "\r left and right \n", "\r left and right" },
+			{ " \t\f\v\n\rall whitespaces \t\f\v\n\r", " \t\f\v\n\rall whitespaces" }
 		};
 
 		vector<pair<string, string>> TRIMMED_STRING_TESTS = {
 			{ EMPTY_STRING, EMPTY_STRING },
 			{ "idempot3nt", "idempot3nt" },
 			{ "\n \rfront & bacc _ g0n3  \r \n", "front & bacc _ g0n3" },
-			{ "< div&= >\n", "< div&= >" }
+			{ "< div&= >\n", "< div&= >" },
+			{ " \t\f\v\n\rall whitespaces \t\f\v\n\r", "all whitespaces" }
 		};
 
 		vector<pair<string, string>> STRIPPED_PATTERN_TESTS = {
@@ -94,7 +100,8 @@ namespace UnitTesting {
 			{ "_\"DORSCON - orang3\"_", "_DORSCON-orang3_" },
 			{ "\" pls * 1  -star+rep0\"    ", "pls*1-star+rep0" },
 			{ " _\"n0ne+ l3ft *righT % both -  many  \" _","_n0ne+l3ft*righT%both-many_" },
-			{ "_  \"      wutDis  -1\" _  " , "_wutDis-1_" }
+			{ "_  \"      wutDis  -1\" _  " , "_wutDis-1_" },
+			{ "\" \t\f\v\n\rall % white + spaces \t\f\v\n\r\"", "all%white+spaces" }
 		};
 
 		vector<pair<pair<string, char>, pair<string, string>>> SPLIT_STRING_TESTS = {
@@ -108,7 +115,7 @@ namespace UnitTesting {
 			{ { " <div> text </div>  ", '>' }, { "<div", "text </div>" } },
 			{ { "x++; y--; z += y ; ", ';' }, { "x++", "y--; z += y ;" } },
 			{ { "Modifies ( stt, var) ", '(' }, { "Modifies", "stt, var)" } },
-			{ { "Select < x, BOOLEAN, var > ", '<' }, { "Select", "x, BOOLEAN, var >" } }
+			{ { "\nSelect\t<\fx, BOOLEAN, var >\r ", '<' }, { "Select", "x, BOOLEAN, var >" } }
 		};
 		
 		vector<pair<pair<string, char>, vector<string>>> TOKENISED_STRING_TESTS = {
@@ -122,7 +129,8 @@ namespace UnitTesting {
 			{ { "pattern ( Uses ,_, _) ", ',' }, { "pattern ( Uses", "_", "_)" } },
 			{ { " assign a1", ',' }, { "assign a1" } },
 			{ { " stmt s ,s1, s2, s3 ", ',' }, { "stmt s", "s1", "s2", "s3" } },
-			{ { "stmt s1,s2 ;call c; ifs  i1,   i2 ;  while w  ; Select s1", ';' }, { "stmt s1,s2", "call c", "ifs  i1,   i2", "while w", "Select s1" } }
+			{ { "stmt s1,s2 ;call c; ifs  i1,   i2 ;  while w  ; Select s1", ';' }, { "stmt s1,s2", "call c", "ifs  i1,   i2", "while w", "Select s1" } },
+			{ { "\nassign\ra1,\ta2;\rprog_line\nl1 ;\vprocedure\fp;\fSelect BOOLEAN\t", ';' }, { "assign\ra1,\ta2", "prog_line\nl1", "procedure\fp", "Select BOOLEAN" } }
 		};
 
 		vector<pair<pair<string, string>, vector<string>>> REGEX_MATCHER_TESTS = {
@@ -130,6 +138,7 @@ namespace UnitTesting {
 			{ { "ABCDEFGHIJKLMNOPQRSTUVWXYZ", "[0-9]" }, { } },
 			{ { "a -> b -> 3 <- d -> e <- f -> 6", "[A-Za-z]+(?! <-)" }, { "a", "b", "d", "f" } },
 			{ { "<p><b><i> bolded text </p></b></i>", "</?[A-Za-z]+>" }, { "<p>", "<b>", "<i>", "</p>", "</b>", "</i>" } },
+			{ { "\nthe\tlazy\vfox\rsleeps soundly\ftonight", "\\w+(?=\\s)"}, { "the", "lazy", "fox", "sleeps", "soundly" } },
 			{ { "recurse(M[0:N/2], M[N/2 + 1:N], R[0:N])", "\\[[A-Za-z0-9\\+\\-\\*\\/\\%\\s:]+\\]" }, { "[0:N/2]", "[N/2 + 1:N]", "[0:N]" } }
 		};
 
@@ -157,6 +166,15 @@ namespace UnitTesting {
 			}
 			for (auto input : INVALID_STMT_REFS) {
 				Assert::IsFalse(QueryUtils::isValidStmtRef(input));
+			}
+		}
+
+		TEST_METHOD(isValidEntityRef) {
+			for (auto input : VALID_ENTITY_REFS) {
+				Assert::IsTrue(QueryUtils::isValidEntityRef(input));
+			}
+			for (auto input : INVALID_ENTITY_REFS) {
+				Assert::IsFalse(QueryUtils::isValidEntityRef(input));
 			}
 		}
 

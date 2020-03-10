@@ -35,6 +35,7 @@ namespace UnitTesting {
 		string CHAINED_STMT_PROG_LINE_QUERY = "stmt s; prog_line l1, l2; variable v; Select <l1, v> such that Parent*(l1, s) and Next*(s, l2) and Affects(l2, l1) and Uses(l1, v) and Modifies(l1, _)";
 		string CHAINED_ADV_RELATIONS_QUERY = "prog_line l; call cl; assign a; variable v; Select <l, a, v> such that Uses(\"error\", v) and Modifies(a, v) such that Affects(l, a) and Next*(a, cl) and Calls*(_, \"error\")";
 		string CHAINED_ALL_RELATIONS_QUERY = "procedure p; stmt s; prog_line l; call cl; assign a; variable v; Select <p, v> such that Calls(_, p) and Uses(p, v) and Parent(s, cl) and Modifies(cl, v) and Follows*(cl, l) and Next(l, a) and Affects*(a, a)";
+		string CHAINED_VARYING_WHITESPACE_QUERY = "\nprocedure  p;\rwhile\tw ;assign\va;  variable\fv1,  v2;\rSelect\f<  p,\tw,  a>\n pattern\ta(  v1,\f_\"\t69-\v 420\"_ )\nsuch  that\rModifies\r(p\t,v1)  and\rUses(\tw\v,  v1)\npattern\tw  (v2, _\v\f) such\t\tthat Next*\f (\ta, w\v)\n";
 
 		// Invalid queries that fail in validateQuerySyntax
 		string EMPTY_QUERY = "";
@@ -128,7 +129,8 @@ namespace UnitTesting {
 			COMPLEX_VALID_QUERY, COMPLEX_PATTERN_STRING_QUERY, CHAINED_BOOLEAN_QUERY,
 			CHAINED_ALL_PATTERNS_QUERY, CHAINED_BASIC_RELATIONS_QUERY, CHAINED_MIXED_CLAUSES_QUERY,
 			CHAINED_CALLS_QUERY, CHAINED_NEXT_QUERY, CHAINED_AFFECTS_QUERY,
-			CHAINED_STMT_PROG_LINE_QUERY, CHAINED_ADV_RELATIONS_QUERY, CHAINED_ALL_RELATIONS_QUERY
+			CHAINED_STMT_PROG_LINE_QUERY, CHAINED_ADV_RELATIONS_QUERY, CHAINED_ALL_RELATIONS_QUERY,
+			CHAINED_VARYING_WHITESPACE_QUERY
 		};
 
 		// Array containing all invalid queries with a single deviation from the syntax grammar or
