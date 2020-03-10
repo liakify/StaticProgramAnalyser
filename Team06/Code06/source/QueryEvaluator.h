@@ -13,7 +13,7 @@ namespace PQL {
 
     class QueryEvaluator {
 
-    public:
+     public:
         /**
         * Constructor for a QueryEvaluator.
         * The QueryEvaluator will evaluate queries based on the given PKB.
@@ -30,9 +30,9 @@ namespace PQL {
         */
         ClauseResult evaluateQuery(Query &query);
 
-    private:
+     private:
         PKB::PKB database;
-        
+
         /**
         * Evaluates a single relation clause.
         *
@@ -40,7 +40,7 @@ namespace PQL {
         * @param    synonymTable    The synonym table associated with the query.
         * @return   The results of the evaluation
         */
-        ClauseResult evaluateRelationClause(RelationClause &relationClause, 
+        ClauseResult evaluateRelationClause(RelationClause &relationClause,
             std::unordered_map<std::string, DesignEntity> &synonymTable);
 
         /**
@@ -50,7 +50,7 @@ namespace PQL {
         * @param    synonymTable    The synonym table associated with the query.
         * @return   The results of the evaluation
         */
-        ClauseResult evaluatePatternClause(PatternClause &patternClause, 
+        ClauseResult evaluatePatternClause(PatternClause &patternClause,
             std::unordered_map<std::string, DesignEntity> &synonymTable);
 
         /**

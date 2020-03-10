@@ -46,7 +46,7 @@ namespace PKB {
     }
 
     Statement* StmtTable::get(StmtId stmtId) {
-        return idStmtTable.at(stmtId); // throws out_of_range exception
+        return idStmtTable.at(stmtId);  // throws out_of_range exception
     }
 
     unordered_set<StmtId> StmtTable::getStmtsByType(StmtType stmtType) {

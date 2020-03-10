@@ -103,7 +103,7 @@ namespace PQL {
                         clauseResult.emplace_back(resultEntry);
                     }
                 }
-                
+
                 return clauseResult;
             } else {
                 // Case 2: Synonym, Integer
@@ -155,7 +155,6 @@ namespace PQL {
             } else {
                 Synonym arg1 = clause.getArgs().first.second;
                 // Case 2: Synonym, Wildcard
-                // TODO: Check for set of children
                 ClauseResult clauseResult = {};
                 for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
                     if (database.parentKB.getDirectChildren(i).size() > 0) {

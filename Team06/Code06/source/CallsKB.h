@@ -14,7 +14,7 @@ struct callsRS {
 };
 
 class CallsKB {
-public:
+ public:
     /*
     *   Adds Calls(p1, p2) to the callsTable where p1 directly calls p2
     */
@@ -75,7 +75,7 @@ public:
     */
     const std::unordered_set<ProcId>& getAllCallees();
 
-private:
+ private:
     std::unordered_map<ProcId, callsRS> callsTable;
 
     std::unordered_set<ProcId> allProcCallers;

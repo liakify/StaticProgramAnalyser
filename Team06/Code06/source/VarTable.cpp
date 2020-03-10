@@ -11,14 +11,13 @@ namespace PKB {
             VarId thisId = varIdGenerator++;
             idNameTable.insert(make_pair(thisId, varName));
             return thisId;
-        }
-        else {
+        } else {
             return getVarId(varName);
         }
     }
 
     VarName VarTable::get(VarId varId) {
-        return idNameTable.at(varId); // throws out_of_range exception
+        return idNameTable.at(varId);  // throws out_of_range exception
     }
 
 

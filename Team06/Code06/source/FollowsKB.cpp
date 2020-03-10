@@ -1,8 +1,7 @@
 #include "FollowsKB.h"
 #include <stdexcept>
 
-void FollowsKB::addFollows(StmtId stmtId1, StmtId stmtId2)
-{
+void FollowsKB::addFollows(StmtId stmtId1, StmtId stmtId2) {
     followsRS& fRS1 = followsTable[stmtId1];
     followsRS& fRS2 = followsTable[stmtId2];
 
@@ -10,8 +9,7 @@ void FollowsKB::addFollows(StmtId stmtId1, StmtId stmtId2)
     fRS2.following = stmtId1;
 }
 
-bool FollowsKB::follows(StmtId stmtId1, StmtId stmtId2)
-{
+bool FollowsKB::follows(StmtId stmtId1, StmtId stmtId2) {
     try {
         return followsTable.at(stmtId1).follower == stmtId2;
     }
@@ -20,8 +18,7 @@ bool FollowsKB::follows(StmtId stmtId1, StmtId stmtId2)
     }
 }
 
-bool FollowsKB::followStar(StmtId stmtId1, StmtId stmtId2)
-{
+bool FollowsKB::followStar(StmtId stmtId1, StmtId stmtId2) {
     try {
         std::unordered_set<StmtId> stmt1Followers = followsTable.at(stmtId1).allFollowers;
         return stmt1Followers.find(stmtId2) != stmt1Followers.end();
@@ -31,8 +28,7 @@ bool FollowsKB::followStar(StmtId stmtId1, StmtId stmtId2)
     }
 }
 
-StmtId FollowsKB::getFollower(StmtId stmtId)
-{
+StmtId FollowsKB::getFollower(StmtId stmtId) {
     try {
         return followsTable.at(stmtId).follower;
     }
@@ -41,18 +37,16 @@ StmtId FollowsKB::getFollower(StmtId stmtId)
     }
 }
 
-StmtId FollowsKB::getFollowing(StmtId stmtId)
-{
+StmtId FollowsKB::getFollowing(StmtId stmtId) {
     try {
         return followsTable.at(stmtId).following;
-    } 
+    }
     catch (const std::out_of_range &) {
         return INVALID_STMT_ID;
     }
 }
 
-bool FollowsKB::hasFollower(StmtId stmtId)
-{
+bool FollowsKB::hasFollower(StmtId stmtId) {
     try {
         return followsTable.at(stmtId).follower != 0;
     }
@@ -61,8 +55,7 @@ bool FollowsKB::hasFollower(StmtId stmtId)
     }
 }
 
-bool FollowsKB::isFollowing(StmtId stmtId)
-{
+bool FollowsKB::isFollowing(StmtId stmtId) {
     try {
         return followsTable.at(stmtId).following != 0;
     }
@@ -71,8 +64,7 @@ bool FollowsKB::isFollowing(StmtId stmtId)
     }
 }
 
-const std::unordered_set<StmtId>& FollowsKB::getAllFollowers(StmtId stmtId)
-{
+const std::unordered_set<StmtId>& FollowsKB::getAllFollowers(StmtId stmtId) {
     try {
         return followsTable.at(stmtId).allFollowers;
     }
@@ -81,8 +73,7 @@ const std::unordered_set<StmtId>& FollowsKB::getAllFollowers(StmtId stmtId)
     }
 }
 
-const std::unordered_set<StmtId>& FollowsKB::getAllFollowing(StmtId stmtId)
-{
+const std::unordered_set<StmtId>& FollowsKB::getAllFollowing(StmtId stmtId) {
     try {
         return followsTable.at(stmtId).allFollowing;
     }
@@ -91,8 +82,7 @@ const std::unordered_set<StmtId>& FollowsKB::getAllFollowing(StmtId stmtId)
     }
 }
 
-void FollowsKB::setAllFollowers(StmtId stmtId, std::unordered_set<StmtId> followers)
-{
+void FollowsKB::setAllFollowers(StmtId stmtId, std::unordered_set<StmtId> followers) {
     try {
         followsTable.at(stmtId).allFollowers = followers;
     }
@@ -101,8 +91,7 @@ void FollowsKB::setAllFollowers(StmtId stmtId, std::unordered_set<StmtId> follow
     }
 }
 
-void FollowsKB::setAllFollowing(StmtId stmtId, std::unordered_set<StmtId> following)
-{
+void FollowsKB::setAllFollowing(StmtId stmtId, std::unordered_set<StmtId> following) {
     try {
         followsTable.at(stmtId).allFollowing = following;
     }
@@ -111,8 +100,7 @@ void FollowsKB::setAllFollowing(StmtId stmtId, std::unordered_set<StmtId> follow
     }
 }
 
-bool FollowsKB::hasFollowsRelation()
-{
+bool FollowsKB::hasFollowsRelation() {
     return followsTable.size() != 0;
 }
 

@@ -20,4 +20,4 @@ namespace PKB {
     int StmtListTable::size() {
         return idStmtListTable.size();
     }
-};
+}

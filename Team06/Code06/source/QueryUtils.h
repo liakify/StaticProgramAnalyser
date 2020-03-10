@@ -12,7 +12,7 @@ namespace PQL {
      *  Parser for string validation and manipulation.
      */
     namespace QueryUtils {
-        
+
         /**
          *  Validates an input string as a valid integer.
          *

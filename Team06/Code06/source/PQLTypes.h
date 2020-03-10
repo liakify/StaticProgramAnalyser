@@ -118,7 +118,7 @@ namespace PQL {
     const std::string SEMANTIC_ERR_FPN_NON_STMT_SYNONYM = "semantic error: synonym in F(*)/P(*)/N(*) clause not a STATEMENT or its sub-types";
     const std::string SEMANTIC_ERR_PATTERN_UNDECLARED_FIRST_SYNONYM = "semantic error: undeclared synonym as first arg in pattern clause";
     const std::string SEMANTIC_ERR_PATTERN_NON_VARIABLE_FIRST_SYNONYM = "semantic error: synonym as first arg in pattern clause not a VARIABLE";
-    
+
     /**
      *  Sentinel argument pair that should never be returned by getArgs() method
      *  of a RelationClause or PatternClause instance. Used to denote an argument
@@ -232,8 +232,8 @@ namespace PQL {
                 return { firstEnt, secondEnt };
             default:
                 return { INVALID_ARG, INVALID_ARG };
-            };
-        };
+            }
+        }
     };
 
     /**
@@ -249,7 +249,7 @@ namespace PQL {
         std::pair<ArgType, Pattern> patternArg;
         std::pair<std::pair<ArgType, std::string>, std::pair<ArgType, std::string>> getArgs() {
             return { targetArg, patternArg };
-        };
+        }
     };
 
     /**
@@ -274,5 +274,5 @@ namespace PQL {
         std::vector<RelationClause> relations;
         std::vector<PatternClause> patterns;
     };
-    
+
 }

@@ -1,14 +1,12 @@
 #include "ModifiesKB.h"
 #include <stdexcept>
 
-void ModifiesKB::addStmtModifies(StmtId stmtId, VarId varId)
-{
+void ModifiesKB::addStmtModifies(StmtId stmtId, VarId varId) {
     stmtVarTable[stmtId].insert(varId);
     varStmtTable[varId].insert(stmtId);
 }
 
-bool ModifiesKB::stmtModifies(StmtId stmtId, VarId varId)
-{
+bool ModifiesKB::stmtModifies(StmtId stmtId, VarId varId) {
     try {
         std::unordered_set<VarId> varSet = stmtVarTable.at(stmtId);
         return varSet.find(varId) != varSet.end();
@@ -18,14 +16,12 @@ bool ModifiesKB::stmtModifies(StmtId stmtId, VarId varId)
     }
 }
 
-void ModifiesKB::addProcModifies(ProcId procId, VarId varId)
-{
+void ModifiesKB::addProcModifies(ProcId procId, VarId varId) {
     procVarTable[procId].insert(varId);
     varProcTable[varId].insert(procId);
 }
 
-bool ModifiesKB::procModifies(ProcId procId, VarId varId)
-{
+bool ModifiesKB::procModifies(ProcId procId, VarId varId) {
     try {
         std::unordered_set<VarId> varSet = procVarTable.at(procId);
         return varSet.find(varId) != varSet.end();
@@ -35,8 +31,7 @@ bool ModifiesKB::procModifies(ProcId procId, VarId varId)
     }
 }
 
-const std::unordered_set<VarId>& ModifiesKB::getAllVarsModifiedByStmt(StmtId stmtId)
-{
+const std::unordered_set<VarId>& ModifiesKB::getAllVarsModifiedByStmt(StmtId stmtId) {
     try {
         return stmtVarTable.at(stmtId);
     }
@@ -45,8 +40,7 @@ const std::unordered_set<VarId>& ModifiesKB::getAllVarsModifiedByStmt(StmtId stm
     }
 }
 
-const std::unordered_set<StmtId>& ModifiesKB::getAllStmtsModifyVar(VarId varId)
-{
+const std::unordered_set<StmtId>& ModifiesKB::getAllStmtsModifyVar(VarId varId) {
     try {
         return varStmtTable.at(varId);
     }
@@ -55,8 +49,7 @@ const std::unordered_set<StmtId>& ModifiesKB::getAllStmtsModifyVar(VarId varId)
     }
 }
 
-const std::unordered_set<VarId>& ModifiesKB::getAllVarsModifiedByProc(ProcId procId)
-{
+const std::unordered_set<VarId>& ModifiesKB::getAllVarsModifiedByProc(ProcId procId) {
     try {
         return procVarTable.at(procId);
     }
@@ -65,8 +58,7 @@ const std::unordered_set<VarId>& ModifiesKB::getAllVarsModifiedByProc(ProcId pro
     }
 }
 
-const std::unordered_set<ProcId>& ModifiesKB::getAllProcModifyVar(VarId varId)
-{
+const std::unordered_set<ProcId>& ModifiesKB::getAllProcModifyVar(VarId varId) {
     try {
         return varProcTable.at(varId);
     }

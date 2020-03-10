@@ -1,14 +1,12 @@
 #include "UsesKB.h"
 #include <stdexcept>
 
-void UsesKB::addStmtUses(StmtId stmtId, VarId varId)
-{
+void UsesKB::addStmtUses(StmtId stmtId, VarId varId) {
     stmtVarTable[stmtId].insert(varId);
     varStmtTable[varId].insert(stmtId);
 }
 
-bool UsesKB::stmtUses(StmtId stmtId, VarId varId)
-{
+bool UsesKB::stmtUses(StmtId stmtId, VarId varId) {
     try {
         std::unordered_set<VarId> varSet = stmtVarTable.at(stmtId);
         return varSet.find(varId) != varSet.end();
@@ -18,14 +16,12 @@ bool UsesKB::stmtUses(StmtId stmtId, VarId varId)
     }
 }
 
-void UsesKB::addProcUses(ProcId procId, VarId varId)
-{
+void UsesKB::addProcUses(ProcId procId, VarId varId) {
     procVarTable[procId].insert(varId);
     varProcTable[varId].insert(procId);
 }
 
-bool UsesKB::procUses(ProcId procId, VarId varId)
-{
+bool UsesKB::procUses(ProcId procId, VarId varId) {
     try {
         std::unordered_set<VarId> varSet = procVarTable.at(procId);
         return varSet.find(varId) != varSet.end();
@@ -35,8 +31,7 @@ bool UsesKB::procUses(ProcId procId, VarId varId)
     }
 }
 
-const std::unordered_set<VarId>& UsesKB::getAllVarsUsedByStmt(StmtId stmtId)
-{
+const std::unordered_set<VarId>& UsesKB::getAllVarsUsedByStmt(StmtId stmtId) {
     try {
         return stmtVarTable.at(stmtId);
     }
@@ -45,8 +40,7 @@ const std::unordered_set<VarId>& UsesKB::getAllVarsUsedByStmt(StmtId stmtId)
     }
 }
 
-const std::unordered_set<StmtId>& UsesKB::getAllStmtsUsingVar(VarId varId)
-{
+const std::unordered_set<StmtId>& UsesKB::getAllStmtsUsingVar(VarId varId) {
     try {
         return varStmtTable.at(varId);
     }
@@ -55,8 +49,7 @@ const std::unordered_set<StmtId>& UsesKB::getAllStmtsUsingVar(VarId varId)
     }
 }
 
-const std::unordered_set<VarId>& UsesKB::getAllVarsUsedByProc(ProcId procId)
-{
+const std::unordered_set<VarId>& UsesKB::getAllVarsUsedByProc(ProcId procId) {
     try {
         return procVarTable.at(procId);
     }
@@ -65,8 +58,7 @@ const std::unordered_set<VarId>& UsesKB::getAllVarsUsedByProc(ProcId procId)
     }
 }
 
-const std::unordered_set<ProcId>& UsesKB::getAllProcUsingVar(VarId varId)
-{
+const std::unordered_set<ProcId>& UsesKB::getAllProcUsingVar(VarId varId) {
     try {
         return varProcTable.at(varId);
     }

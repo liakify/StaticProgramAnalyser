@@ -30,7 +30,7 @@ namespace SIMPLE {
     std::unordered_set<VarId> Expression::getVarIds() {
         return this->varSet;
     }
-    
+
     std::unordered_set<ConstId> Expression::getConstIds() {
         return this->constSet;
     }
@@ -46,8 +46,7 @@ namespace SIMPLE {
     std::string Expression::getStr() {
         if (this->str != "") {
             return this->str;
-        }
-        else {
+        } else {
             return "(" + this->left.getStr() + this->op + this->right.getStr() + ")";
         }
     }
@@ -97,7 +96,7 @@ namespace SIMPLE {
         : var(var) {
         this->stmtType = StmtType::READ;
     }
-    
+
     VarId ReadStmt::getVar() {
         return this->var;
     }
@@ -154,7 +153,7 @@ namespace SIMPLE {
         return this->expr;
     }
 
-    StatementList::StatementList(std::vector<StmtId>& statements) 
+    StatementList::StatementList(std::vector<StmtId>& statements)
         : statements(statements) {
     }
 

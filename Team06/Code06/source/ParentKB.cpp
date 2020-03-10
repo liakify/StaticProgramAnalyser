@@ -1,8 +1,7 @@
 #include "ParentKB.h"
 #include <stdexcept>
 
-void ParentKB::addParent(StmtId stmtId1, StmtId stmtId2)
-{
+void ParentKB::addParent(StmtId stmtId1, StmtId stmtId2) {
     parentRS& pRS1 = parentTable[stmtId1];
     parentRS& pRS2 = parentTable[stmtId2];
 
@@ -10,8 +9,7 @@ void ParentKB::addParent(StmtId stmtId1, StmtId stmtId2)
     pRS2.parent = stmtId1;
 }
 
-bool ParentKB::parent(StmtId stmtId1, StmtId stmtId2)
-{
+bool ParentKB::parent(StmtId stmtId1, StmtId stmtId2) {
     try {
         std::unordered_set<StmtId> stmtId1Children = parentTable.at(stmtId1).directChildren;
         return stmtId1Children.find(stmtId2) != stmtId1Children.end();
@@ -21,8 +19,7 @@ bool ParentKB::parent(StmtId stmtId1, StmtId stmtId2)
     }
 }
 
-bool ParentKB::parentStar(StmtId stmtId1, StmtId stmtId2)
-{
+bool ParentKB::parentStar(StmtId stmtId1, StmtId stmtId2) {
     try {
         std::unordered_set<StmtId> stmtId1AllChildren = parentTable.at(stmtId1).allChildren;
         return stmtId1AllChildren.find(stmtId2) != stmtId1AllChildren.end();
@@ -32,8 +29,7 @@ bool ParentKB::parentStar(StmtId stmtId1, StmtId stmtId2)
     }
 }
 
-StmtId ParentKB::getParent(StmtId stmtId)
-{
+StmtId ParentKB::getParent(StmtId stmtId) {
     try {
         return parentTable.at(stmtId).parent;
     }
@@ -42,8 +38,7 @@ StmtId ParentKB::getParent(StmtId stmtId)
     }
 }
 
-const std::unordered_set<StmtId>& ParentKB::getDirectChildren(StmtId stmtId)
-{
+const std::unordered_set<StmtId>& ParentKB::getDirectChildren(StmtId stmtId) {
     try {
         return parentTable.at(stmtId).directChildren;
     }
@@ -52,8 +47,7 @@ const std::unordered_set<StmtId>& ParentKB::getDirectChildren(StmtId stmtId)
     }
 }
 
-bool ParentKB::hasParent(StmtId stmtId)
-{
+bool ParentKB::hasParent(StmtId stmtId) {
     try {
         return parentTable.at(stmtId).parent != 0;
     }
@@ -62,8 +56,7 @@ bool ParentKB::hasParent(StmtId stmtId)
     }
 }
 
-bool ParentKB::hasDirectChildren(StmtId stmtId)
-{
+bool ParentKB::hasDirectChildren(StmtId stmtId) {
     try {
         return parentTable.at(stmtId).directChildren.size() != 0;
     }
@@ -72,8 +65,7 @@ bool ParentKB::hasDirectChildren(StmtId stmtId)
     }
 }
 
-const std::unordered_set<StmtId>& ParentKB::getAllParents(StmtId stmtId)
-{
+const std::unordered_set<StmtId>& ParentKB::getAllParents(StmtId stmtId) {
     try {
         return parentTable.at(stmtId).allParents;
     }
@@ -82,8 +74,7 @@ const std::unordered_set<StmtId>& ParentKB::getAllParents(StmtId stmtId)
     }
 }
 
-const std::unordered_set<StmtId>& ParentKB::getAllChildren(StmtId stmtId)
-{
+const std::unordered_set<StmtId>& ParentKB::getAllChildren(StmtId stmtId) {
     try {
         return parentTable.at(stmtId).allChildren;
     }
@@ -92,8 +83,7 @@ const std::unordered_set<StmtId>& ParentKB::getAllChildren(StmtId stmtId)
     }
 }
 
-void ParentKB::setAllChildren(StmtId stmtId, std::unordered_set<StmtId> children)
-{
+void ParentKB::setAllChildren(StmtId stmtId, std::unordered_set<StmtId> children) {
     try {
         parentTable.at(stmtId).allChildren = children;
     }
@@ -102,8 +92,7 @@ void ParentKB::setAllChildren(StmtId stmtId, std::unordered_set<StmtId> children
     }
 }
 
-void ParentKB::setAllParents(StmtId stmtId, std::unordered_set<StmtId> parents)
-{
+void ParentKB::setAllParents(StmtId stmtId, std::unordered_set<StmtId> parents) {
     try {
         parentTable.at(stmtId).allParents = parents;
     }
@@ -112,7 +101,6 @@ void ParentKB::setAllParents(StmtId stmtId, std::unordered_set<StmtId> parents)
     }
 }
 
-bool ParentKB::hasParentRelation()
-{
+bool ParentKB::hasParentRelation() {
     return parentTable.size() != 0;
 }

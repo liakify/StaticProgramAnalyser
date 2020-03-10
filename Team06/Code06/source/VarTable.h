@@ -17,13 +17,13 @@ namespace PKB {
      *  and tags them with an ID. 
      */
     class VarTable {
-    
+
         unordered_map<VarName, VarId> nameIdTable;
         unordered_map<VarId, VarName> idNameTable;
         VarId varIdGenerator;
-    
-    public:
-        
+
+     public:
+
         VarTable();
 
         /**
@@ -48,7 +48,7 @@ namespace PKB {
          *  Returns all variables in the VarTable
          */
         std::unordered_set<VarName> getAllVars();
-        
+
         /**
          *  Returns the number of variables in the VarTable
          */

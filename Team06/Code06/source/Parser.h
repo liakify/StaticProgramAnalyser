@@ -13,7 +13,7 @@ namespace FrontEnd {
     * The Parser class is used for parsing SIMPLE source code.
     */
     class Parser {
-    public:
+     public:
         /**
         * Parses full SIMPLE source and populates PKB accordingly.
         * 
@@ -32,7 +32,7 @@ namespace FrontEnd {
         * @throws   std::invalid_argument   if the SIMPLE source has syntax errors.
         */
         std::string parseExpression(std::string exp);
-    private:
+     private:
         std::string src;
         PKB::PKB pkb;
         size_t pos;
@@ -57,7 +57,7 @@ namespace FrontEnd {
         CondExpr rel_expr();
 
         int get_op_rank(char op);
-        int compare_op(char op1, char op2); 
+        int compare_op(char op1, char op2);
         void combine_op(std::stack<Expression>& operands, std::stack<char>& operators);
         Expression expr();
         Expression factor();

@@ -186,7 +186,7 @@ namespace PQL {
             for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
                 StmtId parent = database.parentKB.getParent(i);
                 if (parent != 0) {
-                    if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(parent)->getType(), synonymTable[arg1]) && 
+                    if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(parent)->getType(), synonymTable[arg1]) &&
                         SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i)->getType(), synonymTable[arg2])) {
                         if (!singleSynonym) {
                             ClauseResultEntry resultEntry;

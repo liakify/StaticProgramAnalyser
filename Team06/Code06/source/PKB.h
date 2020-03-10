@@ -24,7 +24,7 @@ namespace PKB {
          *  calls upon the Design Extractor in the Front End.
          */
     class PKB {
-    public:
+     public:
         VarTable varTable;
         ProcTable procTable;
         ConstTable constTable;

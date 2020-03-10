@@ -16,12 +16,11 @@ namespace PKB {
      *  The StmtListTable class stores all StmtLists extracted from the SIMPLE source code
      *  and tags them with an ID.
      */
-    class StmtListTable
-    {
+    class StmtListTable {
         unordered_map<StmtListId, StatementList> idStmtListTable;
         StmtListId stmtListIdGenerator;
 
-    public:
+     public:
 
         StmtListTable();
         /**

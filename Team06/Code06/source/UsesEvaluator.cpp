@@ -14,7 +14,7 @@ namespace PQL {
         */
         ClauseResult evaluateUsesClauseIntIdId(PKB::PKB& database, RelationClause clause) {
             ArgType argType1 = clause.getArgs().first.first;
-            
+
             if (argType1 == ArgType::INTEGER) {
                 // Case 1: Statement number provided
                 StmtId arg1 = std::stoi(clause.getArgs().first.second);
@@ -51,7 +51,7 @@ namespace PQL {
         */
         ClauseResult evaluateUsesClauseIntIdWild(PKB::PKB& database, RelationClause clause) {
             ArgType argType1 = clause.getArgs().first.first;
-            
+
             if (argType1 == ArgType::INTEGER) {
                 // Case 1: Statement number provided
                 StmtId arg1 = std::stoi(clause.getArgs().first.second);
@@ -86,7 +86,7 @@ namespace PQL {
         ClauseResult evaluateUsesClauseIntIdSyn(PKB::PKB& database, RelationClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable) {
             ArgType argType1 = clause.getArgs().first.first;
-            
+
             if (argType1 == ArgType::INTEGER) {
                 // Case 1: Statement number provided
                 StmtId arg1 = std::stoi(clause.getArgs().first.second);
@@ -128,7 +128,7 @@ namespace PQL {
         */
         ClauseResult evaluateUsesClauseSynId(PKB::PKB& database, RelationClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable) {
-            
+
             Synonym arg1 = clause.getArgs().first.second;
             VarId arg2 = database.varTable.getVarId(clause.getArgs().second.second);
 

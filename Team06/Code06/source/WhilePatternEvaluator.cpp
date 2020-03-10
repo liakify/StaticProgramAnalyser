@@ -34,9 +34,9 @@ namespace PQL {
 
             Synonym arg0 = clause.synonym;
             VarId arg1 = database.varTable.getVarId(clause.getArgs().first.second);
-            
+
             std::unordered_set<StmtId> stmts = database.patternKB.getWhilePatternStmts(arg1);
-            
+
             ClauseResult clauseResult;
             for (StmtId stmt : stmts) {
                 ClauseResultEntry resultEntry;
@@ -61,7 +61,7 @@ namespace PQL {
             Synonym arg1 = clause.getArgs().first.second;
 
             ClauseResult clauseResult;
-            
+
             std::unordered_set<StmtId> stmts = database.stmtTable.getStmtsByType(StmtType::WHILE);
             for (StmtId stmt : stmts) {
                 SIMPLE::WhileStmt *whileStmt = (SIMPLE::WhileStmt*)database.stmtTable.get(stmt);
@@ -73,7 +73,7 @@ namespace PQL {
                     clauseResult.emplace_back(resultEntry);
                 }
             }
-            
+
             return clauseResult;
         }
 

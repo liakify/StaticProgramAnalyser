@@ -34,7 +34,7 @@ namespace PQL {
 
         // Extract last statement (Select <var> (constraints)...)
         string queryBody = statements.back();
-        
+
         bool hasValidTarget;
         string queryBodySuffix;
         tie(hasValidTarget, queryBodySuffix) = parseQueryTarget(query, queryBody);

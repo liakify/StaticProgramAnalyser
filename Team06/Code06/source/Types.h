@@ -4,18 +4,15 @@
 #include <vector>
 #include <unordered_map>
 
-enum class StmtType
-{
+enum class StmtType {
     PRINT, READ, IF, WHILE, CALL, ASSIGN
 };
 
-enum class ExprType
-{
+enum class ExprType {
     VAR, CONST
 };
 
-enum class NodeType
-{
+enum class NodeType {
     PREDECESSOR, SUCCESSOR
 };
 

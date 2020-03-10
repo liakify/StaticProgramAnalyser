@@ -23,8 +23,8 @@ namespace PKB {
         unordered_map<ProcId, Procedure> idProcTable;
         ProcId procIdGenerator;
 
-    public:
-        
+     public:
+
         ProcTable();
 
         /**
@@ -42,7 +42,7 @@ namespace PKB {
          *  Throws an exception if the ID is not found in the table.
          */
         Procedure get(ProcId procId);
-        
+
         /**
          * Returns the ID of proc in the ProcTable. If proc is not found, -1 is returned.
          */

@@ -19,13 +19,12 @@ namespace PKB {
      *  The StmtTable class stores all statements extracted from the SIMPLE source code
      *  and tags them with an ID.
      */
-    class StmtTable
-    {
+    class StmtTable {
         unordered_map<StmtId, Statement*> idStmtTable;
         unordered_map<StmtType, unordered_set<StmtId>> typeIdsTable;
         StmtId stmtIdGenerator;
 
-    public:
+     public:
 
         StmtTable();
 

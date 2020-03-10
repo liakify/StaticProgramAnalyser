@@ -21,7 +21,7 @@ namespace PKB {
         unordered_map<ConstId, ConstValue> idValueTable;
         ConstId ConstIdGenerator;
 
-    public:
+     public:
 
         ConstTable();
 

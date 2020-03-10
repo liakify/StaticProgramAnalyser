@@ -11,7 +11,7 @@ namespace FrontEnd {
      *  fully parse the SIMPLE source code and populate the PKB accordingly.
      */
     class FrontEndManager {
-    public:
+     public:
         /**
         * Constructor for FrontEndManager.
         */
@@ -34,7 +34,7 @@ namespace FrontEnd {
         * @throws   std::invalid_argument   if the SIMPLE source has syntax errors.
         */
         std::string parseExpression(std::string exp);
-    private:
+     private:
         Parser parser;
         DesignExtractor de;
     };

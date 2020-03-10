@@ -6,10 +6,10 @@ namespace SPA {
     namespace LoggingUtils {
 
         void Log(LoggingUtils::Level severityLevel, std::string format, std::va_list params) {
-            
+
             char buffer[1000];
             std::vsnprintf(buffer, 1000, format.c_str(), params);
-            
+
             switch (severityLevel) {
             case LoggingUtils::Level::DEBUG:
                 std::cout << "[DEBUG] " << buffer << std::endl;

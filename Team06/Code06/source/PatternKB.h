@@ -7,9 +7,8 @@
 #include "Types.h"
 #include "Constants.h"
 
-class PatternKB
-{
-public:
+class PatternKB {
+ public:
     void addAssignPattern(Pattern pattern, StmtId stmtId);
 
     void addIfPattern(VarId varId, StmtId stmtId);
@@ -22,7 +21,7 @@ public:
 
     const std::unordered_set<StmtId>& getWhilePatternStmts(VarId varId);
 
-private:
+ private:
     std::unordered_map<Pattern, std::unordered_set<StmtId>> assignTable;
     std::unordered_map<VarId, std::unordered_set<StmtId>> ifTable;
     std::unordered_map<VarId, std::unordered_set<StmtId>> whileTable;

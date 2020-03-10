@@ -11,14 +11,13 @@ namespace PKB {
             ConstId thisId = ConstIdGenerator++;
             idValueTable.insert(make_pair(thisId, ConstValue));
             return thisId;
-        }
-        else {
+        } else {
             return getConstId(ConstValue);
         }
     }
 
     ConstValue ConstTable::get(ConstId ConstId) {
-        return idValueTable.at(ConstId); // throws out_of_range exception
+        return idValueTable.at(ConstId);  // throws out_of_range exception
     }
 
 

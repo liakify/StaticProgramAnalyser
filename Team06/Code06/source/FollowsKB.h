@@ -7,17 +7,15 @@
 #include "Types.h"
 #include "Constants.h"
 
-struct followsRS
-{
+struct followsRS {
     StmtId following = 0;
     StmtId follower = 0;
     std::unordered_set<StmtId> allFollowing;
     std::unordered_set<StmtId> allFollowers;
 };
 
-class FollowsKB
-{
-public:
+class FollowsKB {
+ public:
     /*
         Adds Follows(stmtId1, stmtId2) relation to followsTable.
     */
@@ -80,6 +78,6 @@ public:
     */
     bool hasFollowsRelation();
 
-private:
+ private:
     std::unordered_map<StmtId, followsRS> followsTable;
 };

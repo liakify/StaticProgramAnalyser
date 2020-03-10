@@ -13,14 +13,13 @@ namespace PKB {
             procIdGenerator++;
             idProcTable.insert(std::make_pair(thisId, proc));
             return thisId;
-        }
-        else {
+        } else {
                 throw std::invalid_argument("Duplicate procName detected");
         }
     }
 
     Procedure ProcTable::get(ProcId procId) {
-        return idProcTable.at(procId); // throws out_of_range exception
+        return idProcTable.at(procId);  // throws out_of_range exception
     }
 
     ProcId ProcTable::getProcId(ProcName procName) {

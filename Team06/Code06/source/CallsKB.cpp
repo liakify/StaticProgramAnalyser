@@ -36,8 +36,7 @@ const std::unordered_set<ProcId>& CallsKB::getDirectNodes(ProcId p, NodeType typ
     try {
         if (type == NodeType::SUCCESSOR) {
             return callsTable.at(p).directCallees;
-        }
-        else {
+        } else {
             return callsTable.at(p).directCallers;
         }
     }
@@ -50,8 +49,7 @@ const std::unordered_set<ProcId>& CallsKB::getAllNodes(ProcId p, NodeType type) 
     try {
         if (type == NodeType::SUCCESSOR) {
             return callsTable.at(p).allCallees;
-        }
-        else {
+        } else {
             return callsTable.at(p).allCallers;
         }
     }
@@ -63,8 +61,7 @@ const std::unordered_set<ProcId>& CallsKB::getAllNodes(ProcId p, NodeType type) 
 void CallsKB::addToAll(ProcId p, ProcId proc, NodeType type) {
     if (type == NodeType::SUCCESSOR) {
         callsTable.at(p).allCallees.insert(proc);
-    }
-    else {
+    } else {
         callsTable.at(p).allCallers.insert(proc);
     }
 }
@@ -72,14 +69,12 @@ void CallsKB::addToAll(ProcId p, ProcId proc, NodeType type) {
 void CallsKB::addToAll(ProcId p, const std::unordered_set<ProcId>& procs, NodeType type) {
     if (type == NodeType::SUCCESSOR) {
         callsTable.at(p).allCallees.insert(procs.begin(), procs.end());
-    }
-    else {
+    } else {
         callsTable.at(p).allCallers.insert(procs.begin(), procs.end());
     }
 }
 
-bool CallsKB::hasCallee(ProcId p)
-{
+bool CallsKB::hasCallee(ProcId p) {
     try {
         return callsTable.at(p).directCallees.size() != 0;
     }
@@ -88,8 +83,7 @@ bool CallsKB::hasCallee(ProcId p)
     }
 }
 
-bool CallsKB::hasCaller(ProcId p)
-{
+bool CallsKB::hasCaller(ProcId p) {
     try {
         return callsTable.at(p).directCallers.size() != 0;
     }
@@ -98,17 +92,14 @@ bool CallsKB::hasCaller(ProcId p)
     }
 }
 
-bool CallsKB::hasCallsRelation()
-{
+bool CallsKB::hasCallsRelation() {
     return callsTable.size() != 0;
 }
 
-const std::unordered_set<ProcId>& CallsKB::getAllCallers()
-{
+const std::unordered_set<ProcId>& CallsKB::getAllCallers() {
     return allProcCallers;
 }
 
-const std::unordered_set<ProcId>& CallsKB::getAllCallees()
-{
+const std::unordered_set<ProcId>& CallsKB::getAllCallees() {
     return allProcCallees;
 }

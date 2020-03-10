@@ -7,17 +7,15 @@
 #include "Types.h"
 #include "Constants.h"
 
-struct parentRS
-{
+struct parentRS {
     StmtId parent = 0;
     std::unordered_set<StmtId> directChildren;
     std::unordered_set<StmtId> allParents;
     std::unordered_set<StmtId> allChildren;
 };
 
-class ParentKB
-{
-public:
+class ParentKB {
+ public:
     /*
         Adds Parent(stmtId1, stmtId2) relation to parentTable.
     */
@@ -80,6 +78,6 @@ public:
     */
     bool hasParentRelation();
 
-private:
+ private:
     std::unordered_map<StmtId, parentRS> parentTable;
 };

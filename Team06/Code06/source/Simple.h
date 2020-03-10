@@ -14,7 +14,7 @@ namespace SIMPLE {
     * present in the expression respectively.
     */
     class Expression {
-    public:
+     public:
         /**
         * Constructor for a non-literal Expression. The unordered_sets of the sub-expressions
         * will be unioned to form the VarId, ConstId and pattern unordered_sets of the expression.
@@ -46,7 +46,7 @@ namespace SIMPLE {
         std::unordered_set<ConstId> getConstIds();
         std::unordered_set<std::string> getPatterns();
         char getOp();
-    private:
+     private:
         Expression& left;
         Expression& right;
         char op;
@@ -64,12 +64,12 @@ namespace SIMPLE {
     * the variables and constants present in the expression.
     */
     class CondExpr {
-    public:
+     public:
         CondExpr(CondExpr left, CondExpr right);
         CondExpr(Expression left, Expression right);
         std::unordered_set<VarId> getVarIds();
         std::unordered_set<ConstId> getConstIds();
-    private:
+     private:
         CondExpr* leftCond;
         CondExpr* rightCond;
         Expression* leftFactor;
@@ -79,85 +79,85 @@ namespace SIMPLE {
     };
 
     class Statement {
-    public:
+     public:
         StmtType getType();
-    protected:
+     protected:
         Statement();
         StmtType stmtType;
     };
 
     class PrintStmt : public Statement {
-    public:
+     public:
         PrintStmt(VarId var);
         VarId getVar();
-    private:
+     private:
         VarId var;
     };
 
     class ReadStmt : public Statement {
-    public:
+     public:
         ReadStmt(VarId var);
         VarId getVar();
-    private:
+     private:
         VarId var;
     };
 
     class IfStmt : public Statement {
-    public:
+     public:
         IfStmt(CondExpr cond, StmtListId thenStmtLst, StmtListId elseStmtLst);
         CondExpr getCondExpr();
         StmtListId getThenStmtLstId();
         StmtListId getElseStmtLstId();
-    private:
+     private:
         CondExpr condExpr;
         StmtListId thenStmtLst;
         StmtListId elseStmtLst;
     };
 
     class WhileStmt : public Statement {
-    public:
+     public:
         WhileStmt(CondExpr cond, StmtListId stmtLst);
         CondExpr getCondExpr();
         StmtListId getStmtLstId();
-    private:
+     private:
         CondExpr condExpr;
         StmtListId stmtLst;
     };
 
     class CallStmt : public Statement {
-    public:
+     public:
         CallStmt(ProcName procName);
         ProcName getProc();
-    private:
+     private:
         ProcName procName;
     };
 
     class AssignStmt : public Statement {
-    public:
+     public:
         AssignStmt(VarId var, Expression expr);
         VarId getVar();
         Expression getExpr();
-    private:
+     private:
         Expression expr;
         VarId var;
     };
 
     class StatementList {
-    public:
+     public:
         StatementList(std::vector<StmtId>& statements);
         bool operator== (const StatementList& other);
         std::vector<StmtId> getStmtIds();
-    private:
+     private:
         std::vector<StmtId> statements;
     };
 
     class Procedure {
-    public:
+     public:
         Procedure(ProcName procName, StmtListId stmtLstId);
         bool operator== (const Procedure& p);
         ProcName getName();
         StmtListId getStmtLstId();
-    private:
+     private:
         ProcName procName;
         StmtListId stmtLstId;
     };

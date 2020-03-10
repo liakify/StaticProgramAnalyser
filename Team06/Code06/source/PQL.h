@@ -15,7 +15,7 @@ namespace PQL {
      *  Projector) in order to serve incoming PQL queries.
      */
     class PQLManager {
-    public:
+     public:
         /**
          *  Constructor for PQLManager facade class to handle PQL queries.
          *
@@ -31,7 +31,7 @@ namespace PQL {
          *  @param      resultList      list to populate the query results with.
          */
         void evaluateQuery(std::string queryString, std::list<std::string>& resultList);
-    private:
+     private:
         QueryParser parser;
         QueryEvaluator evaluator;
         QueryProjector formatter;
