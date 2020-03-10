@@ -31,9 +31,9 @@ namespace PQL {
         ClauseResult evaluateAssignPatternClauseWildPtn(PKB::PKB& database, PatternClause &clause) {
             Synonym arg0 = clause.synonym;
             Pattern arg2 = clause.getArgs().second.second;
-            
+
             std::unordered_set<StmtId> stmts = database.patternKB.getAssignPatternStmts(arg2);
-            
+
             ClauseResult clauseResult;
             for (StmtId stmt : stmts) {
                 if (database.stmtTable.get(stmt)->getType() == StmtType::ASSIGN) {
@@ -56,7 +56,7 @@ namespace PQL {
             Synonym arg0 = clause.synonym;
             VarName arg1 = clause.getArgs().first.second;
             VarId arg1Id = database.varTable.getVarId(arg1);
-            
+
             std::unordered_set<StmtId> stmts = database.modifiesKB.getAllStmtsModifyVar(arg1Id);
             ClauseResult clauseResult;
             for (StmtId stmt : stmts) {
@@ -66,7 +66,7 @@ namespace PQL {
                     clauseResult.emplace_back(resultEntry);
                 }
             }
-            
+
             return clauseResult;
         }
 
@@ -82,10 +82,10 @@ namespace PQL {
             VarName arg1 = clause.getArgs().first.second;
             VarId arg1Id = database.varTable.getVarId(arg1);
             Pattern arg2 = clause.getArgs().second.second;
-            
+
             std::unordered_set<StmtId> stmts1 = database.modifiesKB.getAllStmtsModifyVar(arg1Id);
             std::unordered_set<StmtId> stmts2 = database.patternKB.getAssignPatternStmts(arg2);
-            
+
             // Find the intersection
             std::unordered_set<StmtId> stmts;
             for (StmtId stmt : stmts1) {
@@ -118,7 +118,7 @@ namespace PQL {
             std::unordered_map<std::string, DesignEntity>& synonymTable) {
             Synonym arg0 = clause.synonym;
             Synonym arg1 = clause.getArgs().first.second;
-            
+
             std::unordered_set<StmtId> stmts = database.stmtTable.getStmtsByType(StmtType::ASSIGN);
 
             // If synonym 'arg1' appeared on LHS, then it must have been modified by the assignment
@@ -189,21 +189,21 @@ namespace PQL {
             if (argType1 == ArgType::WILDCARD && argType2 == ArgType::WILDCARD) {
                 // 2 wildcards
                 return evaluateAssignPatternClauseWildWild(database);
-            } else if (argType1 == ArgType::WILDCARD && 
+            } else if (argType1 == ArgType::WILDCARD &&
                 (argType2 == ArgType::EXACT_PATTERN || argType2 == ArgType::INCLUSIVE_PATTERN)) {
                 // 1 wildcard, 1 pattern
                 return evaluateAssignPatternClauseWildPtn(database, clause);
             } else if (argType1 == ArgType::IDENTIFIER && argType2 == ArgType::WILDCARD) {
                 // 1 identifier, 1 wildcard
                 return evaluateAssignPatternClauseIdWild(database, clause);
-            } else if (argType1 == ArgType::IDENTIFIER && 
+            } else if (argType1 == ArgType::IDENTIFIER &&
                 (argType2 == ArgType::EXACT_PATTERN || argType2 == ArgType::INCLUSIVE_PATTERN)) {
                 // 1 identifier, 1 pattern
                 return evaluateAssignPatternClauseIdPtn(database, clause);
             } else if (argType1 == ArgType::SYNONYM && argType2 == ArgType::WILDCARD) {
                 // 1 synonym, 1 wildcard
                 return evaluateAssignPatternClauseSynWild(database, clause, synonymTable);
-            } else if (argType1 == ArgType::SYNONYM && 
+            } else if (argType1 == ArgType::SYNONYM &&
                 (argType2 == ArgType::EXACT_PATTERN || argType2 == ArgType::INCLUSIVE_PATTERN)) {
                 // 1 synonym, 1 pattern
                 return evaluateAssignPatternClauseSynPtn(database, clause, synonymTable);

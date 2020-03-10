@@ -32,7 +32,7 @@ namespace PQL {
         * @return   The result of the evaluation.
         */
         ClauseResult evaluateCallsClauseWildWild(PKB::PKB& database) {
-            
+
             if (database.callsKB.hasCallsRelation()) {
                 ClauseResultEntry resultEntry;
                 resultEntry["_RESULT"] = "TRUE";
@@ -63,8 +63,7 @@ namespace PQL {
                 } else {
                     return {};
                 }
-            }
-            else {
+            } else {
                 // Case 2: Wildcard, Identifier
                 ProcId arg2 = database.procTable.getProcId(clause.getArgs().second.second);
                 if (database.callsKB.hasCaller(arg2) != 0) {

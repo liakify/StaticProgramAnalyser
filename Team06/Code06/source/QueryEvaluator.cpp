@@ -14,7 +14,7 @@
 #include "WhilePatternEvaluator.h"
 
 namespace PQL {
-    
+
     QueryEvaluator::QueryEvaluator(PKB::PKB &database) {
         this->database = database;
     }
@@ -42,7 +42,7 @@ namespace PQL {
 
         // Combine Results
         ClauseResult combinedResult = combineClauseResults(clauseResults);
-        
+
         // Extract necessary results to answer query
         ClauseResult result = extractQueryResults(query, combinedResult);
 
@@ -50,7 +50,7 @@ namespace PQL {
     }
 
     ClauseResult QueryEvaluator::extractQueryResults(Query &query, ClauseResult& combinedResult) {
-        
+
         if (query.returnsBool) {
             ClauseResult result;
             ClauseResultEntry resultEntry;
@@ -118,7 +118,7 @@ namespace PQL {
         }
     }
 
-    ClauseResultEntry QueryEvaluator::combineTwoClauseResultEntries(ClauseResultEntry &entry1, ClauseResultEntry &entry2, 
+    ClauseResultEntry QueryEvaluator::combineTwoClauseResultEntries(ClauseResultEntry &entry1, ClauseResultEntry &entry2,
         std::unordered_set<Synonym> &commonSynonyms) {
 
         ClauseResultEntry combinedEntry;
@@ -135,7 +135,7 @@ namespace PQL {
         return combinedEntry;
     }
 
-    bool QueryEvaluator::checkCommonSynonyms(ClauseResultEntry &entry1, ClauseResultEntry &entry2, 
+    bool QueryEvaluator::checkCommonSynonyms(ClauseResultEntry &entry1, ClauseResultEntry &entry2,
         std::unordered_set<Synonym> &commonSynonyms) {
         for (Synonym synonym : commonSynonyms) {
             if (entry1[synonym] != entry2[synonym]) {
@@ -181,10 +181,10 @@ namespace PQL {
         }
         std::vector<ClauseResult> left;
         std::vector<ClauseResult> right;
-        for (int i = 0; i < (int)clauseResults.size() / 2; i++) {
+        for (int i = 0; i < static_cast<int>(clauseResults.size()) / 2; i++) {
             left.emplace_back(clauseResults[i]);
         }
-        for (int i = clauseResults.size() / 2; i < (int)clauseResults.size(); i++) {
+        for (int i = clauseResults.size() / 2; i < static_cast<int>(clauseResults.size()); i++) {
             right.emplace_back(clauseResults[i]);
         }
         ClauseResult leftResult = combineClauseResults(left);
@@ -193,7 +193,7 @@ namespace PQL {
         return combinedResults;
     }
 
-    ClauseResult QueryEvaluator::evaluateRelationClause(RelationClause &relationClause, 
+    ClauseResult QueryEvaluator::evaluateRelationClause(RelationClause &relationClause,
         std::unordered_map<std::string, DesignEntity> &synonymTable) {
         switch (relationClause.type) {
         case RelationType::FOLLOWS:
@@ -240,9 +240,9 @@ namespace PQL {
         }
     }
 
-    ClauseResult QueryEvaluator::evaluatePatternClause(PatternClause &patternClause, 
+    ClauseResult QueryEvaluator::evaluatePatternClause(PatternClause &patternClause,
         std::unordered_map<std::string, DesignEntity> &synonymTable) {
-        
+
         switch (patternClause.type) {
         case PatternType::ASSIGN_PATTERN:
             return AssignPatternEvaluator::evaluateAssignPatternClause(this->database, patternClause, synonymTable);

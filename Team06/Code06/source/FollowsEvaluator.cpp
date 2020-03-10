@@ -75,7 +75,7 @@ namespace PQL {
                 }
             }
         }
-        
+
         /**
         * Evaluates a single Follows clause on the given PKB where the input contains a StmtId and a synonym.
         *
@@ -110,7 +110,7 @@ namespace PQL {
                 // Case 2: Synonym, Integer
                 Synonym arg1 = clause.getArgs().first.second;
                 StmtId arg2 = std::stoi(clause.getArgs().second.second);
-                
+
                 StmtId following = database.followsKB.getFollowing(arg2);
                 if (following == 0) {
                     return {};
@@ -125,7 +125,7 @@ namespace PQL {
                 }
             }
         }
-        
+
         /**
         * Evaluates a single Follows clause on the given PKB where the inputs contain a wildcard and a synonym.
         *
@@ -168,7 +168,7 @@ namespace PQL {
                 return clauseResult;
             }
         }
-        
+
         /**
         * Evaluates a single Follows clause on the given PKB where the input contains two synonyms.
         *

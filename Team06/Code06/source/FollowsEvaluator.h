@@ -6,7 +6,7 @@
 
 namespace PQL {
     namespace FollowsEvaluator {
-        
+
         /**
         * Evaluates a single Follows clause on the given PKB.
         *
@@ -15,7 +15,7 @@ namespace PQL {
         * @param    synonymTable    The synonym table associated with the query containing the clause.
         * @return   The result of the evaluation.
         */
-        ClauseResult evaluateFollowsClause(PKB::PKB& database, RelationClause clause, 
+        ClauseResult evaluateFollowsClause(PKB::PKB& database, RelationClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable);
 
     }
