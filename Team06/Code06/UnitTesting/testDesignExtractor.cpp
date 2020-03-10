@@ -17,27 +17,27 @@ namespace UnitTesting
 	public:
 		TEST_CLASS_INITIALIZE(setup) {
 			pkb = PKB::PKB();
-			pkb.stmtTable.insertStmt(&ReadStmt(1));
-			pkb.stmtTable.insertStmt(&ReadStmt(2));
-			pkb.stmtTable.insertStmt(&ReadStmt(3));
-			pkb.stmtTable.insertStmt(&ReadStmt(4));
-			pkb.stmtTable.insertStmt(&ReadStmt(5));
-			pkb.stmtTable.insertStmt(&ReadStmt(6));
+			pkb.stmtTable.insertStmt(new ReadStmt(1));
+			pkb.stmtTable.insertStmt(new ReadStmt(2));
+			pkb.stmtTable.insertStmt(new ReadStmt(3));
+			pkb.stmtTable.insertStmt(new ReadStmt(4));
+			pkb.stmtTable.insertStmt(new ReadStmt(5));
+			pkb.stmtTable.insertStmt(new ReadStmt(6));
 
 			std::vector<StmtId> v1 = { 1,2,6 };
 			pkb.stmtListTable.insertStmtLst(StatementList(v1));
 			std::vector<StmtId> v2 = { 3,4,5 };
 			pkb.stmtListTable.insertStmtLst(StatementList(v2));
 
-			pkb.stmtTable.insertStmt(&ReadStmt(7));
-			pkb.stmtTable.insertStmt(&ReadStmt(8));
-			pkb.stmtTable.insertStmt(&ReadStmt(9));
-			pkb.stmtTable.insertStmt(&ReadStmt(10));
-			pkb.stmtTable.insertStmt(&ReadStmt(11));
-			pkb.stmtTable.insertStmt(&ReadStmt(12));
-			pkb.stmtTable.insertStmt(&ReadStmt(13));
-			pkb.stmtTable.insertStmt(&ReadStmt(14));
-			pkb.stmtTable.insertStmt(&ReadStmt(15));
+			pkb.stmtTable.insertStmt(new ReadStmt(7));
+			pkb.stmtTable.insertStmt(new ReadStmt(8));
+			pkb.stmtTable.insertStmt(new ReadStmt(9));
+			pkb.stmtTable.insertStmt(new ReadStmt(10));
+			pkb.stmtTable.insertStmt(new ReadStmt(11));
+			pkb.stmtTable.insertStmt(new ReadStmt(12));
+			pkb.stmtTable.insertStmt(new ReadStmt(13));
+			pkb.stmtTable.insertStmt(new ReadStmt(14));
+			pkb.stmtTable.insertStmt(new ReadStmt(15));
 			pkb.parentKB.addParent(7, 8);
 			pkb.parentKB.addParent(8, 9);
 			pkb.parentKB.addParent(8, 10);

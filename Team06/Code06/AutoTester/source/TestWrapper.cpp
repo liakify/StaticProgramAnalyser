@@ -32,6 +32,7 @@ void TestWrapper::parse(std::string filename) {
     }
     catch (std::invalid_argument& e) {
         SPA::LoggingUtils::LogErrorMessage("%s", e.what());
+        throw e;
     }
 }
 
