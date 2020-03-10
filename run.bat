@@ -13,8 +13,10 @@ wget --no-check-certificate https://github.com/cpplint/cpplint/archive/master.zi
 python cpplint-master/cpplint.py --linelength=1000 --filter=+build,-build/namespaces,-build/c++11,-build/c++14,-build/c++tr1,-legal,+readability,-runtime,+whitespace,-whitespace/ending_newline,-readability/namespace,-whitespace/blank_line --quiet Team06/Code06/source/* &> cpplint.txt
 type cpplint.txt
 type nul > blankfile.txt
-fc cpplint.txt blankfile.txt
-if errorlevel 1 exit 1
+fc cpplint.txt blankfile.txt > nul
+if errorlevel 1 (
+	exit 1
+)
 
 cmd.exe /c ""C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\MSBuild\15.0\Bin\MSBuild.exe" "Team06/Code06/StartupSPASolution.sln" "/p:PlatformToolset=v141" "/p:UseEnv=true" "/p:Configuration=Debug" "/p:Platform=Win32" "/verbosity:minimal""
 
