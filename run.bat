@@ -10,6 +10,7 @@ wget --no-check-certificate http://infocommsociety.com/~zhijian/cs3203/StartupSP
 move StartupSPASolution.sln Team06\Code06\
 wget --no-check-certificate https://github.com/cpplint/cpplint/archive/master.zip
 7z x master.zip
+dir
 python cpplint-master/cpplint.py --linelength=1000 --filter=+build,-build/namespaces,-build/c++11,-build/c++14,-build/c++tr1,-legal,+readability,-runtime,+whitespace,-whitespace/ending_newline,-readability/namespace,-whitespace/blank_line --quiet Team06/Code06/source/* &> cpplint.txt
 type cpplint.txt
 type nul > blankfile.txt
