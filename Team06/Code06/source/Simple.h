@@ -119,7 +119,7 @@ namespace SIMPLE {
 		WhileStmt(CondExpr cond, StmtListId stmtLst);
 		CondExpr getCondExpr();
 		StmtListId getStmtLstId();
-	public:
+	private:
 		CondExpr condExpr;
 		StmtListId stmtLst;
 	};
@@ -128,7 +128,7 @@ namespace SIMPLE {
 	public:
 		CallStmt(ProcName procName);
 		ProcName getProc();
-	public:
+	private:
 		ProcName procName;
 	};
 
@@ -137,7 +137,7 @@ namespace SIMPLE {
 		AssignStmt(VarId var, Expression expr);
 		VarId getVar();
 		Expression getExpr();
-	public:
+	private:
 		Expression expr;
 		VarId var;
 	};
