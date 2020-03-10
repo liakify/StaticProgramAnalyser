@@ -5,6 +5,8 @@ using std::unordered_set;
 namespace FrontEnd {
 	PKB::PKB DesignExtractor::run(PKB::PKB& pkb) {
 		this->pkb = pkb;
+		populateCalls();
+		populateCallStar();
 		populateFollows();
 		populateFollowStar();
 		populateParent();
@@ -13,6 +15,70 @@ namespace FrontEnd {
 		populateModifies();
 		populatePattern();
 		return this->pkb;
+	}
+
+	void DesignExtractor::populateCalls() {
+		for (ProcId i = 1; i <= pkb.procTable.size(); i++) {
+			StmtListId slid = pkb.procTable.get(i).getStmtLstId();
+			std::vector<StmtId> idList = pkb.stmtListTable.get(slid).getStmtIds();
+			for (StmtId id : idList) {
+				Statement* s = pkb.stmtTable.get(id);
+				if (s->getType() != StmtType::CALL) {
+					continue;
+				}
+				CallStmt* cs = (CallStmt*)s;
+				ProcId calledId = pkb.procTable.getProcId(cs->getProc());
+				if (calledId == -1) { // ProcId not found
+					throw std::invalid_argument("Invalid procedure call detected");
+				}
+				pkb.callsKB.addCalls(i, calledId);
+			}
+		}
+	}
+
+	void DesignExtractor::populateCallStar() {
+		int numProc = pkb.procTable.size();
+
+		/*
+			0 indicates unvisited,
+			-1 indicates visited in current dfs call path,
+			1 indicates visited and fully processed
+		*/
+		std::vector<ProcId> visited(numProc + 1);
+		// Populate allCallees for every proc
+		processCallStar(numProc, visited, NodeType::SUCCESSOR);
+
+		std::fill(visited.begin(), visited.end(), 0);
+		// Populate allCallers for every proc
+		processCallStar(numProc, visited, NodeType::PREDECESSOR);
+	}
+	
+	void DesignExtractor::processCallStar(int numProc, std::vector<int>& visited, NodeType type) {
+		for (int p = 1; p <= numProc; p++) {
+			if (visited[p] == 0) {
+				callStarDFS(p, visited, type);
+			}
+		}
+	}
+
+	void DesignExtractor::callStarDFS(ProcId root, std::vector<ProcId>& visited, NodeType type) {
+		visited[root] = -1;
+
+		std::unordered_set<ProcId> directSet = pkb.callsKB.getDirectNodes(root, type);
+
+		for (const auto& dirNode : directSet) {
+			if (visited[dirNode] == -1) {
+				throw std::invalid_argument("Cycle Detected");
+			}
+			if (visited[dirNode] == 0) {
+				callStarDFS(dirNode, visited, type);
+			}
+
+			pkb.callsKB.addToAll(root, dirNode, type);
+			pkb.callsKB.addToAll(root, pkb.callsKB.getAllNodes(dirNode, type), type);
+		}
+
+		visited[root] = 1;
 	}
 
 	void DesignExtractor::populateFollows() {
@@ -129,6 +195,16 @@ namespace FrontEnd {
 			Expression exp = as->getExpr();
 			populateStmtUsesKB(id, exp.getVarIds());
 		}
+		else if (type == StmtType::CALL) {
+			CallStmt* cs = (CallStmt*)s;
+			ProcId pid = pkb.procTable.getProcId(cs->getProc());
+			StmtListId stmtLstId = pkb.procTable.get(pid).getStmtLstId();
+			
+			// Depending on the DAG of the procedure calls, can potentially be very inefficient
+			// Possible to optimize performance of this by using DP
+			// i.e. cache result of getAllUses(StmtLstId)
+			populateStmtUsesKB(id, getAllUses(stmtLstId));
+		}
 	}
 
 	unordered_set<VarId> DesignExtractor::getAllUses(StmtListId sid) {
@@ -186,6 +262,16 @@ namespace FrontEnd {
 			AssignStmt* as = (AssignStmt*)s;
 			Expression exp = as->getExpr();
 			pkb.modifiesKB.addStmtModifies(id, as->getVar());
+		}
+		else if (type == StmtType::CALL) {
+			CallStmt* cs = (CallStmt*)s;
+			ProcId pid = pkb.procTable.getProcId(cs->getProc());
+			StmtListId stmtLstId = pkb.procTable.get(pid).getStmtLstId();
+
+			// Depending on the DAG of the procedure calls, can potentially be very inefficient
+			// Possible to optimize performance of this by using DP
+			// i.e. cache result of getAllModifies(StmtLstId)
+			populateStmtModifiesKB(id, getAllModifies(stmtLstId));
 		}
 	}
 

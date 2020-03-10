@@ -11,9 +11,8 @@ AbstractWrapper* WrapperFactory::createWrapper() {
 volatile bool TestWrapper::GlobalStop = false;
 
 // a default constructor
-TestWrapper::TestWrapper() {
-  // create any objects here as instance variables of this class
-  // as well as any initialization required for your spa program
+TestWrapper::TestWrapper()
+    : frontEnd(), pkb(), pql(pkb) {
 }
 
 /**
@@ -26,11 +25,14 @@ void TestWrapper::parse(std::string filename) {
 	// Create input file stream and char iterator
     std::ifstream ifs(filename);
     std::string program((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());
+
     try {
         this->pkb = frontEnd.parseSimple(program);
+        this->pql = PQL::PQLManager(this->pkb);
     }
     catch (std::invalid_argument& e) {
         SPA::LoggingUtils::LogErrorMessage("%s", e.what());
+        throw e;
     }
 }
 
@@ -42,8 +44,6 @@ void TestWrapper::parse(std::string filename) {
  *  @param      results     reference to list of query result strings.
  */
 void TestWrapper::evaluate(std::string query, std::list<std::string>& results) {
-    PQL::PQLManager pql = PQL::PQLManager(pkb);
-    
     // Evaluate query and store result into provided list
-    pql.evaluateQuery(query, results);
+    this->pql.evaluateQuery(query, results);
 }

@@ -1,6 +1,9 @@
 #include "AssignPatternEvaluator.h"
+#include "CallsEvaluator.h"
+#include "CallsStarEvaluator.h"
 #include "FollowsEvaluator.h"
 #include "FollowsStarEvaluator.h"
+#include "IfPatternEvaluator.h"
 #include "LoggingUtils.h"
 #include "ModifiesEvaluator.h"
 #include "ParentEvaluator.h"
@@ -8,6 +11,7 @@
 #include "QueryEvaluator.h"
 #include "UsesEvaluator.h"
 #include "TypeUtils.h"
+#include "WhilePatternEvaluator.h"
 
 namespace PQL {
 	
@@ -46,64 +50,77 @@ namespace PQL {
 	}
 
 	ClauseResult QueryEvaluator::extractQueryResults(Query &query, ClauseResult& combinedResult) {
-		// Iteration 1: Only one target entity
-		if (combinedResult.empty()) {
+		
+		if (query.returnsBool) {
+			ClauseResult result;
+			ClauseResultEntry resultEntry;
+			if (combinedResult.empty()) {
+				resultEntry["_BOOLEAN"] = "FALSE";
+			}
+			else {
+				resultEntry["_BOOLEAN"] = "TRUE";
+			}
+			result.emplace_back(resultEntry);
+			return result;
+		}
+		else if (combinedResult.empty()) {
 			SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::extractQueryResults: Empty Result!\n");
 			return {};
 		}
-
-		Synonym target = query.targetEntities[0];
-
-		if (combinedResult[0].find(target) != combinedResult[0].end()) {
-			// Target does not exist in table: treat results from table as true if table is not empty
-			ClauseResult result;
-			for (ClauseResultEntry entry : combinedResult) {
-				ClauseResultEntry resultEntry;
-				resultEntry[target] = entry[target];
-				result.emplace_back(resultEntry);
-			}
-			return result;
-		}
 		else {
-			// Case bash by target entity type
-			if (query.synonymTable[target] == DesignEntity::PROCEDURE) {
-				// Iteration 1: Only one procedure
+			Synonym target = query.targetEntities[0];
+
+			if (combinedResult[0].find(target) != combinedResult[0].end()) {
+				// Target does not exist in table: treat results from table as true if table is not empty
 				ClauseResult result;
-				ClauseResultEntry resultEntry;
-				resultEntry[target] = database.procTable.get(1).getName();
-				result.emplace_back(resultEntry);
-				return result;
-			}
-			else if (query.synonymTable[target] == DesignEntity::CONSTANT) {
-				ClauseResult result;
-				for (ConstId i = 1; i <= database.constTable.size(); i++) {
+				for (ClauseResultEntry entry : combinedResult) {
 					ClauseResultEntry resultEntry;
-					resultEntry[target] = database.constTable.get(i);
-					result.emplace_back(resultEntry);
-				}
-				return result;
-			}
-			else if (query.synonymTable[target] == DesignEntity::VARIABLE) {
-				ClauseResult result;
-				std::unordered_set<VarName> vars = database.varTable.getAllVars();
-				for (VarName var : vars) {
-					ClauseResultEntry resultEntry;
-					resultEntry[target] = var;
+					resultEntry[target] = entry[target];
 					result.emplace_back(resultEntry);
 				}
 				return result;
 			}
 			else {
-				// Statement
-				ClauseResult result;
-				for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
-					if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i)->getType(), query.synonymTable[target])) {
+				// Case bash by target entity type
+				if (query.synonymTable[target] == DesignEntity::PROCEDURE) {
+					// Iteration 1: Only one procedure
+					ClauseResult result;
+					ClauseResultEntry resultEntry;
+					resultEntry[target] = database.procTable.get(1).getName();
+					result.emplace_back(resultEntry);
+					return result;
+				}
+				else if (query.synonymTable[target] == DesignEntity::CONSTANT) {
+					ClauseResult result;
+					for (ConstId i = 1; i <= database.constTable.size(); i++) {
 						ClauseResultEntry resultEntry;
-						resultEntry[target] = std::to_string(i);
+						resultEntry[target] = database.constTable.get(i);
 						result.emplace_back(resultEntry);
 					}
+					return result;
 				}
-				return result;
+				else if (query.synonymTable[target] == DesignEntity::VARIABLE) {
+					ClauseResult result;
+					std::unordered_set<VarName> vars = database.varTable.getAllVars();
+					for (VarName var : vars) {
+						ClauseResultEntry resultEntry;
+						resultEntry[target] = var;
+						result.emplace_back(resultEntry);
+					}
+					return result;
+				}
+				else {
+					// Statement
+					ClauseResult result;
+					for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
+						if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i)->getType(), query.synonymTable[target])) {
+							ClauseResultEntry resultEntry;
+							resultEntry[target] = std::to_string(i);
+							result.emplace_back(resultEntry);
+						}
+					}
+					return result;
+				}
 			}
 		}
 	}
@@ -206,6 +223,24 @@ namespace PQL {
 		case RelationType::USESP:
 			return UsesEvaluator::evaluateUsesClause(this->database, relationClause, synonymTable);
 			break;
+		case RelationType::CALLS:
+			return CallsEvaluator::evaluateCallsClause(this->database, relationClause, synonymTable);
+			break;
+		case RelationType::CALLST:
+			return CallsStarEvaluator::evaluateCallsStarClause(this->database, relationClause, synonymTable);
+			break;
+		case RelationType::NEXT:
+			SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluateRelationClause: Next relationship not implemented!");
+			break;
+		case RelationType::NEXTT:
+			SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluateRelationClause: Next* relationship not implemented!");
+			break;
+		case RelationType::AFFECTS:
+			SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluateRelationClause: Affects relationship not implemented!");
+			break;
+		case RelationType::AFFECTST:
+			SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluateRelationClause: Affects* relationship not implemented!");
+			break;
 		default:
 			SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluateRelationClause: Unknown relation type %d\n", relationClause.type);
 			return {};
@@ -220,12 +255,10 @@ namespace PQL {
 			return AssignPatternEvaluator::evaluateAssignPatternClause(this->database, patternClause, synonymTable);
 			break;
 		case PatternType::IF_PATTERN:
-			SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluatePatternClause: Evaluator for IF_PATTERN pattern type not implemented!");
-			return {};
+			return IfPatternEvaluator::evaluateIfPatternClause(this->database, patternClause, synonymTable);
 			break;
 		case PatternType::WHILE_PATTERN:
-			SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluatePatternClause: Evaluator for WHILE_PATTERN pattern type not implemented!");
-			return {};
+			return WhilePatternEvaluator::evaluateWhilePatternClause(this->database, patternClause, synonymTable);
 			break;
 		default:
 			SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluatePatternClause: Unknown pattern type %d\n", patternClause.type);

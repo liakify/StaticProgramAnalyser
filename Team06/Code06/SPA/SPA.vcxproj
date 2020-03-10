@@ -11,6 +11,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\source\CallsEvaluator.cpp" />
+    <ClCompile Include="..\source\CallsKB.cpp" />
+    <ClCompile Include="..\source\CallsStarEvaluator.cpp" />
     <ClCompile Include="..\source\ConstTable.cpp" />
     <ClCompile Include="..\source\AssignPatternEvaluator.cpp" />
     <ClCompile Include="..\source\DesignExtractor.cpp" />
@@ -18,6 +21,7 @@
     <ClCompile Include="..\source\FollowsKB.cpp" />
     <ClCompile Include="..\source\FollowsStarEvaluator.cpp" />
     <ClCompile Include="..\source\FrontEnd.cpp" />
+    <ClCompile Include="..\source\IfPatternEvaluator.cpp" />
     <ClCompile Include="..\source\LoggingUtils.cpp" />
     <ClCompile Include="..\source\ModifiesEvaluator.cpp" />
     <ClCompile Include="..\source\ParentEvaluator.cpp" />
@@ -40,8 +44,12 @@
     <ClCompile Include="..\source\UsesKB.cpp" />
     <ClCompile Include="..\source\ModifiesKB.cpp" />
     <ClCompile Include="..\source\PatternKB.cpp" />
+    <ClCompile Include="..\source\WhilePatternEvaluator.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\source\CallsEvaluator.h" />
+    <ClInclude Include="..\source\CallsKB.h" />
+    <ClInclude Include="..\source\CallsStarEvaluator.h" />
     <ClInclude Include="..\source\ConstTable.h" />
     <ClInclude Include="..\source\Constants.h" />
     <ClInclude Include="..\source\AssignPatternEvaluator.h" />
@@ -49,6 +57,7 @@
     <ClInclude Include="..\source\FollowsKB.h" />
     <ClInclude Include="..\source\FollowsStarEvaluator.h" />
     <ClInclude Include="..\source\FrontEnd.h" />
+    <ClInclude Include="..\source\IfPatternEvaluator.h" />
     <ClInclude Include="..\source\LoggingUtils.h" />
     <ClInclude Include="..\source\ModifiesEvaluator.h" />
     <ClInclude Include="..\source\ParentEvaluator.h" />
@@ -75,6 +84,7 @@
     <ClInclude Include="..\source\ModifiesKB.h" />
     <ClInclude Include="..\source\PatternKB.h" />
     <ClInclude Include="..\source\DesignExtractor.h" />
+    <ClInclude Include="..\source\WhilePatternEvaluator.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />

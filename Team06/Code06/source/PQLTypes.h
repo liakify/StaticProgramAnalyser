@@ -67,6 +67,57 @@ enum class ArgType {
 };
 
 namespace PQL {
+
+    /**
+     *  All status messages in use by the Query Parser during query parsing and
+     *  validation of a PQL query. All but the OK and SUCCESS messages indicate
+     *  either a syntax or semantic error with the query.
+     */
+    const std::string OK = "ok";
+    const std::string SUCCESS = "success";
+    const std::string SYNTAX_ERR_EMPTY_QUERY = "syntax error: empty query";
+    const std::string SYNTAX_ERR_INVALID_DECLARATION = "syntax error: declaration statement has incorrect syntax";
+    const std::string SYNTAX_ERR_MISSING_SELECT_OR_UNKNOWN_CHAR = "syntax error: query missing 'Select' keyword or has unrecognised characters";
+    const std::string SYNTAX_ERR_INVALID_AND_CHAINED_CLAUSES = "syntax error: query contains incorrect use of clause keywords and 'and'";
+    const std::string SYNTAX_ERR_UNKNOWN_DESIGN_ENTITY_KEYWORD = "syntax error: unrecognised design entity keyword in declaration";
+    const std::string SEMANTIC_ERR_CONFLICTING_SYNONYM_DECLARATIONS = "semantic error: conflicting synonym declarations";
+    const std::string SYNTAX_ERR_MISSING_OR_INVALID_QUERY_TARGET = "syntax error: missing query target or target entities not correctly specified";
+    const std::string SYNTAX_ERR_MISSING_OR_MALFORMED_PATTERN_ARG = "syntax error: pattern clause has missing or malformed argument";
+    const std::string SYNTAX_ERR_INVALID_CLAUSES_IN_QUERY_BODY = "syntax error: compound clauses in query body violate query body syntax";
+    const std::string SYNTAX_ERR_INVALID_RELATION_KEYWORD = "syntax error: invalid relation keyword";
+    const std::string SYNTAX_ERR_RELATION_INVALID_NUM_ARGS = "syntax error: relations only accept 2 arguments";
+    const std::string SYNTAX_ERR_FOLLOWS_PARENTS_INVALID_STMT_REF = "syntax error: invalid statement reference in Follows(*)/Parent(*) clause";
+    const std::string SYNTAX_ERR_USES_MODIFIES_INVALID_SECOND_ENT_REF = "syntax error: invalid entity reference as second arg in Uses/Modifies clause";
+    const std::string SYNTAX_ERR_USES_MODIFIES_INVALID_FIRST_ARG = "syntax error: invalid first arg in Uses/Modifies clause";
+    const std::string SYNTAX_ERR_CALLS_INVALID_ENT_REF = "syntax error: invalid entity reference in Calls(*) clause";
+    const std::string SYNTAX_ERR_NEXT_INVALID_LINE_REF = "syntax error: invalid line reference in Next(*) clause";
+    const std::string SYNTAX_ERR_AFFECTS_INVALID_STMT_REF = "syntax error: invalid statement reference in Affects(*) clause";
+    const std::string FATAL_MISSING_RELATION_HANDLER = "internal error: failed to match relation type";
+    const std::string SEMANTIC_ERR_UNDECLARED_PATTERN_TYPE_SYNONYM = "semantic error: undeclared synonym for type of pattern clause";
+    const std::string SYNTAX_ERR_PATTERN_INVALID_ENT_REF = "syntax error: invalid entity reference as first arg in pattern clause";
+    const std::string SYNTAX_ERR_ASSIGN_PATTERN_INVALID_NUM_ARGS = "syntax error: assign pattern does not have two arguments";
+    const std::string SYNTAX_ERR_ASSIGN_PATTERN_INVALID_PATTERN = "syntax error: assign pattern has invalid pattern string";
+    const std::string SYNTAX_ERR_WHILE_PATTERN_INVALID_NUM_ARGS = "syntax error: while pattern does not have two arguments";
+    const std::string SYNTAX_ERR_WHILE_PATTERN_INVALID_SECOND_ARG = "syntax error: while pattern only supports '_' as second argument";
+    const std::string SYNTAX_ERR_IF_PATTERN_INVALID_NUM_ARGS = "syntax error: if pattern does not have three arguments";
+    const std::string SYNTAX_ERR_IF_PATTERN_INVALID_SECOND_THIRD_ARG = "syntax error: if pattern only supports '_' for last two arguments";
+    const std::string SYNTAX_ERR_INVALID_PATTERN_TYPE = "syntax error: pattern clauses only defined for assign, if, while";
+    const std::string SEMANTIC_ERR_AMBIGUOUS_USE_OF_BOOLEAN = "semantic error: ambiguous use of BOOLEAN as both synonym and return type";
+    const std::string SEMANTIC_ERR_UNDECLARED_SYNONYM_IN_RETURN_TYPE = "semantic error: undeclared synonym part of query return type";
+    const std::string SEMANTIC_ERR_USES_MODIFIES_AMBIGUOUS_WILDCARD = "semantic error: wildcard not accepted as first arg for Uses/Modifies";
+    const std::string SEMANTIC_ERR_USES_MODIFIES_UNDECLARED_FIRST_SYNONYM = "semantic error: undeclared synonym as first arg in Uses/Modifies clause";
+    const std::string SEMANTIC_ERR_USES_INVALID_FIRST_SYNONYM = "semantic error: relation not defined for synonym as first arg in Uses clause";
+    const std::string SEMANTIC_ERR_MODIFIES_INVALID_FIRST_SYNONYM = "semantic error: relation not defined for synonym as first arg in Modifies clause";
+    const std::string SEMANTIC_ERR_USES_MODIFIES_UNDECLARED_SECOND_SYNONYM = "semantic error: undeclared synonym as second arg in Uses/Modifies clause";
+    const std::string SEMANTIC_ERR_USES_MODIFIES_NON_VARIABLE_SECOND_SYNONYM = "semantic error: synonym as second arg in Uses/Modifies clause not a VARIABLE";
+    const std::string SEMANTIC_ERR_CALLS_UNDECLARED_SYNONYM = "semantic error: undeclared synonym in Calls(*) clause";
+    const std::string SEMANTIC_ERR_CALLS_NON_PROCEDURE_SYNONYM = "semantic error: synonym in Calls(*) clause not a PROCEDURE";
+    const std::string SEMANTIC_ERR_FPNA_NON_POSITIVE_STMT_NUMBER = "semantic error: statement number in F(*)/P(*)/N(*)/A(*) clause must be positive";
+    const std::string SEMANTIC_ERR_FPNA_UNDECLARED_SYNONYM = "semantic error: undeclared synonym in F(*)/P(*)/N(*)/A(*) clause";
+    const std::string SEMANTIC_ERR_AFFECTS_NON_ASSIGN_SYNONYM = "semantic error: synonym in Affects(*) clause not an ASSIGN or its super-types";
+    const std::string SEMANTIC_ERR_FPN_NON_STMT_SYNONYM = "semantic error: synonym in F(*)/P(*)/N(*) clause not a STATEMENT or its sub-types";
+    const std::string SEMANTIC_ERR_PATTERN_UNDECLARED_FIRST_SYNONYM = "semantic error: undeclared synonym as first arg in pattern clause";
+    const std::string SEMANTIC_ERR_PATTERN_NON_VARIABLE_FIRST_SYNONYM = "semantic error: synonym as first arg in pattern clause not a VARIABLE";
     
     /**
      *  Sentinel argument pair that should never be returned by getArgs() method

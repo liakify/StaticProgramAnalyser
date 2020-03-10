@@ -26,4 +26,5 @@ class TestWrapper : public AbstractWrapper {
 private:
   FrontEnd::FrontEndManager frontEnd;
   PKB::PKB pkb;
+  PQL::PQLManager pql;
 };
