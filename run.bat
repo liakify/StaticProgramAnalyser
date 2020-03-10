@@ -9,7 +9,7 @@ del Team06/Code06/StartupSPASolution.sln
 wget --no-check-certificate http://infocommsociety.com/~zhijian/cs3203/StartupSPASolution.sln
 move StartupSPASolution.sln Team06\Code06\
 wget --no-check-certificate https://github.com/cpplint/cpplint/archive/master.zip
-7z x cpplint-master.zip
+7z x master.zip
 python cpplint-master/cpplint.py --linelength=1000 --filter=-build,-legal,+readability,-runtime,+whitespace,-whitespace/ending_newline,-readability/namespace,-whitespace/blank_line Team06/Code06/source/*
 
 cmd.exe /c ""C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\MSBuild\15.0\Bin\MSBuild.exe" "Team06/Code06/StartupSPASolution.sln" "/p:PlatformToolset=v141" "/p:UseEnv=true" "/p:Configuration=Debug" "/p:Platform=Win32" "/verbosity:minimal""
