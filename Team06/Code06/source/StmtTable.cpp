@@ -1,3 +1,5 @@
+#include <utility>
+
 #include "StmtTable.h"
 
 namespace PKB {

@@ -2,9 +2,10 @@
 
 #include <stdexcept>
 #include <string>
-#include <vector>
 #include <unordered_map>
 #include <unordered_set>
+#include <vector>
+
 #include "Types.h"
 
 using std::out_of_range;

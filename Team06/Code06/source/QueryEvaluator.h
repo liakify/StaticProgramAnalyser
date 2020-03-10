@@ -1,9 +1,14 @@
 #pragma once
 
-#include "PQLTypes.h"
-#include "Types.h"
+#include <string>
+#include <unordered_map>
+#include <unordered_set>
+#include <utility>
+#include <vector>
 
 #include "PKB.h"
+#include "PQLTypes.h"
+#include "Types.h"
 
 namespace PQL {
 

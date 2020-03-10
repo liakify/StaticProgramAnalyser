@@ -2,6 +2,9 @@
 
 #include <regex>
 #include <sstream>
+#include <string>
+#include <utility>
+#include <vector>
 
 #include "PQLTypes.h"
 

@@ -1,3 +1,7 @@
+#include <string>
+#include <unordered_map>
+#include <unordered_set>
+
 #include "AssignPatternEvaluator.h"
 #include "LoggingUtils.h"
 

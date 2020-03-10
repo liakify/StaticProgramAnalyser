@@ -1,10 +1,12 @@
 #pragma once
 
-#include "PQLTypes.h"
+#include <list>
+#include <string>
 
 #include "PKB.h"
-#include "QueryParser.h"
+#include "PQLTypes.h"
 #include "QueryEvaluator.h"
+#include "QueryParser.h"
 #include "QueryProjector.h"
 
 namespace PQL {

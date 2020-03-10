@@ -1,8 +1,10 @@
 #pragma once
 
-#include <stdexcept>
 #include <regex>
 #include <stack>
+#include <stdexcept>
+#include <string>
+
 #include "PKB.h"
 #include "Simple.h"
 

@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include "PKB.h"
 #include "Parser.h"
 #include "DesignExtractor.h"

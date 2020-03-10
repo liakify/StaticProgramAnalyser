@@ -1,10 +1,11 @@
-#ifndef STMTTABLE_H
-#define STMTTABLE_H
+#pragma once
 
 #include <stdexcept>
 #include <string>
-#include <vector>
 #include <unordered_map>
+#include <unordered_set>
+#include <vector>
+
 #include "Types.h"
 #include "Simple.h"
 
@@ -70,5 +71,3 @@ namespace PKB {
         int size();
     };
 }
-
-#endif

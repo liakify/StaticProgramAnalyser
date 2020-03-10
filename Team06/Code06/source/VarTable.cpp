@@ -1,3 +1,5 @@
+#include <utility>
+
 #include "VarTable.h"
 
 namespace PKB {

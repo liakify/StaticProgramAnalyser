@@ -1,12 +1,12 @@
 #pragma once
 
+#include <stdexcept>
 #include <unordered_set>
+#include <vector>
 
 #include "Types.h"
 #include "PKB.h"
 #include "Simple.h"
-
-#include <stdexcept>
 
 using namespace SIMPLE;
 

@@ -1,3 +1,7 @@
+#include <string>
+#include <unordered_map>
+#include <unordered_set>
+
 #include "ModifiesEvaluator.h"
 #include "LoggingUtils.h"
 #include "TypeUtils.h"

@@ -1,3 +1,8 @@
+#include <string>
+#include <unordered_map>
+#include <unordered_set>
+#include <vector>
+
 #include "AssignPatternEvaluator.h"
 #include "CallsEvaluator.h"
 #include "CallsStarEvaluator.h"

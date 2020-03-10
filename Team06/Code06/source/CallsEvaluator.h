@@ -1,5 +1,8 @@
 #pragma once
 
+#include <string>
+#include <unordered_map>
+
 #include "Types.h"
 #include "PKB.h"
 #include "PQL.h"

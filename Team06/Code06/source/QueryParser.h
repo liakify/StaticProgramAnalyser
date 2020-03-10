@@ -3,9 +3,12 @@
 #include <algorithm>
 #include <regex>
 #include <sstream>
+#include <string>
+#include <tuple>
+#include <utility>
+#include <vector>
 
 #include "PQLTypes.h"
-
 #include "QueryUtils.h"
 
 namespace PQL {

@@ -2,8 +2,9 @@
 
 #include <stdexcept>
 #include <string>
-#include <vector>
 #include <unordered_map>
+#include <vector>
+
 #include "Types.h"
 #include "Simple.h"
 

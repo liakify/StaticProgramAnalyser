@@ -2,8 +2,8 @@
 
 #include <stdexcept>
 #include <string>
-#include <vector>
 #include <unordered_map>
+#include <vector>
 #include "Types.h"
 
 using std::out_of_range;

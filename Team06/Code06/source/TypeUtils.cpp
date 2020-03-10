@@ -1,7 +1,8 @@
 #pragma once
 
-#include "Types.h"
 #include "PQLTypes.h"
+#include "Types.h"
+#include "TypeUtils.h"
 
 namespace SPA {
     namespace TypeUtils {

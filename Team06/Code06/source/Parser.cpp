@@ -1,3 +1,5 @@
+#include <vector>
+
 #include "Parser.h"
 
 using std::invalid_argument;
