@@ -9,39 +9,6 @@ using namespace SIMPLE;
 
 namespace UnitTesting
 {
-	Procedure PROC_A = Procedure("a", 1);
-	Procedure PROC_B = Procedure("b", 2);
-	Procedure PROC_C = Procedure("c", 3);
-	Procedure PROC_D = Procedure("d", 4);
-	Procedure PROC_E = Procedure("e", 5);
-	Procedure PROC_F = Procedure("f", 6);
-
-	StatementList sl1 = StatementList(std::vector<StmtId>{1});
-	StatementList sl2 = StatementList(std::vector<StmtId>{2});
-	StatementList sl3 = StatementList(std::vector<StmtId>{3});
-	StatementList sl4 = StatementList(std::vector<StmtId>{4});
-	StatementList sl5 = StatementList(std::vector<StmtId>{5});
-	StatementList sl6 = StatementList(std::vector<StmtId>{6});
-	StatementList sl7 = StatementList(std::vector<StmtId>{1, 2});
-	StatementList sl8 = StatementList(std::vector<StmtId>{2, 3});
-
-	CallStmt ca("a");
-	Statement* CALL_A = &ca;
-	CallStmt cb("b");
-	Statement* CALL_B = &cb;
-	CallStmt cc("c");
-	Statement* CALL_C = &cc;
-	CallStmt cd("d");
-	Statement* CALL_D = &cd;
-	CallStmt ce("e");
-	Statement* CALL_E = &ce;
-	CallStmt cf("f");
-	Statement* CALL_F = &cf;
-	ReadStmt r1(1);
-	Statement* READ_1 = &r1;
-	ReadStmt r2(2);
-	Statement* READ_2 = &r2;
-
 	PKB::PKB pkbCallStar;
 	PKB::PKB pkbX;
 	PKB::PKB pkbDiamond;
@@ -60,6 +27,31 @@ namespace UnitTesting
 		std::unordered_set<ProcId> emptyResult;
 
 		TEST_CLASS_INITIALIZE(setup) {
+			Procedure PROC_A = Procedure("a", 1);
+			Procedure PROC_B = Procedure("b", 2);
+			Procedure PROC_C = Procedure("c", 3);
+			Procedure PROC_D = Procedure("d", 4);
+			Procedure PROC_E = Procedure("e", 5);
+			Procedure PROC_F = Procedure("f", 6);
+
+			StatementList sl1 = StatementList(std::vector<StmtId>{1});
+			StatementList sl2 = StatementList(std::vector<StmtId>{2});
+			StatementList sl3 = StatementList(std::vector<StmtId>{3});
+			StatementList sl4 = StatementList(std::vector<StmtId>{4});
+			StatementList sl5 = StatementList(std::vector<StmtId>{5});
+			StatementList sl6 = StatementList(std::vector<StmtId>{6});
+			StatementList sl7 = StatementList(std::vector<StmtId>{1, 2});
+			StatementList sl8 = StatementList(std::vector<StmtId>{2, 3});
+
+			Statement* CALL_A = new CallStmt("a");
+			Statement* CALL_B = new CallStmt("b");
+			Statement* CALL_C = new CallStmt("c");
+			Statement* CALL_D = new CallStmt("d");
+			Statement* CALL_E = new CallStmt("e");
+			Statement* CALL_F = new CallStmt("f");
+			Statement* READ_1 = new ReadStmt(1);
+			Statement* READ_2 = new ReadStmt(2);
+
 			// Valid SIMPLE: 1 -> 2 -> 3
 			pkbCallStar = PKB::PKB();
 			pkbCallStar.procTable.insertProc(PROC_A);
