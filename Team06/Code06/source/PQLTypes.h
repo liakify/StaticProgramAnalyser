@@ -284,7 +284,8 @@ namespace PQL {
      *  - status:           status message from evaluation by the Query Parser.
      *  - queryString:      the full query string.
      *  - returnsBool:      boolean describing if this query returns a BOOLEAN.
-     *  - targetEntities:   vector of all design entities (by synonym) to return for the query.
+     *  - targetEntities:   vector of return types for the query, each a pair
+     *                      comprising the synonym and an optional attribute.
      *  - synonymTable:     a mapping of declared synonyms to design entities.
      *  - relations:        a vector of parsed relation clauses.
      *  - patterns:         a vector of parsed pattern clauses.
@@ -295,7 +296,7 @@ namespace PQL {
         std::string status;
         std::string queryString;
         bool returnsBool;
-        std::vector<std::string> targetEntities;
+        std::vector<std::pair<std::string, AttrType>> targetEntities;
         std::unordered_map<std::string, DesignEntity> synonymTable;
         std::vector<RelationClause> relations;
         std::vector<PatternClause> patterns;
