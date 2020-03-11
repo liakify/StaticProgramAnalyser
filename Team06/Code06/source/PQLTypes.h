@@ -8,7 +8,7 @@
 
 #include "Types.h"
 
-// Additional types specific to PQL (Query Processor)
+// Additional global aliases specific to PQL (Query Processor)
 using StmtRef = std::string;
 using EntityRef = std::string;
 
@@ -17,6 +17,20 @@ using EntityRef = std::string;
  */
 enum class DesignEntity {
     STATEMENT, READ, PRINT, CALL, WHILE, IF, ASSIGN, VARIABLE, CONSTANT, PROCEDURE, PROG_LINE
+};
+
+/**
+ *  Enumeration for recognised attribute types of synonyms appearing as a return
+ *  type or an argument in a with clause.
+ *
+ *  Note that NONE is a sentinel value used to denote a synonym is used without an
+ *  attribute type.
+ *
+ *  Note that INVALID is a sentinel value used to denote an invalid attribute
+ *  keyword was supplied with a synonym.
+ */
+enum class AttrType {
+    INVALID, NONE, PROC_NAME, VAR_NAME, VALUE, STMT_NUM
 };
 
 /**
@@ -63,7 +77,8 @@ enum class PatternType {
  *    EXACT_PATTERN.
  */
 enum class ArgType {
-    INVALID, UNKNOWN, SYNONYM, INTEGER, IDENTIFIER, WILDCARD, INCLUSIVE_PATTERN, EXACT_PATTERN
+    INVALID, UNKNOWN, SYNONYM, INTEGER, IDENTIFIER, WILDCARD,
+    INCLUSIVE_PATTERN, EXACT_PATTERN
 };
 
 namespace PQL {
@@ -81,6 +96,7 @@ namespace PQL {
     const std::string SYNTAX_ERR_INVALID_AND_CHAINED_CLAUSES = "syntax error: query contains incorrect use of clause keywords and 'and'";
     const std::string SYNTAX_ERR_UNKNOWN_DESIGN_ENTITY_KEYWORD = "syntax error: unrecognised design entity keyword in declaration";
     const std::string SEMANTIC_ERR_CONFLICTING_SYNONYM_DECLARATIONS = "semantic error: conflicting synonym declarations";
+    const std::string SYNTAX_ERR_INVALID_ATTRIBUTE_KEYWORD_IN_RETURN_TYPE = "syntax error: invalid design entity attribute keyword in return type";
     const std::string SYNTAX_ERR_MISSING_OR_INVALID_QUERY_TARGET = "syntax error: missing query target or target entities not correctly specified";
     const std::string SYNTAX_ERR_MISSING_OR_MALFORMED_PATTERN_ARG = "syntax error: pattern clause has missing or malformed argument";
     const std::string SYNTAX_ERR_INVALID_CLAUSES_IN_QUERY_BODY = "syntax error: compound clauses in query body violate query body syntax";
@@ -176,6 +192,16 @@ namespace PQL {
         {"constant", DesignEntity::CONSTANT},
         {"procedure", DesignEntity::PROCEDURE},
         {"prog_line", DesignEntity::PROG_LINE}
+    };
+
+    /**
+     *  Map from design entity attribute keyword to attribute type enum,
+     */
+    const std::unordered_map<std::string, AttrType> ATTRIBUTE_MAP {
+        { "procName", AttrType::PROC_NAME },
+        { "varName", AttrType::VAR_NAME },
+        { "value", AttrType::VALUE },
+        { "stmt#", AttrType::STMT_NUM }
     };
 
     /**
