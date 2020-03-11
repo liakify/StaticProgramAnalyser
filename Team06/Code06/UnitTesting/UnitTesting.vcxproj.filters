@@ -74,7 +74,7 @@
     <ClCompile Include="testCallsKB.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="testDesignExtractor_callStar.cpp">
+    <ClCompile Include="testDesignExtractor_calls.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

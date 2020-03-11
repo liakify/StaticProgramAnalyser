@@ -46,7 +46,7 @@ namespace FrontEnd {
 	}
 
 	void Parser::program() {
-		int currentPos = this->pos;
+		size_t currentPos = this->pos;
 		procedure();
 		while (currentPos < this->pos) {
 			try {
@@ -86,7 +86,7 @@ namespace FrontEnd {
 	}
 
 	StmtId Parser::stmt() {
-		int currentPos = this->pos;
+		size_t currentPos = this->pos;
 		try {
 			return pkb.stmtTable.insertStmt(read_stmt());
 		} catch (const invalid_argument&) {
@@ -175,7 +175,7 @@ namespace FrontEnd {
 	}
 
 	CondExpr Parser::cond_expr() {
-		int currentPos = this->pos;
+		size_t currentPos = this->pos;
 		try {
 			return rel_expr();
 		}
@@ -211,7 +211,7 @@ namespace FrontEnd {
 	}
 
 	CondExpr Parser::rel_expr() {
-		int currentPos = this->pos;
+		size_t currentPos = this->pos;
 		try {
 			Expression left = expr();
 			consume(regex("[\\s]*(>)[\\s]*"));
@@ -321,7 +321,7 @@ namespace FrontEnd {
 	}
 
 	Expression Parser::factor() {
-		int currentPos = this->pos;
+		size_t currentPos = this->pos;
 		try {
 			VarId id = var_name();
 			VarName name = pkb.varTable.get(id);
