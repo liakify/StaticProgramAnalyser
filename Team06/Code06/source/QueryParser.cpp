@@ -81,7 +81,7 @@ namespace PQL {
         }
 
         // Validate structure of query body (last statement)
-        regex VALID_QUERY_BODY("^Select\\s[\\w<>\\(\\),\"\\+\\-\\*\\/\\%\\s]+(?!;)$");
+        regex VALID_QUERY_BODY("^Select\\s[\\w<>#.\\(\\),\"\\+\\-\\*\\/\\%\\s]+(?!;)$");
         smatch qbmatch;
 
         if (!regex_search(statements.at(numDeclarations), qbmatch, VALID_QUERY_BODY)) {
@@ -376,12 +376,13 @@ namespace PQL {
         vector<string> tokens;
         vector<pair<string, AttrType>> targets;
 
-        regex SINGLE_TARGET("^Select\\s+[A-Za-z][A-Za-z0-9]*(?=\\s*$|\\s(?!\\s*,))");
-        regex TUPLE_TARGET("^Select\\s+<\\s*[A-Za-z][A-Za-z0-9]*(\\s*,\\s*[A-Za-z][A-Za-z0-9]*)*\\s*>(?=\\s*$|\\s(?!\\s*,))");
+        string TARGET = "[A-Za-z][A-Za-z0-9]*(?:\\s*\\.\\s*[A-Za-z#]+)?";
+        regex SINGLE_RETURN("^Select\\s+" + TARGET + "(?=$|\\s+(?![,.]))");
+        regex TUPLE_RETURN("^Select\\s+<\\s*" + TARGET + "(?:\\s*,\\s*" + TARGET + ")*\\s*>(?=$|\\s+(?![,.]))");
         smatch tmatch;
 
         // Attempt to match a single return type, otherwise match a tuple return type
-        if (regex_search(queryBody, tmatch, SINGLE_TARGET)) {
+        if (regex_search(queryBody, tmatch, SINGLE_RETURN)) {
             // Strip leading "Select"
             string targetEntity = QueryUtils::leftTrim(tmatch.str().erase(0, 6));
             if (targetEntity == "BOOLEAN") {
@@ -392,7 +393,7 @@ namespace PQL {
                 tokens.push_back(targetEntity);
             }
         }
-        else if (regex_search(queryBody, tmatch, TUPLE_TARGET)) {
+        else if (regex_search(queryBody, tmatch, TUPLE_RETURN)) {
             // Retrieve first match - a string of form "Select <x1, x2, ...>"
             // Then strip leading "Select"
             string targetTuple = QueryUtils::leftTrim(tmatch.str().erase(0, 6));
