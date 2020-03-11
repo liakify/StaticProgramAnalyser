@@ -120,6 +120,7 @@ namespace PQL {
     const std::string SYNTAX_ERR_INVALID_PATTERN_TYPE = "syntax error: pattern clauses only defined for assign, if, while";
     const std::string SEMANTIC_ERR_AMBIGUOUS_USE_OF_BOOLEAN = "semantic error: ambiguous use of BOOLEAN as both synonym and return type";
     const std::string SEMANTIC_ERR_UNDECLARED_SYNONYM_IN_RETURN_TYPE = "semantic error: undeclared synonym part of query return type";
+    const std::string SEMANTIC_ERR_INVALID_SYNONYM_ATTRIBUTE_IN_RETURN_TYPE = "semantic error: attribute not defined for synonym in query return type";
     const std::string SEMANTIC_ERR_USES_MODIFIES_AMBIGUOUS_WILDCARD = "semantic error: wildcard not accepted as first arg for Uses/Modifies";
     const std::string SEMANTIC_ERR_USES_MODIFIES_UNDECLARED_FIRST_SYNONYM = "semantic error: undeclared synonym as first arg in Uses/Modifies clause";
     const std::string SEMANTIC_ERR_USES_INVALID_FIRST_SYNONYM = "semantic error: relation not defined for synonym as first arg in Uses clause";

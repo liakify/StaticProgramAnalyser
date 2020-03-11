@@ -1,7 +1,6 @@
 #include "QueryParser.h"
 #include "Parser.h"
 
-using std::find;
 using std::invalid_argument;
 using std::pair;
 using std::regex;
@@ -121,10 +120,21 @@ namespace PQL {
         for (auto target : query.targetEntities) {
             // If BOOLEAN is used in a tuple, it is treated as a synonym and hence the query is
             // semantically invalid if it has not been previously declared
-            // SEMANTIC ERROR: undeclared synonym as single return type or part of tuple return type
-            if (synonymTable.find(target.first) == synonymTable.end()) {
+            auto targetMapping = synonymTable.find(target.first);
+            if (targetMapping == synonymTable.end()) {
+                // SEMANTIC ERROR: undeclared synonym as single return type or part of tuple return type
                 query.status = SEMANTIC_ERR_UNDECLARED_SYNONYM_IN_RETURN_TYPE;
                 return false;
+            } 
+            else if (target.second != AttrType::NONE) {
+                // Return type is an attribute reference - determine if its design entity has the attribute
+                vector<DesignEntity> validEntities = ATTRIBUTE_ENTITY_MAP.find(target.second)->second;
+
+                if (find(validEntities.begin(), validEntities.end(), targetMapping->second) == validEntities.end()) {
+                    // SEMANTIC ERROR: design entity not have this attribute type
+                    query.status = SEMANTIC_ERR_INVALID_SYNONYM_ATTRIBUTE_IN_RETURN_TYPE;
+                    return false;
+                }
             }
         }
 
@@ -714,7 +724,7 @@ namespace PQL {
 
     pair<bool, pair<string, AttrType>> QueryParser::parseAttrRef(string arg) {
         string prefix, suffix;
-        std::tie(prefix, suffix) = QueryUtils::splitString(arg, '.');
+        tie(prefix, suffix) = QueryUtils::splitString(arg, '.');
 
         // Find the attribute corresponding to the provided attribute keyword
         // Validity of the design entity-attribute pair is only checked during
