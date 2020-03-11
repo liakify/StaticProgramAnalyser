@@ -1,7 +1,7 @@
 1 - argument variant: (s, v)
 stmt s; variable v;
 Select s such that Modifies(s, v)
-1, 3, 4, 5, 6, 7, 8, 10, 12, 13, 14, 16, 18, 19, 28, 31, 32
+1, 3, 4, 5, 6, 7, 8, 10, 12, 13, 14, 16, 18, 19, 26, 28, 29, 31, 32
 5000
 2 - argument variant: (s, v) - testing on all nesting levels, bracket levels, boolean and arithmetic operators
 stmt s; variable v;
@@ -21,7 +21,7 @@ Select s such that Modifies(s, "b")
 5 - argument variant: (s, _)
 stmt s;
 Select s such that Modifies(s, _)
-1, 3, 4, 5, 6, 7, 8, 10, 12, 13, 14, 16, 18, 19, 28, 31, 32
+1, 3, 4, 5, 6, 7, 8, 10, 12, 13, 14, 16, 18, 19, 26, 28, 29, 31, 32
 5000
 6 - argument variant: (1, v)
 variable v;
