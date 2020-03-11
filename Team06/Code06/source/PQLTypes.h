@@ -178,20 +178,38 @@ namespace PQL {
     };
 
     /**
+     *  Map from attribute type to a vector of valid associated design entities.
+     */
+    const std::unordered_map<AttrType, std::vector<DesignEntity>> ATTRIBUTE_ENTITY_MAP {
+        { AttrType::PROC_NAME, { DesignEntity::PROCEDURE, DesignEntity::CALL } },
+        { AttrType::VAR_NAME, { DesignEntity::VARIABLE, DesignEntity::READ, DesignEntity::PRINT } },
+        { AttrType::VALUE, { DesignEntity::CONSTANT } },
+        { AttrType::STMT_NUM, {
+            DesignEntity::STATEMENT,
+            DesignEntity::READ,
+            DesignEntity::PRINT,
+            DesignEntity::CALL,
+            DesignEntity::WHILE,
+            DesignEntity::IF,
+            DesignEntity::ASSIGN
+        } }
+    };
+
+    /**
      *  Map from program entity keyword to program entity enum.
      */
     const std::unordered_map<std::string, DesignEntity> ENTITY_MAP {
-        {"stmt", DesignEntity::STATEMENT},
-        {"read", DesignEntity::READ},
-        {"print", DesignEntity::PRINT},
-        {"call", DesignEntity::CALL},
-        {"while", DesignEntity::WHILE},
-        {"if", DesignEntity::IF},
-        {"assign", DesignEntity::ASSIGN},
-        {"variable", DesignEntity::VARIABLE},
-        {"constant", DesignEntity::CONSTANT},
-        {"procedure", DesignEntity::PROCEDURE},
-        {"prog_line", DesignEntity::PROG_LINE}
+        { "stmt", DesignEntity::STATEMENT },
+        { "read", DesignEntity::READ },
+        { "print", DesignEntity::PRINT },
+        { "call", DesignEntity::CALL },
+        { "while", DesignEntity::WHILE },
+        { "if", DesignEntity::IF },
+        { "assign", DesignEntity::ASSIGN },
+        { "variable", DesignEntity::VARIABLE },
+        { "constant", DesignEntity::CONSTANT },
+        { "procedure", DesignEntity::PROCEDURE },
+        { "prog_line", DesignEntity::PROG_LINE }
     };
 
     /**
@@ -213,18 +231,18 @@ namespace PQL {
      *  the supplied arguments.
      */
     const std::unordered_map<std::string, RelationType> RELATION_MAP {
-        {"Follows", RelationType::FOLLOWS},
-        {"Follows*", RelationType::FOLLOWST},
-        {"Parent", RelationType::PARENT},
-        {"Parent*", RelationType::PARENTT},
-        {"Uses", RelationType::USESS},
-        {"Modifies", RelationType::MODIFIESS},
-        {"Calls", RelationType::CALLS},
-        {"Calls*", RelationType::CALLST},
-        {"Next", RelationType::NEXT},
-        {"Next*", RelationType::NEXTT},
-        {"Affects", RelationType::AFFECTS},
-        {"Affects*", RelationType::AFFECTST}
+        { "Follows", RelationType::FOLLOWS },
+        { "Follows*", RelationType::FOLLOWST },
+        { "Parent", RelationType::PARENT },
+        { "Parent*", RelationType::PARENTT },
+        { "Uses", RelationType::USESS },
+        { "Modifies", RelationType::MODIFIESS },
+        { "Calls", RelationType::CALLS },
+        { "Calls*", RelationType::CALLST },
+        { "Next", RelationType::NEXT },
+        { "Next*", RelationType::NEXTT },
+        { "Affects", RelationType::AFFECTS },
+        { "Affects*", RelationType::AFFECTST }
     };
 
     /**
