@@ -48,6 +48,13 @@ namespace PQL {
         }
     }
 
+    bool QueryUtils::isValidAttrRef(string input) {
+        regex VALID_ATTRIBUTE_REF("^[A-Za-z][A-Za-z0-9]*\\s*.\\s*[A-Za-z#]+$");
+        smatch amatch;
+
+        return regex_search(input, amatch, VALID_ATTRIBUTE_REF);
+    }
+
     string QueryUtils::leftTrim(string input) {
         return input.erase(0, input.find_first_not_of(" \t\f\v\n\r"));
     }

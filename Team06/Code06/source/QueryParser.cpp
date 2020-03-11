@@ -683,4 +683,20 @@ namespace PQL {
         }
     }
 
+    pair<bool, pair<string, AttrType>> QueryParser::parseAttrRef(string arg) {
+        string prefix, suffix;
+        std::tie(prefix, suffix) = QueryUtils::splitString(arg, '.');
+
+        // Find the attribute corresponding to the provided attribute keyword
+        // Validity of the design entity-attribute pair is only checked during
+        // validation of query semantics
+        auto attributeMapping = ATTRIBUTE_MAP.find(suffix);
+        if (attributeMapping == ATTRIBUTE_MAP.end()) {
+            return { false, { prefix, AttrType::INVALID } };
+        }
+        else {
+            return { true, { prefix, attributeMapping->second } };
+        }
+    }
+
 }
