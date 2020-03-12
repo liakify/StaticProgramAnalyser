@@ -1,6 +1,5 @@
 #pragma once
 
-#include <stdexcept>
 #include <unordered_set>
 #include <vector>
 
@@ -16,7 +15,7 @@ namespace FrontEnd {
     * from the the parsed SIMPLE code, and populates the PKB accordingly.
     */
     class DesignExtractor {
-     public:
+    public:
         /**
         * Updates the PKB with secondary relationships.
         * Relationships handled:
@@ -28,7 +27,7 @@ namespace FrontEnd {
         */
         PKB::PKB run(PKB::PKB& pkb);
 
-     private:
+    private:
         PKB::PKB pkb;
 
         // Functions to be called in run()

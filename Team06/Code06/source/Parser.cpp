@@ -4,6 +4,7 @@
 
 using std::invalid_argument;
 using std::regex;
+using std::shared_ptr;
 using std::string;
 
 namespace FrontEnd {
@@ -127,37 +128,37 @@ namespace FrontEnd {
         return pkb.stmtTable.insertStmt(assign_stmt());
     }
 
-    ReadStmt* Parser::read_stmt() {
+    shared_ptr<ReadStmt> Parser::read_stmt() {
         consume(regex("[\\s]*read[\\s]+"));
         VarId v = var_name();
         consume(regex("[\\s]*[;][\\s]*"));
-        return new ReadStmt(v);
+        return shared_ptr<ReadStmt>(new ReadStmt(v));
     }
 
-    PrintStmt* Parser::print_stmt() {
+    shared_ptr<PrintStmt> Parser::print_stmt() {
         consume(regex("[\\s]*print[\\s]+"));
         VarId v = var_name();
         consume(regex("[\\s]*[;][\\s]*"));
-        return new PrintStmt(v);
+        return shared_ptr<PrintStmt>(new PrintStmt(v));
     }
 
-    CallStmt* Parser::call_stmt() {
+    shared_ptr<CallStmt> Parser::call_stmt() {
         consume(regex("[\\s]*call[\\s]+"));
         ProcName p = proc_name();
         consume(regex("[\\s]*[;][\\s]*"));
-        return new CallStmt(p);
+        return shared_ptr<CallStmt>(new CallStmt(p));
     }
 
-    WhileStmt* Parser::while_stmt() {
+    shared_ptr<WhileStmt> Parser::while_stmt() {
         consume(regex("[\\s]*while[\\s]*[(][\\s]*"));
         CondExpr cond = cond_expr();
         consume(regex("[\\s]*[)][\\s]*[{][\\s]*"));
         StmtListId sl = stmtLst();
         consume(regex("[\\s]*[}][\\s]*"));
-        return new WhileStmt(cond, sl);
+        return shared_ptr<WhileStmt>(new WhileStmt(cond, sl));
     }
 
-    IfStmt* Parser::if_stmt() {
+    shared_ptr<IfStmt> Parser::if_stmt() {
         consume(regex("[\\s]*if[\\s]*[(][\\s]*"));
         CondExpr cond = cond_expr();
         consume(regex("[\\s]*[)][\\s]*then[\\s]*[{][\\s]*"));
@@ -165,15 +166,15 @@ namespace FrontEnd {
         consume(regex("[\\s]*[}][\\s]*else[\\s]*[{][\\s]*"));
         StmtListId elseStmtLst = stmtLst();
         consume(regex("[\\s]*[}][\\s]*"));
-        return new IfStmt(cond, thenStmtLst, elseStmtLst);
+        return shared_ptr<IfStmt>(new IfStmt(cond, thenStmtLst, elseStmtLst));
     }
 
-    AssignStmt* Parser::assign_stmt() {
+    shared_ptr<AssignStmt> Parser::assign_stmt() {
         VarId v = var_name();
         consume(regex("[\\s]*[=][\\s]*"));
         Expression exp = expr();
         consume(regex("[\\s]*[;][\\s]*"));
-        return new AssignStmt(v, exp);
+        return shared_ptr<AssignStmt>(new AssignStmt(v, exp));
     }
 
     CondExpr Parser::cond_expr() {

@@ -81,7 +81,7 @@ namespace SIMPLE {
 
     class Statement {
      public:
-        StmtType getType();
+        virtual StmtType getType();
      protected:
         Statement();
         StmtType stmtType;

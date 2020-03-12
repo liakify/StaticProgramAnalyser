@@ -48,12 +48,12 @@ namespace FrontEnd {
         ProcId procedure();
         StmtListId stmtLst();
         StmtId stmt();
-        ReadStmt* read_stmt();
-        PrintStmt* print_stmt();
-        CallStmt* call_stmt();
-        WhileStmt* while_stmt();
-        IfStmt* if_stmt();
-        AssignStmt* assign_stmt();
+        std::shared_ptr<ReadStmt> read_stmt();
+        std::shared_ptr<PrintStmt> print_stmt();
+        std::shared_ptr<CallStmt> call_stmt();
+        std::shared_ptr<WhileStmt> while_stmt();
+        std::shared_ptr<IfStmt> if_stmt();
+        std::shared_ptr<AssignStmt> assign_stmt();
 
         CondExpr cond_expr();
         CondExpr rel_expr();
