@@ -1,0 +1,1 @@
+cpplint --linelength=1000 --filter=+build,-build/namespaces,-build/c++11,-build/c++14,-build/c++tr1,-legal,+readability,-runtime,+whitespace,-whitespace/ending_newline,-readability/namespace,-whitespace/blank_line --quiet Team06/Code06/source/*
