@@ -670,16 +670,15 @@ namespace PQL {
     }
 
     pair<bool, pair<string, AttrType>> QueryParser::parseReturnType(string arg) {
-        if (QueryUtils::isValidIdentifier(arg)) {
-            // Return type is just the synonym identifier itself
-            return { true, { arg, AttrType::NONE } };
-        }
-        else if (QueryUtils::isValidAttrRef(arg)) {
+        if (QueryUtils::isValidAttrRef(arg)) {
             // Return type string contains only one . - interpret as an attribute reference
             return parseAttrRef(arg);
         }
         else {
-            return { false, { arg, AttrType::INVALID } };
+            // Regex rejects all return types that are not synonyms or attribute references
+            // Hence return type here is just the synonym identifier itself
+            assert(QueryUtils::isValidIdentifier(arg));
+            return { true, { arg, AttrType::NONE } };
         }
     }
 
