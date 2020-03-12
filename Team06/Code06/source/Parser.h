@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <regex>
 #include <stack>
 #include <stdexcept>
