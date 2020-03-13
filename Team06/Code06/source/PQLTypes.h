@@ -281,6 +281,10 @@ namespace PQL {
             case RelationType::FOLLOWST:
             case RelationType::PARENT:
             case RelationType::PARENTT:
+            case RelationType::NEXT:
+            case RelationType::NEXTT:
+            case RelationType::AFFECTS:
+            case RelationType::AFFECTST:
                 return { firstStmt, secondStmt };
                 break;
             case RelationType::USESS:
@@ -289,6 +293,8 @@ namespace PQL {
                 break;
             case RelationType::USESP:
             case RelationType::MODIFIESP:
+            case RelationType::CALLS:
+            case RelationType::CALLST:
                 return { firstEnt, secondEnt };
             default:
                 return { INVALID_ARG, INVALID_ARG };
