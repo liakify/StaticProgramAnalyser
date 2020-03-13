@@ -9,10 +9,6 @@
 
 #include "Types.h"
 
-// Additional global aliases specific to PQL (Query Processor)
-using StmtRef = std::string;
-using EntityRef = std::string;
-
 /**
  *  Enumeration for recognised program design entities in PQL queries.
  */
@@ -64,6 +60,17 @@ enum class PatternType {
 };
 
 /**
+ *  Enumeration for recognised with clause types in PQL queries, identified by the
+ *  type of value both arguments of the clause evaluate to.
+ *
+ *  Note that LITERAL_EQUAL is used to denote the special case where both arguments
+ *  are literals (integers or identifiers) requiring no further evaluation.
+ */
+enum class WithType {
+    LITERAL_EQUAL, INTEGER_EQUAL, IDENTIFIER_EQUAL
+};
+
+/**
  *  Enumeration to convey argument types of clauses in PQL queries, identified by
  *  parsing and validation.
  *
@@ -76,11 +83,18 @@ enum class PatternType {
  *  - EntityRef args in the PQL grammar can be one of: SYNONYM, IDENTIFIER, WILDCARD.
  *  - Pattern args in the PQL grammar can be one of: WILDCARD, INCLUSIVE_PATTERN,
  *    EXACT_PATTERN.
+ *  - Ref args in the PQL grammar can be one of: INTEGER, IDENTIFIER, SYNONYM,
+ *    ATTRIBUTE.
  */
 enum class ArgType {
     INVALID, UNKNOWN, SYNONYM, INTEGER, IDENTIFIER, WILDCARD,
-    INCLUSIVE_PATTERN, EXACT_PATTERN
+    INCLUSIVE_PATTERN, EXACT_PATTERN, ATTRIBUTE
 };
+
+// Additional global aliases specific to PQL (Query Processor)
+using StmtRef = std::string;
+using EntityRef = std::string;
+using Ref = std::pair<std::string, AttrType>;
 
 namespace PQL {
 
@@ -293,14 +307,33 @@ namespace PQL {
         std::string synonym;
         std::pair<ArgType, EntityRef> targetArg;
         std::pair<ArgType, Pattern> patternArg;
-        std::pair<std::pair<ArgType, std::string>, std::pair<ArgType, std::string>> getArgs() {
+        std::pair<std::pair<ArgType, EntityRef>, std::pair<ArgType, Pattern>> getArgs() {
             return { targetArg, patternArg };
         }
     };
 
     /**
-     *  Struct representing a parsed PQL query. Contains the following fields:
+     *  Struct representing a parsed with clause in a PQL query. Contains the
+     *  clause string, equality type and method to retrieve its arguments. Arguments
+     *  are returned as pairs with the first element the ArgType and the second
+     *  element a pair comprising the argument string and an optional attribute type.
+     *
+     *  Note that for non-ATTRIBUTE arguments, the optional attribute type is set to
+     *  the default value NONE.
+     */
+    struct WithClause {
+        std::string clause;
+        WithType type;
+        std::pair<ArgType, Ref> leftArg;
+        std::pair<ArgType, Ref> rightArg;
+        std::pair<std::pair<ArgType, Ref>, std::pair<ArgType, Ref>> getArgs() {
+            return { leftArg, rightArg };
+        }
+    };
 
+    /**
+     *  Struct representing a parsed PQL query. Contains the following fields:
+     *
      *  - status:           status message from evaluation by the Query Parser.
      *  - queryString:      the full query string.
      *  - returnsBool:      boolean describing if this query returns a BOOLEAN.
@@ -309,17 +342,16 @@ namespace PQL {
      *  - synonymTable:     a mapping of declared synonyms to design entities.
      *  - relations:        a vector of parsed relation clauses.
      *  - patterns:         a vector of parsed pattern clauses.
-     *
-     *  Note however that the BOOLEAN return type is not supported yet.
      */
     struct Query {
         std::string status;
         std::string queryString;
         bool returnsBool;
-        std::vector<std::pair<std::string, AttrType>> targetEntities;
+        std::vector<Ref> targetEntities;
         std::unordered_map<std::string, DesignEntity> synonymTable;
         std::vector<RelationClause> relations;
         std::vector<PatternClause> patterns;
+        std::vector<WithClause> equalities;
     };
 
 }
