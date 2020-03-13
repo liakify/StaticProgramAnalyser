@@ -10,14 +10,14 @@ using std::vector;
 namespace PQL {
 
     bool QueryUtils::isInteger(string input) {
-        regex VALID_INTEGER("^[0-9]+$");
+        regex VALID_INTEGER("^[0-9]+(?!\n)$");
         smatch imatch;
 
         return regex_search(input, imatch, VALID_INTEGER);
     }
 
     bool QueryUtils::isValidIdentifier(string input) {
-        regex VALID_IDENTIFIER("^[A-Za-z][A-Za-z0-9]*$");
+        regex VALID_IDENTIFIER("^[A-Za-z][A-Za-z0-9]*(?!\n)$");
         smatch imatch;
 
         return regex_search(input, imatch, VALID_IDENTIFIER);
@@ -36,7 +36,7 @@ namespace PQL {
     bool QueryUtils::isValidEntityRef(string input) {
         if (input.find('\"') != string::npos) {
             // String contains a " - interpret literally as variable name
-            regex VALID_ENTITY_REFERENCE("^\"\\s*[A-Za-z][A-Za-z0-9]*\\s*\"$");
+            regex VALID_ENTITY_REFERENCE("^\"\\s*[A-Za-z][A-Za-z0-9]*\\s*\"(?!\n)$");
             smatch ematch;
 
             // Entity reference is not a string of form "<identifier>"
@@ -45,6 +45,13 @@ namespace PQL {
             // String is either '_' or just "<synonym>" - validate identifier
             return input == "_" || QueryUtils::isValidIdentifier(input);
         }
+    }
+
+    bool QueryUtils::isValidAttrRef(string input) {
+        regex VALID_ATTRIBUTE_REF("^[A-Za-z][A-Za-z0-9]*\\s*\\.\\s*[A-Za-z#]+(?!\n)$");
+        smatch amatch;
+
+        return regex_search(input, amatch, VALID_ATTRIBUTE_REF);
     }
 
     string QueryUtils::leftTrim(string input) {

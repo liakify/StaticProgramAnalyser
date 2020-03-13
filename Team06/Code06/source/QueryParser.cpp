@@ -3,7 +3,6 @@
 #include "Parser.h"
 #include "QueryParser.h"
 
-using std::find;
 using std::invalid_argument;
 using std::pair;
 using std::regex;
@@ -83,7 +82,7 @@ namespace PQL {
         }
 
         // Validate structure of query body (last statement)
-        regex VALID_QUERY_BODY("^Select\\s[\\w<>\\(\\),\"\\+\\-\\*\\/\\%\\s]+(?!;)$");
+        regex VALID_QUERY_BODY("^Select\\s[\\w<>#.\\(\\),\"\\+\\-\\*\\/\\%\\s]+(?!;)$");
         smatch qbmatch;
 
         if (!regex_search(statements.at(numDeclarations), qbmatch, VALID_QUERY_BODY)) {
@@ -120,17 +119,27 @@ namespace PQL {
             return false;
         }
 
-        for (string target : query.targetEntities) {
+        for (auto target : query.targetEntities) {
             // If BOOLEAN is used in a tuple, it is treated as a synonym and hence the query is
             // semantically invalid if it has not been previously declared
-            // SEMANTIC ERROR: undeclared synonym as single return type or part of tuple return type
-            if (synonymTable.find(target) == synonymTable.end()) {
+            auto targetMapping = synonymTable.find(target.first);
+            if (targetMapping == synonymTable.end()) {
+                // SEMANTIC ERROR: undeclared synonym as single return type or part of tuple return type
                 query.status = SEMANTIC_ERR_UNDECLARED_SYNONYM_IN_RETURN_TYPE;
                 return false;
+            } else if (target.second != AttrType::NONE) {
+                // Return type is an attribute reference - determine if its design entity has the attribute
+                vector<DesignEntity> validEntities = ATTRIBUTE_ENTITY_MAP.find(target.second)->second;
+
+                if (find(validEntities.begin(), validEntities.end(), targetMapping->second) == validEntities.end()) {
+                    // SEMANTIC ERROR: design entity not have this attribute type
+                    query.status = SEMANTIC_ERR_INVALID_SYNONYM_ATTRIBUTE_IN_RETURN_TYPE;
+                    return false;
+                }
             }
         }
 
-        for (RelationClause relation : query.relations) {
+        for (auto relation : query.relations) {
             RelationType relationClass = relation.type;
 
             if (relationClass == RelationType::USESS || relationClass == RelationType::MODIFIESS) {
@@ -233,7 +242,7 @@ namespace PQL {
 
         // Pattern clauses: only need to validate first argument (entity reference)
         // of ArgType SYNONYM corresponds to a valid declared synonym
-        for (PatternClause pattern : query.patterns) {
+        for (auto pattern : query.patterns) {
             if (pattern.targetArg.first == ArgType::SYNONYM) {
                 auto synonymMapping = synonymTable.find(pattern.targetArg.second);
                 if (synonymMapping == synonymTable.end()) {
@@ -361,23 +370,25 @@ namespace PQL {
     }
 
     pair<bool, string> QueryParser::parseQueryTarget(Query& query, string queryBody) {
-        vector<string> targets;
+        vector<string> tokens;
+        vector<pair<string, AttrType>> targets;
 
-        regex SINGLE_TARGET("^Select\\s+[A-Za-z][A-Za-z0-9]*(?=\\s*$|\\s(?!\\s*,))");
-        regex TUPLE_TARGET("^Select\\s+<\\s*[A-Za-z][A-Za-z0-9]*(\\s*,\\s*[A-Za-z][A-Za-z0-9]*)*\\s*>(?=\\s*$|\\s(?!\\s*,))");
+        string TARGET = "[A-Za-z][A-Za-z0-9]*(?:\\s*\\.\\s*[A-Za-z#]+)?";
+        regex SINGLE_RETURN("^Select\\s+" + TARGET + "(?=$|\\s+(?![,.]))");
+        regex TUPLE_RETURN("^Select\\s+<\\s*" + TARGET + "(?:\\s*,\\s*" + TARGET + ")*\\s*>(?=$|\\s+(?![,.]))");
         smatch tmatch;
 
         // Attempt to match a single return type, otherwise match a tuple return type
-        if (regex_search(queryBody, tmatch, SINGLE_TARGET)) {
+        if (regex_search(queryBody, tmatch, SINGLE_RETURN)) {
             // Strip leading "Select"
             string targetEntity = QueryUtils::leftTrim(tmatch.str().erase(0, 6));
             if (targetEntity == "BOOLEAN") {
                 query.returnsBool = true;
             } else {
                 query.returnsBool = false;
-                targets.push_back(targetEntity);
+                tokens.push_back(targetEntity);
             }
-        } else if (regex_search(queryBody, tmatch, TUPLE_TARGET)) {
+        } else if (regex_search(queryBody, tmatch, TUPLE_RETURN)) {
             // Retrieve first match - a string of form "Select <x1, x2, ...>"
             // Then strip leading "Select"
             string targetTuple = QueryUtils::leftTrim(tmatch.str().erase(0, 6));
@@ -386,11 +397,27 @@ namespace PQL {
 
             // Extract all target entities in the tuple string "x1, x2, ..."
             query.returnsBool = false;
-            targets = QueryUtils::tokeniseString(tupleString, ',');
+            tokens = QueryUtils::tokeniseString(tupleString, ',');
         } else {
             // SYNTAX ERROR: unable to parse select target to entities
             query.status = SYNTAX_ERR_MISSING_OR_INVALID_QUERY_TARGET;
             return { false, "" };
+        }
+
+        bool isValidTarget;
+        pair<string, AttrType> parsedTarget;
+
+        // Parse all string targets into their representation as pairs of synonyms
+        // and an optional attribute type
+        for (auto target : tokens) {
+            tie(isValidTarget, parsedTarget) = parseReturnType(target);
+            if (!isValidTarget) {
+                // SYNTAX ERROR: unknown attribute type in return type
+                query.status = SYNTAX_ERR_INVALID_ATTRIBUTE_KEYWORD_IN_RETURN_TYPE;
+                return { false, "" };
+            } else {
+                targets.push_back(parsedTarget);
+            }
         }
 
         // Extract the suffix of the query body (following the query return types)
@@ -478,7 +505,7 @@ namespace PQL {
                 // Fallthrough
             case RelationType::CALLST:
                 if (!(QueryUtils::isValidEntityRef(arg1) && QueryUtils::isValidEntityRef(arg2))) {
-                    // SYNTAX ERORR: at least one argument is not a valid entity reference
+                    // SYNTAX ERROR: at least one argument is not a valid entity reference
                     query.status = SYNTAX_ERR_CALLS_INVALID_ENT_REF;
                 } else {
                     relation = { clause, relationClass, INVALID_ARG, INVALID_ARG, parseEntityRef(arg1), parseEntityRef(arg2) };
@@ -612,6 +639,18 @@ namespace PQL {
         return true;
     }
 
+    pair<bool, pair<string, AttrType>> QueryParser::parseReturnType(string arg) {
+        if (QueryUtils::isValidAttrRef(arg)) {
+            // Return type string contains only one . - interpret as an attribute reference
+            return parseAttrRef(arg);
+        } else {
+            // Regex rejects all return types that are not synonyms or attribute references
+            // Hence return type here is just the synonym identifier itself
+            assert(QueryUtils::isValidIdentifier(arg));
+            return { true, { arg, AttrType::NONE } };
+        }
+    }
+
     pair<ArgType, StmtRef> QueryParser::parseStmtRef(string arg) {
         if (arg == "_") {
             return { ArgType::WILDCARD, arg };
@@ -647,6 +686,21 @@ namespace PQL {
         } else {
             // Exact pattern string
             return { ArgType::EXACT_PATTERN, FrontEnd::Parser().parseExpression(strippedPattern) };
+        }
+    }
+
+    pair<bool, pair<string, AttrType>> QueryParser::parseAttrRef(string arg) {
+        string prefix, suffix;
+        tie(prefix, suffix) = QueryUtils::splitString(arg, '.');
+
+        // Find the attribute corresponding to the provided attribute keyword
+        // Validity of the design entity-attribute pair is only checked during
+        // validation of query semantics
+        auto attributeMapping = ATTRIBUTE_MAP.find(suffix);
+        if (attributeMapping == ATTRIBUTE_MAP.end()) {
+            return { false, { prefix, AttrType::INVALID } };
+        } else {
+            return { true, { prefix, attributeMapping->second } };
         }
     }
 

@@ -70,7 +70,7 @@ namespace PQL {
             SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::extractQueryResults: Empty Result!\n");
             return {};
         } else {
-            Synonym target = query.targetEntities[0];
+            Synonym target = query.targetEntities[0].first;
 
             if (combinedResult[0].find(target) != combinedResult[0].end()) {
                 // Target does not exist in table: treat results from table as true if table is not empty
