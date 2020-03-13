@@ -41,8 +41,7 @@ namespace PQL {
 
             // Entity reference is not a string of form "<identifier>"
             return regex_search(input, ematch, VALID_ENTITY_REFERENCE);
-        }
-        else {
+        } else {
             // String is either '_' or just "<synonym>" - validate identifier
             return input == "_" || QueryUtils::isValidIdentifier(input);
         }

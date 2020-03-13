@@ -4,9 +4,9 @@
 #include "PQLTypes.h"
 
 namespace SPA {
-	namespace TypeUtils {
+    namespace TypeUtils {
 
-		bool isStmtTypeDesignEntity(StmtType stmtType, DesignEntity designEntity);
+        bool isStmtTypeDesignEntity(StmtType stmtType, DesignEntity designEntity);
 
-	}
+    }
 }
