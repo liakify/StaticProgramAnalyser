@@ -127,8 +127,7 @@ namespace PQL {
                 // SEMANTIC ERROR: undeclared synonym as single return type or part of tuple return type
                 query.status = SEMANTIC_ERR_UNDECLARED_SYNONYM_IN_RETURN_TYPE;
                 return false;
-            } 
-            else if (target.second != AttrType::NONE) {
+            } else if (target.second != AttrType::NONE) {
                 // Return type is an attribute reference - determine if its design entity has the attribute
                 vector<DesignEntity> validEntities = ATTRIBUTE_ENTITY_MAP.find(target.second)->second;
 
@@ -416,8 +415,7 @@ namespace PQL {
                 // SYNTAX ERROR: unknown attribute type in return type
                 query.status = SYNTAX_ERR_INVALID_ATTRIBUTE_KEYWORD_IN_RETURN_TYPE;
                 return { false, "" };
-            }
-            else {
+            } else {
                 targets.push_back(parsedTarget);
             }
         }
@@ -645,8 +643,7 @@ namespace PQL {
         if (QueryUtils::isValidAttrRef(arg)) {
             // Return type string contains only one . - interpret as an attribute reference
             return parseAttrRef(arg);
-        }
-        else {
+        } else {
             // Regex rejects all return types that are not synonyms or attribute references
             // Hence return type here is just the synonym identifier itself
             assert(QueryUtils::isValidIdentifier(arg));
@@ -702,8 +699,7 @@ namespace PQL {
         auto attributeMapping = ATTRIBUTE_MAP.find(suffix);
         if (attributeMapping == ATTRIBUTE_MAP.end()) {
             return { false, { prefix, AttrType::INVALID } };
-        }
-        else {
+        } else {
             return { true, { prefix, attributeMapping->second } };
         }
     }
