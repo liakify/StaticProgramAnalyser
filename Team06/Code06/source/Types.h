@@ -1,22 +1,19 @@
 #pragma once
 
 #include <string>
-#include <vector>
 #include <unordered_map>
+#include <vector>
 
-enum class StmtType
-{
-	PRINT, READ, IF, WHILE, CALL, ASSIGN
+enum class StmtType {
+    PRINT, READ, IF, WHILE, CALL, ASSIGN
 };
 
-enum class ExprType
-{
-	VAR, CONST
+enum class ExprType {
+    VAR, CONST
 };
 
-enum class NodeType
-{
-	PREDECESSOR, SUCCESSOR
+enum class NodeType {
+    PREDECESSOR, SUCCESSOR
 };
 
 using VarName = std::string;

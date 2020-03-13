@@ -2,6 +2,9 @@
 
 #include <regex>
 #include <sstream>
+#include <string>
+#include <utility>
+#include <vector>
 
 #include "PQLTypes.h"
 
@@ -12,7 +15,7 @@ namespace PQL {
      *  Parser for string validation and manipulation.
      */
     namespace QueryUtils {
-        
+
         /**
          *  Validates an input string as a valid integer.
          *
