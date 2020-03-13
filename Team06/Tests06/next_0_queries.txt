@@ -43,52 +43,52 @@ Select cn such that Next(cn, _)
 Select BOOLEAN such that Next(_, _)
 true
 5000
-1 - arg variant: (a, s) - stmtRef combinations
+10 - arg variant: (a, s) - stmtRef combinations
 assign a; stmt s;
 Select a such that Next(a, s.stmt#)
 
 5000
-1 - arg variant: (s, a)
+11 - arg variant: (s, a)
 assign a; stmt s;
 Select s such that Next(s, a.stmt#)
 
 5000
-1 - arg variant: (c, s)
+12 - arg variant: (c, s)
 call c; stmt s;
 Select c such that Next(c, s)
 
 5000
-1 - arg variant: (s, c)
+13 - arg variant: (s, c)
 call c; stmt s;
 Select s such that Next(s, c.stmt#)
 
 5000
-1 - arg variant: (r, pn)
+14 - arg variant: (r, pn)
 print pn; read r;
 Select r such that Next(r, pn.stmt#)
 
 5000
-1 - arg variant: (p, r)
+15 - arg variant: (p, r)
 print pn; read r;
 Select pn such that Next(pn, r.stmt#)
 
 5000
-1 - arg variant: (w, ifs) - Nested
+16 - arg variant: (w, ifs) - Nested
 while w; if ifs;
 Select w such that Next(w, ifs.stmt#)
 
 5000
-1 - arg variant: (ifs, w)
+17 - arg variant: (ifs, w)
 while w; if ifs;
 Select ifs such that Next(ifs, w.stmt#)
 
 5000
-1 - arg variant: (w, w)
+18 - arg variant: (w, w)
 while w1, w2;
 Select w2 such that Next(w1, w2)
 
 5000
-1 - arg variant: (ifs, ifs)
+19 - arg variant: (ifs, ifs)
 if ifs1, ifs2;
 Select ifs2 such that Next(ifs1, ifs2)
 

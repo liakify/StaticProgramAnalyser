@@ -1,0 +1,18 @@
+procedure SelectNext {
+  x = 5;
+  y = 6 + 10;
+  print x;
+  if (x < y) then {
+    read x;
+    if (y > 0) {
+      read y;
+      print x;   }
+    call Next2; } else {
+    while (x > 0) {
+      x = x;    }  }
+  read x;}
+procedure Next2 {
+  while (x < y) {
+      x = x + y;
+      while (x > y) {
+          read y;  }  }  }
