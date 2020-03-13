@@ -1,11 +1,6 @@
 1 - arg variant: (n, n) - Regular combinations
-prog_line n1; prog_line n2;
+prog_line n1, n2;
 Select n1 such that Next(n1, n2)
-
-5000
-1 - arg variant: (s, n)
-stmt s; prog_line n;
-Select n such that Next(s.stmt#, n)
 
 5000
 2 - arg variant: (n, _)
@@ -29,7 +24,7 @@ Select n such that Next(cn, n)
 
 5000
 6 - arg variant: (cn, cn)
-constant cn1; constant cn2;
+constant cn1, cn2;
 Select cn2 such that Next(cn1, cn2)
 
 5000
@@ -78,7 +73,7 @@ print pn; read r;
 Select pn such that Next(pn, r.stmt#)
 
 5000
-1 - arg variant: (w, ifs)
+1 - arg variant: (w, ifs) - Nested
 while w; if ifs;
 Select w such that Next(w, ifs.stmt#)
 
@@ -86,5 +81,15 @@ Select w such that Next(w, ifs.stmt#)
 1 - arg variant: (ifs, w)
 while w; if ifs;
 Select ifs such that Next(ifs, w.stmt#)
+
+5000
+1 - arg variant: (w, w)
+while w1, w2;
+Select w2 such that Next(w1, w2)
+
+5000
+1 - arg variant: (ifs, ifs)
+if ifs1, ifs2;
+Select ifs2 such that Next(ifs1, ifs2)
 
 5000
