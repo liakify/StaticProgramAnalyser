@@ -1,0 +1,5 @@
+1 - list affects* pairs (will this break?)
+assign a1, a2;
+Select <a1, a2> such that Affects*(a1, a2)
+
+5000
