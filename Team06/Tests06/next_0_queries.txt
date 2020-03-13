@@ -1,0 +1,90 @@
+1 - arg variant: (n, n) - Regular combinations
+prog_line n1; prog_line n2;
+Select n1 such that Next(n1, n2)
+
+5000
+1 - arg variant: (s, n)
+stmt s; prog_line n;
+Select n such that Next(s.stmt#, n)
+
+5000
+2 - arg variant: (n, _)
+prog_line n;
+Select n such that Next(n, _)
+
+5000
+3 - arg variant: (n, c)
+prog_line n; constant cn;
+Select n such that Next(n, cn)
+
+5000
+4 - arg variant: (_, n)
+prog_line n;
+Select n such that Next(_, n)
+
+5000
+5 - arg variant: (cn, n)
+prog_line n; constant cn;
+Select n such that Next(cn, n)
+
+5000
+6 - arg variant: (cn, cn)
+constant cn1; constant cn2;
+Select cn2 such that Next(cn1, cn2)
+
+5000
+7 - arg variant: (_, cn)
+constant cn;
+Select cn such that Next(_, cn)
+
+5000
+8 - arg variant: (cn, _)
+constant cn;
+Select cn such that Next(cn, _)
+
+5000
+9 - arg variant: (_, _)
+
+Select BOOLEAN such that Next(_, _)
+true
+5000
+1 - arg variant: (a, s) - stmtRef combinations
+assign a; stmt s;
+Select a such that Next(a, s.stmt#)
+
+5000
+1 - arg variant: (s, a)
+assign a; stmt s;
+Select s such that Next(s, a.stmt#)
+
+5000
+1 - arg variant: (c, s)
+call c; stmt s;
+Select c such that Next(c, s)
+
+5000
+1 - arg variant: (s, c)
+call c; stmt s;
+Select s such that Next(s, c.stmt#)
+
+5000
+1 - arg variant: (r, pn)
+print pn; read r;
+Select r such that Next(r, pn.stmt#)
+
+5000
+1 - arg variant: (p, r)
+print pn; read r;
+Select pn such that Next(pn, r.stmt#)
+
+5000
+1 - arg variant: (w, ifs)
+while w; if ifs;
+Select w such that Next(w, ifs.stmt#)
+
+5000
+1 - arg variant: (ifs, w)
+while w; if ifs;
+Select ifs such that Next(ifs, w.stmt#)
+
+5000
