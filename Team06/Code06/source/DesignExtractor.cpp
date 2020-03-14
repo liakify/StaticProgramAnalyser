@@ -311,7 +311,7 @@ namespace FrontEnd {
     }
 
     void DesignExtractor::populateNext() {
-        for (ProcId pid = 1; pid < pkb.procTable.size(); pid++) {
+        for (ProcId pid = 1; pid <= pkb.procTable.size(); pid++) {
             populateNextKB(pkb.procTable.get(pid).getStmtLstId());
         }
     }
@@ -372,7 +372,7 @@ namespace FrontEnd {
     }
 
     void DesignExtractor::updateStmtListId() {
-        for (StmtListId sid = 1; sid < pkb.stmtListTable.size(); sid++) {
+        for (StmtListId sid = 1; sid <= pkb.stmtListTable.size(); sid++) {
             StatementList sl = pkb.stmtListTable.get(sid);
             for (StmtId id : sl.getStmtIds()) {
                 pkb.stmtTable.get(id)->setParentId(sid);

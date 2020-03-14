@@ -17,7 +17,7 @@ namespace UnitTesting
 	PKB::PKB pkbNormalAndRecursive;
 	PKB::PKB pkbNormalAndCyclic;
 	PKB::PKB pkbInvalidProcCall;
-	FrontEnd::DesignExtractor DE_callStar;
+	FrontEnd::DesignExtractor DE_calls;
 
 	TEST_CLASS(TestDesignExtractor_calls)
 	{
@@ -65,7 +65,7 @@ namespace UnitTesting
 			pkbCallStar.stmtTable.insertStmt(READ_1);
 			pkbCallStar.stmtListTable.insertStmtLst(sl3);
 
-			pkbCallStar = DE_callStar.run(pkbCallStar);
+			pkbCallStar = DE_calls.run(pkbCallStar);
 
 			/* 
 				Valid SIMPLE. Calls form X-shaped DAG
@@ -94,7 +94,7 @@ namespace UnitTesting
 			pkbX.stmtTable.insertStmt(READ_2);
 			pkbX.stmtListTable.insertStmtLst(sl6);
 
-			pkbX = DE_callStar.run(pkbX);
+			pkbX = DE_calls.run(pkbX);
 
 			/* 
 				Valid SIMPLE. Calls form diamond-shaped DAG
@@ -120,7 +120,7 @@ namespace UnitTesting
 			pkbDiamond.stmtTable.insertStmt(CALL_C);
 			pkbDiamond.stmtListTable.insertStmtLst(sl5);
 
-			pkbDiamond = DE_callStar.run(pkbDiamond);
+			pkbDiamond = DE_calls.run(pkbDiamond);
 
 			// Recursive call in SIMPLE
 			pkbRecursive = PKB::PKB();
@@ -265,28 +265,28 @@ namespace UnitTesting
 		}
 
 		TEST_METHOD(populateCallStar_pkbRecursive) {
-			auto lambda = [] { pkbRecursive = DE_callStar.run(pkbRecursive); };
+			auto lambda = [] { pkbRecursive = DE_calls.run(pkbRecursive); };
 			Assert::ExpectException<std::invalid_argument>(lambda, message);
 		}
 
 		TEST_METHOD(populateCallStar_pkbCyclic) {
-			auto lambda = [] { pkbCyclic = DE_callStar.run(pkbCyclic); };
+			auto lambda = [] { pkbCyclic = DE_calls.run(pkbCyclic); };
 			Assert::ExpectException<std::invalid_argument>(lambda, message);
 		}
 
 		TEST_METHOD(populateCallStar_pkbNormalAndRecursive) {
-			auto lambda = [] { pkbNormalAndRecursive = DE_callStar.run(pkbNormalAndRecursive); };
+			auto lambda = [] { pkbNormalAndRecursive = DE_calls.run(pkbNormalAndRecursive); };
 			Assert::ExpectException<std::invalid_argument>(lambda, message);
 		}
 
 		TEST_METHOD(populateCallStar_pkbNormalAndCyclic) {
-			auto lambda = [] { pkbNormalAndCyclic = DE_callStar.run(pkbNormalAndCyclic); };
+			auto lambda = [] { pkbNormalAndCyclic = DE_calls.run(pkbNormalAndCyclic); };
 			Assert::ExpectException<std::invalid_argument>(lambda, message);
 		}
 
 
 		TEST_METHOD(populateCallStar_pkbInvalidProcCall) {
-			auto lambda = [] { pkbInvalidProcCall = DE_callStar.run(pkbInvalidProcCall); };
+			auto lambda = [] { pkbInvalidProcCall = DE_calls.run(pkbInvalidProcCall); };
 			Assert::ExpectException<std::invalid_argument>(lambda, message2);
 		}
 	};
