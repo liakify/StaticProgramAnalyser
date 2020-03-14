@@ -7,26 +7,29 @@ $regression_test_path = '.\Team06\Tests06\regression_tests\'
 $list_of_test_files = @(
   # SAMPLE FAILED TEST CASE (to verify that this works)
   # '..\modifies_0',
-# 'select_0_1',
-# 'follows_0',
-# 'followsStar_0',
-# 'parent_0',
-# 'parentStar_0',
-# 'modifies_0_1',
-# 'uses_0_1',
-# 'pattern_0',
-# 'pattern_1',
-# 'suchthatPattern_0_1'
+
+# DO NOT MODIFY THE FOLLOWING IN ANY COMMITS
+'select_0_1',
+'follows_0',
+'followsStar_0',
+'parent_0',
+'parentStar_0',
+'patternAssign_0',
+'patternAssign_1',
+'suchthatPatternAssign_0',
+'uses_0',
+'modifies_0'
+
+# ONLY MODIFY THE BELOW
+# '..\patternWhile_0',
+# '..\patternIf_0'
+# '..\select_0'
 # '..\calls_0',
-# '..\calls_1',
-'..\uses_0',
-'..\modifies_0'
+# '..\calls_1'
 # '..\callsStar_0',
 # '..\callsStar_1'
 # '..\callsStar_twoDiamonds',
 # '..\callsStar_threePronged',
-# '..\patternWhile_0',
-# '..\patternIf_0'
 # '..\invalid_simple\simple_CondAsFalse',
 # '..\invalid_simple\simple_CondAsTrue'
 # '..\invalid_simple\simple_cyclicCalls',

@@ -6,7 +6,7 @@ Select r
 2 - print
 print pn;
 Select pn 
-3, 4, 11, 14, 18
+3, 4, 11, 14, 18, 20
 5000
 3 - assign
 assign a;
@@ -34,13 +34,13 @@ Select v
 a, b, c, d, e, f, F, g, h, i, j, k, x, y, K, l
 5000
 8 - constant
-constant c;
-Select c
+constant cn;
+Select cn
 0, 1
 5000
 9 - prog_line
 prog_line pl;
-Select pl;
+Select pl
 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20
 5000 
 10 - stmt
@@ -50,7 +50,7 @@ Select s
 5000
 11 - calls
 call c;
-Select c;
+Select c
 19
 5000
 12 - valid: unused declarations
