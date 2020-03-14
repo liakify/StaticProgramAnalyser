@@ -1,0 +1,20 @@
+1 - 
+Procedure p;
+Select p such that Calls* ("DmdATop", p)
+
+5000
+2 - 
+Procedure p;
+Select p such that Calls* ("DmdBTop", p)
+
+5000
+3 - 
+Procedure p;
+Select p such that Calls* ("DmdBLeftOrARight", p)
+
+5000
+4 - 
+Procedure p;
+Select p such that Calls* ("DmdBRight", p)
+
+5000
