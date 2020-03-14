@@ -322,11 +322,15 @@ namespace FrontEnd {
             Statement* s = pkb.stmtTable.get(idList[i]);
             if (s->getType() == StmtType::IF) {
                 IfStmt* ifs = reinterpret_cast<IfStmt*>(s);
-                StatementList& thenSl = pkb.stmtListTable.get(ifs->getThenStmtLstId());
+                StmtListId thenId = ifs->getThenStmtLstId();
+                StatementList& thenSl = pkb.stmtListTable.get(thenId);
                 updateLastStmtId(thenSl);
+                populateNextKB(thenId);
                 // pkb.nextKB.addNext(idList[i], thenSl.getFirst());
-                StatementList& elseSl = pkb.stmtListTable.get(ifs->getElseStmtLstId());
+                StmtListId elseId = ifs->getElseStmtLstId();
+                StatementList& elseSl = pkb.stmtListTable.get(elseId);
                 updateLastStmtId(elseSl);
+                populateNextKB(elseId);
                 // pkb.nextKB.addNext(idList[i], elseSl.getFirst());
                 if (i < idList.size() - 1) {
                     // pkb.nextKB.addNext(thenSl.getLast(), idList[i+1]);
@@ -334,8 +338,10 @@ namespace FrontEnd {
                 }
             } else if (s->getType() == StmtType::WHILE) {
                 WhileStmt* ws = reinterpret_cast<WhileStmt*>(s);
-                StatementList& whileSl = pkb.stmtListTable.get(ws->getStmtLstId());
+                StmtListId loopId = ws->getStmtLstId();
+                StatementList& whileSl = pkb.stmtListTable.get(loopId);
                 updateLastStmtId(whileSl);
+                populateNextKB(loopId);
                 // pkb.nextKB.addNext(idList[i], whileSl.getFirst());
                 // pkb.nextKB.addNext(whileSl.getLast(), idList[i]);
                 if (i < idList.size() - 1) {
