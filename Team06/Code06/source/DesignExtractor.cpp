@@ -14,6 +14,7 @@ namespace FrontEnd {
         populateUses();
         populateModifies();
         populatePattern();
+        populateNext();
         return this->pkb;
     }
 
@@ -305,6 +306,61 @@ namespace FrontEnd {
         unordered_set<Pattern> patterns = exp.getPatterns();
         for (Pattern p : patterns) {
             pkb.patternKB.addAssignPattern(p, stmtId);
+        }
+    }
+
+    void DesignExtractor::populateNext() {
+        for (ProcId pid = 1; pid < pkb.procTable.size(); pid++) {
+            populateNextKB(pkb.procTable.get(pid).getStmtLstId());
+        }
+    }
+
+    void DesignExtractor::populateNextKB(StmtListId sid) {
+        StatementList sl = pkb.stmtListTable.get(sid);
+        std::vector<StmtId> idList = sl.getStmtIds();
+        for (int i = 0; i < idList.size(); i++) {
+            Statement* s = pkb.stmtTable.get(idList[i]);
+            if (s->getType() == StmtType::IF) {
+                IfStmt* ifs = reinterpret_cast<IfStmt*>(s);
+                StatementList& thenSl = pkb.stmtListTable.get(ifs->getThenStmtLstId());
+                updateLastStmtId(thenSl);
+                //pkb.nextKB.addNext(idList[i], thenSl.getFirst());
+                StatementList& elseSl = pkb.stmtListTable.get(ifs->getElseStmtLstId());
+                updateLastStmtId(elseSl);
+                //pkb.nextKB.addNext(idList[i], elseSl.getFirst());
+                if (i < idList.size() - 1) {
+                    //pkb.nextKB.addNext(thenSl.getLast(), idList[i+1]);
+                    //pkb.nextKB.addNext(elseSl.getLast(), idList[i+1]);
+                }
+            } else if (s->getType() == StmtType::WHILE) {
+                WhileStmt* ws = reinterpret_cast<WhileStmt*>(s);
+                StatementList& whileSl = pkb.stmtListTable.get(ws->getStmtLstId());
+                updateLastStmtId(whileSl);
+                //pkb.nextKB.addNext(idList[i], whileSl.getFirst());
+                //pkb.nextKB.addNext(whileSl.getLast(), idList[i]);
+                if (i < idList.size() - 1) {
+                    //pkb.nextKB.addNext(idList[i], idList[i+1]);
+                }
+            } else {
+                if (i < idList.size() - 1) {
+                    //pkb.nextKB.addNext(idList[i], idList[i+1]);
+                }
+            }
+        }
+    }
+
+    void DesignExtractor::updateLastStmtId(StatementList& sl) {
+        Statement* lastStmt = pkb.stmtTable.get(sl.getLast());
+        if (lastStmt->getType() == StmtType::IF) {
+            IfStmt* ifs = reinterpret_cast<IfStmt*>(lastStmt);
+            StatementList& newSl = pkb.stmtListTable.get(ifs->getElseStmtLstId());
+            updateLastStmtId(newSl);
+            sl.setLast(newSl.getLast());
+        } else if (lastStmt->getType() == StmtType::WHILE) {
+            WhileStmt* ws = reinterpret_cast<WhileStmt*>(lastStmt);
+            StatementList& newSl = pkb.stmtListTable.get(ws->getStmtLstId());
+            updateLastStmtId(newSl);
+            sl.setLast(newSl.getLast());
         }
     }
 }

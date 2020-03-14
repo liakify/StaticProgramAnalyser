@@ -39,8 +39,9 @@ namespace UnitTesting
 			StmtListId stmtList_A_id = stmtListTable.insertStmtLst(STMTLST_A);
 			Assert::AreEqual(stmtListTable.size(), 1);
 
-			StatementList stmtlist = stmtListTable.get(stmtList_A_id);
+			StatementList& stmtlist = stmtListTable.get(stmtList_A_id);
 			Assert::IsTrue(stmtlist == STMTLST_A);
+			Assert::IsTrue(&stmtlist == &stmtListTable.get(stmtList_A_id));
 		}
 	};
 }
