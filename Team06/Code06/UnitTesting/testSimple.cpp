@@ -132,9 +132,13 @@ namespace UnitTesting {
 			sid2.push_back(STMT_ID_2);
 			sid2.push_back(STMT_ID_1);
 			StatementList STATEMENT_LIST_1 = StatementList(sid1);
+			Assert::IsTrue(STMT_ID_1 == STATEMENT_LIST_1.getFirst());
+			Assert::IsTrue(STMT_ID_2 == STATEMENT_LIST_1.getLast());
 			StatementList STATEMENT_LIST_2 = StatementList(sid1);
 			Assert::IsTrue(sid1 == STATEMENT_LIST_1.getStmtIds());
 			Assert::IsTrue(STATEMENT_LIST_1 == STATEMENT_LIST_2);
+			STATEMENT_LIST_2.setLast(0);
+			Assert::IsFalse(STATEMENT_LIST_1 == STATEMENT_LIST_2);
 			STATEMENT_LIST_2 = StatementList(sid2);
 			Assert::IsFalse(STATEMENT_LIST_1 == STATEMENT_LIST_2);
 		}

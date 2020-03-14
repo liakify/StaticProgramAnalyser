@@ -148,8 +148,13 @@ namespace SIMPLE {
         StatementList(std::vector<StmtId>& statements);
         bool operator== (const StatementList& other);
         std::vector<StmtId> getStmtIds();
+        StmtId getFirst();
+        void setLast(StmtId last);
+        StmtId getLast();
      private:
         std::vector<StmtId> statements;
+        StmtId first;
+        StmtId last;
     };
 
     class Procedure {

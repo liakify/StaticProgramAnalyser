@@ -154,15 +154,29 @@ namespace SIMPLE {
     }
 
     StatementList::StatementList(std::vector<StmtId>& statements)
-        : statements(statements) {
+        : statements(statements), first(statements.front()), last(statements.back()) {
     }
 
     bool StatementList::operator== (const StatementList& other) {
-        return this->statements == other.statements;
+        return this->statements == other.statements
+            && this->first == other.first
+            && this->last == other.last;
     }
 
     std::vector<StmtId> StatementList::getStmtIds() {
         return this->statements;
+    }
+
+    StmtId StatementList::getFirst() {
+        return this->first;
+    }
+
+    void StatementList::setLast(StmtId last) {
+        this->last = last;
+    }
+
+    StmtId StatementList::getLast() {
+        return this->last;
     }
 
     Procedure::Procedure(ProcName procName, StmtListId stmtLstId)
