@@ -56,10 +56,10 @@ c1, c2, a
 12 - arg variant (IDENT, IDENT)  - indirect calling
 
 Select BOOLEAN such that Calls* ("SelectCalls", "Calls4")
-true
+TRUE
 5000
 13 - arg variant (IDENT, IDENT) => false
 
 Select BOOLEAN such that Calls* ("Calls4", "Calls3")
-false
+FALSE
 5000

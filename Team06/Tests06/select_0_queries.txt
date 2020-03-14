@@ -103,10 +103,10 @@ while    w2;
 Select w2
 15, 17
 5000
-22 - BOOLEAN: true by default
+22 - BOOLEAN: TRUE by default
 
 Select BOOLEAN
-true
+TRUE
 5000
 23 - invalid: syntax (select constant)
 

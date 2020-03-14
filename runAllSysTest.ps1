@@ -7,18 +7,28 @@ $regression_test_path = '.\Team06\Tests06\regression_tests\'
 $list_of_test_files = @(
   # SAMPLE FAILED TEST CASE (to verify that this works)
   # '..\modifies_0',
-'select_0_1',
-'follows_0',
-'followsStar_0',
-'parent_0',
-'parentStar_0',
-'modifies_0_1',
-'uses_0_1',
-'pattern_0',
-'pattern_1',
-'suchthatPattern_0_1'
+# 'select_0_1',
+# 'follows_0',
+# 'followsStar_0',
+# 'parent_0',
+# 'parentStar_0',
+# 'modifies_0_1',
+# 'uses_0_1',
+# 'pattern_0',
+# 'pattern_1',
+# 'suchthatPattern_0_1'
+# '..\calls_0',
+# '..\calls_1',
+'..\uses_0',
+'..\modifies_0'
+# '..\callsStar_0',
+# '..\callsStar_1'
+# '..\callsStar_twoDiamonds',
+# '..\callsStar_threePronged',
+# '..\patternWhile_0',
+# '..\patternIf_0'
 # '..\invalid_simple\simple_CondAsFalse',
-# '..\invalid_simple\simple_CondAsTrue',
+# '..\invalid_simple\simple_CondAsTrue'
 # '..\invalid_simple\simple_cyclicCalls',
 # '..\invalid_simple\simple_digitWithZero',
 # '..\invalid_simple\simple_logicExprNoBracket',
@@ -36,8 +46,16 @@ $list_of_test_files = @(
 Try {
   foreach ($test in $list_of_test_files) {
     .\Team06\Code06\Debug\AutoTester.exe $regression_test_path$test$source_suffix $regression_test_path$test$query_suffix $regression_test_path$test$output_suffix *>$null
+    # Remove-Item $regression_test_path$test$output_suffix
+    
     [XML]$output = Get-Content $regression_test_path$test$output_suffix
     
+    if ($null -eq $output) {
+      "SYSTEM TEST FAILED in: " + $test
+      $test + $output_suffix + " not found. "
+      exit 1
+    }
+
     foreach ($query in $output.test_results.queries.query) {
       if ($null -eq $query.passed) {
         "SYSTEM TEST FAILED in: " + $test

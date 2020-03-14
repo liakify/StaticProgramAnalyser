@@ -116,7 +116,7 @@ t, v
 24 - direct and indirect procedure modifies
 variable v;
 Select BOOLEAN such that Modifies("SelectModifies", "t")
-true
+TRUE
 5000
 25 - direct procedure modifies => empty
 variable v;
@@ -126,7 +126,7 @@ Select v such that Modifies("Calls3", v)
 26 - direct and indirect procedure modifies
 variable v;
 Select BOOLEAN such that Modifies("Calls3", _)
-false
+FALSE
 5000
 27 - unfound variable names
 stmt s;
