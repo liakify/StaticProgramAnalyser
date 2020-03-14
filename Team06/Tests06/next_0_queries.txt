@@ -1,95 +1,185 @@
-1 - arg variant: (n, n) - Regular combinations
+1 - arg variant (n1, n2)
 prog_line n1, n2;
 Select n1 such that Next(n1, n2)
 
 5000
-2 - arg variant: (n, _)
+2 - arg variant (n1, n2): Select n2
+prog_line n1, n2;
+Select n2 such that Next(n1, n2)
+
+5000
+3 - arg variant (n1, n2): non-related
+prog_line n1, n2, n;
+Select n such that Next(n1, n2)
+
+5000
+4 - arg variant (n, _)
 prog_line n;
 Select n such that Next(n, _)
 
 5000
-3 - arg variant: (n, c)
-prog_line n; constant cn;
-Select n such that Next(n, cn)
-
-5000
-4 - arg variant: (_, n)
+5 - arg variant (_, n)
 prog_line n;
 Select n such that Next(_, n)
 
 5000
-5 - arg variant: (cn, n)
-prog_line n; constant cn;
-Select n such that Next(cn, n)
+6 - arg variant (_, _)
+prog_line n;
+Select n such that Next(_, _)
 
 5000
-6 - arg variant: (cn, cn)
-constant cn1, cn2;
-Select cn2 such that Next(cn1, cn2)
+7 - arg variant (n, 1)
+prog_line n;
+Select n such that Next(n, 4)
 
 5000
-7 - arg variant: (_, cn)
-constant cn;
-Select cn such that Next(_, cn)
+8 - arg variant (1, n)
+prog_line n;
+Select n such that Next(3, n)
 
 5000
-8 - arg variant: (cn, _)
-constant cn;
-Select cn such that Next(cn, _)
+9 - arg variant (1, 1)
+
+Select BOOLEAN such that Next(3, 4)
+TRUE
+5000
+10 - arg variant (_, 1)
+
+Select BOOLEAN such that Next(_, 2)
+TRUE
+5000
+11 - arg variant (_, 1): First statement
+
+Select BOOLEAN such that Next(_, 1)
+FALSE
+5000
+12 - arg variant (1, _)
+prog_line n;
+Select n such that Next(1, _)
 
 5000
-9 - arg variant: (_, _)
-
-Select BOOLEAN such that Next(_, _)
-true
-5000
-10 - arg variant: (a, s) - stmtRef combinations
-assign a; stmt s;
-Select a such that Next(a, s.stmt#)
+13 - Indirect Next: Valid
+prog_line n;
+Select n such that Next(4, 11)
 
 5000
-11 - arg variant: (s, a)
-assign a; stmt s;
-Select s such that Next(s, a.stmt#)
+14 - Indirect Next: Invalid
+prog_line n;
+Select n such that Next(1, 3)
 
 5000
-12 - arg variant: (c, s)
-call c; stmt s;
-Select c such that Next(c, s)
+15 - Same prog_line
+prog_line n;
+Select n such that Next(1, 1)
 
 5000
-13 - arg variant: (s, c)
-call c; stmt s;
-Select s such that Next(s, c.stmt#)
+16 - Negative prog_line LHS
+prog_line n;
+Select n such that Next(-1, 1)
 
 5000
-14 - arg variant: (r, pn)
-print pn; read r;
-Select r such that Next(r, pn.stmt#)
+17 - Negative prog_line RHS
+prog_line n;
+Select n such that Next(1, -1)
 
 5000
-15 - arg variant: (p, r)
-print pn; read r;
-Select pn such that Next(pn, r.stmt#)
+18 - Negative prog_line LHS/RHS
+prog_line n;
+Select n such that Next(-1, -1)
 
 5000
-16 - arg variant: (w, ifs) - Nested
+19 - arg variant (n, s)
+prog_line n; stmt s;
+Select s such that Next(n, s)
+
+5000
+20 - arg variant (s, n)
+prog_line n; stmt s;
+Select s such that Next(s, n)
+
+5000
+21 - arg variant (n, a)
+prog_line n; assign a;
+Select a such that Next(n, a)
+
+5000
+22 - arg variant (a, n)
+prog_line n; assign a;
+Select a such that Next(a, n)
+
+5000
+23 - arg variant (n, c)
+prog_line n; call c;
+Select c such that Next(n, c)
+
+5000
+24 - arg variant (c, n)
+prog_line n; call c;
+Select c such that Next(c, n)
+
+5000
+25 - arg variant (n, r)
+prog_line n; read r;
+Select r such that Next(n, r)
+
+5000
+26 - arg variant (r, n)
+prog_line n; read r;
+Select r such that Next(r, n)
+
+5000
+27 - arg variant (n, pn)
+prog_line n; print pn;
+Select pn such that Next(n, pn)
+
+5000
+28 - arg variant (pn, n)
+prog_line n; print pn;
+Select pn such that Next(pn, n)
+
+5000
+29 - arg variant (n, ifs)
+prog_line n; if ifs;
+Select ifs such that Next(n, ifs)
+
+5000
+30 - arg variant (ifs, n)
+prog_line n; if ifs;
+Select ifs such that Next(ifs, n)
+
+5000
+31 - arg variant (n, w)
+prog_line n; while w;
+Select w such that Next(n, w)
+
+5000
+32 - arg variant (w, n)
+prog_line n; while w;
+Select w such that Next(w, n)
+
+5000
+33 - arg variant (w, ifs): Nested if in while
 while w; if ifs;
-Select w such that Next(w, ifs.stmt#)
+Select w such that Next(w, ifs)
 
 5000
-17 - arg variant: (ifs, w)
+34 - arg variant (ifs, w): Nested while in if
 while w; if ifs;
-Select ifs such that Next(ifs, w.stmt#)
+Select ifs such that Next(ifs, w)
 
 5000
-18 - arg variant: (w, w)
+35 - arg variant (w1, w2): Nested while in while
 while w1, w2;
 Select w2 such that Next(w1, w2)
 
 5000
-19 - arg variant: (ifs, ifs)
-if ifs1, ifs2;
-Select ifs2 such that Next(ifs1, ifs2)
+36 - arg variant (if, ifs): Nested if in if
+if if, ifs;
+Select ifs such that Next(if, ifs)
 
+5000
+37 - Across procedures
+
+Select BOOLEAN such that Next(12, 13)
+FALSE
 5000
