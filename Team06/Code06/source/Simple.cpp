@@ -83,6 +83,14 @@ namespace SIMPLE {
         return this->stmtType;
     }
 
+    void Statement::setParentId(StmtListId sid) {
+        this->parent = sid;
+    }
+
+    StmtListId Statement::getParentId() {
+        return this->parent;
+    }
+
     PrintStmt::PrintStmt(VarId var)
         : var(var) {
         this->stmtType = StmtType::PRINT;

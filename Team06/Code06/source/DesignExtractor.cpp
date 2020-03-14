@@ -15,6 +15,7 @@ namespace FrontEnd {
         populateModifies();
         populatePattern();
         populateNext();
+        updateStmtListId();
         return this->pkb;
     }
 
@@ -367,6 +368,15 @@ namespace FrontEnd {
             StatementList& newSl = pkb.stmtListTable.get(ws->getStmtLstId());
             updateLastStmtId(newSl);
             sl.setLast(newSl.getLast());
+        }
+    }
+
+    void DesignExtractor::updateStmtListId() {
+        for (StmtListId sid = 1; sid < pkb.stmtListTable.size(); sid++) {
+            StatementList sl = pkb.stmtListTable.get(sid);
+            for (StmtId id : sl.getStmtIds()) {
+                pkb.stmtTable.get(id)->setParentId(sid);
+            }
         }
     }
 }

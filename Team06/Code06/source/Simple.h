@@ -82,9 +82,12 @@ namespace SIMPLE {
     class Statement {
      public:
         StmtType getType();
+        void setParentId(StmtListId sid);
+        StmtListId getParentId();
      protected:
         Statement();
         StmtType stmtType;
+        StmtListId parent;
     };
 
     class PrintStmt : public Statement {
