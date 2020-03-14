@@ -1,9 +1,14 @@
 "STARTING SYSTEM TESTS"
 
+# For cmd reference:
+# Autotester.exe ..\..\Tests06\_source.txt ..\..\Tests06\_queries.txt ..\..\Tests06\_out.xml
+# Autotester.exe ..\..\Tests06\patternIf_operators_source.txt ..\..\Tests06\patternIf_operators_queries.txt ..\..\Tests06\patternIf_operators_out.xml
+
 $source_suffix = '_source.txt'
 $query_suffix = '_queries.txt'
 $output_suffix = '_out.xml'
 $regression_test_path = '.\Team06\Tests06\regression_tests\'
+
 $list_of_test_files = @(
   # SAMPLE FAILED TEST CASE (to verify that this works)
   # '..\modifies_0',
@@ -18,11 +23,13 @@ $list_of_test_files = @(
 'patternAssign_1',
 'suchthatPatternAssign_0',
 'uses_0',
-'modifies_0'
+'modifies_0',
 
 # ONLY MODIFY THE BELOW
+# '..\patternIf_0',
 # '..\patternWhile_0',
-# '..\patternIf_0'
+'..\patternIf_operators', 
+'..\patternWhile_operators'
 # '..\select_0'
 # '..\calls_0',
 # '..\calls_1'
