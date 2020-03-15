@@ -18,6 +18,8 @@ namespace UnitTesting
 		std::unordered_map<std::string, DesignEntity> EMPTY_SYNONYM_TABLE = {};
 		ClauseResult TRUE_RESULT = ClauseResult({ ClauseResultEntry({{"_RESULT", "TRUE"}}) });
 		ClauseResult EMPTY_RESULT = {};
+		
+		/*
 		TEST_METHOD(evaluateModifiesStmtClauseIntId_True)
 		{
 			PKBBuilder pkbBuilder;
@@ -35,11 +37,12 @@ namespace UnitTesting
 			ClauseResult result = PQL::ModifiesEvaluator::evaluateModifiesClause(pkb, clause, EMPTY_SYNONYM_TABLE);
 			Assert::IsTrue(result == TRUE_RESULT);
 		}
-
+		
 		TEST_METHOD(evaluateModifiesStmtClauseIntId_Empty)
 		{
 			PKBBuilder pkbBuilder;
 			PKB::PKB pkb = pkbBuilder
+				.addVar("a")
 				.addStmtModifiesRS(5, "a")
 				.getPKB();
 
@@ -54,7 +57,6 @@ namespace UnitTesting
 			Assert::IsTrue(result == EMPTY_RESULT);
 		}
 
-		/*
 		TEST_METHOD(evaluateModifiesStmtClauseIntWild_True)
 		{
 			PKBBuilder pkbBuilder;
@@ -73,7 +75,6 @@ namespace UnitTesting
 			ClauseResult result = PQL::ModifiesEvaluator::evaluateModifiesClause(pkb, clause, EMPTY_SYNONYM_TABLE);
 			Assert::IsTrue(result == TRUE_RESULT);
 		}
-		*/
 
 		TEST_METHOD(evaluateModifiesStmtClauseIntWild_Empty)
 		{
@@ -91,7 +92,7 @@ namespace UnitTesting
 			ClauseResult result = PQL::ModifiesEvaluator::evaluateModifiesClause(pkb, clause, EMPTY_SYNONYM_TABLE);
 			Assert::IsTrue(result == EMPTY_RESULT);
 		}
-
+		*/
 
 	};
 		
