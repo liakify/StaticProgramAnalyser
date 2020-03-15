@@ -42,13 +42,14 @@ namespace PQL {
         if (!hasValidTarget) return query;
 
         bool hasValidClauses;
-        vector<string> relationClauses, patternClauses;
-        tie(hasValidClauses, relationClauses, patternClauses) = splitClauses(query, queryBodySuffix);
+        vector<string> relationClauses, patternClauses, withClauses;
+        hasValidClauses = splitClauses(query, queryBodySuffix, relationClauses, patternClauses, withClauses);
         if (!hasValidClauses) return query;
 
         bool hasValidRelations = parseRelationClauses(query, relationClauses);
         bool hasValidPatterns = parsePatternClauses(query, patternClauses);
-        if (!(hasValidRelations && hasValidPatterns)) return query;
+        bool hasValidEqualities = parseWithClauses(query, withClauses);
+        if (!(hasValidRelations && hasValidPatterns && hasValidEqualities)) return query;
 
         // Ensure query is semantically valid (no ambiguities, valid synonyms, argument types)
         bool isSemanticallyValid = validateQuerySemantics(query);
@@ -284,7 +285,8 @@ namespace PQL {
     // Consumes compound clauses from start to end, terminating early if failing to do so before
     // reaching the end of the query string (i.e. there exists some incorrect syntax)
     // Returns an array of clauses
-    tuple<bool, vector<string>, vector<string>> QueryParser::splitClauses(Query& query, string queryBodySuffix) {
+    bool QueryParser::splitClauses(Query& query, string queryBodySuffix,
+        vector<string>& relationClauses, vector<string>& patternClauses, vector<string>& withClauses) {
         string RELATION_CLAUSE = "[A-Za-z*]+\\s*\\([\\w,\"\\s]*\\)";
         string PATTERN_CLAUSE = "[A-Za-z][A-Za-z0-9]*\\s*\\([\\w\"\\s]+(?:,\\s*(?:_|(?:(_?)\\s*\"[A-Za-z0-9\\(\\)\\+\\-\\*\\/\\%\\s]+\"\\s*\\1))\\s*)+\\)";
         string WITH_CLAUSE = "(\"?)\\s*[A-Za-z0-9.]+\\s*\\1\\s*=\\s*(?:(?=\")\"\\s*[A-Za-z0-9.]+\\s*\"|[A-Za-z0-9.]+)";
@@ -294,9 +296,6 @@ namespace PQL {
         regex COMPOUND_PATTERN_CLAUSE("^pattern\\s+" + PATTERN_CLAUSE + "(?:\\s+and\\s+" + PATTERN_CLAUSE + ")*");
         regex COMPOUND_WITH_CLAUSE("^with\\s+" + WITH_CLAUSE + "(?:\\s+and\\s+" + WITH_CLAUSE + ")*");
         smatch ccmatch;
-
-        vector<string> relationClauses;
-        vector<string> patternClauses;
 
         // Continue consuming compound clauses until the end of the query
         while (queryBodySuffix.length() > 0) {
@@ -310,24 +309,26 @@ namespace PQL {
                 if (!regex_search(queryBodySuffix, ccmatch, COMPOUND_PATTERN_CLAUSE)) {
                     // SYNTAX ERROR: first arg has zero length or other args violate pattern string syntax
                     query.status = SYNTAX_ERR_MISSING_OR_MALFORMED_PATTERN_ARG;
-                    return { false, relationClauses, patternClauses };
+                    return false;
                 }
 
                 // Consume a compound pattern clause and extract individual pattern clauses
                 vector<string> patterns = QueryUtils::matchAll(ccmatch.str(), PATTERN_CLAUSE);
                 patternClauses.insert(patternClauses.end(), patterns.begin(), patterns.end());
             } else if (regex_search(queryBodySuffix, ccmatch, COMPOUND_WITH_CLAUSE)) {
-                // Consume a compound with clause
+                // Consume a compound with clause and extract individual with clauses (equalities)
+                vector<string> equalities = QueryUtils::matchAll(ccmatch.str(), WITH_CLAUSE);
+                withClauses.insert(withClauses.end(), equalities.begin(), equalities.end());
             } else {
                 // SYNTAX ERROR: compound clauses fail to obey query syntax somewhere in query body
                 query.status = SYNTAX_ERR_INVALID_CLAUSES_IN_QUERY_BODY;
-                return { false, relationClauses, patternClauses };
+                return false;
             }
 
             queryBodySuffix = QueryUtils::leftTrim(ccmatch.suffix().str());
         }
 
-        return { true, relationClauses, patternClauses };
+        return true;
     }
 
     bool QueryParser::parseDeclarations(Query& query, vector<string> statements) {
@@ -435,7 +436,7 @@ namespace PQL {
         return { true, queryBodySuffix };
     }
 
-    bool QueryParser::parseRelationClauses(Query& query, vector<string> relationClauses) {
+    bool QueryParser::parseRelationClauses(Query& query, vector<string>& relationClauses) {
         vector<RelationClause> relations;
 
         for (auto clause : relationClauses) {
@@ -557,7 +558,7 @@ namespace PQL {
     }
 
     // Receives a vector of pattern clause strings and constructs pattern clause objects
-    bool QueryParser::parsePatternClauses(Query& query, vector<string> patternClauses) {
+    bool QueryParser::parsePatternClauses(Query& query, vector<string>& patternClauses) {
         vector<PatternClause> patterns;
 
         for (auto clause : patternClauses) {
@@ -642,6 +643,10 @@ namespace PQL {
         }
 
         query.patterns = patterns;
+        return true;
+    }
+
+    bool QueryParser::parseWithClauses(Query& query, vector<string>& withClauses) {
         return true;
     }
 
