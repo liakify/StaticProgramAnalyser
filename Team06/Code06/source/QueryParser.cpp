@@ -665,7 +665,7 @@ namespace PQL {
     pair<ArgType, StmtRef> QueryParser::parseStmtRef(string arg) {
         if (arg == "_") {
             return { ArgType::WILDCARD, arg };
-        } else if (QueryUtils::isInteger(arg)) {
+        } else if (QueryUtils::isValidInteger(arg)) {
             return { ArgType::INTEGER, arg };
         } else {
             return { ArgType::SYNONYM, arg };
@@ -697,6 +697,26 @@ namespace PQL {
         } else {
             // Exact pattern string
             return { ArgType::EXACT_PATTERN, FrontEnd::Parser().parseExpression(strippedPattern) };
+        }
+    }
+
+    pair<bool, pair<ArgType, Ref>> QueryParser::parseRef(string arg) {
+        if (QueryUtils::isValidInteger(arg)) {
+            return { true, { ArgType::INTEGER, { arg, AttrType::NONE } } };
+        } else if (QueryUtils::isValidIdentifier(arg)) {
+            return { true, { ArgType::SYNONYM, { arg, AttrType::NONE } } };
+        } else if (arg.find('\"') != string::npos) {
+            return { true, { ArgType::IDENTIFIER, { arg, AttrType::NONE } } };
+        } else {
+            bool hasValidAttributeType;
+            Ref parsedAttribute;
+            tie(hasValidAttributeType, parsedAttribute) = parseAttrRef(arg);
+
+            if (!hasValidAttributeType) {
+                // Attribute keyword does not correspond to a valid attribute type
+                return { false, { ArgType::INVALID, { arg, AttrType::INVALID } } };
+            }
+            return { true, { ArgType::ATTRIBUTE, parsedAttribute } };
         }
     }
 

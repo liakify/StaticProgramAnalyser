@@ -147,10 +147,10 @@ namespace UnitTesting {
 
 		TEST_METHOD(isInteger) {
 			for (auto input : VALID_INTEGERS) {
-				Assert::IsTrue(QueryUtils::isInteger(input));
+				Assert::IsTrue(QueryUtils::isValidInteger(input));
 			}
 			for (auto input : INVALID_INTEGERS) {
-				Assert::IsFalse(QueryUtils::isInteger(input));
+				Assert::IsFalse(QueryUtils::isValidInteger(input));
 			}
 		}
 

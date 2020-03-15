@@ -55,6 +55,7 @@ namespace PQL {
         std::pair<ArgType, StmtRef> parseStmtRef(std::string arg);
         std::pair<ArgType, EntityRef> parseEntityRef(std::string arg);
         std::pair<ArgType, Pattern> parsePattern(std::string arg);
+        std::pair<bool, std::pair<ArgType, Ref>> parseRef(std::string arg);
         std::pair<bool, std::pair<std::string, AttrType>> parseAttrRef(std::string arg);
     };
 
