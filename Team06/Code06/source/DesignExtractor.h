@@ -54,7 +54,9 @@ namespace FrontEnd {
         void populateStmtModifiesKB(StmtId stmtId, std::unordered_set<VarId>& varSet);
         void populateProcModifiesKB(ProcId procId, std::unordered_set<VarId>& varSet);
 
-        void populatePatternKB(StmtId stmtId, Expression exp);
+        void populateAssignPatternKB(StmtId stmtId, Expression exp);
+        void populateIfPatternKB(StmtId stmtId, CondExpr cond);
+        void populateWhilePatternKB(StmtId stmtId, CondExpr cond);
 
         void processCallStar(int numProc, std::vector<ProcId>& visited, NodeType type);
         void callStarDFS(ProcId root, std::vector<ProcId>& visited, NodeType type);

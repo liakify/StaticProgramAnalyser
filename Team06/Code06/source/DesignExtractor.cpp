@@ -299,15 +299,41 @@ namespace FrontEnd {
         for (StmtId id : assignSet) {
             AssignStmt* as = dynamic_cast<AssignStmt*>(pkb.stmtTable.get(id).get());
             Expression exp = as->getExpr();
-            populatePatternKB(id, exp);
+            populateAssignPatternKB(id, exp);
+        }
+        unordered_set<StmtId> ifSet = pkb.stmtTable.getStmtsByType(StmtType::IF);
+        for (StmtId id : ifSet) {
+            IfStmt* ifs = reinterpret_cast<IfStmt*>(pkb.stmtTable.get(id));
+            CondExpr cond = ifs->getCondExpr();
+            populateIfPatternKB(id, cond);
+        }
+        unordered_set<StmtId> whileSet = pkb.stmtTable.getStmtsByType(StmtType::WHILE);
+        for (StmtId id : whileSet) {
+            WhileStmt* ws = reinterpret_cast<WhileStmt*>(pkb.stmtTable.get(id));
+            CondExpr cond = ws->getCondExpr();
+            populateWhilePatternKB(id, cond);
         }
     }
 
-    void DesignExtractor::populatePatternKB(StmtId stmtId, Expression exp) {
+    void DesignExtractor::populateAssignPatternKB(StmtId stmtId, Expression exp) {
         pkb.patternKB.addAssignPattern(exp.getStr(), stmtId);
         unordered_set<Pattern> patterns = exp.getPatterns();
         for (Pattern p : patterns) {
             pkb.patternKB.addAssignPattern(p, stmtId);
+        }
+    }
+
+    void DesignExtractor::populateIfPatternKB(StmtId stmtId, CondExpr cond) {
+        unordered_set<VarId> varSet = cond.getVarIds();
+        for (VarId id : varSet) {
+            pkb.patternKB.addIfPattern(id, stmtId);
+        }
+    }
+
+    void DesignExtractor::populateWhilePatternKB(StmtId stmtId, CondExpr cond) {
+        unordered_set<VarId> varSet = cond.getVarIds();
+        for (VarId id : varSet) {
+            pkb.patternKB.addWhilePattern(id, stmtId);
         }
     }
 }
