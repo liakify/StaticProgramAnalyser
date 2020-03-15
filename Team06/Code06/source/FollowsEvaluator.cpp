@@ -36,14 +36,13 @@ namespace PQL {
         * @return   The result of the evaluation.
         */
         ClauseResult evaluateFollowsClauseWildWild(PKB::PKB& database) {
-            for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
-                if (database.followsKB.getFollower(i) != 0) {
-                    ClauseResultEntry resultEntry;
-                    resultEntry["_RESULT"] = "TRUE";
-                    return { resultEntry };
-                }
+            if (database.followsKB.hasFollowsRelation()) {
+                ClauseResultEntry resultEntry;
+                resultEntry["_RESULT"] = "TRUE";
+                return { resultEntry };
+            } else {
+                return {};
             }
-            return {};
         }
 
         /**
