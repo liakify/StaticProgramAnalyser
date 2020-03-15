@@ -158,10 +158,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="PKBBuilder.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="PKBBuilder.cpp" />
     <ClCompile Include="testDesignExtractor_calls.cpp" />
     <ClCompile Include="testCallsKB.cpp" />
     <ClCompile Include="testDesignExtractor.cpp" />
