@@ -70,7 +70,7 @@ namespace UnitTesting {
         /**
         * Adds Follows* Relationships to the PKB, such that Follows*(stmt1, stmts) holds.
         *
-        * @param    stmt1   The first statement in the follows relationship
+        * @param    stmt1   The first statement in the Follows* relationship
         * @param    stmts   The list of statements for the second statement in the Follows* relationship
         */
         PKBBuilder& addFollowsStarRS(StmtId stmt1, std::unordered_set<StmtId> stmts);
@@ -79,9 +79,33 @@ namespace UnitTesting {
         * Adds Follows* Relationships to the PKB, such that Follows*(stmt1, stmts) holds.
         *
         * @param    stmts   The list of statements for the first statement in the Follows* relationship
-        * @param    stmt2   The first statement in the follows relationship
+        * @param    stmt2   The first statement in the Follows* relationship
         */
         PKBBuilder& addFollowsStarRS(std::unordered_set<StmtId> stmts, StmtId stmt2);
+
+        /**
+        * Adds a Parent Relationship to the PKB, such that Parent(stmt1, stmt2) holds.
+        *
+        * @param    stmt1   The first statement in the Parent relationship
+        * @param    stmt2   The second statement in the Parent relationship
+        */
+        PKBBuilder& addParentRS(StmtId stmt1, StmtId stmt2);
+
+        /**
+        * Adds Parent* Relationships to the PKB, such that Parent*(stmt1, stmts) holds.
+        *
+        * @param    stmt1   The first statement in the Parent* relationship
+        * @param    stmts   The list of statements for the second statement in the Parent* relationship
+        */
+        PKBBuilder& addParentStarRS(StmtId stmt1, std::unordered_set<StmtId> stmts);
+
+        /**
+        * Adds Parent* Relationships to the PKB, such that Parent*(stmt1, stmts) holds.
+        *
+        * @param    stmts   The list of statements for the first statement in the Parent* relationship
+        * @param    stmt2   The first statement in the Parent* relationship
+        */
+        PKBBuilder& addParentStarRS(std::unordered_set<StmtId> stmts, StmtId stmt2);
         
         /**
         * Returns the constructed PKB.

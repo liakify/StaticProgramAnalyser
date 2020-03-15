@@ -60,6 +60,21 @@ namespace UnitTesting {
         return *this;
     }
 
+    PKBBuilder& PKBBuilder::addParentRS(StmtId stmt1, StmtId stmt2) {
+        pkb.parentKB.addParent(stmt1, stmt2);
+        return *this;
+    }
+
+    PKBBuilder& PKBBuilder::addParentStarRS(StmtId stmt1, std::unordered_set<StmtId> stmts) {
+        pkb.parentKB.setAllChildren(stmt1, stmts);
+        return *this;
+    }
+
+    PKBBuilder& PKBBuilder::addParentStarRS(std::unordered_set<StmtId> stmts, StmtId stmt2) {
+        pkb.parentKB.setAllParents(stmt2, stmts);
+        return *this;
+    }
+
     PKB::PKB& PKBBuilder::getPKB() {
         return pkb;
     }
