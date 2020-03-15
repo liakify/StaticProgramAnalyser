@@ -17,10 +17,7 @@ namespace FrontEnd {
     class DesignExtractor {
      public:
         /**
-        * Updates the PKB with secondary relationships.
-        * Relationships handled:
-        *   Follows*
-        *   Parent*
+        * Updates the PKB with all precomputable relationships.
         *
         * @param    pkb         Reference to PKB to be updated.
         * @return   PKB::PKB    The updated PKB instance.
@@ -30,7 +27,12 @@ namespace FrontEnd {
      private:
         PKB::PKB pkb;
 
-        // Functions to be called in run()
+        /**
+        * Functions to be called in run()
+        * Note that populateUses/populateModifies must be called after
+        * populateCalls/populateCallStar as the former is unable to detect
+        * cyclic calls. 
+        */
         void populateCalls();
         void populateCallStar();
         void populateFollows();
