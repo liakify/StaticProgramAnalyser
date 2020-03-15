@@ -1,42 +1,42 @@
 1 - arg variant (n1, n2)
 prog_line n1, n2;
 Select n1 such that Next(n1, n2)
-
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 15, 16
 5000
 2 - arg variant (n1, n2): Select n2
 prog_line n1, n2;
 Select n2 such that Next(n1, n2)
-
+2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17
 5000
 3 - arg variant (n1, n2): non-related
 prog_line n1, n2, n;
 Select n such that Next(n1, n2)
-
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17
 5000
 4 - arg variant (n, _)
 prog_line n;
 Select n such that Next(n, _)
-
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 15, 16
 5000
 5 - arg variant (_, n)
 prog_line n;
 Select n such that Next(_, n)
-
+2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17
 5000
 6 - arg variant (_, _)
 prog_line n;
 Select n such that Next(_, _)
-
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17
 5000
 7 - arg variant (n, 1)
 prog_line n;
 Select n such that Next(n, 4)
-
+3
 5000
 8 - arg variant (1, n)
 prog_line n;
 Select n such that Next(3, n)
-
+4
 5000
 9 - arg variant (1, 1)
 
@@ -56,12 +56,12 @@ FALSE
 12 - arg variant (1, _)
 prog_line n;
 Select n such that Next(1, _)
-
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17
 5000
 13 - Indirect Next: Valid
 prog_line n;
 Select n such that Next(4, 11)
-
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17
 5000
 14 - Indirect Next: Invalid
 prog_line n;
@@ -91,92 +91,92 @@ Select n such that Next(-1, -1)
 19 - arg variant (n, s)
 prog_line n; stmt s;
 Select s such that Next(n, s)
-
+2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17
 5000
 20 - arg variant (s, n)
 prog_line n; stmt s;
 Select s such that Next(s, n)
-
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 13, 14, 15, 16
 5000
 21 - arg variant (n, a)
 prog_line n; assign a;
 Select a such that Next(n, a)
-
+2, 8, 11
 5000
 22 - arg variant (a, n)
 prog_line n; assign a;
 Select a such that Next(a, n)
-
+1, 2, 8
 5000
 23 - arg variant (n, c)
 prog_line n; call c;
 Select c such that Next(n, c)
-
+9
 5000
 24 - arg variant (c, n)
 prog_line n; call c;
 Select c such that Next(c, n)
-
+9
 5000
 25 - arg variant (n, r)
 prog_line n; read r;
 Select r such that Next(n, r)
-
+6, 16, 17
 5000
 26 - arg variant (r, n)
 prog_line n; read r;
 Select r such that Next(r, n)
-
+6
 5000
 27 - arg variant (n, pn)
 prog_line n; print pn;
 Select pn such that Next(n, pn)
-
+3, 7, 14
 5000
 28 - arg variant (pn, n)
 prog_line n; print pn;
 Select pn such that Next(pn, n)
-
+3, 7, 14
 5000
 29 - arg variant (n, ifs)
 prog_line n; if ifs;
 Select ifs such that Next(n, ifs)
-
+4, 5, 15
 5000
 30 - arg variant (ifs, n)
 prog_line n; if ifs;
 Select ifs such that Next(ifs, n)
-
+4, 5, 15
 5000
 31 - arg variant (n, w)
 prog_line n; while w;
 Select w such that Next(n, w)
-
+10, 13
 5000
 32 - arg variant (w, n)
 prog_line n; while w;
 Select w such that Next(w, n)
-
+10, 12, 13
 5000
 33 - arg variant (w, ifs): Nested if in while
 while w; if ifs;
 Select w such that Next(w, ifs)
-
+12
 5000
 34 - arg variant (ifs, w): Nested while in if
 while w; if ifs;
 Select ifs such that Next(ifs, w)
-
+4
 5000
 35 - arg variant (w1, w2): Nested while in while
 while w1, w2;
 Select w2 such that Next(w1, w2)
-
+13
 5000
 36 - arg variant (if, ifs): Nested if in if
 if if, ifs;
 Select ifs such that Next(if, ifs)
-
+5
 5000
 37 - Across procedures
 

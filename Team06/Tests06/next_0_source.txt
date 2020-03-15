@@ -3,17 +3,17 @@ procedure SelectNext {
     y = 6;
     print x;
     if (x < y) then {
-        read x;
         if (y > 0) then {
             read y;
             print x; } else {
             x = y; }
         call Next2; } else {
             while (x > 0) {
-                x = x;    }  }  }
+                x = x;  }  }  }
 procedure Next2 {
     while (x < y) {
-        x = x + y;
         while (x > y) {
-            print x;
+            print x; }
+        if (x == y) then {
+            read x; } else {
             read y;  }  }  }
