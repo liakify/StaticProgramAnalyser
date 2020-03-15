@@ -82,7 +82,7 @@ namespace PQL {
         }
 
         // Validate structure of query body (last statement)
-        regex VALID_QUERY_BODY("^Select\\s[\\w<>#.\\(\\),\"\\+\\-\\*\\/\\%\\s]+(?!;)$");
+        regex VALID_QUERY_BODY("^Select\\s[\\w<>=#.\\(\\),\"\\+\\-\\*\\/\\%\\s]+(?!;)$");
         smatch qbmatch;
 
         if (!regex_search(statements.at(numDeclarations), qbmatch, VALID_QUERY_BODY)) {
@@ -287,10 +287,12 @@ namespace PQL {
     tuple<bool, vector<string>, vector<string>> QueryParser::splitClauses(Query& query, string queryBodySuffix) {
         string RELATION_CLAUSE = "[A-Za-z*]+\\s*\\([\\w,\"\\s]*\\)";
         string PATTERN_CLAUSE = "[A-Za-z][A-Za-z0-9]*\\s*\\([\\w\"\\s]+(?:,\\s*(?:_|(?:(_?)\\s*\"[A-Za-z0-9\\(\\)\\+\\-\\*\\/\\%\\s]+\"\\s*\\1))\\s*)+\\)";
+        string WITH_CLAUSE = "(\"?)\\s*[A-Za-z0-9.]+\\s*\\1\\s*=\\s*(?:(?=\")\"\\s*[A-Za-z0-9.]+\\s*\"|[A-Za-z0-9.]+)";
 
-        regex COMPOUND_RELATION_CLAUSE("^ *such\\s+that\\s+" + RELATION_CLAUSE + "(?:\\s+and\\s+" + RELATION_CLAUSE + ")*");
-        regex COMPOUND_PATTERN_PREFIX("^ *pattern\\s+[A-Za-z][A-Za-z0-9]*\\s*\\(");
-        regex COMPOUND_PATTERN_CLAUSE("^ *pattern\\s+" + PATTERN_CLAUSE + "(?:\\s+and\\s+" + PATTERN_CLAUSE + ")*");
+        regex COMPOUND_RELATION_CLAUSE("^such\\s+that\\s+" + RELATION_CLAUSE + "(?:\\s+and\\s+" + RELATION_CLAUSE + ")*");
+        regex COMPOUND_PATTERN_PREFIX("^pattern\\s+[A-Za-z][A-Za-z0-9]*\\s*\\(");
+        regex COMPOUND_PATTERN_CLAUSE("^pattern\\s+" + PATTERN_CLAUSE + "(?:\\s+and\\s+" + PATTERN_CLAUSE + ")*");
+        regex COMPOUND_WITH_CLAUSE("^with\\s+" + WITH_CLAUSE + "(?:\\s+and\\s+" + WITH_CLAUSE + ")*");
         smatch ccmatch;
 
         vector<string> relationClauses;
@@ -298,9 +300,10 @@ namespace PQL {
 
         // Continue consuming compound clauses until the end of the query
         while (queryBodySuffix.length() > 0) {
-            // Attempt to consume either a relation or pattern compound clause
+            // Attempt to consume either a relation, pattern or with compound clause, then decompose it
             // If this fails, then the query string is synctactically invalid
             if (regex_search(queryBodySuffix, ccmatch, COMPOUND_RELATION_CLAUSE)) {
+                // Consume a compound relation clause and extract individual relation clauses
                 vector<string> relations = QueryUtils::matchAll(ccmatch.str(), RELATION_CLAUSE);
                 relationClauses.insert(relationClauses.end(), relations.begin(), relations.end());
             } else if (regex_search(queryBodySuffix, ccmatch, COMPOUND_PATTERN_PREFIX)) {
@@ -310,8 +313,11 @@ namespace PQL {
                     return { false, relationClauses, patternClauses };
                 }
 
+                // Consume a compound pattern clause and extract individual pattern clauses
                 vector<string> patterns = QueryUtils::matchAll(ccmatch.str(), PATTERN_CLAUSE);
                 patternClauses.insert(patternClauses.end(), patterns.begin(), patterns.end());
+            } else if (regex_search(queryBodySuffix, ccmatch, COMPOUND_WITH_CLAUSE)) {
+                // Consume a compound with clause
             } else {
                 // SYNTAX ERROR: compound clauses fail to obey query syntax somewhere in query body
                 query.status = SYNTAX_ERR_INVALID_CLAUSES_IN_QUERY_BODY;
