@@ -155,6 +155,11 @@ namespace PQL {
     const std::string SEMANTIC_ERR_FPN_NON_STMT_SYNONYM = "semantic error: synonym in F(*)/P(*)/N(*) clause not a STATEMENT or its sub-types";
     const std::string SEMANTIC_ERR_PATTERN_UNDECLARED_FIRST_SYNONYM = "semantic error: undeclared synonym as first arg in pattern clause";
     const std::string SEMANTIC_ERR_PATTERN_NON_VARIABLE_FIRST_SYNONYM = "semantic error: synonym as first arg in pattern clause not a VARIABLE";
+    const std::string SEMANTIC_ERR_WITH_CLAUSE_DIFF_LITERAL_TYPE = "semantic error: literal values on both sides of with (equality) clause have different type";
+    const std::string SEMANTIC_ERR_WITH_CLAUSE_UNDECLARED_SYNONYM_ARG = "semantic error: undeclared synonym as arg in with (equality) clause";
+    const std::string SEMANTIC_ERR_WITH_CLAUSE_UNDECLARED_SYNONYM_IN_ATTRIBUTE_ARG = "semantic error: undeclared synonym part of attribute arg in with (equality) clause";
+    const std::string SEMANTIC_ERR_WITH_CLAUSE_INVALID_SYNONYM_ATTRIBUTE_PAIR_ARG = "semantic error: attribute not defined for synonym part of attribute arg in with (equality) clause";
+    const std::string SEMANTIC_ERR_WITH_CLAUSE_DIFF_RETURN_TYPE_OF_ARGS = "semantic error: expressions on both sides of with (equality) clause evaluate to different type";
 
     /**
      *  Sentinel argument pair that should never be returned by getArgs() method

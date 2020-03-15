@@ -258,6 +258,86 @@ namespace PQL {
             }
         }
 
+        // With clauses: need to evaluate and validate the result type of args (expressions)
+        // on both sides of the equality
+        for (auto& equality : query.equalities) {
+            if (equality.type == WithType::LITERAL_EQUAL) {
+                // Both sides of the equality are literal values (integers or identifiers)
+                // Check that both arguments have the same type
+                if (equality.leftArg.first != equality.rightArg.first) {
+                    query.status = SEMANTIC_ERR_WITH_CLAUSE_DIFF_LITERAL_TYPE;
+                    return false;
+                }
+                continue;
+            }
+
+            // Equality type has not been determined since at least one argument is a synonym
+            // or attribute - evaluate the type of those arguments and compare for equality
+            ArgType leftType = equality.leftArg.first;
+            ArgType rightType = equality.rightArg.first;
+
+            pair<ArgType, Ref> args[2] = {
+                { leftType, equality.leftArg.second },
+                { rightType, equality.rightArg.second }
+            };
+
+            // Evaluate the type of the result the argument on either side evaluates to
+            // For example, synonyms of type PROCEDURE evaluate to an IDENTIFIER and
+            // attributes of type VALUE evaluate to an INTEGER
+            for (auto& arg : args) {
+                if (arg.first == ArgType::SYNONYM) {
+                    // First validate the synonym has been previously declared
+                    auto synonymMapping = synonymTable.find(arg.second.first);
+                    if (synonymMapping == synonymTable.end()) {
+                        // SEMANTIC ERROR: synonym referenced in with clause as arg is undeclared
+                        query.status = SEMANTIC_ERR_WITH_CLAUSE_UNDECLARED_SYNONYM_ARG;
+                        return false;
+                    }
+
+                    // Evaluate return type by checking the design entity of that synonym
+                    DesignEntity synonymType = synonymMapping->second;
+                    arg.first = synonymType == DesignEntity::PROCEDURE || synonymType == DesignEntity::VARIABLE
+                        ? ArgType::IDENTIFIER
+                        : ArgType::INTEGER;
+                } else if (arg.first == ArgType::ATTRIBUTE) {
+                    // First validate the synonym used in the attribute ref has been declared
+                    auto synonymMapping = synonymTable.find(arg.second.first);
+                    if (synonymMapping == synonymTable.end()) {
+                        // SEMANTIC ERROR: synonym appearing in attribute arg is undeclared
+                        query.status = SEMANTIC_ERR_WITH_CLAUSE_UNDECLARED_SYNONYM_IN_ATTRIBUTE_ARG;
+                        return false;
+                    }
+
+                    // Next, evaluate if this design entity has this attribute type
+                    AttrType attributeType = arg.second.second;
+                    vector<DesignEntity> validEntities = ATTRIBUTE_ENTITY_MAP.find(attributeType)->second;
+                    if (find(validEntities.begin(), validEntities.end(), synonymMapping->second) == validEntities.end()) {
+                        // SEMANTIC ERROR: design entity in attribute arg does not have this attribute type
+                        query.status = SEMANTIC_ERR_WITH_CLAUSE_INVALID_SYNONYM_ATTRIBUTE_PAIR_ARG;
+                        return false;
+                    }
+
+                    // Evaluate return type by checking attribute type of that arg
+                    arg.first = attributeType == AttrType::PROC_NAME || attributeType == AttrType::VAR_NAME
+                        ? ArgType::IDENTIFIER
+                        : ArgType::INTEGER;
+                }
+            }
+
+            // Compare the types of the return values of expressions on both sides of the equality
+            if (args[0].first != args[1].first) {
+                // SEMANTIC ERROR: arguments of equality evaluate to return values of different type
+                query.status = SEMANTIC_ERR_WITH_CLAUSE_DIFF_RETURN_TYPE_OF_ARGS;
+                return false;
+            } else {
+                // Update the equality type of the with clause
+                equality.type = args[0].first == ArgType::IDENTIFIER
+                    ? WithType::IDENTIFIER_EQUAL
+                    : WithType::INTEGER_EQUAL;
+            }
+
+        }
+
         return true;
     }
 
