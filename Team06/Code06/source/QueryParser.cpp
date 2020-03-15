@@ -120,7 +120,7 @@ namespace PQL {
             return false;
         }
 
-        for (auto target : query.targetEntities) {
+        for (auto& target : query.targetEntities) {
             // If BOOLEAN is used in a tuple, it is treated as a synonym and hence the query is
             // semantically invalid if it has not been previously declared
             auto targetMapping = synonymTable.find(target.first);
@@ -140,7 +140,7 @@ namespace PQL {
             }
         }
 
-        for (auto relation : query.relations) {
+        for (auto& relation : query.relations) {
             RelationType relationClass = relation.type;
 
             if (relationClass == RelationType::USESS || relationClass == RelationType::MODIFIESS) {
@@ -192,7 +192,7 @@ namespace PQL {
                 // Relation is between procedures only
                 pair<ArgType, string> args[2] = { relation.firstEnt , relation.secondEnt };
 
-                for (auto arg : args) {
+                for (auto& arg : args) {
                     if (arg.first == ArgType::SYNONYM) {
                         auto synonymMapping = synonymTable.find(arg.second);
                         if (synonymMapping == synonymTable.end()) {
@@ -211,7 +211,7 @@ namespace PQL {
                 // Or relation is between program lines: NEXT, NEXTT (program line equivalent to stmt number)
                 pair<ArgType, string> args[2] = { relation.firstStmt , relation.secondStmt };
 
-                for (auto arg : args) {
+                for (auto& arg : args) {
                     if (arg.first == ArgType::INTEGER) {
                         int lineNo = stoi(arg.second);
                         if (lineNo <= 0) {
@@ -243,7 +243,7 @@ namespace PQL {
 
         // Pattern clauses: only need to validate first argument (entity reference)
         // of ArgType SYNONYM corresponds to a valid declared synonym
-        for (auto pattern : query.patterns) {
+        for (auto& pattern : query.patterns) {
             if (pattern.targetArg.first == ArgType::SYNONYM) {
                 auto synonymMapping = synonymTable.find(pattern.targetArg.second);
                 if (synonymMapping == synonymTable.end()) {
@@ -416,7 +416,7 @@ namespace PQL {
 
         // Parse all string targets into their representation as pairs of synonyms
         // and an optional attribute type
-        for (auto target : tokens) {
+        for (auto& target : tokens) {
             tie(isValidTarget, parsedTarget) = parseReturnType(target);
             if (!isValidTarget) {
                 // SYNTAX ERROR: unknown attribute type in return type
@@ -439,7 +439,7 @@ namespace PQL {
     bool QueryParser::parseRelationClauses(Query& query, vector<string>& relationClauses) {
         vector<RelationClause> relations;
 
-        for (auto clause : relationClauses) {
+        for (auto& clause : relationClauses) {
             // Each candidate relation clause is of form <relation> (arg1, arg2)
 
             pair<string, string> splitPair = QueryUtils::splitString(clause, '(');
@@ -561,7 +561,7 @@ namespace PQL {
     bool QueryParser::parsePatternClauses(Query& query, vector<string>& patternClauses) {
         vector<PatternClause> patterns;
 
-        for (auto clause : patternClauses) {
+        for (auto& clause : patternClauses) {
             // Each candidate pattern clause is of form <synonym> (arg1, arg2, [arg3 if while])
 
             pair<string, string> splitPair = QueryUtils::splitString(clause, '(');
@@ -649,7 +649,7 @@ namespace PQL {
     bool QueryParser::parseWithClauses(Query& query, vector<string>& withClauses) {
         vector<WithClause> equalities;
 
-        for (auto clause : withClauses) {
+        for (auto& clause : withClauses) {
             // Each candidate with clause is of form <arg1> = <arg2>
 
             string argString1, argString2;
