@@ -647,6 +647,42 @@ namespace PQL {
     }
 
     bool QueryParser::parseWithClauses(Query& query, vector<string>& withClauses) {
+        vector<WithClause> equalities;
+
+        for (auto clause : withClauses) {
+            // Each candidate with clause is of form <arg1> = <arg2>
+
+            string argString1, argString2;
+            tie(argString1, argString2) = QueryUtils::splitString(clause, '=');
+
+            if (!(QueryUtils::isValidRef(argString1) && QueryUtils::isValidRef(argString2))) {
+                // SYNTAX ERROR: invalid (reference) argument in with (equality) clause
+                query.status = SYNTAX_ERR_WITH_CLAUSE_INVALID_REF_ARG;
+                return false;
+            }
+
+            bool hasValidLHS, hasValidRHS;
+            pair<ArgType, Ref> arg1, arg2;
+            tie(hasValidLHS, arg1) = parseRef(argString1);
+            tie(hasValidRHS, arg2) = parseRef(argString2);
+
+            if (!(hasValidLHS && hasValidRHS)) {
+                // SYNTAX ERROR: attribute reference arg contains invalid attribute keyword
+                query.status = SYNTAX_ERR_WITH_CLAUSE_INVALID_ATTRIBUTE_KEYWORD;
+                return false;
+            }
+
+            WithClause equality;
+            if ((arg1.first == ArgType::INTEGER || arg1.first == ArgType::IDENTIFIER) &&
+                (arg2.first == ArgType::INTEGER || arg2.first == ArgType::IDENTIFIER)) {
+                equality = { clause, WithType::LITERAL_EQUAL, arg1, arg2 };
+            } else {
+                equality = { clause, WithType::UNKNOWN_EQUAL, arg1, arg2 };
+            }
+
+            equalities.push_back(equality);
+        }
+
         return true;
     }
 

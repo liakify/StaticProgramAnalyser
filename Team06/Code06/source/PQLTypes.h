@@ -65,9 +65,12 @@ enum class PatternType {
  *
  *  Note that LITERAL_EQUAL is used to denote the special case where both arguments
  *  are literals (integers or identifiers) requiring no further evaluation.
+ *
+ *  Note that UNKNOWN_EQUAL is a sentinel used to denote the case where the types
+ *  of both arguments have not been determined and compared yet.
  */
 enum class WithType {
-    LITERAL_EQUAL, INTEGER_EQUAL, IDENTIFIER_EQUAL
+    UNKNOWN_EQUAL, LITERAL_EQUAL, INTEGER_EQUAL, IDENTIFIER_EQUAL
 };
 
 /**
@@ -133,6 +136,8 @@ namespace PQL {
     const std::string SYNTAX_ERR_IF_PATTERN_INVALID_NUM_ARGS = "syntax error: if pattern does not have three arguments";
     const std::string SYNTAX_ERR_IF_PATTERN_INVALID_SECOND_THIRD_ARG = "syntax error: if pattern only supports '_' for last two arguments";
     const std::string SYNTAX_ERR_INVALID_PATTERN_TYPE = "syntax error: pattern clauses only defined for assign, if, while";
+    const std::string SYNTAX_ERR_WITH_CLAUSE_INVALID_REF_ARG = "syntax error: invalid reference arg in with (equality) clause";
+    const std::string SYNTAX_ERR_WITH_CLAUSE_INVALID_ATTRIBUTE_KEYWORD = "syntax error: invalid attribute keyword in attrRef arg in with (equality) clause";
     const std::string SEMANTIC_ERR_AMBIGUOUS_USE_OF_BOOLEAN = "semantic error: ambiguous use of BOOLEAN as both synonym and return type";
     const std::string SEMANTIC_ERR_UNDECLARED_SYNONYM_IN_RETURN_TYPE = "semantic error: undeclared synonym part of query return type";
     const std::string SEMANTIC_ERR_INVALID_SYNONYM_ATTRIBUTE_IN_RETURN_TYPE = "semantic error: attribute not defined for synonym in query return type";
