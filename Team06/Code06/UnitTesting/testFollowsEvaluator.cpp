@@ -12,19 +12,14 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace UnitTesting
 {
-	std::unordered_map<std::string, DesignEntity> EMPTY_SYNONYM_TABLE;
-	ClauseResult TRUE_RESULT;
-	ClauseResult EMPTY_RESULT;
-
 	TEST_CLASS(TestFollowsEvaluator)
 	{
 	public:
-		TEST_CLASS_INITIALIZE(setup) {
-			ClauseResultEntry resultEntry;
-			resultEntry["_RESULT"] = "TRUE";
-			TRUE_RESULT.emplace_back(resultEntry);
+		std::unordered_map<std::string, DesignEntity> EMPTY_SYNONYM_TABLE = {};
+		ClauseResult TRUE_RESULT = ClauseResult({ ClauseResultEntry({{"_RESULT", "TRUE"}}) });
+		ClauseResult EMPTY_RESULT = {};
 
-			EMPTY_RESULT = {};
+		TEST_CLASS_INITIALIZE(setup) {
 		}
 		TEST_METHOD(evaluateFollowsClauseIntInt_True)
 		{

@@ -36,14 +36,13 @@ namespace PQL {
         * @return   The result of the evaluation.
         */
         ClauseResult evaluateParentClauseWildWild(PKB::PKB& database) {
-            for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
-                if (database.parentKB.getParent(i) != 0) {
-                    ClauseResultEntry resultEntry;
-                    resultEntry["_RESULT"] = "TRUE";
-                    return { resultEntry };
-                }
+            if (database.parentKB.hasParentRelation()) {
+                ClauseResultEntry resultEntry;
+                resultEntry["_RESULT"] = "TRUE";
+                return { resultEntry };
+            } else {
+                return {};
             }
-            return {};
         }
 
         /**
