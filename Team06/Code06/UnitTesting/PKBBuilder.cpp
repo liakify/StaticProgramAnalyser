@@ -75,6 +75,16 @@ namespace UnitTesting {
         return *this;
     }
 
+    PKBBuilder& PKBBuilder::addStmtModifiesRS(StmtId stmt, VarName var) {
+        pkb.modifiesKB.addStmtModifies(stmt, pkb.varTable.getVarId(var));
+        return *this;
+    }
+
+    PKBBuilder& PKBBuilder::addProcModifiesRS(ProcName proc, VarName var) {
+        pkb.modifiesKB.addProcModifies(pkb.procTable.getProcId(proc), pkb.varTable.getVarId(var));
+        return *this;
+    }
+
     PKB::PKB& PKBBuilder::getPKB() {
         return pkb;
     }

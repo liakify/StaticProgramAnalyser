@@ -106,6 +106,22 @@ namespace UnitTesting {
         * @param    stmt2   The first statement in the Parent* relationship
         */
         PKBBuilder& addParentStarRS(std::unordered_set<StmtId> stmts, StmtId stmt2);
+
+        /**
+        * Adds a Modifies Relationship to the PKB, such that Modifies(stmt, var) holds.
+        *
+        * @param    stmt   The statement in the Modifies relationship
+        * @param    var    The variable in the Modifies relationship
+        */
+        PKBBuilder& addStmtModifiesRS(StmtId stmt, VarName var);
+
+        /**
+        * Adds a Modifies Relationship to the PKB, such that Modifies(proc, var) holds.
+        *
+        * @param    proc   The procedure in the Modifies relationship
+        * @param    var    The variable in the Modifies relationship
+        */
+        PKBBuilder& addProcModifiesRS(ProcName proc, VarName var);
         
         /**
         * Returns the constructed PKB.
