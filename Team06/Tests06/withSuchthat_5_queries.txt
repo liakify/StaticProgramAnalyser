@@ -1,0 +1,50 @@
+1 - 
+prog_line pl; stmt s;
+Select s such that Follows(pl, s) with pl = 1
+2
+5000
+2 - 
+prog_line pl; stmt s;
+Select s such that Follows(s, pl) with pl = 3
+2
+5000
+3 - 
+prog_line pl; stmt s;
+Select s such that Follows*(pl, s) with pl = 3
+4, 7, 8, 9, 10
+5000
+4 - 
+prog_line pl; stmt s;
+Select s such that Follows*(s, pl) with pl = 4
+3
+5000
+5 - 
+prog_line pl; stmt s;
+Select s such that Parent (pl, s) with pl = 2
+1
+5000
+6 - 
+prog_line pl; stmt s;
+Select s such that Parent (s, pl) with pl = 3
+2
+5000
+7 - 
+prog_line pl; stmt s;
+Select s such that Parent* (pl, s) with pl = 4
+5, 6
+5000
+8 - 
+prog_line pl; stmt s;
+Select s such that Parent* (s, pl) with pl = 9
+1, 2
+5000
+9 - 
+prog_line pl; variable v;
+Select v such that Uses (pl, v) with pl = 6
+a
+5000
+10 - 
+prog_line pl; variable v;
+Select v such that Modifies (pl, v) with pl = 13
+z
+5000
