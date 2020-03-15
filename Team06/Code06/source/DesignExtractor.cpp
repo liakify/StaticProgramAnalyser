@@ -303,13 +303,13 @@ namespace FrontEnd {
         }
         unordered_set<StmtId> ifSet = pkb.stmtTable.getStmtsByType(StmtType::IF);
         for (StmtId id : ifSet) {
-            IfStmt* ifs = reinterpret_cast<IfStmt*>(pkb.stmtTable.get(id));
+            IfStmt* ifs = dynamic_cast<IfStmt*>(pkb.stmtTable.get(id).get());
             CondExpr cond = ifs->getCondExpr();
             populateIfPatternKB(id, cond);
         }
         unordered_set<StmtId> whileSet = pkb.stmtTable.getStmtsByType(StmtType::WHILE);
         for (StmtId id : whileSet) {
-            WhileStmt* ws = reinterpret_cast<WhileStmt*>(pkb.stmtTable.get(id));
+            WhileStmt* ws = dynamic_cast<WhileStmt*>(pkb.stmtTable.get(id).get());
             CondExpr cond = ws->getCondExpr();
             populateWhilePatternKB(id, cond);
         }
