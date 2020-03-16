@@ -164,7 +164,7 @@ namespace SIMPLE {
 
     StatementList::StatementList(std::vector<StmtId>& statements)
         : statements(statements), first(statements.front()), last(statements.back()) {
-        this->allLast = std::unordered_set<StmtId>({ statements.back() });
+        this->allLast = std::unordered_set<StmtId>();
     }
 
     bool StatementList::operator== (const StatementList& other) {
@@ -183,7 +183,6 @@ namespace SIMPLE {
         if (last < statements.back()) {
             throw std::invalid_argument("Last statement cannot come before the last statement in the stmtId vector");
         }
-        this->allLast.erase(statements.back());
         this->allLast.insert(last);
         this->last = last > this->last ? last : this->last;
     }

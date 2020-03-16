@@ -410,9 +410,12 @@ namespace FrontEnd {
             WhileStmt* ws = dynamic_cast<WhileStmt*>(lastStmt.get());
             StatementList& newSl = pkb.stmtListTable.get(ws->getStmtLstId());
             updateLastStmtId(newSl);
+            sl.addLast(sl.getLast());
             for (StmtId s : newSl.getAllLast()) {
                 sl.addLast(s);
             }
+        } else {
+            sl.addLast(sl.getLast());
         }
     }
 

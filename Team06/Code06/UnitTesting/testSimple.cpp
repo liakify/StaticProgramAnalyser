@@ -140,7 +140,7 @@ namespace UnitTesting {
 
 
             Assert::ExpectException<std::invalid_argument>([&STATEMENT_LIST_2] { STATEMENT_LIST_2.addLast(0); });
-            std::unordered_set<StmtId> expectedSet = std::unordered_set<StmtId>({ 2 });
+            std::unordered_set<StmtId> expectedSet = std::unordered_set<StmtId>();
             Assert::IsTrue(STATEMENT_LIST_2.getAllLast().size() == expectedSet.size());
             Assert::IsTrue(STATEMENT_LIST_2.getLast() == 2);
             for (StmtId i : expectedSet) {
