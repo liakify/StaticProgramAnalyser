@@ -74,51 +74,31 @@ namespace IntegrationTesting {
         Assert::IsTrue(pkb.stmtTable.getStmtsByType(StmtType::IF).size() == stmtCount_IF);
         Assert::IsTrue(pkb.stmtTable.getStmtsByType(StmtType::WHILE).size() == stmtCount_WHILE);
 
-        Assert::IsTrue(pkb.followsKB.follows(1, 2));
-        Assert::IsTrue(pkb.followsKB.follows(2, 3));
-        Assert::IsTrue(pkb.followsKB.follows(3, 6));
-        Assert::IsTrue(pkb.followsKB.followStar(1, 2));
-        Assert::IsTrue(pkb.followsKB.followStar(1, 3));
-        Assert::IsTrue(pkb.followsKB.followStar(1, 6));
-        Assert::IsTrue(pkb.followsKB.followStar(2, 3));
-        Assert::IsTrue(pkb.followsKB.followStar(2, 6));
-        Assert::IsTrue(pkb.followsKB.followStar(3, 6));
+        Assert::IsTrue(pkb.followsKB.getFollower(1) == 2);
+        Assert::IsTrue(pkb.followsKB.getFollower(2) == 3);
+        Assert::IsTrue(pkb.followsKB.getFollower(3) == 6);
+        Assert::IsTrue(pkb.followsKB.getFollower(4) == 0);
+        Assert::IsTrue(pkb.followsKB.getFollower(5) == 0);
+        Assert::IsTrue(pkb.followsKB.getFollower(6) == 0);
+        Assert::IsTrue(pkb.followsKB.getAllFollowers(1) == std::unordered_set<StmtId>({2, 3, 6}));
+        Assert::IsTrue(pkb.followsKB.getAllFollowers(2) == std::unordered_set<StmtId>({3, 6}));
+        Assert::IsTrue(pkb.followsKB.getAllFollowers(3) == std::unordered_set<StmtId>({6}));
+        Assert::IsTrue(pkb.followsKB.getAllFollowers(4) == std::unordered_set<StmtId>({}));
+        Assert::IsTrue(pkb.followsKB.getAllFollowers(5) == std::unordered_set<StmtId>({}));
+        Assert::IsTrue(pkb.followsKB.getAllFollowers(6) == std::unordered_set<StmtId>({}));
 
-        Assert::IsFalse(pkb.followsKB.follows(3, 4));
-        Assert::IsFalse(pkb.followsKB.follows(4, 5));
-        Assert::IsFalse(pkb.followsKB.follows(5, 6));
-        Assert::IsFalse(pkb.followsKB.followStar(1, 4));
-        Assert::IsFalse(pkb.followsKB.followStar(1, 5));
-        Assert::IsFalse(pkb.followsKB.followStar(2, 4));
-        Assert::IsFalse(pkb.followsKB.followStar(2, 5));
-        Assert::IsFalse(pkb.followsKB.followStar(3, 4));
-        Assert::IsFalse(pkb.followsKB.followStar(3, 5));
-        Assert::IsFalse(pkb.followsKB.followStar(4, 5));
-        Assert::IsFalse(pkb.followsKB.followStar(4, 6));
-        Assert::IsFalse(pkb.followsKB.followStar(5, 6));
-
-        Assert::IsTrue(pkb.parentKB.parent(3, 4));
-        Assert::IsTrue(pkb.parentKB.parent(3, 5));
-        Assert::IsTrue(pkb.parentKB.parentStar(3, 4));
-        Assert::IsTrue(pkb.parentKB.parentStar(3, 5));
-
-        Assert::IsFalse(pkb.parentKB.parent(1, 2));
-        Assert::IsFalse(pkb.parentKB.parent(2, 3));
-        Assert::IsFalse(pkb.parentKB.parent(5, 6));
-        Assert::IsFalse(pkb.parentKB.parentStar(1, 2));
-        Assert::IsFalse(pkb.parentKB.parentStar(1, 3));
-        Assert::IsFalse(pkb.parentKB.parentStar(1, 4));
-        Assert::IsFalse(pkb.parentKB.parentStar(1, 5));
-        Assert::IsFalse(pkb.parentKB.parentStar(1, 6));
-        Assert::IsFalse(pkb.parentKB.parentStar(2, 3));
-        Assert::IsFalse(pkb.parentKB.parentStar(2, 4));
-        Assert::IsFalse(pkb.parentKB.parentStar(2, 5));
-        Assert::IsFalse(pkb.parentKB.parentStar(2, 6));
-        Assert::IsFalse(pkb.parentKB.parentStar(3, 6));
-        Assert::IsFalse(pkb.parentKB.parentStar(4, 5));
-        Assert::IsFalse(pkb.parentKB.parentStar(4, 6));
-        Assert::IsFalse(pkb.parentKB.parentStar(5, 6));
-
+        Assert::IsTrue(pkb.parentKB.getDirectChildren(1) == std::unordered_set<StmtId>({}));
+        Assert::IsTrue(pkb.parentKB.getDirectChildren(2) == std::unordered_set<StmtId>({}));
+        Assert::IsTrue(pkb.parentKB.getDirectChildren(3) == std::unordered_set<StmtId>({4, 5}));
+        Assert::IsTrue(pkb.parentKB.getDirectChildren(4) == std::unordered_set<StmtId>({}));
+        Assert::IsTrue(pkb.parentKB.getDirectChildren(5) == std::unordered_set<StmtId>({}));
+        Assert::IsTrue(pkb.parentKB.getDirectChildren(6) == std::unordered_set<StmtId>({}));
+        Assert::IsTrue(pkb.parentKB.getAllChildren(1) == std::unordered_set<StmtId>({}));
+        Assert::IsTrue(pkb.parentKB.getAllChildren(2) == std::unordered_set<StmtId>({}));
+        Assert::IsTrue(pkb.parentKB.getAllChildren(3) == std::unordered_set<StmtId>({4, 5}));
+        Assert::IsTrue(pkb.parentKB.getAllChildren(4) == std::unordered_set<StmtId>({}));
+        Assert::IsTrue(pkb.parentKB.getAllChildren(5) == std::unordered_set<StmtId>({}));
+        Assert::IsTrue(pkb.parentKB.getAllChildren(6) == std::unordered_set<StmtId>({}));
 
         std::unordered_set<VarId> modifiedVarIds = pkb.modifiesKB.getAllVarsModifiedByProc(pkb.procTable.getProcId(procedureName));
         std::unordered_set<VarName> modifiedVarNames;
