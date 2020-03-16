@@ -20,6 +20,9 @@ namespace UnitTesting {
 		vector<string> VALID_IDENTIFIERS = { "A", "fOr", "softwareEng1n33r1ng", "CS3203" };
 		vector<string> INVALID_IDENTIFIERS = { EMPTY_STRING, "1", "3203S", "\tGive", "us ", "an\r", "A+", "pls\n", "thank you", "xoxo_team6" };
 
+		vector<string> VALID_LITERALS = { "\"y\"", "\"COVID19\"", "\" annoyingAF\"", "\"kms\t\"", "\"sigh\n\"", "\"mein\r\"", "\"\vtemp365C\f\"", };
+		vector<string> INVALID_LITERALS = { EMPTY_STRING, "noQuotes", "noL\"", "\"noR", "\"3243\"", "\"1010E\"", "\"prog_line\"", " \"unTrimmed\"", "\"trailingN\"\n" };
+
 		vector<string> VALID_STMT_REFS = { "_" , "3281", "dAmYtH" };
 		vector<string> INVALID_STMT_REFS = { EMPTY_STRING, " 369", "-65536", "2040S", "0b1101", "prog_line" };
 
@@ -28,6 +31,9 @@ namespace UnitTesting {
 
 		vector<string> VALID_ATTR_REFS = { "pt.x", "var.#occ", "c.value", "s. stmt#", "rd\t.varName", "p\r.\nprocName" };
 		vector<string> INVALID_ATTR_REFS = { EMPTY_STRING, "syn", "pt,y", "\tx.final", "v.varName\t", "w.stmt#\n", "1.value", "v16.04", "auspicium.melioris.aevi" };
+
+		vector<string> VALID_REFS = { "69", "proc1", "cl.procName", "a .\tstmt#", "\"TAs\"", "\"\tuNiOn \"" };
+		vector<string> INVALID_REFS = { EMPTY_STRING, "_", "-65536", "14916 ", "N\tUC", "1920AY", "sem-2", "\rsux", "ifs.1", "\fmeme.jpg", "henz.meme\n", "\"unmatched", "\"69\", \"2109S\"" };
 
 		vector<string> VALID_PATTERNS = {
 			// Wildcard pattern
@@ -145,7 +151,7 @@ namespace UnitTesting {
 			{ { "recurse(M[0:N/2], M[N/2 + 1:N], R[0:N])", "\\[[A-Za-z0-9\\+\\-\\*\\/\\%\\s:]+\\]" }, { "[0:N/2]", "[N/2 + 1:N]", "[0:N]" } }
 		};
 
-		TEST_METHOD(isInteger) {
+		TEST_METHOD(isValidInteger) {
 			for (auto input : VALID_INTEGERS) {
 				Assert::IsTrue(QueryUtils::isValidInteger(input));
 			}
@@ -160,6 +166,15 @@ namespace UnitTesting {
 			}
 			for (auto input : INVALID_IDENTIFIERS) {
 				Assert::IsFalse(QueryUtils::isValidIdentifier(input));
+			}
+		}
+
+		TEST_METHOD(isValidLiteral) {
+			for (auto input : VALID_LITERALS) {
+				Assert::IsTrue(QueryUtils::isValidLiteral(input));
+			}
+			for (auto input : INVALID_LITERALS) {
+				Assert::IsFalse(QueryUtils::isValidLiteral(input));
 			}
 		}
 
@@ -187,6 +202,15 @@ namespace UnitTesting {
 			}
 			for (auto input : INVALID_ATTR_REFS) {
 				Assert::IsFalse(QueryUtils::isValidAttrRef(input));
+			}
+		}
+
+		TEST_METHOD(isValidRef) {
+			for (auto input : VALID_REFS) {
+				Assert::IsTrue(QueryUtils::isValidRef(input));
+			}
+			for (auto input : INVALID_REFS) {
+				Assert::IsFalse(QueryUtils::isValidRef(input));
 			}
 		}
 
