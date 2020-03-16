@@ -18,14 +18,6 @@ bool NextKB::next(StmtId s1, StmtId s2) {
     }
 }
 
-bool NextKB::nextStar(StmtId s1, StmtId s2) {
-    if (nextStarTable.find(s1) == nextStarTable.end()) {
-        FrontEnd::processNextStar(s1, pkb);
-    }
-    std::unordered_set<StmtId> allNext = nextStarTable.at(s1).allNext;
-    return allNext.find(s2) != allNext.end();
-}
-
 const std::unordered_set<StmtId>& NextKB::getDirectNodes(StmtId s, NodeType type) {
     try {
         if (type == NodeType::SUCCESSOR) {
