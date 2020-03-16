@@ -13,67 +13,67 @@ procedure p, q; while w;
 Select q such that Calls* (p, q) pattern w (_, _)
 P2, P3, P4
 5000
-61 - Next, No relation with any synonym
+4 - Next, No relation with any synonym
 prog_line n; assign a1, a2, a3; variable v;
 Select n such that Next(a1, a2) pattern a3 (v, _)
 
 5000
-62 - Next, Connected Clauses
+5 - Next, Connected Clauses
 assign a1, a2; variable v;
 Select a1 such that Next(a1, a2) pattern a1 (v, _)
 
 5000
-63 - Next, Connected Clauses: Select a2
+6 - Next, Connected Clauses: Select a2
 assign a1, a2; variable v;
 Select a2 such that Next(a1, a2) pattern a1 (v, _)
 
 5000
-64 - Next, Connected Clauses: Limiting pattern
+7 - Next, Connected Clauses: Limiting pattern
 assign a1, a2; variable v;
 Select a1 such that Next(a1, a2) pattern a2 (v, _"c"_)
 
 5000
-65 - Next, Connected Clauses: Limiting pattern, select a2
+8 - Next, Connected Clauses: Limiting pattern, select a2
 assign a1, a2; variable v;
 Select a2 such that Next(a1, a2) pattern a2 (v, _"c"_)
 
 5000
-66 - Next*, Connected Clauses
+9 - Next*, Connected Clauses
 assign a1, a2; variable v;
 Select a1 such that Next*(a1, a2) pattern a1 (v, _)
 
 5000
-67 - Next*, Connected Clauses: Select a2
+10 - Next*, Connected Clauses: Select a2
 assign a1, a2; variable v;
 Select a2 such that Next*(a1, a2) pattern a1 (v, _)
 
 5000
-68 - Next*, Connected Clauses: Limiting pattern
+11 - Next*, Connected Clauses: Limiting pattern
 assign a1, a2; variable v;
 Select a1 such that Next*(a1, a2) pattern a2 (v, _"c"_)
 
 5000
-69 - Next*, Connected Clauses: Limiting pattern, select a2
+12 - Next*, Connected Clauses: Limiting pattern, select a2
 assign a1, a2; variable v;
 Select a2 such that Next*(a1, a2) pattern a2 (v, _"c"_)
 
 5000
-70 - Next, Next => empty
+13 - Next, Next => empty
 assign a; variable v;
 Select a such that Next(a, 1) pattern a (v, _)
 
 5000
-71 - Next, Pattern => empty
+14 - Next, Pattern => empty
 assign a; prog_line n;
 Select a such that Next(a, n) pattern a("notFound", "notFound")
 
 5000
-72 - Next*, Next* => empty
+15 - Next*, Next* => empty
 assign a; variable v;
 Select a such that Next*(a, 1) pattern a (v, _)
 
 5000
-73 - Next*, Pattern => empty
+16 - Next*, Pattern => empty
 assign a; prog_line n;
 Select a such that Next*(a, n) pattern a("notFound", "notFound")
 
