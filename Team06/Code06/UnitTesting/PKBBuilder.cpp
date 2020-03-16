@@ -9,6 +9,18 @@ namespace UnitTesting {
         return *this;
     }
 
+    PKBBuilder& PKBBuilder::addStmtList(std::vector<StmtId> &stmts) {
+        StatementList stmtList(stmts);
+        pkb.stmtListTable.insertStmtLst(stmtList);
+        return *this;
+    }
+
+    PKBBuilder& PKBBuilder::addProc(ProcName procName, StmtListId stmtList) {
+        Procedure proc(procName, stmtList);
+        pkb.procTable.insertProc(proc);
+        return *this;
+    }
+
     PKBBuilder& PKBBuilder::addPrintStmt(VarName var) {
         std::shared_ptr<SIMPLE::PrintStmt> printStmt(new SIMPLE::PrintStmt(pkb.varTable.getVarId(var)));
         pkb.stmtTable.insertStmt(printStmt);

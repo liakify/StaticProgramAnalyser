@@ -57,6 +57,46 @@ namespace UnitTesting
 			Assert::IsTrue(result == EMPTY_RESULT);
 		}
 
+		TEST_METHOD(evaluateModifiesProcClauseIdId_True)
+		{
+			PKBBuilder pkbBuilder;
+			PKB::PKB pkb = pkbBuilder
+				.addProc("proc1", 1)
+				.addVar("a")
+				.addProcModifiesRS("proc1", "a")
+				.getPKB();
+
+			RelationClauseBuilder clauseBuilder;
+			PQL::RelationClause clause = clauseBuilder
+				.setRelationType(RelationType::MODIFIESP)
+				.setFirstEnt(ArgType::IDENTIFIER, "proc1")
+				.setSecondEnt(ArgType::IDENTIFIER, "a")
+				.getClause();
+
+			ClauseResult result = PQL::ModifiesEvaluator::evaluateModifiesClause(pkb, clause, EMPTY_SYNONYM_TABLE);
+			Assert::IsTrue(result == TRUE_RESULT);
+		}
+
+		TEST_METHOD(evaluateModifiesProcClauseIdId_Empty)
+		{
+			PKBBuilder pkbBuilder;
+			PKB::PKB pkb = pkbBuilder
+				.addProc("proc1", 1)
+				.addVar("a")
+				.addProcModifiesRS("proc1", "a")
+				.getPKB();
+
+			RelationClauseBuilder clauseBuilder;
+			PQL::RelationClause clause = clauseBuilder
+				.setRelationType(RelationType::MODIFIESP)
+				.setFirstStmt(ArgType::IDENTIFIER, "proc1")
+				.setSecondEnt(ArgType::IDENTIFIER, "b")
+				.getClause();
+
+			ClauseResult result = PQL::ModifiesEvaluator::evaluateModifiesClause(pkb, clause, EMPTY_SYNONYM_TABLE);
+			Assert::IsTrue(result == EMPTY_RESULT);
+		}
+
 		TEST_METHOD(evaluateModifiesStmtClauseIntWild_True)
 		{
 			PKBBuilder pkbBuilder;
@@ -86,6 +126,43 @@ namespace UnitTesting
 			PQL::RelationClause clause = clauseBuilder
 				.setRelationType(RelationType::MODIFIESS)
 				.setFirstStmt(ArgType::INTEGER, "10")
+				.setSecondEnt(ArgType::WILDCARD, "_")
+				.getClause();
+
+			ClauseResult result = PQL::ModifiesEvaluator::evaluateModifiesClause(pkb, clause, EMPTY_SYNONYM_TABLE);
+			Assert::IsTrue(result == EMPTY_RESULT);
+		}
+
+		TEST_METHOD(evaluateModifiesProcClauseIdWild_True)
+		{
+			PKBBuilder pkbBuilder;
+			PKB::PKB pkb = pkbBuilder
+				.addProc("proc2", 5)
+				.addVar("c")
+				.addProcModifiesRS("proc2", "c")
+				.getPKB();
+
+			RelationClauseBuilder clauseBuilder;
+			PQL::RelationClause clause = clauseBuilder
+				.setRelationType(RelationType::MODIFIESP)
+				.setFirstEnt(ArgType::IDENTIFIER, "proc2")
+				.setSecondEnt(ArgType::WILDCARD, "_")
+				.getClause();
+
+			ClauseResult result = PQL::ModifiesEvaluator::evaluateModifiesClause(pkb, clause, EMPTY_SYNONYM_TABLE);
+			Assert::IsTrue(result == TRUE_RESULT);
+		}
+
+		TEST_METHOD(evaluateModifiesProcClauseIdWild_Empty)
+		{
+			PKBBuilder pkbBuilder;
+			PKB::PKB pkb = pkbBuilder
+				.getPKB();
+
+			RelationClauseBuilder clauseBuilder;
+			PQL::RelationClause clause = clauseBuilder
+				.setRelationType(RelationType::MODIFIESP)
+				.setFirstStmt(ArgType::INTEGER, "proc2")
 				.setSecondEnt(ArgType::WILDCARD, "_")
 				.getClause();
 

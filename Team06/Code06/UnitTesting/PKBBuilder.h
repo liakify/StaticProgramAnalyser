@@ -18,6 +18,20 @@ namespace UnitTesting {
         PKBBuilder& addVar(VarName var);
 
         /**
+        * Adds a statement list to the PKB.
+        *
+        * @param    stmt    The statements belonging to the statement list.
+        */
+        PKBBuilder& addStmtList(std::vector<StmtId>& stmts);
+
+        /**
+        * Adds a procedure to the PKB.
+        *
+        * @param    proc    The procedure to add.
+        */
+        PKBBuilder& addProc(ProcName procName, StmtListId stmtList);
+
+        /**
         * Adds a print statement to the PKB.
         *
         * @param    var     The variable used by the print statement.
