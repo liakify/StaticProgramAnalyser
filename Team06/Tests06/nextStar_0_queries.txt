@@ -43,147 +43,147 @@ Select n such that Next*(3, n)
 Select BOOLEAN such that Next*(3, 4)
 TRUE
 5000
-9 - arg variant (1, 1)
+10 - arg variant (1, 1)
 
 Select BOOLEAN such that Next*(1, 11)
 TRUE
 5000
-10 - arg variant (_, 1)
+11 - arg variant (_, 1)
 
 Select BOOLEAN such that Next*(_, 2)
 TRUE
 5000
-11 - arg variant (_, 1): Outer statement has no predecessor
+12 - arg variant (_, 1): Outer statement has no predecessor
 
 Select BOOLEAN such that Next*(_, 1)
 FALSE
 5000
-12 - arg variant (1, _): All statements
+13 - arg variant (1, _): All statements
 prog_line n;
 Select n such that Next*(1, _)
 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17
 5000
-11 - arg variant (1, _): Last statement has no successor
+14 - arg variant (1, _): Last statement has no successor
 
 Select BOOLEAN such that Next*(11, _)
 FALSE
 5000
-14 - Invalid Next*
+15 - Invalid Next*
 prog_line n;
 Select n such that Next*(5, 10)
 
 5000
-15 - Same prog_line
+16 - Same prog_line
 prog_line n;
 Select n such that Next*(1, 1)
 
 5000
-16 - Negative prog_line LHS
+17 - Negative prog_line LHS
 prog_line n;
 Select n such that Next*(-1, 11)
 
 5000
-17 - Negative prog_line RHS
+18 - Negative prog_line RHS
 prog_line n;
 Select n such that Next*(1, -1)
 
 5000
-18 - Negative prog_line LHS/RHS
+19 - Negative prog_line LHS/RHS
 prog_line n;
 Select n such that Next*(-1, -11)
 
 5000
-19 - arg variant (n, s)
+20 - arg variant (n, s)
 prog_line n; stmt s;
 Select s such that Next*(n, s)
 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 16, 17
 5000
-20 - arg variant (s, n)
+21 - arg variant (s, n)
 prog_line n; stmt s;
 Select s such that Next*(s, n)
 1, 2, 3, 4, 5, 6, 7, 8, 10, 12, 13, 14, 15
 5000
-21 - arg variant (n, a)
+22 - arg variant (n, a)
 prog_line n; assign a;
 Select a such that Next*(n, a)
 2, 8, 11
 5000
-22 - arg variant (a, n)
+23 - arg variant (a, n)
 prog_line n; assign a;
 Select a such that Next*(a, n)
 1, 2, 8
 5000
-23 - arg variant (n, c): Select n
+24 - arg variant (n, c): Select n
 prog_line n; call c;
 Select n such that Next*(n, c)
 1, 2, 3, 4, 5, 6, 7, 8
 5000
-24 - arg variant (c, n)
+25 - arg variant (c, n)
 prog_line n; call c;
 Select c such that Next*(c, n)
 
 5000
-25 - arg variant (n, r)
+26 - arg variant (n, r)
 prog_line n; read r;
 Select r such that Next*(n, r)
 6, 16, 17
 5000
-26 - arg variant (r, n)
+27 - arg variant (r, n)
 prog_line n; read r;
 Select r such that Next*(r, n)
 6
 5000
-27 - arg variant (n, pn)
+28 - arg variant (n, pn)
 prog_line n; print pn;
 Select pn such that Next*(n, pn)
 3, 7, 14
 5000
-28 - arg variant (pn, n)
+29 - arg variant (pn, n)
 prog_line n; print pn;
 Select pn such that Next*(pn, n)
 3, 7, 14
 5000
-29 - arg variant (n, ifs)
+30 - arg variant (n, ifs)
 prog_line n; if ifs;
 Select ifs such that Next*(n, ifs)
 4, 5, 15
 5000
-30 - arg variant (ifs, n)
+31 - arg variant (ifs, n)
 prog_line n; if ifs;
 Select ifs such that Next*(ifs, n)
 4, 5, 15
 5000
-31 - arg variant (n, w)
+32 - arg variant (n, w)
 prog_line n; while w;
 Select w such that Next*(n, w)
 10, 13
 5000
-32 - arg variant (w, n)
+33 - arg variant (w, n)
 prog_line n; while w;
 Select w such that Next*(w, n)
 10, 12, 13
 5000
-33 - arg variant (w, ifs): Nested if in while
+34 - arg variant (w, ifs): Nested if in while
 while w; if ifs;
 Select w such that Next*(w, ifs)
 12, 13
 5000
-34 - arg variant (ifs, w): Nested while in if
+35 - arg variant (ifs, w): Nested while in if
 while w; if ifs;
 Select ifs such that Next*(ifs, w)
 4
 5000
-35 - arg variant (w1, w2): Nested while in while
+36 - arg variant (w1, w2): Nested while in while
 while w1, w2;
 Select w2 such that Next*(w1, w2)
 13
 5000
-36 - arg variant (if, ifs): Nested if in if
+37 - arg variant (if, ifs): Nested if in if
 if if, ifs;
 Select ifs such that Next*(if, ifs)
 5
 5000
-37 - Across procedures
+38 - Across procedures
 
 Select BOOLEAN such that Next*(9, 13)
 FALSE
