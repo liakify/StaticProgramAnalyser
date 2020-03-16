@@ -122,6 +122,22 @@ namespace UnitTesting {
         * @param    var    The variable in the Modifies relationship
         */
         PKBBuilder& addProcModifiesRS(ProcName proc, VarName var);
+
+        /**
+        * Adds a Uses Relationship to the PKB, such that Uses(stmt, var) holds.
+        *
+        * @param    stmt   The statement in the Uses relationship
+        * @param    var    The variable in the Uses relationship
+        */
+        PKBBuilder& addStmtUsesRS(StmtId stmt, VarName var);
+
+        /**
+        * Adds a Uses Relationship to the PKB, such that Uses(proc, var) holds.
+        *
+        * @param    proc   The procedure in the Uses relationship
+        * @param    var    The variable in the Uses relationship
+        */
+        PKBBuilder& addProcUsesRS(ProcName proc, VarName var);
         
         /**
         * Returns the constructed PKB.

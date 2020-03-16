@@ -175,6 +175,7 @@
     <ClCompile Include="testPatternKB.cpp" />
     <ClCompile Include="testModifiesKB.cpp" />
     <ClCompile Include="testQueryParser.cpp" />
+    <ClCompile Include="testUsesEvaluator.cpp" />
     <ClCompile Include="testUsesKB.cpp" />
     <ClCompile Include="testParentKB.cpp" />
     <ClCompile Include="testFollowsKB.cpp" />
