@@ -83,12 +83,12 @@ namespace SIMPLE {
         return this->stmtType;
     }
 
-    void Statement::setParentId(StmtListId sid) {
-        this->parent = sid;
+    void Statement::setContainerId(StmtListId sid) {
+        this->containerId = sid;
     }
 
-    StmtListId Statement::getParentId() {
-        return this->parent;
+    StmtListId Statement::getContainerId() {
+        return this->containerId;
     }
 
     PrintStmt::PrintStmt(VarId var)

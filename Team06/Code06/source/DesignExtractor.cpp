@@ -357,15 +357,15 @@ namespace FrontEnd {
                 StatementList& thenSl = pkb.stmtListTable.get(thenId);
                 updateLastStmtId(thenSl);
                 populateNextKB(thenId);
-                // pkb.nextKB.addNext(idList[i], thenSl.getFirst());
+                pkb.nextKB.addNext(idList[i], thenSl.getFirst());
                 StmtListId elseId = ifs->getElseStmtLstId();
                 StatementList& elseSl = pkb.stmtListTable.get(elseId);
                 updateLastStmtId(elseSl);
                 populateNextKB(elseId);
-                // pkb.nextKB.addNext(idList[i], elseSl.getFirst());
+                pkb.nextKB.addNext(idList[i], elseSl.getFirst());
                 if (i < idList.size() - 1) {
-                    // pkb.nextKB.addNext(thenSl.getLast(), idList[i+1]);
-                    // pkb.nextKB.addNext(elseSl.getLast(), idList[i+1]);
+                    pkb.nextKB.addNext(thenSl.getLast(), idList[i+1]);
+                    pkb.nextKB.addNext(elseSl.getLast(), idList[i+1]);
                 }
             } else if (s->getType() == StmtType::WHILE) {
                 WhileStmt* ws = dynamic_cast<WhileStmt*>(s.get());
@@ -373,14 +373,14 @@ namespace FrontEnd {
                 StatementList& whileSl = pkb.stmtListTable.get(loopId);
                 updateLastStmtId(whileSl);
                 populateNextKB(loopId);
-                // pkb.nextKB.addNext(idList[i], whileSl.getFirst());
-                // pkb.nextKB.addNext(whileSl.getLast(), idList[i]);
+                pkb.nextKB.addNext(idList[i], whileSl.getFirst());
+                pkb.nextKB.addNext(whileSl.getLast(), idList[i]);
                 if (i < idList.size() - 1) {
-                    // pkb.nextKB.addNext(idList[i], idList[i+1]);
+                    pkb.nextKB.addNext(idList[i], idList[i+1]);
                 }
             } else {
                 if (i < idList.size() - 1) {
-                    // pkb.nextKB.addNext(idList[i], idList[i+1]);
+                    pkb.nextKB.addNext(idList[i], idList[i+1]);
                 }
             }
         }
@@ -405,7 +405,7 @@ namespace FrontEnd {
         for (StmtListId sid = 1; sid <= pkb.stmtListTable.size(); sid++) {
             StatementList sl = pkb.stmtListTable.get(sid);
             for (StmtId id : sl.getStmtIds()) {
-                pkb.stmtTable.get(id)->setParentId(sid);
+                pkb.stmtTable.get(id)->setContainerId(sid);
             }
         }
     }

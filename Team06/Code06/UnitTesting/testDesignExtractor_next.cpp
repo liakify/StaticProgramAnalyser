@@ -75,13 +75,13 @@ namespace UnitTesting
         }
 
         TEST_METHOD(updateStmtListId) {
-            Assert::IsTrue(pkbNext.stmtTable.get(1)->getParentId() == 1);
-            Assert::IsTrue(pkbNext.stmtTable.get(2)->getParentId() == 2);
-            Assert::IsTrue(pkbNext.stmtTable.get(3)->getParentId() == 2);
-            Assert::IsTrue(pkbNext.stmtTable.get(4)->getParentId() == 3);
-            Assert::IsTrue(pkbNext.stmtTable.get(5)->getParentId() == 4);
-            Assert::IsTrue(pkbNext.stmtTable.get(6)->getParentId() == 5);
-            Assert::IsTrue(pkbNext.stmtTable.get(7)->getParentId() == 2);
+            Assert::IsTrue(pkbNext.stmtTable.get(1)->getContainerId() == 1);
+            Assert::IsTrue(pkbNext.stmtTable.get(2)->getContainerId() == 2);
+            Assert::IsTrue(pkbNext.stmtTable.get(3)->getContainerId() == 2);
+            Assert::IsTrue(pkbNext.stmtTable.get(4)->getContainerId() == 3);
+            Assert::IsTrue(pkbNext.stmtTable.get(5)->getContainerId() == 4);
+            Assert::IsTrue(pkbNext.stmtTable.get(6)->getContainerId() == 5);
+            Assert::IsTrue(pkbNext.stmtTable.get(7)->getContainerId() == 2);
         }
     };
 }
