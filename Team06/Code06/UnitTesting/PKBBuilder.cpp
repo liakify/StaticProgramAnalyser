@@ -10,21 +10,21 @@ namespace UnitTesting {
     }
 
     PKBBuilder& PKBBuilder::addPrintStmt(VarName var) {
-        SIMPLE::PrintStmt *printStmt = new SIMPLE::PrintStmt(pkb.varTable.getVarId(var));
+        std::shared_ptr<SIMPLE::PrintStmt> printStmt(new SIMPLE::PrintStmt(pkb.varTable.getVarId(var)));
         pkb.stmtTable.insertStmt(printStmt);
         return *this;
     }
 
     PKBBuilder& PKBBuilder::addReadStmt(VarName var) {
-        SIMPLE::ReadStmt* readStmt = new SIMPLE::ReadStmt(pkb.varTable.getVarId(var));
+        std::shared_ptr<SIMPLE::ReadStmt> readStmt(new SIMPLE::ReadStmt(pkb.varTable.getVarId(var)));
         pkb.stmtTable.insertStmt(readStmt);
         return *this;
     }
 
     PKBBuilder& PKBBuilder::addAssignStmt(VarName var) {
         // Note: Expression attribute is currently just a dummy value and is irrelevant
-        SIMPLE::AssignStmt* assignStmt = new SIMPLE::AssignStmt(pkb.varTable.getVarId(var), 
-            SIMPLE::Expression(var, pkb.varTable.getVarId(var), ExprType::VAR));
+        std::shared_ptr<SIMPLE::AssignStmt> assignStmt(new SIMPLE::AssignStmt(pkb.varTable.getVarId(var), 
+            SIMPLE::Expression(var, pkb.varTable.getVarId(var), ExprType::VAR)));
         pkb.stmtTable.insertStmt(assignStmt);
         return *this;
     }
@@ -40,7 +40,7 @@ namespace UnitTesting {
     }
 
     PKBBuilder& PKBBuilder::addCallStmt(ProcName proc) {
-        SIMPLE::CallStmt* callStmt = new SIMPLE::CallStmt(proc);
+        std::shared_ptr<SIMPLE::CallStmt> callStmt(new SIMPLE::CallStmt(proc));
         pkb.stmtTable.insertStmt(callStmt);
         return *this;
     }
