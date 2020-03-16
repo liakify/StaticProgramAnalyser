@@ -83,7 +83,7 @@ namespace PQL {
         }
 
         // Validate structure of query body (last statement)
-        regex VALID_QUERY_BODY("^Select\\s[\\w<>=#.\\(\\),\"\\+\\-\\*\\/\\%\\s]+(?!;)$");
+        regex VALID_QUERY_BODY("^Select(?:(?=\\s*<)\\s*<|\\s)[\\w<>=#.\\(\\),\"\\+\\-\\*\\/\\%\\s]+(?!;)$");
         smatch qbmatch;
 
         if (!regex_search(statements.at(numDeclarations), qbmatch, VALID_QUERY_BODY)) {
@@ -92,12 +92,14 @@ namespace PQL {
         }
 
         // Check if syntax violations occur from use of clause keywords and connectives
-        regex INVALID_REPEATED_RELATION("and\\s+such\\s+that");
-        regex INVALID_REPEATED_PATTERN("and\\s+pattern");
+        regex INVALID_REPEATED_RELATIONS("and\\s+such\\s+that");
+        regex INVALID_REPEATED_PATTERNS("and\\s+pattern");
+        regex INVALID_REPEATED_EQUALITIES("and\\s+with");
         smatch rmatch;
 
-        if (regex_search(statements.at(numDeclarations), rmatch, INVALID_REPEATED_RELATION)
-            || regex_search(statements.at(numDeclarations), rmatch, INVALID_REPEATED_PATTERN)) {
+        if (regex_search(statements.at(numDeclarations), rmatch, INVALID_REPEATED_RELATIONS) ||
+            regex_search(statements.at(numDeclarations), rmatch, INVALID_REPEATED_PATTERNS) ||
+            regex_search(statements.at(numDeclarations), rmatch, INVALID_REPEATED_EQUALITIES)) {
             // SYNTAX ERROR: incorrect use of 'and' keyword to connect adjacent clauses
             query.status = SYNTAX_ERR_INVALID_AND_CHAINED_CLAUSES;
             return false;
@@ -372,9 +374,9 @@ namespace PQL {
         string WITH_CLAUSE = "(\"?)\\s*[A-Za-z0-9.#]+\\s*\\1\\s*=\\s*(?:(?=\")\"\\s*[A-Za-z0-9.#]+\\s*\"|[A-Za-z0-9.#]+)";
         string CONNECTED_WITH_CLAUSE = "(\"?)\\s*[A-Za-z0-9.#]+\\s*\\2\\s*=\\s*(?:(?=\")\"\\s*[A-Za-z0-9.#]+\\s*\"|[A-Za-z0-9.#]+)";
 
-        regex COMPOUND_RELATION_CLAUSE("^such\\s+that\\s+" + RELATION_CLAUSE + "(?:\\s+and\\s+" + RELATION_CLAUSE + ")*");
+        regex COMPOUND_RELATION_CLAUSE("^such\\s+that\\s+" + RELATION_CLAUSE + "(?:\\s*and\\s+" + RELATION_CLAUSE + ")*");
         regex COMPOUND_PATTERN_PREFIX("^pattern\\s+[A-Za-z][A-Za-z0-9]*\\s*\\(");
-        regex COMPOUND_PATTERN_CLAUSE("^pattern\\s+" + PATTERN_CLAUSE + "(?:\\s+and\\s+" + PATTERN_CLAUSE + ")*");
+        regex COMPOUND_PATTERN_CLAUSE("^pattern\\s+" + PATTERN_CLAUSE + "(?:\\s*and\\s+" + PATTERN_CLAUSE + ")*");
         regex COMPOUND_WITH_CLAUSE("^with\\s+" + WITH_CLAUSE + "(?:\\s+and\\s+" + CONNECTED_WITH_CLAUSE + ")*");
         smatch ccmatch;
 
@@ -463,7 +465,7 @@ namespace PQL {
 
         string TARGET = "[A-Za-z][A-Za-z0-9]*(?:\\s*\\.\\s*[A-Za-z#]+)?";
         regex SINGLE_RETURN("^Select\\s+" + TARGET + "(?=$|\\s+(?![,.]))");
-        regex TUPLE_RETURN("^Select\\s+<\\s*" + TARGET + "(?:\\s*,\\s*" + TARGET + ")*\\s*>(?=$|\\s+(?![,.]))");
+        regex TUPLE_RETURN("^Select\\s*<\\s*" + TARGET + "(?:\\s*,\\s*" + TARGET + ")*\\s*>(?=$|\\s*(?![,.]))");
         smatch tmatch;
 
         // Attempt to match a single return type, otherwise match a tuple return type
