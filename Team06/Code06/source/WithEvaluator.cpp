@@ -11,6 +11,41 @@ namespace PQL {
     namespace WithEvaluator {
 
         /**
+        * Extracts data value pairs for a given StmtType.
+        *
+        * @param    stmtType    StmtType to extract data value pairs for.
+        * @return   The data value pairs extracted.
+        */
+        std::unordered_set<std::pair<StmtId, std::string> > getStmtDataPairs(PKB::PKB database, StmtType stmtType) {
+            std::unordered_set<std::pair<StmtId, std::string> > result;
+
+            if (stmtType == StmtType::CALL) {
+                std::unordered_set<StmtId> callStmts = database.stmtTable.getStmtsByType(StmtType::CALL);
+                for (StmtId callStmtId : callStmts) {
+                    SIMPLE::CallStmt* callStmt = dynamic_cast<SIMPLE::CallStmt*>(database.stmtTable.get(callStmtId).get());
+                    result.insert(std::make_pair(callStmtId, callStmt->getProc()));
+                }
+                return result;
+            } else if (stmtType == StmtType::READ) {
+                std::unordered_set<StmtId> readStmts = database.stmtTable.getStmtsByType(StmtType::READ);
+                for (StmtId readStmtId : readStmts) {
+                    SIMPLE::ReadStmt* readStmt = dynamic_cast<SIMPLE::ReadStmt*>(database.stmtTable.get(readStmtId).get());
+                    result.insert(std::make_pair(readStmtId, database.varTable.get(readStmt->getVar())));
+                }
+                return result;
+            } else if (stmtType == StmtType::PRINT) {
+                std::unordered_set<StmtId> printStmts = database.stmtTable.getStmtsByType(StmtType::PRINT);
+                for (StmtId printStmtId : printStmts) {
+                    SIMPLE::PrintStmt* printStmt = dynamic_cast<SIMPLE::PrintStmt*>(database.stmtTable.get(printStmtId).get());
+                    result.insert(std::make_pair(printStmtId, database.varTable.get(printStmt->getVar())));
+                }
+                return result;
+            } else {
+                return {};
+            }
+        }
+
+        /**
         * Evaluates a single With clause where the inputs are two identifiers.
         *
         * @param    database        The PKB to evaluate the clause on.
@@ -37,43 +72,15 @@ namespace PQL {
                 
                 Synonym syn1 = arg1.second.first;
 
-                if (synonymTable[syn1] == DesignEntity::CALL) {
+                if (synonymTable[syn1] == DesignEntity::CALL || synonymTable[syn1] == DesignEntity::READ || synonymTable[syn1] == DesignEntity::PRINT) {
                     ClauseResult clauseResult;
 
-                    std::unordered_set<StmtId> callStmts = database.stmtTable.getStmtsByType(StmtType::CALL);
-                    for (StmtId callStmtId : callStmts) {
-                        SIMPLE::CallStmt* callStmt = dynamic_cast<SIMPLE::CallStmt*>(database.stmtTable.get(callStmtId).get());
-                        if (callStmt->getProc() == arg2.second.first) {
+                    std::unordered_set<std::pair<StmtId, ProcName> > stmts =
+                        getStmtDataPairs(database, SPA::TypeUtils::getStmtTypeFromDesignEntity(synonymTable[syn1]));
+                    for (std::pair<StmtId, std::string> stmt : stmts) {
+                        if (stmt.second == arg2.second.first) {
                             ClauseResultEntry resultEntry;
-                            resultEntry[syn1] = std::to_string(callStmtId);
-                            clauseResult.emplace_back(resultEntry);
-                        }
-                    }
-                    return clauseResult;
-
-                } else if (synonymTable[syn1] == DesignEntity::READ) {
-                    ClauseResult clauseResult;
-
-                    std::unordered_set<StmtId> readStmts = database.stmtTable.getStmtsByType(StmtType::READ);
-                    for (StmtId readStmtId : readStmts) {
-                        SIMPLE::ReadStmt* readStmt = dynamic_cast<SIMPLE::ReadStmt*>(database.stmtTable.get(readStmtId).get());
-                        if (readStmt->getVar == arg2.second.first) {
-                            ClauseResultEntry resultEntry;
-                            resultEntry[syn1] = std::to_string(readStmtId);
-                            clauseResult.emplace_back(resultEntry);
-                        }
-                    }
-                    return clauseResult;
-
-                } else if (synonymTable[syn1] == DesignEntity::PRINT) {
-                    ClauseResult clauseResult;
-
-                    std::unordered_set<StmtId> printStmts = database.stmtTable.getStmtsByType(StmtType::PRINT);
-                    for (StmtId printStmtId : printStmts) {
-                        SIMPLE::PrintStmt* printStmt = dynamic_cast<SIMPLE::PrintStmt*>(database.stmtTable.get(printStmtId).get());
-                        if (printStmt->getVar == arg2.second.first) {
-                            ClauseResultEntry resultEntry;
-                            resultEntry[syn1] = std::to_string(printStmtId);
+                            resultEntry[syn1] = std::to_string(stmt.first);
                             clauseResult.emplace_back(resultEntry);
                         }
                     }
@@ -90,8 +97,11 @@ namespace PQL {
             } else if (argType1 == ArgType::ATTRIBUTE && argType2 == ArgType::ATTRIBUTE) {
                 // Case 2: Both LHS and RHS are attributes
 
+                std::unordered_set<std::pair<StmtId, std::string> > result1;
+                std::unordered_set<std::pair<StmtId, std::string> > result2;
+
             } else {
-                SPA::LoggingUtils::LogErrorMessage("WithEvaluator::evaluateIntegerEqual: Invalid ArgTypes for integer With clause. argType1 = %d, argType2 = %d\n", argType1, argType2);
+                SPA::LoggingUtils::LogErrorMessage("WithEvaluator::evaluateIdentifierEqual: Invalid ArgTypes for identifier With clause. argType1 = %d, argType2 = %d\n", argType1, argType2);
             }
         }
 
