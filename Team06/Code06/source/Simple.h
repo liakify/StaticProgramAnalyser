@@ -81,7 +81,7 @@ namespace SIMPLE {
 
     class Statement {
      public:
-        StmtType getType();
+        virtual StmtType getType();
         void setParentId(StmtListId sid);
         StmtListId getParentId();
      protected:

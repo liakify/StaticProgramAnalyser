@@ -17,12 +17,12 @@ namespace UnitTesting
     public:
         TEST_CLASS_INITIALIZE(setup) {
             pkbFollowsParent = PKB::PKB();
-            pkbFollowsParent.stmtTable.insertStmt(new ReadStmt(1));
-            pkbFollowsParent.stmtTable.insertStmt(new ReadStmt(2));
-            pkbFollowsParent.stmtTable.insertStmt(new ReadStmt(3));
-            pkbFollowsParent.stmtTable.insertStmt(new ReadStmt(4));
-            pkbFollowsParent.stmtTable.insertStmt(new ReadStmt(5));
-            pkbFollowsParent.stmtTable.insertStmt(new ReadStmt(6));
+            pkbFollowsParent.stmtTable.insertStmt(std::shared_ptr<ReadStmt>(new ReadStmt(1)));
+            pkbFollowsParent.stmtTable.insertStmt(std::shared_ptr<ReadStmt>(new ReadStmt(2)));
+            pkbFollowsParent.stmtTable.insertStmt(std::shared_ptr<ReadStmt>(new ReadStmt(3)));
+            pkbFollowsParent.stmtTable.insertStmt(std::shared_ptr<ReadStmt>(new ReadStmt(4)));
+            pkbFollowsParent.stmtTable.insertStmt(std::shared_ptr<ReadStmt>(new ReadStmt(5)));
+            pkbFollowsParent.stmtTable.insertStmt(std::shared_ptr<ReadStmt>(new ReadStmt(6)));
 
             std::vector<StmtId> v1 = { 1,2,6 };
             pkbFollowsParent.stmtListTable.insertStmtLst(StatementList(v1));
@@ -36,10 +36,10 @@ namespace UnitTesting
             std::vector<StmtId> v4 = { 9, 10 };
             pkbFollowsParent.stmtListTable.insertStmtLst(StatementList(v4));
 
-            pkbFollowsParent.stmtTable.insertStmt(new WhileStmt(cond, 3));
-            pkbFollowsParent.stmtTable.insertStmt(new WhileStmt(cond, 4));
-            pkbFollowsParent.stmtTable.insertStmt(new ReadStmt(9));
-            pkbFollowsParent.stmtTable.insertStmt(new ReadStmt(10));
+            pkbFollowsParent.stmtTable.insertStmt(std::shared_ptr<WhileStmt>(new WhileStmt(cond, 3)));
+            pkbFollowsParent.stmtTable.insertStmt(std::shared_ptr<WhileStmt>(new WhileStmt(cond, 4)));
+            pkbFollowsParent.stmtTable.insertStmt(std::shared_ptr<ReadStmt>(new ReadStmt(9)));
+            pkbFollowsParent.stmtTable.insertStmt(std::shared_ptr<ReadStmt>(new ReadStmt(10)));
             
             std::vector<StmtId> v5 = { 12 };
             pkbFollowsParent.stmtListTable.insertStmtLst(StatementList(v5));
@@ -50,11 +50,11 @@ namespace UnitTesting
             std::vector<StmtId> v8 = { 15 };
             pkbFollowsParent.stmtListTable.insertStmtLst(StatementList(v8));
 
-            pkbFollowsParent.stmtTable.insertStmt(new IfStmt(cond, 5, 7));
-            pkbFollowsParent.stmtTable.insertStmt(new WhileStmt(cond, 6));
-            pkbFollowsParent.stmtTable.insertStmt(new ReadStmt(13));
-            pkbFollowsParent.stmtTable.insertStmt(new WhileStmt(cond, 8));
-            pkbFollowsParent.stmtTable.insertStmt(new ReadStmt(15));
+            pkbFollowsParent.stmtTable.insertStmt(std::shared_ptr<IfStmt>(new IfStmt(cond, 5, 7)));
+            pkbFollowsParent.stmtTable.insertStmt(std::shared_ptr<WhileStmt>(new WhileStmt(cond, 6)));
+            pkbFollowsParent.stmtTable.insertStmt(std::shared_ptr<ReadStmt>(new ReadStmt(13)));
+            pkbFollowsParent.stmtTable.insertStmt(std::shared_ptr<WhileStmt>(new WhileStmt(cond, 8)));
+            pkbFollowsParent.stmtTable.insertStmt(std::shared_ptr<ReadStmt>(new ReadStmt(15)));
 
             pkbFollowsParent = DE_followsParent.run(pkbFollowsParent);
         }

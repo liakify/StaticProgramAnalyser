@@ -50,16 +50,15 @@ namespace UnitTesting
 
             CondExpr cond = CondExpr(Expression("1", 1, ExprType::CONST), Expression("2", 2, ExprType::CONST));
 
-            pkbNext.stmtTable.insertStmt(new CallStmt("b"));
-            pkbNext.stmtTable.insertStmt(new ReadStmt(2));
-            pkbNext.stmtTable.insertStmt(new WhileStmt(cond, 3));
-            pkbNext.stmtTable.insertStmt(new IfStmt(cond, 4, 5));
-            pkbNext.stmtTable.insertStmt(new ReadStmt(5));
-            pkbNext.stmtTable.insertStmt(new ReadStmt(6));
-            pkbNext.stmtTable.insertStmt(new ReadStmt(7));
+            pkbNext.stmtTable.insertStmt(std::shared_ptr<CallStmt>(new CallStmt("b")));
+            pkbNext.stmtTable.insertStmt(std::shared_ptr<ReadStmt>(new ReadStmt(2)));
+            pkbNext.stmtTable.insertStmt(std::shared_ptr<WhileStmt>(new WhileStmt(cond, 3)));
+            pkbNext.stmtTable.insertStmt(std::shared_ptr<IfStmt>(new IfStmt(cond, 4, 5)));
+            pkbNext.stmtTable.insertStmt(std::shared_ptr<ReadStmt>(new ReadStmt(5)));
+            pkbNext.stmtTable.insertStmt(std::shared_ptr<ReadStmt>(new ReadStmt(6)));
+            pkbNext.stmtTable.insertStmt(std::shared_ptr<ReadStmt>(new ReadStmt(7)));
 
             pkbNext = DE_next.run(pkbNext);
-            int x;
         }
 
         TEST_METHOD(updateLastStmtId) {

@@ -6,6 +6,7 @@
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 using namespace SIMPLE;
+using std::shared_ptr;
 
 namespace UnitTesting
 {
@@ -43,14 +44,14 @@ namespace UnitTesting
             StatementList sl7 = StatementList(std::vector<StmtId>{1, 2});
             StatementList sl8 = StatementList(std::vector<StmtId>{2, 3});
 
-            Statement* CALL_A = new CallStmt("a");
-            Statement* CALL_B = new CallStmt("b");
-            Statement* CALL_C = new CallStmt("c");
-            Statement* CALL_D = new CallStmt("d");
-            Statement* CALL_E = new CallStmt("e");
-            Statement* CALL_F = new CallStmt("f");
-            Statement* READ_1 = new ReadStmt(1);
-            Statement* READ_2 = new ReadStmt(2);
+            shared_ptr<Statement> CALL_A = shared_ptr<Statement>(new CallStmt("a"));
+            shared_ptr<Statement> CALL_B = shared_ptr<Statement>(new CallStmt("b"));
+            shared_ptr<Statement> CALL_C = shared_ptr<Statement>(new CallStmt("c"));
+            shared_ptr<Statement> CALL_D = shared_ptr<Statement>(new CallStmt("d"));
+            shared_ptr<Statement> CALL_E = shared_ptr<Statement>(new CallStmt("e"));
+            shared_ptr<Statement> CALL_F = shared_ptr<Statement>(new CallStmt("f"));
+            shared_ptr<Statement> READ_1 = shared_ptr<Statement>(new ReadStmt(1));
+            shared_ptr<Statement> READ_2 = shared_ptr<Statement>(new ReadStmt(2));
 
             // Valid SIMPLE: 1 -> 2 -> 3
             pkbCallStar = PKB::PKB();
