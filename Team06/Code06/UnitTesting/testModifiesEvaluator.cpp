@@ -19,11 +19,11 @@ namespace UnitTesting
 		ClauseResult TRUE_RESULT = ClauseResult({ ClauseResultEntry({{"_RESULT", "TRUE"}}) });
 		ClauseResult EMPTY_RESULT = {};
 		
-		/*
 		TEST_METHOD(evaluateModifiesStmtClauseIntId_True)
 		{
 			PKBBuilder pkbBuilder;
 			PKB::PKB pkb = pkbBuilder
+				.addVar("a")
 				.addStmtModifiesRS(5, "a")
 				.getPKB();
 			
@@ -31,7 +31,7 @@ namespace UnitTesting
 			PQL::RelationClause clause = clauseBuilder
 				.setRelationType(RelationType::MODIFIESS)
 				.setFirstStmt(ArgType::INTEGER, "5")
-				.setSecondStmt(ArgType::IDENTIFIER, "a")
+				.setSecondEnt(ArgType::IDENTIFIER, "a")
 				.getClause();
 
 			ClauseResult result = PQL::ModifiesEvaluator::evaluateModifiesClause(pkb, clause, EMPTY_SYNONYM_TABLE);
@@ -50,7 +50,7 @@ namespace UnitTesting
 			PQL::RelationClause clause = clauseBuilder
 				.setRelationType(RelationType::MODIFIESS)
 				.setFirstStmt(ArgType::INTEGER, "5")
-				.setSecondStmt(ArgType::IDENTIFIER, "b")
+				.setSecondEnt(ArgType::IDENTIFIER, "b")
 				.getClause();
 
 			ClauseResult result = PQL::ModifiesEvaluator::evaluateModifiesClause(pkb, clause, EMPTY_SYNONYM_TABLE);
@@ -69,7 +69,7 @@ namespace UnitTesting
 			PQL::RelationClause clause = clauseBuilder
 				.setRelationType(RelationType::MODIFIESS)
 				.setFirstStmt(ArgType::INTEGER, "10")
-				.setSecondStmt(ArgType::WILDCARD, "_")
+				.setSecondEnt(ArgType::WILDCARD, "_")
 				.getClause();
 
 			ClauseResult result = PQL::ModifiesEvaluator::evaluateModifiesClause(pkb, clause, EMPTY_SYNONYM_TABLE);
@@ -86,13 +86,12 @@ namespace UnitTesting
 			PQL::RelationClause clause = clauseBuilder
 				.setRelationType(RelationType::MODIFIESS)
 				.setFirstStmt(ArgType::INTEGER, "10")
-				.setSecondStmt(ArgType::WILDCARD, "_")
+				.setSecondEnt(ArgType::WILDCARD, "_")
 				.getClause();
 
 			ClauseResult result = PQL::ModifiesEvaluator::evaluateModifiesClause(pkb, clause, EMPTY_SYNONYM_TABLE);
 			Assert::IsTrue(result == EMPTY_RESULT);
 		}
-		*/
 
 	};
 		
