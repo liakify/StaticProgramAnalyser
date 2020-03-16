@@ -191,7 +191,7 @@ namespace SIMPLE {
     StmtId StatementList::getLast() {
         return this->last;
     }
-    
+
     std::unordered_set<StmtId>& StatementList::getAllLast() {
         return this->allLast;
     }
