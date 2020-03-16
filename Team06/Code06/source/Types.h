@@ -5,7 +5,7 @@
 #include <vector>
 
 enum class StmtType {
-    PRINT, READ, IF, WHILE, CALL, ASSIGN
+    PRINT, READ, IF, WHILE, CALL, ASSIGN, ERROR
 };
 
 enum class ExprType {

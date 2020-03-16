@@ -59,6 +59,16 @@ namespace PQL {
             std::unordered_map<std::string, DesignEntity> &synonymTable);
 
         /**
+        * Evaluates a single with clause
+        *
+        * @param    withClause   The with clause to evaluate
+        * @param    synonymTable    The synonym table associated with the query.
+        * @return   The results of the evaluation
+        */
+        ClauseResult evaluateWithClause(WithClause& withClause,
+            std::unordered_map<std::string, DesignEntity>& synonymTable);
+
+        /**
         * Summarizes the combined results of the clauses into the results needed to answer the given query.
         *
         * @param    query   The query to evaluate.

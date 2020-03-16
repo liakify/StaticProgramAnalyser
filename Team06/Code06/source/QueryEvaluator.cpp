@@ -17,6 +17,7 @@
 #include "UsesEvaluator.h"
 #include "TypeUtils.h"
 #include "WhilePatternEvaluator.h"
+#include "WithEvaluator.h"
 
 namespace PQL {
 
@@ -43,6 +44,11 @@ namespace PQL {
         // Evaluate Pattern Clauses
         for (PatternClause pattern : query.patterns) {
             clauseResults.emplace_back(evaluatePatternClause(pattern, query.synonymTable));
+        }
+
+        // Evaluate With Clauses
+        for (WithClause with : query.equalities) {
+            clauseResults.emplace_back(evaluateWithClause(with, query.synonymTable));
         }
 
         // Combine Results
@@ -262,6 +268,13 @@ namespace PQL {
             SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluatePatternClause: Unknown pattern type %d\n", patternClause.type);
             return {};
         }
+
+    }
+
+    ClauseResult QueryEvaluator::evaluateWithClause(WithClause& withClause,
+        std::unordered_map<std::string, DesignEntity>& synonymTable) {
+
+        WithEvaluator::evaluateWithClause(this->database, withClause, synonymTable);
 
     }
 
