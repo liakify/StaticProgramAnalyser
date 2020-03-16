@@ -11,8 +11,8 @@ namespace UnitTesting {
         ProcName PROC_NAME_2 = "proCc";
         StmtListId STMTLIST_ID_1 = 2;
         StmtListId STMTLIST_ID_2 = 5;
-        StmtId STMT_ID_1 = 0;
-        StmtId STMT_ID_2 = 1;
+        StmtId STMT_ID_1 = 1;
+        StmtId STMT_ID_2 = 2;
         VarName VAR_NAME_1 = "qwerty";
         VarName VAR_NAME_2 = "asdf";
         char op = '%';
@@ -137,10 +137,54 @@ namespace UnitTesting {
             StatementList STATEMENT_LIST_2 = StatementList(sid1);
             Assert::IsTrue(sid1 == STATEMENT_LIST_1.getStmtIds());
             Assert::IsTrue(STATEMENT_LIST_1 == STATEMENT_LIST_2);
-            STATEMENT_LIST_2.setLast(0);
-            Assert::IsFalse(STATEMENT_LIST_1 == STATEMENT_LIST_2);
-            STATEMENT_LIST_2 = StatementList(sid2);
-            Assert::IsFalse(STATEMENT_LIST_1 == STATEMENT_LIST_2);
+
+
+            Assert::ExpectException<std::invalid_argument>([&STATEMENT_LIST_2] { STATEMENT_LIST_2.addLast(0); });
+            std::unordered_set<StmtId> expectedSet = std::unordered_set<StmtId>({ 2 });
+            Assert::IsTrue(STATEMENT_LIST_2.getAllLast().size() == expectedSet.size());
+            Assert::IsTrue(STATEMENT_LIST_2.getLast() == 2);
+            for (StmtId i : expectedSet) {
+                Assert::IsTrue(STATEMENT_LIST_2.getAllLast().find(i) != STATEMENT_LIST_2.getAllLast().end());
+            }
+            for (StmtId i : STATEMENT_LIST_2.getAllLast()) {
+                Assert::IsTrue(expectedSet.find(i) != expectedSet.end());
+            }
+
+            STATEMENT_LIST_2.addLast(3);
+            expectedSet.erase(2);
+            expectedSet.insert(3);
+            Assert::IsTrue(STATEMENT_LIST_2.getAllLast().size() == expectedSet.size());
+            Assert::IsTrue(STATEMENT_LIST_2.getLast() == 3);
+            for (StmtId i : expectedSet) {
+                Assert::IsTrue(STATEMENT_LIST_2.getAllLast().find(i) != STATEMENT_LIST_2.getAllLast().end());
+            }
+            for (StmtId i : STATEMENT_LIST_2.getAllLast()) {
+                Assert::IsTrue(expectedSet.find(i) != expectedSet.end());
+            }
+
+            STATEMENT_LIST_2.addLast(5);
+            expectedSet.insert(5);
+            Assert::IsTrue(STATEMENT_LIST_2.getAllLast().size() == expectedSet.size());
+            Assert::IsTrue(STATEMENT_LIST_2.getLast() == 5);
+            for (StmtId i : expectedSet) {
+                Assert::IsTrue(STATEMENT_LIST_2.getAllLast().find(i) != STATEMENT_LIST_2.getAllLast().end());
+            }
+            for (StmtId i : STATEMENT_LIST_2.getAllLast()) {
+                Assert::IsTrue(expectedSet.find(i) != expectedSet.end());
+            }
+
+            STATEMENT_LIST_2.addLast(4);
+            expectedSet.insert(4);
+            Assert::IsTrue(STATEMENT_LIST_2.getAllLast().size() == expectedSet.size());
+            Assert::IsTrue(STATEMENT_LIST_2.getLast() == 5);
+            for (StmtId i : expectedSet) {
+                Assert::IsTrue(STATEMENT_LIST_2.getAllLast().find(i) != STATEMENT_LIST_2.getAllLast().end());
+            }
+            for (StmtId i : STATEMENT_LIST_2.getAllLast()) {
+                Assert::IsTrue(expectedSet.find(i) != expectedSet.end());
+            }
+
+            Assert::IsTrue(STATEMENT_LIST_1 == STATEMENT_LIST_2);
         }
 
         TEST_METHOD(TestProcedure) {

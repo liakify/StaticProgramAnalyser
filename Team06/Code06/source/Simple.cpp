@@ -1,5 +1,6 @@
-#include "Simple.h"
 #include <stdexcept>
+
+#include "Simple.h"
 
 namespace SIMPLE {
     Expression::Expression(Expression left, Expression right, char op)
@@ -163,12 +164,11 @@ namespace SIMPLE {
 
     StatementList::StatementList(std::vector<StmtId>& statements)
         : statements(statements), first(statements.front()), last(statements.back()) {
+        this->allLast = std::unordered_set<StmtId>({ statements.back() });
     }
 
     bool StatementList::operator== (const StatementList& other) {
-        return this->statements == other.statements
-            && this->first == other.first
-            && this->last == other.last;
+        return this->statements == other.statements;
     }
 
     std::vector<StmtId> StatementList::getStmtIds() {
@@ -179,12 +179,21 @@ namespace SIMPLE {
         return this->first;
     }
 
-    void StatementList::setLast(StmtId last) {
-        this->last = last;
+    void StatementList::addLast(StmtId last) {
+        if (last < statements.back()) {
+            throw std::invalid_argument("Last statement cannot come before the last statement in the stmtId vector");
+        }
+        this->allLast.erase(statements.back());
+        this->allLast.insert(last);
+        this->last = last > this->last ? last : this->last;
     }
 
     StmtId StatementList::getLast() {
         return this->last;
+    }
+    
+    std::unordered_set<StmtId>& StatementList::getAllLast() {
+        return this->allLast;
     }
 
     Procedure::Procedure(ProcName procName, StmtListId stmtLstId)

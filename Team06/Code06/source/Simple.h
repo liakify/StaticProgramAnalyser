@@ -152,12 +152,14 @@ namespace SIMPLE {
         bool operator== (const StatementList& other);
         std::vector<StmtId> getStmtIds();
         StmtId getFirst();
-        void setLast(StmtId last);
+        void addLast(StmtId last);
         StmtId getLast();
+        std::unordered_set<StmtId>& getAllLast();
      private:
         std::vector<StmtId> statements;
         StmtId first;
         StmtId last;
+        std::unordered_set<StmtId> allLast;
     };
 
     class Procedure {
