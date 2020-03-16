@@ -53,7 +53,7 @@ namespace UnitTesting {
 		string CHAINED_ALL_PATTERNS_QUERY = "while w; assign a; if ifs; variable v; Select <a, v> pattern ifs(v, _, _) and a(\"x\", _) pattern w(v, _)";
 		string CHAINED_ALL_NON_LITERAL_EQUALITIES_QUERY = "call cl; read rd; print pn; constant c1, c2; procedure p1, p2; variable v1, v2; Select BOOLEAN with cl.stmt# = 22 and rd = pn and p1 = \"main\" with p2.procName = v1.varName with 0 = c2 and rd.varName = \"x\" with c1.value = pn.stmt# and v2 = cl.procName with p1 = v1 and c1 = c1.value";
 		string CHAINED_NO_WHITESPACE_QUERY = "assign a;while w;variable v;print pn;Select<a,w,v,pn>pattern a(v,_)and w(v,_)with pn.varName=v and 6=9 such that Modifies(a,v)and Modifies(w,v)";
-		string CHAINED_EXTRA_WHITESPACE_QUERY = "\nprocedure  p\f;\rwhile\tw ;assign\va\r;  variable\fv1,  v2\n;\tcall\rcl\t;\nSelect\f<\vp. procName\r,\tw\n,  cl\f,\ncl\t.\rprocName\v,\fa >\n pattern\ta(  v1,\r_\"\t69-\v 420\"_ )\nwith\tv2  =\t\"i\f\"\vand  17\r=w.stmt#\nsuch  that\fModifies\r(p\t,v1)\fand\rUses(\tw\v,  v1\n)  pattern\tw  (v2, _\v\f) such\t\tthat  Next*\f (\ta, w\v)\rand\tFollows(\na\r,\fcl  )\vwith p.procName\r=\n\" function\t\"\n";
+		string CHAINED_EXTRA_WHITESPACE_QUERY = "\nprocedure  p\f;\rwhile\tw ;assign\va\r;  variable\fv1,  v2\n;\tcall\rcl\t;\nSelect\f<\vp. procName\r,\tw\n,  cl\f,\ncl\t.\rprocName\v,\fa >\n pattern\ta(  v1,\r_\"\t69-\v 420\"_ )\nwith\tv2  =\t\"i\f\"\vand  17\r=w\t.  stmt#\nsuch  that\fModifies\r(p\t,v1)\fand\rUses(\tw\v,  v1\n)  pattern\tw  (v2, _\v\f) such\t\tthat  Next*\f (\ta, w\v)\rand\tFollows(\na\r,\fcl  )\vwith p\n.\fprocName\r=\n\" function\t\"  and\rcl\v.\fprocName\n=  p  .\tprocName\n";
 
 		// Invalid queries that fail in validateQuerySyntax
 		string EMPTY_QUERY = "";
