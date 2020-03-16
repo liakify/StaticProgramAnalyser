@@ -16,4 +16,6 @@ procedure Next2 {
             print x; }
         if (x == y) then {
             read x; } else {
-            read y;  }  }  }
+            call Next3;  }  }  }
+procedure Next3 {
+    print y;  }
