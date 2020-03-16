@@ -1,8 +1,5 @@
 #include "NextKB.h"
 
-
-}
-
 void NextKB::addNext(StmtId s1, StmtId s2) {
     nextRS& nRS1 = nextTable[s1];
     nextRS& nRS2 = nextTable[s2];
@@ -40,8 +37,6 @@ const std::unordered_set<StmtId>& NextKB::getDirectNodes(StmtId s, NodeType type
     catch (const std::out_of_range&) {
         return EMPTY_RESULT;
     }
-}
-
 }
 
 bool NextKB::hasNext(StmtId s) {

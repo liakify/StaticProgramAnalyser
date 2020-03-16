@@ -10,7 +10,6 @@
 struct nextRS {
     std::unordered_set<StmtId> directPrev;
     std::unordered_set<StmtId> directNext;
-
 };
 
 struct nextStarRS {
