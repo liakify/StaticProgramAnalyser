@@ -4,11 +4,12 @@
 #include <string>
 #include <tuple>
 #include <unordered_map>
+#include <utility>
 #include <vector>
 
 #include "Types.h"
 
-// Additional types specific to PQL (Query Processor)
+// Additional global aliases specific to PQL (Query Processor)
 using StmtRef = std::string;
 using EntityRef = std::string;
 
@@ -17,6 +18,20 @@ using EntityRef = std::string;
  */
 enum class DesignEntity {
     STATEMENT, READ, PRINT, CALL, WHILE, IF, ASSIGN, VARIABLE, CONSTANT, PROCEDURE, PROG_LINE
+};
+
+/**
+ *  Enumeration for recognised attribute types of synonyms appearing as a return
+ *  type or an argument in a with clause.
+ *
+ *  Note that NONE is a sentinel value used to denote a synonym is used without an
+ *  attribute type.
+ *
+ *  Note that INVALID is a sentinel value used to denote an invalid attribute
+ *  keyword was supplied with a synonym.
+ */
+enum class AttrType {
+    INVALID, NONE, PROC_NAME, VAR_NAME, VALUE, STMT_NUM
 };
 
 /**
@@ -63,7 +78,8 @@ enum class PatternType {
  *    EXACT_PATTERN.
  */
 enum class ArgType {
-    INVALID, UNKNOWN, SYNONYM, INTEGER, IDENTIFIER, WILDCARD, INCLUSIVE_PATTERN, EXACT_PATTERN
+    INVALID, UNKNOWN, SYNONYM, INTEGER, IDENTIFIER, WILDCARD,
+    INCLUSIVE_PATTERN, EXACT_PATTERN
 };
 
 namespace PQL {
@@ -81,6 +97,7 @@ namespace PQL {
     const std::string SYNTAX_ERR_INVALID_AND_CHAINED_CLAUSES = "syntax error: query contains incorrect use of clause keywords and 'and'";
     const std::string SYNTAX_ERR_UNKNOWN_DESIGN_ENTITY_KEYWORD = "syntax error: unrecognised design entity keyword in declaration";
     const std::string SEMANTIC_ERR_CONFLICTING_SYNONYM_DECLARATIONS = "semantic error: conflicting synonym declarations";
+    const std::string SYNTAX_ERR_INVALID_ATTRIBUTE_KEYWORD_IN_RETURN_TYPE = "syntax error: invalid design entity attribute keyword in return type";
     const std::string SYNTAX_ERR_MISSING_OR_INVALID_QUERY_TARGET = "syntax error: missing query target or target entities not correctly specified";
     const std::string SYNTAX_ERR_MISSING_OR_MALFORMED_PATTERN_ARG = "syntax error: pattern clause has missing or malformed argument";
     const std::string SYNTAX_ERR_INVALID_CLAUSES_IN_QUERY_BODY = "syntax error: compound clauses in query body violate query body syntax";
@@ -104,6 +121,7 @@ namespace PQL {
     const std::string SYNTAX_ERR_INVALID_PATTERN_TYPE = "syntax error: pattern clauses only defined for assign, if, while";
     const std::string SEMANTIC_ERR_AMBIGUOUS_USE_OF_BOOLEAN = "semantic error: ambiguous use of BOOLEAN as both synonym and return type";
     const std::string SEMANTIC_ERR_UNDECLARED_SYNONYM_IN_RETURN_TYPE = "semantic error: undeclared synonym part of query return type";
+    const std::string SEMANTIC_ERR_INVALID_SYNONYM_ATTRIBUTE_IN_RETURN_TYPE = "semantic error: attribute not defined for synonym in query return type";
     const std::string SEMANTIC_ERR_USES_MODIFIES_AMBIGUOUS_WILDCARD = "semantic error: wildcard not accepted as first arg for Uses/Modifies";
     const std::string SEMANTIC_ERR_USES_MODIFIES_UNDECLARED_FIRST_SYNONYM = "semantic error: undeclared synonym as first arg in Uses/Modifies clause";
     const std::string SEMANTIC_ERR_USES_INVALID_FIRST_SYNONYM = "semantic error: relation not defined for synonym as first arg in Uses clause";
@@ -118,7 +136,7 @@ namespace PQL {
     const std::string SEMANTIC_ERR_FPN_NON_STMT_SYNONYM = "semantic error: synonym in F(*)/P(*)/N(*) clause not a STATEMENT or its sub-types";
     const std::string SEMANTIC_ERR_PATTERN_UNDECLARED_FIRST_SYNONYM = "semantic error: undeclared synonym as first arg in pattern clause";
     const std::string SEMANTIC_ERR_PATTERN_NON_VARIABLE_FIRST_SYNONYM = "semantic error: synonym as first arg in pattern clause not a VARIABLE";
-    
+
     /**
      *  Sentinel argument pair that should never be returned by getArgs() method
      *  of a RelationClause or PatternClause instance. Used to denote an argument
@@ -162,20 +180,48 @@ namespace PQL {
     };
 
     /**
+     *  Map from attribute type to a vector of valid associated design entities.
+     */
+    const std::unordered_map<AttrType, std::vector<DesignEntity>> ATTRIBUTE_ENTITY_MAP {
+        { AttrType::PROC_NAME, { DesignEntity::PROCEDURE, DesignEntity::CALL } },
+        { AttrType::VAR_NAME, { DesignEntity::VARIABLE, DesignEntity::READ, DesignEntity::PRINT } },
+        { AttrType::VALUE, { DesignEntity::CONSTANT } },
+        { AttrType::STMT_NUM, {
+            DesignEntity::STATEMENT,
+            DesignEntity::READ,
+            DesignEntity::PRINT,
+            DesignEntity::CALL,
+            DesignEntity::WHILE,
+            DesignEntity::IF,
+            DesignEntity::ASSIGN
+        } }
+    };
+
+    /**
      *  Map from program entity keyword to program entity enum.
      */
     const std::unordered_map<std::string, DesignEntity> ENTITY_MAP {
-        {"stmt", DesignEntity::STATEMENT},
-        {"read", DesignEntity::READ},
-        {"print", DesignEntity::PRINT},
-        {"call", DesignEntity::CALL},
-        {"while", DesignEntity::WHILE},
-        {"if", DesignEntity::IF},
-        {"assign", DesignEntity::ASSIGN},
-        {"variable", DesignEntity::VARIABLE},
-        {"constant", DesignEntity::CONSTANT},
-        {"procedure", DesignEntity::PROCEDURE},
-        {"prog_line", DesignEntity::PROG_LINE}
+        { "stmt", DesignEntity::STATEMENT },
+        { "read", DesignEntity::READ },
+        { "print", DesignEntity::PRINT },
+        { "call", DesignEntity::CALL },
+        { "while", DesignEntity::WHILE },
+        { "if", DesignEntity::IF },
+        { "assign", DesignEntity::ASSIGN },
+        { "variable", DesignEntity::VARIABLE },
+        { "constant", DesignEntity::CONSTANT },
+        { "procedure", DesignEntity::PROCEDURE },
+        { "prog_line", DesignEntity::PROG_LINE }
+    };
+
+    /**
+     *  Map from design entity attribute keyword to attribute type enum,
+     */
+    const std::unordered_map<std::string, AttrType> ATTRIBUTE_MAP {
+        { "procName", AttrType::PROC_NAME },
+        { "varName", AttrType::VAR_NAME },
+        { "value", AttrType::VALUE },
+        { "stmt#", AttrType::STMT_NUM }
     };
 
     /**
@@ -187,18 +233,18 @@ namespace PQL {
      *  the supplied arguments.
      */
     const std::unordered_map<std::string, RelationType> RELATION_MAP {
-        {"Follows", RelationType::FOLLOWS},
-        {"Follows*", RelationType::FOLLOWST},
-        {"Parent", RelationType::PARENT},
-        {"Parent*", RelationType::PARENTT},
-        {"Uses", RelationType::USESS},
-        {"Modifies", RelationType::MODIFIESS},
-        {"Calls", RelationType::CALLS},
-        {"Calls*", RelationType::CALLST},
-        {"Next", RelationType::NEXT},
-        {"Next*", RelationType::NEXTT},
-        {"Affects", RelationType::AFFECTS},
-        {"Affects*", RelationType::AFFECTST}
+        { "Follows", RelationType::FOLLOWS },
+        { "Follows*", RelationType::FOLLOWST },
+        { "Parent", RelationType::PARENT },
+        { "Parent*", RelationType::PARENTT },
+        { "Uses", RelationType::USESS },
+        { "Modifies", RelationType::MODIFIESS },
+        { "Calls", RelationType::CALLS },
+        { "Calls*", RelationType::CALLST },
+        { "Next", RelationType::NEXT },
+        { "Next*", RelationType::NEXTT },
+        { "Affects", RelationType::AFFECTS },
+        { "Affects*", RelationType::AFFECTST }
     };
 
     /**
@@ -232,8 +278,8 @@ namespace PQL {
                 return { firstEnt, secondEnt };
             default:
                 return { INVALID_ARG, INVALID_ARG };
-            };
-        };
+            }
+        }
     };
 
     /**
@@ -249,7 +295,7 @@ namespace PQL {
         std::pair<ArgType, Pattern> patternArg;
         std::pair<std::pair<ArgType, std::string>, std::pair<ArgType, std::string>> getArgs() {
             return { targetArg, patternArg };
-        };
+        }
     };
 
     /**
@@ -258,7 +304,8 @@ namespace PQL {
      *  - status:           status message from evaluation by the Query Parser.
      *  - queryString:      the full query string.
      *  - returnsBool:      boolean describing if this query returns a BOOLEAN.
-     *  - targetEntities:   vector of all design entities (by synonym) to return for the query.
+     *  - targetEntities:   vector of return types for the query, each a pair
+     *                      comprising the synonym and an optional attribute.
      *  - synonymTable:     a mapping of declared synonyms to design entities.
      *  - relations:        a vector of parsed relation clauses.
      *  - patterns:         a vector of parsed pattern clauses.
@@ -269,10 +316,10 @@ namespace PQL {
         std::string status;
         std::string queryString;
         bool returnsBool;
-        std::vector<std::string> targetEntities;
+        std::vector<std::pair<std::string, AttrType>> targetEntities;
         std::unordered_map<std::string, DesignEntity> synonymTable;
         std::vector<RelationClause> relations;
         std::vector<PatternClause> patterns;
     };
-    
+
 }

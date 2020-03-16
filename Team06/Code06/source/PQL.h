@@ -1,10 +1,12 @@
 #pragma once
 
-#include "PQLTypes.h"
+#include <list>
+#include <string>
 
 #include "PKB.h"
-#include "QueryParser.h"
+#include "PQLTypes.h"
 #include "QueryEvaluator.h"
+#include "QueryParser.h"
 #include "QueryProjector.h"
 
 namespace PQL {
@@ -15,7 +17,7 @@ namespace PQL {
      *  Projector) in order to serve incoming PQL queries.
      */
     class PQLManager {
-    public:
+     public:
         /**
          *  Constructor for PQLManager facade class to handle PQL queries.
          *
@@ -31,7 +33,7 @@ namespace PQL {
          *  @param      resultList      list to populate the query results with.
          */
         void evaluateQuery(std::string queryString, std::list<std::string>& resultList);
-    private:
+     private:
         QueryParser parser;
         QueryEvaluator evaluator;
         QueryProjector formatter;
