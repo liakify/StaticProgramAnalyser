@@ -4,6 +4,7 @@
 #include "CppUnitTest.h"
 #include "FrontEnd.h"
 #include "Types.h"
+#include "Simple.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
@@ -14,27 +15,41 @@ namespace IntegrationTesting {
     TEST_CLASS(TestFrontEnd_PKB) {
     public:
 
-        std::unordered_set<VarName> allVars = std::unordered_set<VarName>({ "x", "y", "z", "a" });
+        std::unordered_set<VarName> allVars = std::unordered_set<VarName>({"x", "y", "z", "a"});
 
-        std::unordered_set<VarName> allModifiedVars = std::unordered_set<VarName>({ "x", "y", "z" });
+        std::unordered_set<VarName> allModifiedVars = std::unordered_set<VarName>({"x", "y", "z"});
+        std::unordered_map<VarName, std::unordered_set<StmtId>> allModifiedVarWithStmt =
+        {
+            std::make_pair("x", std::unordered_set<StmtId>({1})),
+            std::make_pair("y", std::unordered_set<StmtId>({2, 6, 7})),
+            std::make_pair("z", std::unordered_set<StmtId>({3, 4}))
+        };
 
-        std::unordered_set<StmtId> allModifiedStmts = std::unordered_set<StmtId>({ 1, 2, 4 });
+        std::unordered_set<VarName> allUsedVars = std::unordered_set<VarName>({"x", "y", "a"});
+        std::unordered_map<VarName, std::unordered_set<StmtId>> allUsedVarWithStmt =
+        {
+            std::make_pair("x", std::unordered_set<StmtId>({3, 4})),
+            std::make_pair("y", std::unordered_set<StmtId>({3, 5, 6})),
+            std::make_pair("a", std::unordered_set<StmtId>({3, 4, 6}))
+        };
 
-        std::unordered_set<VarName> allUsedVars = std::unordered_set<VarName>({ "x", "y", "a" });
-
-        std::unordered_set<StmtId> allUsedStmts = std::unordered_set<StmtId>({ 4, 5, 6});
-
-        std::unordered_set<ConstValue> allConstants = { "7", "2" };
+        std::unordered_set<ConstValue> allConstants = {"7", "2"};
 
         std::string procedureName = "p";
 
-        int stmtListCount = 4;
-        int stmtCount_ASSIGN = 3;
-        int stmtCount_READ = 1;
-        int stmtCount_PRINT = 1;
-        int stmtCount_CALL = 0;
-        int stmtCount_IF = 1;
-        int stmtCount_WHILE = 1;
+        std::vector<std::vector<StmtId>> stmtLists =
+        {
+            std::vector<StmtId>({4}),
+            std::vector<StmtId>({5}),
+            std::vector<StmtId>({7}),
+            std::vector<StmtId>({1, 2, 3, 6})
+        };
+        std::unordered_set<StmtId> stmts_ASSIGN = std::unordered_set<StmtId>({1, 2, 4});
+        std::unordered_set<StmtId> stmts_READ = std::unordered_set<StmtId>({7});
+        std::unordered_set<StmtId> stmts_PRINT = std::unordered_set<StmtId>({5});
+        std::unordered_set<StmtId> stmts_CALL = std::unordered_set<StmtId>({});
+        std::unordered_set<StmtId> stmts_IF = std::unordered_set<StmtId>({3});
+        std::unordered_set<StmtId> stmts_WHILE = std::unordered_set<StmtId>({6});
 
         TEST_CLASS_INITIALIZE(setup) {
             FrontEnd::FrontEndManager frontEnd = FrontEnd::FrontEndManager();
@@ -58,26 +73,25 @@ namespace IntegrationTesting {
 
             Assert::IsTrue(pkb.constTable.size() == allConstants.size());
             std::unordered_set<ConstValue> constants;
-            for (auto itr = allConstants.begin(); itr != allConstants.end(); ++itr) {
-                try {
-                    constants.insert(pkb.constTable.get(pkb.constTable.getConstId(*itr)));
-                }
-                catch (std::exception&) {
-                    Assert::IsTrue(false);
-                }
+            for (int i = 1; i <= pkb.constTable.size(); ++i) {
+                constants.insert(pkb.constTable.get(i));
             }
             Assert::IsTrue(constants == allConstants);
 
             Assert::IsTrue(pkb.procTable.size() == 1);
             Assert::IsTrue(pkb.procTable.getProcId(procedureName) == 1);
 
-            Assert::IsTrue(pkb.stmtListTable.size() == stmtListCount);
-            Assert::IsTrue(pkb.stmtTable.getStmtsByType(StmtType::ASSIGN).size() == stmtCount_ASSIGN);
-            Assert::IsTrue(pkb.stmtTable.getStmtsByType(StmtType::READ).size() == stmtCount_READ);
-            Assert::IsTrue(pkb.stmtTable.getStmtsByType(StmtType::PRINT).size() == stmtCount_PRINT);
-            Assert::IsTrue(pkb.stmtTable.getStmtsByType(StmtType::CALL).size() == stmtCount_CALL);
-            Assert::IsTrue(pkb.stmtTable.getStmtsByType(StmtType::IF).size() == stmtCount_IF);
-            Assert::IsTrue(pkb.stmtTable.getStmtsByType(StmtType::WHILE).size() == stmtCount_WHILE);
+            Assert::IsTrue(pkb.stmtListTable.size() == stmtLists.size());
+            for (int i = 1; i <= pkb.stmtListTable.size(); ++i) {
+                Assert::IsTrue(pkb.stmtListTable.get(i) == stmtLists[i - 1]);
+            }
+
+            Assert::IsTrue(pkb.stmtTable.getStmtsByType(StmtType::ASSIGN) == stmts_ASSIGN);
+            Assert::IsTrue(pkb.stmtTable.getStmtsByType(StmtType::READ) == stmts_READ);
+            Assert::IsTrue(pkb.stmtTable.getStmtsByType(StmtType::PRINT) == stmts_PRINT);
+            Assert::IsTrue(pkb.stmtTable.getStmtsByType(StmtType::CALL) == stmts_CALL);
+            Assert::IsTrue(pkb.stmtTable.getStmtsByType(StmtType::IF) == stmts_IF);
+            Assert::IsTrue(pkb.stmtTable.getStmtsByType(StmtType::WHILE) == stmts_WHILE);
 
             Assert::IsTrue(pkb.followsKB.getFollower(1) == 2);
             Assert::IsTrue(pkb.followsKB.getFollower(2) == 3);
@@ -115,6 +129,10 @@ namespace IntegrationTesting {
                 modifiedVarNames.insert(pkb.varTable.get(*itr));
             }
             Assert::IsTrue(modifiedVarNames == allModifiedVars);
+            Assert::IsTrue(pkb.modifiesKB.getAllStmtsModifyVar(pkb.varTable.getVarId("x")) == allModifiedVarWithStmt.at("x"));
+            Assert::IsTrue(pkb.modifiesKB.getAllStmtsModifyVar(pkb.varTable.getVarId("y")) == allModifiedVarWithStmt.at("y"));
+            Assert::IsTrue(pkb.modifiesKB.getAllStmtsModifyVar(pkb.varTable.getVarId("z")) == allModifiedVarWithStmt.at("z"));
+
 
             std::unordered_set<VarId> usedVarIds = pkb.usesKB.getAllVarsUsedByProc(pkb.procTable.getProcId(procedureName));
             std::unordered_set<VarName> usedVarNames;
@@ -122,6 +140,9 @@ namespace IntegrationTesting {
                 usedVarNames.insert(pkb.varTable.get(*itr));
             }
             Assert::IsTrue(usedVarNames == allUsedVars);
+            Assert::IsTrue(pkb.usesKB.getAllStmtsUsingVar(pkb.varTable.getVarId("x")) == allUsedVarWithStmt.at("x"));
+            Assert::IsTrue(pkb.usesKB.getAllStmtsUsingVar(pkb.varTable.getVarId("y")) == allUsedVarWithStmt.at("y"));
+            Assert::IsTrue(pkb.usesKB.getAllStmtsUsingVar(pkb.varTable.getVarId("a")) == allUsedVarWithStmt.at("a"));
 
             Assert::IsTrue(pkb.patternKB.getAssignPatternStmts("7") == std::unordered_set<StmtId>({1}));
             Assert::IsTrue(pkb.patternKB.getAssignPatternStmts("2") == std::unordered_set<StmtId>({2}));
