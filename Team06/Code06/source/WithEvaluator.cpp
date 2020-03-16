@@ -4,6 +4,7 @@
 
 #include "WithEvaluator.h"
 #include "LoggingUtils.h"
+#include "Simple.h"
 #include "TypeUtils.h"
 
 namespace PQL {
@@ -28,11 +29,66 @@ namespace PQL {
                 std::swap(arg1, arg2);
             }
 
-            if (arg1.first == ArgType::ATTRIBUTE && arg2.first == ArgType::SYNONYM) {
-                // Case 1: LHS is a synonym, RHS is an integer
+            ArgType argType1 = arg1.first;
+            ArgType argType2 = arg2.first;
 
-            } else if (arg1.first == ArgType::SYNONYM && arg2.first == ArgType::SYNONYM) {
-                // Case 2: Both LHS and RHS are synonyms
+            if (argType1 == ArgType::ATTRIBUTE && argType2 == ArgType::IDENTIFIER) {
+                // Case 1: LHS is an attribute, RHS is an identifier
+                
+                Synonym syn1 = arg1.second.first;
+
+                if (synonymTable[syn1] == DesignEntity::CALL) {
+                    ClauseResult clauseResult;
+
+                    std::unordered_set<StmtId> callStmts = database.stmtTable.getStmtsByType(StmtType::CALL);
+                    for (StmtId callStmtId : callStmts) {
+                        SIMPLE::CallStmt* callStmt = dynamic_cast<SIMPLE::CallStmt*>(database.stmtTable.get(callStmtId).get());
+                        if (callStmt->getProc() == arg2.second.first) {
+                            ClauseResultEntry resultEntry;
+                            resultEntry[syn1] = std::to_string(callStmtId);
+                            clauseResult.emplace_back(resultEntry);
+                        }
+                    }
+                    return clauseResult;
+
+                } else if (synonymTable[syn1] == DesignEntity::READ) {
+                    ClauseResult clauseResult;
+
+                    std::unordered_set<StmtId> readStmts = database.stmtTable.getStmtsByType(StmtType::READ);
+                    for (StmtId readStmtId : readStmts) {
+                        SIMPLE::ReadStmt* readStmt = dynamic_cast<SIMPLE::ReadStmt*>(database.stmtTable.get(readStmtId).get());
+                        if (readStmt->getVar == arg2.second.first) {
+                            ClauseResultEntry resultEntry;
+                            resultEntry[syn1] = std::to_string(readStmtId);
+                            clauseResult.emplace_back(resultEntry);
+                        }
+                    }
+                    return clauseResult;
+
+                } else if (synonymTable[syn1] == DesignEntity::PRINT) {
+                    ClauseResult clauseResult;
+
+                    std::unordered_set<StmtId> printStmts = database.stmtTable.getStmtsByType(StmtType::PRINT);
+                    for (StmtId printStmtId : printStmts) {
+                        SIMPLE::PrintStmt* printStmt = dynamic_cast<SIMPLE::PrintStmt*>(database.stmtTable.get(printStmtId).get());
+                        if (printStmt->getVar == arg2.second.first) {
+                            ClauseResultEntry resultEntry;
+                            resultEntry[syn1] = std::to_string(printStmtId);
+                            clauseResult.emplace_back(resultEntry);
+                        }
+                    }
+                    return clauseResult;
+
+                } else {
+                    Synonym syn1 = arg1.second.first;
+                    ClauseResultEntry resultEntry;
+                    resultEntry[syn1] = arg2.second.first;
+
+                    return { resultEntry };
+                }
+
+            } else if (argType1 == ArgType::ATTRIBUTE && argType2 == ArgType::ATTRIBUTE) {
+                // Case 2: Both LHS and RHS are attributes
 
             } else {
                 SPA::LoggingUtils::LogErrorMessage("WithEvaluator::evaluateIntegerEqual: Invalid ArgTypes for integer With clause. argType1 = %d, argType2 = %d\n", argType1, argType2);
@@ -57,14 +113,17 @@ namespace PQL {
                 // Always ensure that arg1 is the attribute
                 std::swap(arg1, arg2);
             }
-            
-            if ((arg1.first == ArgType::ATTRIBUTE || arg1.first == ArgType::SYNONYM) && arg2.first == ArgType::INTEGER) {
+
+            ArgType argType1 = arg1.first;
+            ArgType argType2 = arg2.first;
+
+            if ((argType1 == ArgType::ATTRIBUTE || argType1 == ArgType::SYNONYM) && argType2 == ArgType::INTEGER) {
                 // Case 1: LHS is a synonym, RHS is an integer
                 ClauseResultEntry resultEntry;
                 resultEntry[arg1.second.first] = arg2.second.first;
                 return { resultEntry };
 
-            } else if ((arg1.first == ArgType::ATTRIBUTE || arg1.first == ArgType::SYNONYM) && (arg2.first == ArgType::ATTRIBUTE || arg2.first == ArgType::SYNONYM)) {
+            } else if ((argType1 == ArgType::ATTRIBUTE || argType1 == ArgType::SYNONYM) && (argType2 == ArgType::ATTRIBUTE || argType2 == ArgType::SYNONYM)) {
                 // Case 2: Both LHS and RHS are synonyms
                 std::unordered_set<StmtId> result1;
                 std::unordered_set<StmtId> result2;
