@@ -1,7 +1,7 @@
 #include "QueryProjector.h"
 
 namespace PQL {
-    
+
     void QueryProjector::formatResult(ClauseResult& result, std::list<std::string>& resultList) {
         // Use a set to remove duplicates
         std::unordered_set<std::string> uniqueResultSet;
@@ -15,10 +15,10 @@ namespace PQL {
             }
         }
 
-        for (auto itr3 = uniqueResultSet.begin(); itr3 != uniqueResultSet.end(); ++itr3){
+        for (auto itr3 = uniqueResultSet.begin(); itr3 != uniqueResultSet.end(); ++itr3) {
             resultList.push_back(*itr3);
         }
-        
+
         return;
     }
 }

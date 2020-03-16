@@ -38,6 +38,7 @@ Alternatively,
 3. Include the test prefix (eg. `..\calls_0`. The `..\` is needed for tests not in the `\regression_tests` directory) for the test you want and comment out the rest , 
 4. type in cmd:
 `powershell .\runAllSysTest.ps1`
+4a. (Powershell needs permission to run external scripts. This is done with `PowerShell -Command 'Set-ExecutionPolicy -ExecutionPolicy RemoteSigned' while running as administrator`)
 Outputs are in the `.\Team06\Test06` folder or the corresponding subfolder
 
 NOTE: Manual testing may be conducted with the GUI by running the executable `Gui.exe`

@@ -2,6 +2,9 @@
 
 #include <regex>
 #include <sstream>
+#include <string>
+#include <utility>
+#include <vector>
 
 #include "PQLTypes.h"
 
@@ -12,7 +15,7 @@ namespace PQL {
      *  Parser for string validation and manipulation.
      */
     namespace QueryUtils {
-        
+
         /**
          *  Validates an input string as a valid integer.
          *
@@ -32,8 +35,8 @@ namespace PQL {
         /**
          *  Validates if an input string is a valid statement reference argument.
          *
-         *  @param      input       candidate entity reference string.
-         *  @return     boolean describing if the string correctly references an entity.
+         *  @param      input       candidate statement reference string.
+         *  @return     boolean describing if the string correctly references a statement.
          */
         bool isValidStmtRef(std::string input);
 
@@ -44,6 +47,15 @@ namespace PQL {
          *  @return     boolean describing if the string correctly references an entity.
          */
         bool isValidEntityRef(std::string input);
+
+        /**
+         *  Validates if an input string is a valid attribute reference argument.
+         *
+         *  @param      input       candidate attribute reference string.
+         *  @return     boolean describing if the string correctly references an attribute of
+         *              a synonym.
+         */
+        bool isValidAttrRef(std::string input);
 
         /**
          *  Returns the input string stripped of leading spaces and newline characters.

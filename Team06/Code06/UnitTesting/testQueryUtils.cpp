@@ -15,16 +15,19 @@ namespace UnitTesting {
 		string EMPTY_STRING = "";
 
 		vector<string> VALID_INTEGERS = { "0", "3203", "00000000" };
-		vector<string> INVALID_INTEGERS = { EMPTY_STRING, "-1", "3216 ", " 3217", "20 40", "0xF" };
+		vector<string> INVALID_INTEGERS = { EMPTY_STRING, "-1", "3216\t", " 3217", "3218\n", "20 40", "0xF" };
 
 		vector<string> VALID_IDENTIFIERS = { "A", "fOr", "softwareEng1n33r1ng", "CS3203" };
-		vector<string> INVALID_IDENTIFIERS = { EMPTY_STRING, "1", "3203S", " Give", "us ", "an\r", "A+", "thank you", "xoxo_team6" };
+		vector<string> INVALID_IDENTIFIERS = { EMPTY_STRING, "1", "3203S", "\tGive", "us ", "an\r", "A+", "pls\n", "thank you", "xoxo_team6" };
 
 		vector<string> VALID_STMT_REFS = { "_" , "3281", "dAmYtH" };
-		vector<string> INVALID_STMT_REFS = { EMPTY_STRING, " 369", "-65536", "2040S" };
+		vector<string> INVALID_STMT_REFS = { EMPTY_STRING, " 369", "-65536", "2040S", "0b1101", "prog_line" };
 
-		vector<string> VALID_ENTITY_REFS = { "_", "synonym", "\"quotes\"", "\"  varQuotes \"" };
-		vector<string> INVALID_ENTITY_REFS = { EMPTY_STRING, "1", "1231S", " space", "tabs\t" "\"noEnd", "noStart\"", "\"\"dupes\"\"", "\"expr + 1\"" };
+		vector<string> VALID_ENTITY_REFS = { "_", "synonym", "\"quotes\"", "\"  varQuotes \"", "\"\twhitespaces\n\"" };
+		vector<string> INVALID_ENTITY_REFS = { EMPTY_STRING, "1", "1231S", " space", "tabs\t", "\"noEnd", "noStart\"", "\"newline\"\n", "\"\"dupes\"\"", "\"expr + 1\"" };
+
+		vector<string> VALID_ATTR_REFS = { "pt.x", "var.#occ", "c.value", "s. stmt#", "rd\t.varName", "p\r.\nprocName" };
+		vector<string> INVALID_ATTR_REFS = { EMPTY_STRING, "syn", "pt,y", "\tx.final", "v.varName\t", "w.stmt#\n", "1.value", "v16.04", "auspicium.melioris.aevi" };
 
 		vector<string> VALID_PATTERNS = {
 			// Wildcard pattern
@@ -175,6 +178,15 @@ namespace UnitTesting {
 			}
 			for (auto input : INVALID_ENTITY_REFS) {
 				Assert::IsFalse(QueryUtils::isValidEntityRef(input));
+			}
+		}
+
+		TEST_METHOD(isValidAttrRef) {
+			for (auto input : VALID_ATTR_REFS) {
+				Assert::IsTrue(QueryUtils::isValidAttrRef(input));
+			}
+			for (auto input : INVALID_ATTR_REFS) {
+				Assert::IsFalse(QueryUtils::isValidAttrRef(input));
 			}
 		}
 
