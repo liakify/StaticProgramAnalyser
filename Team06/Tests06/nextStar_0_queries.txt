@@ -413,3 +413,13 @@ Select ifs such that Next*(if, ifs)
 Select BOOLEAN such that Next*(4, 14)
 FALSE
 5000
+84 - Single line procedure: no predecessor
+prog_line n;
+Select BOOLEAN such that Next*(n, 27)
+FALSE
+5000
+85 - Single line procedure: no successor
+prog_line n;
+Select BOOLEAN such that Next*(27, n)
+FALSE
+5000

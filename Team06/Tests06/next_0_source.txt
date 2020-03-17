@@ -8,14 +8,18 @@ procedure SelectNext {
             print x; } else {
             x = y; }
         call Next2; } else {
-            while (x > 0) {
-                x = x;  }  }  }
+        while (x > 0) {
+            x = x;  }
+        print y;  }  
+    x = x;  }
 procedure Next2 {
     while (x < y) {
         while (x > y) {
             print x; }
         if (x == y) then {
             read x; } else {
-            call Next3;  }  }  }
+            call Next3;  } 
+        print y;  }  
+    read y; }
 procedure Next3 {
     print y;  }
