@@ -22,21 +22,44 @@ namespace FrontEnd {
 
     void DesignExtractor::populateCalls() {
         for (ProcId i = 1; i <= pkb.procTable.size(); i++) {
-            StmtListId slid = pkb.procTable.get(i).getStmtLstId();
-            std::vector<StmtId> idList = pkb.stmtListTable.get(slid).getStmtIds();
-            for (StmtId id : idList) {
-                std::shared_ptr<Statement>& s = pkb.stmtTable.get(id);
-                if (s->getType() != StmtType::CALL) {
-                    continue;
-                }
+            StmtListId sid = pkb.procTable.get(i).getStmtLstId();
+            for (ProcId p : getAllCalls(sid)) {
+                pkb.callsKB.addCalls(i, p);
+            }
+        }
+    }
+
+    unordered_set<ProcId> DesignExtractor::getAllCalls(StmtListId sid) {
+        std::vector<StmtId> idList = pkb.stmtListTable.get(sid).getStmtIds();
+        unordered_set<ProcId> result = unordered_set<ProcId>();
+        for (StmtId id : idList) {
+            std::shared_ptr<Statement>& s = pkb.stmtTable.get(id);
+            if (s->getType() == StmtType::CALL) {
                 CallStmt* cs = dynamic_cast<CallStmt*>(s.get());
                 ProcId calledId = pkb.procTable.getProcId(cs->getProc());
                 if (calledId == -1) {  // ProcId not found
                     throw std::invalid_argument("Invalid procedure call detected");
                 }
-                pkb.callsKB.addCalls(i, calledId);
+                result.insert(calledId);
+            } else if (s->getType() == StmtType::IF) {
+                IfStmt* ifs = dynamic_cast<IfStmt*>(s.get());
+                unordered_set<ProcId> thenSet = getAllCalls(ifs->getThenStmtLstId());
+                for (ProcId pid : thenSet) {
+                    result.insert(pid);
+                }
+                unordered_set<ProcId> elseSet = getAllCalls(ifs->getElseStmtLstId());
+                for (ProcId pid : elseSet) {
+                    result.insert(pid);
+                }
+            } else if (s->getType() == StmtType::WHILE) {
+                WhileStmt* ws = dynamic_cast<WhileStmt*>(s.get());
+                unordered_set<ProcId> pidSet = getAllCalls(ws->getStmtLstId());
+                for (ProcId pid : pidSet) {
+                    result.insert(pid);
+                }
             }
         }
+        return result;
     }
 
     void DesignExtractor::populateCallStar() {
