@@ -1,15 +1,25 @@
 1 - 
-Procedure p;
+procedure p;
 Select p such that Calls* ("A1", p)
-
+B1, C1, C2, C3, D1, D2
 5000
 2 - 
-Procedure p;
+procedure p;
 Select p such that Calls* ("A2", p)
-
+B1, C1, C2, C3, D1, D2
 5000
 3 - 
-Procedure p;
+procedure p;
 Select p such that Calls* ("A3", p)
-
+B1, C1, C2, C3, D1, D2
+5000
+4 - 
+procedure p;
+Select p such that Calls* ("B1", p)
+C1, C2, C3, D1, D2
+5000
+5 - 
+procedure p;
+Select p such that Calls* ("C3", p)
+D1, D2
 5000

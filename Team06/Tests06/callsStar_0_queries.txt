@@ -1,7 +1,7 @@
 1 - arg variant (p, q)
 procedure p, q;
 Select p such that Calls* (p, q)
-SelectCalls, Calls2
+SelectCallsStar, Calls2
 5000
 2 - arg variant (p, q): select q
 procedure p, q;
@@ -11,12 +11,12 @@ Calls2, Calls3, Calls4
 3 - arg variant (p, _)
 procedure p;
 Select p such that Calls* (p, _)
-SelectCalls, Calls2;
+SelectCallsStar, Calls2
 5000
 4 - arg variant (p, IDENT)
 procedure p;
 Select p such that Calls* (p, "Calls3")
-SelectCalls, Calls2
+SelectCallsStar, Calls2
 5000
 5 - arg variant (_, q)
 procedure q;
@@ -26,7 +26,7 @@ Calls2, Calls3, Calls4
 6 - arg variant (_, IDENT)
 print pn;
 Select pn such that Calls* (_, "Calls3")
-7, 8
+8, 9
 5000
 7 - arg variant (_, notFound) => none
 print pn;
@@ -40,7 +40,7 @@ Select pn such that Calls* ("Calls4", "Calls4")
 5000
 9 - arg variant (IDENT, q)
 procedure q;
-Select q such that Calls* ("Calls1", q)
+Select q such that Calls* ("SelectCallsStar", q)
 Calls2, Calls3, Calls4
 5000
 10 - arg variant (IDENT, q) => none
@@ -55,7 +55,7 @@ c1, c2, a
 5000
 12 - arg variant (IDENT, IDENT)  - indirect calling
 
-Select BOOLEAN such that Calls* ("SelectCalls", "Calls4")
+Select BOOLEAN such that Calls* ("SelectCallsStar", "Calls4")
 TRUE
 5000
 13 - arg variant (IDENT, IDENT) => false

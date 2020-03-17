@@ -1,10 +1,10 @@
 procedure DmdATop {
   call DmdALeft;
-  call DmdBLeft;
+  call DmdBLeftOrARight;
 }
 
 procedure DmdBTop {
-  call DmdBLeft;
+  call DmdBLeftOrARight;
   call DmdBRight;
 }
 

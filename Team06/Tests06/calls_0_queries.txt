@@ -11,7 +11,7 @@ Calls2, Calls3, Calls4
 3 - arg variant (p, _)
 procedure p;
 Select p such that Calls (p, _)
-SelectCalls, Calls2;
+SelectCalls, Calls2
 5000
 4 - arg variant (p, IDENT)
 procedure p;
@@ -26,7 +26,7 @@ Calls2, Calls3, Calls4
 6 - arg variant (_, IDENT)
 print pn;
 Select pn such that Calls (_, "Calls3")
-7, 8
+8, 9
 5000
 7 - arg variant (_, notFound) => none
 print pn;

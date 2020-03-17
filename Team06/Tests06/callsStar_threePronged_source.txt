@@ -16,7 +16,7 @@ procedure B1 {
 procedure C1 {
   print end;
 }
-procedore C2 {
+procedure C2 {
   print end;
 }
 procedure C3 {
