@@ -1,180 +1,180 @@
 1 - Full SPA Wiki
 
 Select BOOLEAN such that Follows (1, 2)
-true
+TRUE
 5000
 2 - Full SPA Wiki
 
 Select BOOLEAN such that Follows (4, 5)
-true
+TRUE
 5000
 3 - Full SPA Wiki
 
 Select BOOLEAN such that Follows (5, 10)
-true
+TRUE
 5000
 4 - Full SPA Wiki
 
 Select BOOLEAN such that Follows* (3,10)
-true
+TRUE
 5000
 5 - Full SPA Wiki
 
 Select BOOLEAN such that Follows* (1, 14)
-true
+TRUE
 5000
 6 - Full SPA Wiki
 
 Select BOOLEAN such that Follows (5, 6)
-false
+FALSE
 5000
 7 - Full SPA Wiki
 
 Select BOOLEAN such that Follows (9, 10)
-false
+FALSE
 5000
 8 - Full SPA Wiki
 
 Select BOOLEAN such that Follows (11, 12)
-false
+FALSE
 5000
 9 - Full SPA Wiki
 
 Select BOOLEAN such that Follows* (12, 14)
-false
+FALSE
 5000
 10 - Full SPA Wiki
 
 Select BOOLEAN such that Parent (5, 7)
-true
+TRUE
 5000
 11 - Full SPA Wiki
 
 Select BOOLEAN such that Parent (5, 8)
-true
+TRUE
 5000
 12 - Full SPA Wiki
 
 Select BOOLEAN such that Parent (10, 11)
-true
+TRUE
 5000
 13 - Full SPA Wiki
 
 Select BOOLEAN such that Parent (10, 13)
-true
+TRUE
 5000
 14 - Full SPA Wiki
 
 Select BOOLEAN such that Parent* (5, 7)
-true
+TRUE
 5000
 15 - Full SPA Wiki
 
 Select BOOLEAN such that Parent* (10, 13)
-true
+TRUE
 5000
 16 - Full SPA Wiki
 
 Select BOOLEAN such that Parent (2, 3)
-false
+FALSE
 5000
 17 - Full SPA Wiki
 
 Select BOOLEAN such that Parent (4, 7)
-false
+FALSE
 5000
 18 - Full SPA Wiki
 
 Select BOOLEAN such that Parent (9, 5)
-false
+FALSE
 5000
 19 - Full SPA Wiki
 
 Select BOOLEAN such that Parent* (10, 14)
-false
+FALSE
 5000
 20 - Full SPA Wiki
 
 Select BOOLEAN such that Uses (7, “x”)
-true
+TRUE
 5000
 21 - Full SPA Wiki
 
 Select BOOLEAN such that Uses (10, “count”)
-true
+TRUE
 5000
 22 - Full SPA Wiki
 
 Select BOOLEAN such that Uses (10, “cenX”)
-true
+TRUE
 5000
 23 - Full SPA Wiki
 
 Select BOOLEAN such that Uses (“main”, “cenX”)
-true
+TRUE
 5000
 24 - Full SPA Wiki
 
 Select BOOLEAN such that Uses (“main”, “flag”)
-true
+TRUE
 5000
 25 - Full SPA Wiki
 
 Select BOOLEAN such that Uses (“computeCentroid”, “x”)
-true
+TRUE
 5000
 26 - Full SPA Wiki
 
 Select BOOLEAN such that Uses (3, “count”)
-false
+FALSE
 5000
 27 - Full SPA Wiki
 
 Select BOOLEAN such that Uses (10, “flag”)
-false
+FALSE
 5000
 28 - Full SPA Wiki
 
 Select BOOLEAN such that Uses (9, “y”)
-false
+FALSE
 5000
 29 - Full SPA Wiki
 
 Select BOOLEAN such that Modifies (1, “count”)
-true
+TRUE
 5000
 30 - Full SPA Wiki
 
 Select BOOLEAN such that Modifies (7, “cenX”)
-true
+TRUE
 5000
 31 - Full SPA Wiki
 
 Select BOOLEAN such that Modifies (9, “x”)
-true
+TRUE
 5000
 32 - Full SPA Wiki
 
 Select BOOLEAN such that Modifies (10, “flag”)
-true
+TRUE
 5000
 33 - Full SPA Wiki
 
 Select BOOLEAN such that Modifies (5, “x”)
-true
+TRUE
 5000
 34 - Full SPA Wiki
 
 Select BOOLEAN such that Modifies (“main”, “y”)
-true
+TRUE
 5000
 35 - Full SPA Wiki
 
 Select BOOLEAN such that Modifies (5, “flag”)
-false
+FALSE
 5000
 36 - Full SPA Wiki
 
 Select BOOLEAN such that Modifies (“printResults”, “normSq”)
-false
+FALSE
 5000
