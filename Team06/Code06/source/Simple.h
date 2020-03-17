@@ -159,8 +159,8 @@ namespace SIMPLE {
      private:
         std::vector<StmtId> statements;
         StmtId first;
-        StmtId last; // Final stmt ID among all nesting levels of all statements in statement list
-        std::unordered_set<StmtId> allEnds; // Set of all possible ending execution paths
+        StmtId last;  // Final stmt ID among all nesting levels of all statements in statement list
+        std::unordered_set<StmtId> allEnds;  // Set of all possible ending execution paths
     };
 
     class Procedure {
