@@ -42,13 +42,14 @@ namespace PQL {
         if (!hasValidTarget) return query;
 
         bool hasValidClauses;
-        vector<string> relationClauses, patternClauses;
-        tie(hasValidClauses, relationClauses, patternClauses) = splitClauses(query, queryBodySuffix);
+        vector<string> relationClauses, patternClauses, withClauses;
+        hasValidClauses = splitClauses(query, queryBodySuffix, relationClauses, patternClauses, withClauses);
         if (!hasValidClauses) return query;
 
         bool hasValidRelations = parseRelationClauses(query, relationClauses);
         bool hasValidPatterns = parsePatternClauses(query, patternClauses);
-        if (!(hasValidRelations && hasValidPatterns)) return query;
+        bool hasValidEqualities = parseWithClauses(query, withClauses);
+        if (!(hasValidRelations && hasValidPatterns && hasValidEqualities)) return query;
 
         // Ensure query is semantically valid (no ambiguities, valid synonyms, argument types)
         bool isSemanticallyValid = validateQuerySemantics(query);
@@ -82,7 +83,7 @@ namespace PQL {
         }
 
         // Validate structure of query body (last statement)
-        regex VALID_QUERY_BODY("^Select\\s[\\w<>#.\\(\\),\"\\+\\-\\*\\/\\%\\s]+(?!;)$");
+        regex VALID_QUERY_BODY("^Select(?:(?=\\s*<)\\s*<|\\s)[\\w<>=#.\\(\\),\"\\+\\-\\*\\/\\%\\s]+(?!;)$");
         smatch qbmatch;
 
         if (!regex_search(statements.at(numDeclarations), qbmatch, VALID_QUERY_BODY)) {
@@ -91,12 +92,14 @@ namespace PQL {
         }
 
         // Check if syntax violations occur from use of clause keywords and connectives
-        regex INVALID_REPEATED_RELATION("and\\s+such\\s+that");
-        regex INVALID_REPEATED_PATTERN("and\\s+pattern");
+        regex INVALID_REPEATED_RELATIONS("and\\s+such\\s+that");
+        regex INVALID_REPEATED_PATTERNS("and\\s+pattern");
+        regex INVALID_REPEATED_EQUALITIES("and\\s+with");
         smatch rmatch;
 
-        if (regex_search(statements.at(numDeclarations), rmatch, INVALID_REPEATED_RELATION)
-            || regex_search(statements.at(numDeclarations), rmatch, INVALID_REPEATED_PATTERN)) {
+        if (regex_search(statements.at(numDeclarations), rmatch, INVALID_REPEATED_RELATIONS) ||
+            regex_search(statements.at(numDeclarations), rmatch, INVALID_REPEATED_PATTERNS) ||
+            regex_search(statements.at(numDeclarations), rmatch, INVALID_REPEATED_EQUALITIES)) {
             // SYNTAX ERROR: incorrect use of 'and' keyword to connect adjacent clauses
             query.status = SYNTAX_ERR_INVALID_AND_CHAINED_CLAUSES;
             return false;
@@ -119,7 +122,7 @@ namespace PQL {
             return false;
         }
 
-        for (auto target : query.targetEntities) {
+        for (auto& target : query.targetEntities) {
             // If BOOLEAN is used in a tuple, it is treated as a synonym and hence the query is
             // semantically invalid if it has not been previously declared
             auto targetMapping = synonymTable.find(target.first);
@@ -139,7 +142,7 @@ namespace PQL {
             }
         }
 
-        for (auto relation : query.relations) {
+        for (auto& relation : query.relations) {
             RelationType relationClass = relation.type;
 
             if (relationClass == RelationType::USESS || relationClass == RelationType::MODIFIESS) {
@@ -191,7 +194,7 @@ namespace PQL {
                 // Relation is between procedures only
                 pair<ArgType, string> args[2] = { relation.firstEnt , relation.secondEnt };
 
-                for (auto arg : args) {
+                for (auto& arg : args) {
                     if (arg.first == ArgType::SYNONYM) {
                         auto synonymMapping = synonymTable.find(arg.second);
                         if (synonymMapping == synonymTable.end()) {
@@ -210,7 +213,7 @@ namespace PQL {
                 // Or relation is between program lines: NEXT, NEXTT (program line equivalent to stmt number)
                 pair<ArgType, string> args[2] = { relation.firstStmt , relation.secondStmt };
 
-                for (auto arg : args) {
+                for (auto& arg : args) {
                     if (arg.first == ArgType::INTEGER) {
                         int lineNo = stoi(arg.second);
                         if (lineNo <= 0) {
@@ -242,7 +245,7 @@ namespace PQL {
 
         // Pattern clauses: only need to validate first argument (entity reference)
         // of ArgType SYNONYM corresponds to a valid declared synonym
-        for (auto pattern : query.patterns) {
+        for (auto& pattern : query.patterns) {
             if (pattern.targetArg.first == ArgType::SYNONYM) {
                 auto synonymMapping = synonymTable.find(pattern.targetArg.second);
                 if (synonymMapping == synonymTable.end()) {
@@ -255,6 +258,86 @@ namespace PQL {
                     return false;
                 }
             }
+        }
+
+        // With clauses: need to evaluate and validate the result type of args (expressions)
+        // on both sides of the equality
+        for (auto& equality : query.equalities) {
+            if (equality.type == WithType::LITERAL_EQUAL) {
+                // Both sides of the equality are literal values (integers or identifiers)
+                // Check that both arguments have the same type
+                if (equality.leftArg.first != equality.rightArg.first) {
+                    query.status = SEMANTIC_ERR_WITH_CLAUSE_DIFF_LITERAL_TYPE;
+                    return false;
+                }
+                continue;
+            }
+
+            // Equality type has not been determined since at least one argument is a synonym
+            // or attribute - evaluate the type of those arguments and compare for equality
+            ArgType leftType = equality.leftArg.first;
+            ArgType rightType = equality.rightArg.first;
+
+            pair<ArgType, Ref> args[2] = {
+                { leftType, equality.leftArg.second },
+                { rightType, equality.rightArg.second }
+            };
+
+            // Evaluate the type of the result the argument on either side evaluates to
+            // For example, synonyms of type PROCEDURE evaluate to an IDENTIFIER and
+            // attributes of type VALUE evaluate to an INTEGER
+            for (auto& arg : args) {
+                if (arg.first == ArgType::SYNONYM) {
+                    // First validate the synonym has been previously declared
+                    auto synonymMapping = synonymTable.find(arg.second.first);
+                    if (synonymMapping == synonymTable.end()) {
+                        // SEMANTIC ERROR: synonym referenced in with clause as arg is undeclared
+                        query.status = SEMANTIC_ERR_WITH_CLAUSE_UNDECLARED_SYNONYM_ARG;
+                        return false;
+                    }
+
+                    // Evaluate return type by checking the design entity of that synonym
+                    DesignEntity synonymType = synonymMapping->second;
+                    arg.first = synonymType == DesignEntity::PROCEDURE || synonymType == DesignEntity::VARIABLE
+                        ? ArgType::IDENTIFIER
+                        : ArgType::INTEGER;
+                } else if (arg.first == ArgType::ATTRIBUTE) {
+                    // First validate the synonym used in the attribute ref has been declared
+                    auto synonymMapping = synonymTable.find(arg.second.first);
+                    if (synonymMapping == synonymTable.end()) {
+                        // SEMANTIC ERROR: synonym appearing in attribute arg is undeclared
+                        query.status = SEMANTIC_ERR_WITH_CLAUSE_UNDECLARED_SYNONYM_IN_ATTRIBUTE_ARG;
+                        return false;
+                    }
+
+                    // Next, evaluate if this design entity has this attribute type
+                    AttrType attributeType = arg.second.second;
+                    vector<DesignEntity> validEntities = ATTRIBUTE_ENTITY_MAP.find(attributeType)->second;
+                    if (find(validEntities.begin(), validEntities.end(), synonymMapping->second) == validEntities.end()) {
+                        // SEMANTIC ERROR: design entity in attribute arg does not have this attribute type
+                        query.status = SEMANTIC_ERR_WITH_CLAUSE_INVALID_SYNONYM_ATTRIBUTE_PAIR_ARG;
+                        return false;
+                    }
+
+                    // Evaluate return type by checking attribute type of that arg
+                    arg.first = attributeType == AttrType::PROC_NAME || attributeType == AttrType::VAR_NAME
+                        ? ArgType::IDENTIFIER
+                        : ArgType::INTEGER;
+                }
+            }
+
+            // Compare the types of the return values of expressions on both sides of the equality
+            if (args[0].first != args[1].first) {
+                // SEMANTIC ERROR: arguments of equality evaluate to return values of different type
+                query.status = SEMANTIC_ERR_WITH_CLAUSE_DIFF_RETURN_TYPE_OF_ARGS;
+                return false;
+            } else {
+                // Update the equality type of the with clause
+                equality.type = args[0].first == ArgType::IDENTIFIER
+                    ? WithType::IDENTIFIER_EQUAL
+                    : WithType::INTEGER_EQUAL;
+            }
+
         }
 
         return true;
@@ -284,44 +367,52 @@ namespace PQL {
     // Consumes compound clauses from start to end, terminating early if failing to do so before
     // reaching the end of the query string (i.e. there exists some incorrect syntax)
     // Returns an array of clauses
-    tuple<bool, vector<string>, vector<string>> QueryParser::splitClauses(Query& query, string queryBodySuffix) {
+    bool QueryParser::splitClauses(Query& query, string queryBodySuffix,
+        vector<string>& relationClauses, vector<string>& patternClauses, vector<string>& withClauses) {
         string RELATION_CLAUSE = "[A-Za-z*]+\\s*\\([\\w,\"\\s]*\\)";
         string PATTERN_CLAUSE = "[A-Za-z][A-Za-z0-9]*\\s*\\([\\w\"\\s]+(?:,\\s*(?:_|(?:(_?)\\s*\"[A-Za-z0-9\\(\\)\\+\\-\\*\\/\\%\\s]+\"\\s*\\1))\\s*)+\\)";
+        string WITH_ARGUMENT = "[A-Za-z0-9]+(?:\\s*\\.\\s*[A-Za-z0-9#]+)?";
+        string WITH_CLAUSE = "(\"?)\\s*" + WITH_ARGUMENT + "\\s*\\1\\s*=\\s*(?:(?=\")\"\\s*" + WITH_ARGUMENT + "\\s*\"|" + WITH_ARGUMENT + ")";
+        string CONNECTED_WITH_CLAUSE = "(\"?)\\s*" + WITH_ARGUMENT + "\\s*\\2\\s*=\\s*(?:(?=\")\"\\s*" + WITH_ARGUMENT + "\\s*\"|" + WITH_ARGUMENT + ")";
 
-        regex COMPOUND_RELATION_CLAUSE("^ *such\\s+that\\s+" + RELATION_CLAUSE + "(?:\\s+and\\s+" + RELATION_CLAUSE + ")*");
-        regex COMPOUND_PATTERN_PREFIX("^ *pattern\\s+[A-Za-z][A-Za-z0-9]*\\s*\\(");
-        regex COMPOUND_PATTERN_CLAUSE("^ *pattern\\s+" + PATTERN_CLAUSE + "(?:\\s+and\\s+" + PATTERN_CLAUSE + ")*");
+        regex COMPOUND_RELATION_CLAUSE("^such\\s+that\\s+" + RELATION_CLAUSE + "(?:\\s*and\\s+" + RELATION_CLAUSE + ")*");
+        regex COMPOUND_PATTERN_PREFIX("^pattern\\s+[A-Za-z][A-Za-z0-9]*\\s*\\(");
+        regex COMPOUND_PATTERN_CLAUSE("^pattern\\s+" + PATTERN_CLAUSE + "(?:\\s*and\\s+" + PATTERN_CLAUSE + ")*");
+        regex COMPOUND_WITH_CLAUSE("^with\\s+" + WITH_CLAUSE + "(?:\\s+and\\s+" + CONNECTED_WITH_CLAUSE + ")*");
         smatch ccmatch;
-
-        vector<string> relationClauses;
-        vector<string> patternClauses;
 
         // Continue consuming compound clauses until the end of the query
         while (queryBodySuffix.length() > 0) {
-            // Attempt to consume either a relation or pattern compound clause
+            // Attempt to consume either a relation, pattern or with compound clause, then decompose it
             // If this fails, then the query string is synctactically invalid
             if (regex_search(queryBodySuffix, ccmatch, COMPOUND_RELATION_CLAUSE)) {
+                // Consume a compound relation clause and extract individual relation clauses
                 vector<string> relations = QueryUtils::matchAll(ccmatch.str(), RELATION_CLAUSE);
                 relationClauses.insert(relationClauses.end(), relations.begin(), relations.end());
             } else if (regex_search(queryBodySuffix, ccmatch, COMPOUND_PATTERN_PREFIX)) {
                 if (!regex_search(queryBodySuffix, ccmatch, COMPOUND_PATTERN_CLAUSE)) {
                     // SYNTAX ERROR: first arg has zero length or other args violate pattern string syntax
                     query.status = SYNTAX_ERR_MISSING_OR_MALFORMED_PATTERN_ARG;
-                    return { false, relationClauses, patternClauses };
+                    return false;
                 }
 
+                // Consume a compound pattern clause and extract individual pattern clauses
                 vector<string> patterns = QueryUtils::matchAll(ccmatch.str(), PATTERN_CLAUSE);
                 patternClauses.insert(patternClauses.end(), patterns.begin(), patterns.end());
+            } else if (regex_search(queryBodySuffix, ccmatch, COMPOUND_WITH_CLAUSE)) {
+                // Consume a compound with clause and extract individual with clauses (equalities)
+                vector<string> equalities = QueryUtils::matchAll(ccmatch.str(), WITH_CLAUSE);
+                withClauses.insert(withClauses.end(), equalities.begin(), equalities.end());
             } else {
                 // SYNTAX ERROR: compound clauses fail to obey query syntax somewhere in query body
                 query.status = SYNTAX_ERR_INVALID_CLAUSES_IN_QUERY_BODY;
-                return { false, relationClauses, patternClauses };
+                return false;
             }
 
             queryBodySuffix = QueryUtils::leftTrim(ccmatch.suffix().str());
         }
 
-        return { true, relationClauses, patternClauses };
+        return true;
     }
 
     bool QueryParser::parseDeclarations(Query& query, vector<string> statements) {
@@ -375,7 +466,7 @@ namespace PQL {
 
         string TARGET = "[A-Za-z][A-Za-z0-9]*(?:\\s*\\.\\s*[A-Za-z#]+)?";
         regex SINGLE_RETURN("^Select\\s+" + TARGET + "(?=$|\\s+(?![,.]))");
-        regex TUPLE_RETURN("^Select\\s+<\\s*" + TARGET + "(?:\\s*,\\s*" + TARGET + ")*\\s*>(?=$|\\s+(?![,.]))");
+        regex TUPLE_RETURN("^Select\\s*<\\s*" + TARGET + "(?:\\s*,\\s*" + TARGET + ")*\\s*>(?=$|\\s*(?![,.]))");
         smatch tmatch;
 
         // Attempt to match a single return type, otherwise match a tuple return type
@@ -409,7 +500,7 @@ namespace PQL {
 
         // Parse all string targets into their representation as pairs of synonyms
         // and an optional attribute type
-        for (auto target : tokens) {
+        for (auto& target : tokens) {
             tie(isValidTarget, parsedTarget) = parseReturnType(target);
             if (!isValidTarget) {
                 // SYNTAX ERROR: unknown attribute type in return type
@@ -429,10 +520,10 @@ namespace PQL {
         return { true, queryBodySuffix };
     }
 
-    bool QueryParser::parseRelationClauses(Query& query, vector<string> relationClauses) {
+    bool QueryParser::parseRelationClauses(Query& query, vector<string>& relationClauses) {
         vector<RelationClause> relations;
 
-        for (auto clause : relationClauses) {
+        for (auto& clause : relationClauses) {
             // Each candidate relation clause is of form <relation> (arg1, arg2)
 
             pair<string, string> splitPair = QueryUtils::splitString(clause, '(');
@@ -551,10 +642,10 @@ namespace PQL {
     }
 
     // Receives a vector of pattern clause strings and constructs pattern clause objects
-    bool QueryParser::parsePatternClauses(Query& query, vector<string> patternClauses) {
+    bool QueryParser::parsePatternClauses(Query& query, vector<string>& patternClauses) {
         vector<PatternClause> patterns;
 
-        for (auto clause : patternClauses) {
+        for (auto& clause : patternClauses) {
             // Each candidate pattern clause is of form <synonym> (arg1, arg2, [arg3 if while])
 
             pair<string, string> splitPair = QueryUtils::splitString(clause, '(');
@@ -639,6 +730,47 @@ namespace PQL {
         return true;
     }
 
+    bool QueryParser::parseWithClauses(Query& query, vector<string>& withClauses) {
+        vector<WithClause> equalities;
+
+        for (auto& clause : withClauses) {
+            // Each candidate with clause is of form <arg1> = <arg2>
+
+            string argString1, argString2;
+            tie(argString1, argString2) = QueryUtils::splitString(clause, '=');
+
+            if (!(QueryUtils::isValidRef(argString1) && QueryUtils::isValidRef(argString2))) {
+                // SYNTAX ERROR: invalid (reference) argument in with (equality) clause
+                query.status = SYNTAX_ERR_WITH_CLAUSE_INVALID_REF_ARG;
+                return false;
+            }
+
+            bool hasValidLHS, hasValidRHS;
+            pair<ArgType, Ref> arg1, arg2;
+            tie(hasValidLHS, arg1) = parseRef(argString1);
+            tie(hasValidRHS, arg2) = parseRef(argString2);
+
+            if (!(hasValidLHS && hasValidRHS)) {
+                // SYNTAX ERROR: attribute reference arg contains invalid attribute keyword
+                query.status = SYNTAX_ERR_WITH_CLAUSE_INVALID_ATTRIBUTE_KEYWORD;
+                return false;
+            }
+
+            WithClause equality;
+            if ((arg1.first == ArgType::INTEGER || arg1.first == ArgType::IDENTIFIER) &&
+                (arg2.first == ArgType::INTEGER || arg2.first == ArgType::IDENTIFIER)) {
+                equality = { clause, WithType::LITERAL_EQUAL, arg1, arg2 };
+            } else {
+                equality = { clause, WithType::UNKNOWN_EQUAL, arg1, arg2 };
+            }
+
+            equalities.push_back(equality);
+        }
+
+        query.equalities = equalities;
+        return true;
+    }
+
     pair<bool, pair<string, AttrType>> QueryParser::parseReturnType(string arg) {
         if (QueryUtils::isValidAttrRef(arg)) {
             // Return type string contains only one . - interpret as an attribute reference
@@ -654,7 +786,7 @@ namespace PQL {
     pair<ArgType, StmtRef> QueryParser::parseStmtRef(string arg) {
         if (arg == "_") {
             return { ArgType::WILDCARD, arg };
-        } else if (QueryUtils::isInteger(arg)) {
+        } else if (QueryUtils::isValidInteger(arg)) {
             return { ArgType::INTEGER, arg };
         } else {
             return { ArgType::SYNONYM, arg };
@@ -686,6 +818,26 @@ namespace PQL {
         } else {
             // Exact pattern string
             return { ArgType::EXACT_PATTERN, FrontEnd::Parser().parseExpression(strippedPattern) };
+        }
+    }
+
+    pair<bool, pair<ArgType, Ref>> QueryParser::parseRef(string arg) {
+        if (QueryUtils::isValidInteger(arg)) {
+            return { true, { ArgType::INTEGER, { arg, AttrType::NONE } } };
+        } else if (QueryUtils::isValidIdentifier(arg)) {
+            return { true, { ArgType::SYNONYM, { arg, AttrType::NONE } } };
+        } else if (arg.find('\"') != string::npos) {
+            return { true, { ArgType::IDENTIFIER, { arg, AttrType::NONE } } };
+        } else {
+            bool hasValidAttributeType;
+            Ref parsedAttribute;
+            tie(hasValidAttributeType, parsedAttribute) = parseAttrRef(arg);
+
+            if (!hasValidAttributeType) {
+                // Attribute keyword does not correspond to a valid attribute type
+                return { false, { ArgType::INVALID, { arg, AttrType::INVALID } } };
+            }
+            return { true, { ArgType::ATTRIBUTE, parsedAttribute } };
         }
     }
 

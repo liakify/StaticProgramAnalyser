@@ -44,15 +44,18 @@ namespace PQL {
         bool validateQuerySyntax(Query& query, std::vector<std::string> stmts);
         bool validateQuerySemantics(Query& query);
         std::vector<std::string> splitStatements(std::string queryString);
-        std::tuple<bool, std::vector<std::string>, std::vector<std::string>> splitClauses(Query& query, std::string queryBodySuffix);
+        bool splitClauses(Query& query, std::string queryBodySuffix,
+            std::vector<std::string>& relationClauses, std::vector<std::string>& patternClauses, std::vector<std::string>& withClauses);
         bool parseDeclarations(Query& query, std::vector<std::string> statements);
         std::pair<bool, std::string> parseQueryTarget(Query& query, std::string queryBody);
-        bool parseRelationClauses(Query& query, std::vector<std::string> relationClauses);
-        bool parsePatternClauses(Query& query, std::vector<std::string> patternClauses);
+        bool parseRelationClauses(Query& query, std::vector<std::string>& relationClauses);
+        bool parsePatternClauses(Query& query, std::vector<std::string>& patternClauses);
+        bool parseWithClauses(Query& query, std::vector<std::string>& withClauses);
         std::pair<bool, std::pair<std::string, AttrType>> parseReturnType(std::string arg);
         std::pair<ArgType, StmtRef> parseStmtRef(std::string arg);
         std::pair<ArgType, EntityRef> parseEntityRef(std::string arg);
         std::pair<ArgType, Pattern> parsePattern(std::string arg);
+        std::pair<bool, std::pair<ArgType, Ref>> parseRef(std::string arg);
         std::pair<bool, std::pair<std::string, AttrType>> parseAttrRef(std::string arg);
     };
 

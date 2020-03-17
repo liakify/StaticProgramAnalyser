@@ -9,7 +9,7 @@ using std::vector;
 
 namespace PQL {
 
-    bool QueryUtils::isInteger(string input) {
+    bool QueryUtils::isValidInteger(string input) {
         regex VALID_INTEGER("^[0-9]+(?!\n)$");
         smatch imatch;
 
@@ -23,6 +23,14 @@ namespace PQL {
         return regex_search(input, imatch, VALID_IDENTIFIER);
     }
 
+    bool QueryUtils::isValidLiteral(string input) {
+        regex VALID_ENTITY_REFERENCE("^\"\\s*[A-Za-z][A-Za-z0-9]*\\s*\"(?!\n)$");
+        smatch ematch;
+
+        // Literal reference is not a string of form "<identifier>"
+        return regex_search(input, ematch, VALID_ENTITY_REFERENCE);
+    }
+
     bool QueryUtils::isValidStmtRef(string input) {
         if (input == "_") {
             return true;
@@ -30,20 +38,16 @@ namespace PQL {
 
         // Input string can either be an integer (referencing statement line number) or
         // an identifier (a synonym)
-        return QueryUtils::isInteger(input) || QueryUtils::isValidIdentifier(input);
+        return isValidInteger(input) || isValidIdentifier(input);
     }
 
     bool QueryUtils::isValidEntityRef(string input) {
         if (input.find('\"') != string::npos) {
-            // String contains a " - interpret literally as variable name
-            regex VALID_ENTITY_REFERENCE("^\"\\s*[A-Za-z][A-Za-z0-9]*\\s*\"(?!\n)$");
-            smatch ematch;
-
-            // Entity reference is not a string of form "<identifier>"
-            return regex_search(input, ematch, VALID_ENTITY_REFERENCE);
+            // String contains a " - interpret literally as a variable or procedure name
+            return isValidLiteral(input);
         } else {
             // String is either '_' or just "<synonym>" - validate identifier
-            return input == "_" || QueryUtils::isValidIdentifier(input);
+            return input == "_" || isValidIdentifier(input);
         }
     }
 
@@ -52,6 +56,18 @@ namespace PQL {
         smatch amatch;
 
         return regex_search(input, amatch, VALID_ATTRIBUTE_REF);
+    }
+
+    bool QueryUtils::isValidRef(string input) {
+        if (input == "_") {
+            return false;
+        } else if (input.find('\"') != string::npos) {
+            // String contains a " - interpret literally as a variable or procedure name
+            return isValidLiteral(input);
+        } else {
+            // Input string can either be an integer, identifier (a synonym) or attribute ref
+            return isValidInteger(input) || isValidIdentifier(input) || isValidAttrRef(input);
+        }
     }
 
     string QueryUtils::leftTrim(string input) {
