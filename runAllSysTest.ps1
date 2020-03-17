@@ -24,19 +24,19 @@ $list_of_test_files = @(
 'suchthatPatternAssign_0',
 'uses_0',
 'modifies_0',
+'patternIf_0',
+'patternWhile_0',
+'patternIf_operators', 
+'patternWhile_operators'
 
 # ONLY MODIFY THE BELOW
-# '..\patternIf_0',
-# '..\patternWhile_0',
-'..\patternIf_operators', 
-'..\patternWhile_operators'
 # '..\select_0'
 # '..\calls_0',
+# '..\callsStar_0'
 # '..\calls_1'
-# '..\callsStar_0',
 # '..\callsStar_1'
 # '..\callsStar_twoDiamonds',
-# '..\callsStar_threePronged',
+# '..\callsStar_threePronged'
 # '..\invalid_simple\simple_CondAsFalse',
 # '..\invalid_simple\simple_CondAsTrue'
 # '..\invalid_simple\simple_cyclicCalls',
