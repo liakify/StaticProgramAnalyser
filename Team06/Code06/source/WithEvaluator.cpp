@@ -1,6 +1,7 @@
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
+#include <utility>
 
 #include "WithEvaluator.h"
 #include "LoggingUtils.h"
@@ -69,7 +70,7 @@ namespace PQL {
 
             if (argType1 == ArgType::ATTRIBUTE && argType2 == ArgType::IDENTIFIER) {
                 // Case 1: LHS is an attribute, RHS is an identifier
-                
+
                 Synonym syn1 = arg1.second.first;
 
                 if (synonymTable[syn1] == DesignEntity::CALL || synonymTable[syn1] == DesignEntity::READ || synonymTable[syn1] == DesignEntity::PRINT) {
@@ -165,7 +166,7 @@ namespace PQL {
         */
         ClauseResult evaluateIntegerEqual(PKB::PKB& database, WithClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable) {
-            
+
             std::pair<ArgType, Ref> arg1 = clause.getArgs().first;
             std::pair<ArgType, Ref> arg2 = clause.getArgs().second;
 
