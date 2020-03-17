@@ -235,15 +235,19 @@ namespace PQL {
             break;
         case RelationType::NEXT:
             SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluateRelationClause: Next relationship not implemented!");
+            return {};
             break;
         case RelationType::NEXTT:
             SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluateRelationClause: Next* relationship not implemented!");
+            return {};
             break;
         case RelationType::AFFECTS:
             SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluateRelationClause: Affects relationship not implemented!");
+            return {};
             break;
         case RelationType::AFFECTST:
             SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluateRelationClause: Affects* relationship not implemented!");
+            return {};
             break;
         default:
             SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluateRelationClause: Unknown relation type %d\n", relationClause.type);
@@ -274,7 +278,7 @@ namespace PQL {
     ClauseResult QueryEvaluator::evaluateWithClause(WithClause& withClause,
         std::unordered_map<std::string, DesignEntity>& synonymTable) {
 
-        WithEvaluator::evaluateWithClause(this->database, withClause, synonymTable);
+        return WithEvaluator::evaluateWithClause(this->database, withClause, synonymTable);
 
     }
 

@@ -56,7 +56,7 @@ namespace SPA {
                 return StmtType::ASSIGN;
                 break;
             }
-            return StmtType::ERROR;
+            return StmtType::INVALID;
         }
 
     }

@@ -16,28 +16,28 @@ namespace PQL {
         * @param    stmtType    StmtType to extract data value pairs for.
         * @return   The data value pairs extracted.
         */
-        std::unordered_set<std::pair<StmtId, std::string> > getStmtDataPairs(PKB::PKB database, StmtType stmtType) {
-            std::unordered_set<std::pair<StmtId, std::string> > result;
+        std::unordered_map<std::string, StmtId> getStmtDataPairs(PKB::PKB database, StmtType stmtType) {
+            std::unordered_map<std::string, StmtId> result;
 
             if (stmtType == StmtType::CALL) {
                 std::unordered_set<StmtId> callStmts = database.stmtTable.getStmtsByType(StmtType::CALL);
                 for (StmtId callStmtId : callStmts) {
                     SIMPLE::CallStmt* callStmt = dynamic_cast<SIMPLE::CallStmt*>(database.stmtTable.get(callStmtId).get());
-                    result.insert(std::make_pair(callStmtId, callStmt->getProc()));
+                    result.insert(std::make_pair(callStmt->getProc(), callStmtId));
                 }
                 return result;
             } else if (stmtType == StmtType::READ) {
                 std::unordered_set<StmtId> readStmts = database.stmtTable.getStmtsByType(StmtType::READ);
                 for (StmtId readStmtId : readStmts) {
                     SIMPLE::ReadStmt* readStmt = dynamic_cast<SIMPLE::ReadStmt*>(database.stmtTable.get(readStmtId).get());
-                    result.insert(std::make_pair(readStmtId, database.varTable.get(readStmt->getVar())));
+                    result.insert(std::make_pair(database.varTable.get(readStmt->getVar()), readStmtId));
                 }
                 return result;
             } else if (stmtType == StmtType::PRINT) {
                 std::unordered_set<StmtId> printStmts = database.stmtTable.getStmtsByType(StmtType::PRINT);
                 for (StmtId printStmtId : printStmts) {
                     SIMPLE::PrintStmt* printStmt = dynamic_cast<SIMPLE::PrintStmt*>(database.stmtTable.get(printStmtId).get());
-                    result.insert(std::make_pair(printStmtId, database.varTable.get(printStmt->getVar())));
+                    result.insert(std::make_pair(database.varTable.get(printStmt->getVar()), printStmtId));
                 }
                 return result;
             } else {
@@ -75,12 +75,12 @@ namespace PQL {
                 if (synonymTable[syn1] == DesignEntity::CALL || synonymTable[syn1] == DesignEntity::READ || synonymTable[syn1] == DesignEntity::PRINT) {
                     ClauseResult clauseResult;
 
-                    std::unordered_set<std::pair<StmtId, ProcName> > stmts =
+                    std::unordered_map<ProcName, StmtId> stmts =
                         getStmtDataPairs(database, SPA::TypeUtils::getStmtTypeFromDesignEntity(synonymTable[syn1]));
-                    for (std::pair<StmtId, std::string> stmt : stmts) {
-                        if (stmt.second == arg2.second.first) {
+                    for (std::pair<std::string, StmtId> stmt : stmts) {
+                        if (stmt.first == arg2.second.first) {
                             ClauseResultEntry resultEntry;
-                            resultEntry[syn1] = std::to_string(stmt.first);
+                            resultEntry[syn1] = std::to_string(stmt.second);
                             clauseResult.emplace_back(resultEntry);
                         }
                     }
@@ -97,11 +97,61 @@ namespace PQL {
             } else if (argType1 == ArgType::ATTRIBUTE && argType2 == ArgType::ATTRIBUTE) {
                 // Case 2: Both LHS and RHS are attributes
 
-                std::unordered_set<std::pair<StmtId, std::string> > result1;
-                std::unordered_set<std::pair<StmtId, std::string> > result2;
+                std::unordered_map<std::string, StmtId> result1;
+                std::unordered_map<std::string, StmtId> result2;
+
+                Synonym syn1 = arg1.second.first;
+                Synonym syn2 = arg2.second.first;
+
+                if (synonymTable[syn1] == DesignEntity::CALL || synonymTable[syn1] == DesignEntity::READ || synonymTable[syn1] == DesignEntity::PRINT) {
+                    result1 = getStmtDataPairs(database, SPA::TypeUtils::getStmtTypeFromDesignEntity(synonymTable[syn1]));
+                } else if (synonymTable[syn1] == DesignEntity::VARIABLE) {
+                    for (VarId i = 1; i <= database.varTable.size(); i++) {
+                        result1.insert(std::make_pair(database.varTable.get(i), 0));
+                    }
+                } else if (synonymTable[syn1] == DesignEntity::PROCEDURE) {
+                    for (ProcId i = 1; i <= database.procTable.size(); i++) {
+                        result1.insert(std::make_pair(database.procTable.get(i).getName(), 0));
+                    }
+                }
+
+                if (synonymTable[syn2] == DesignEntity::CALL || synonymTable[syn2] == DesignEntity::READ || synonymTable[syn2] == DesignEntity::PRINT) {
+                    result1 = getStmtDataPairs(database, SPA::TypeUtils::getStmtTypeFromDesignEntity(synonymTable[syn2]));
+                } else if (synonymTable[syn2] == DesignEntity::VARIABLE) {
+                    for (VarId i = 1; i <= database.varTable.size(); i++) {
+                        result1.insert(std::make_pair(database.varTable.get(i), 0));
+                    }
+                } else if (synonymTable[syn2] == DesignEntity::PROCEDURE) {
+                    for (ProcId i = 1; i <= database.procTable.size(); i++) {
+                        result1.insert(std::make_pair(database.procTable.get(i).getName(), 0));
+                    }
+                }
+
+                ClauseResult clauseResult;
+
+                for (std::pair<std::string, StmtId> entry1 : result1) {
+                    auto entry2 = result2.find(entry1.first);
+                    if (entry2 != result2.end()) {
+                        ClauseResultEntry resultEntry;
+                        if (entry1.second != 0) {
+                            resultEntry[syn1] = std::to_string(entry1.second);
+                        } else {
+                            resultEntry[syn1] = entry1.first;
+                        }
+                        if (entry2->second != 0) {
+                            resultEntry[syn2] = std::to_string(entry2->second);
+                        } else {
+                            resultEntry[syn2] = entry2->first;
+                        }
+                        clauseResult.emplace_back(resultEntry);
+                    }
+                }
+
+                return clauseResult;
 
             } else {
                 SPA::LoggingUtils::LogErrorMessage("WithEvaluator::evaluateIdentifierEqual: Invalid ArgTypes for identifier With clause. argType1 = %d, argType2 = %d\n", argType1, argType2);
+                return {};
             }
         }
 
@@ -166,6 +216,7 @@ namespace PQL {
                 return clauseResult;
             } else {
                 SPA::LoggingUtils::LogErrorMessage("WithEvaluator::evaluateIntegerEqual: Invalid ArgTypes for integer With clause. argType1 = %d, argType2 = %d\n", argType1, argType2);
+                return {};
             }
         }
 
@@ -202,6 +253,7 @@ namespace PQL {
                 return evaluateLiteralEqual(clause);
                 break;
             }
+            return {};
         }
 
     }
