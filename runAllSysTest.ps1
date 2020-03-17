@@ -15,20 +15,20 @@ $list_of_test_files = @(
   # '..\modifies_0',
 
 # DO NOT MODIFY THE FOLLOWING IN ANY COMMITS
-# 'select_0_1',
-# 'follows_0',
-# 'followsStar_0',
-# 'parent_0',
-# 'parentStar_0',
-# 'patternAssign_0',
-# 'patternAssign_1',
-# 'suchthatPatternAssign_0',
-# 'uses_0',
-# 'modifies_0',
-# 'patternIf_0',
-# 'patternWhile_0',
-# 'patternIf_operators', 
-# 'patternWhile_operators'
+'select_0_1',
+'follows_0',
+'followsStar_0',
+'parent_0',
+'parentStar_0',
+'patternAssign_0',
+'patternAssign_1',
+'suchthatPatternAssign_0',
+'uses_0',
+'modifies_0',
+'patternIf_0',
+'patternWhile_0',
+'patternIf_operators', 
+'patternWhile_operators',
 
 # ONLY MODIFY THE BELOW
 # '..\select_0'
@@ -37,23 +37,23 @@ $list_of_test_files = @(
 # '..\calls_1'
 # '..\callsStar_1'
 # '..\callsStar_twoDiamonds',
-# '..\callsStar_threePronged'
+# '..\callsStar_threePronged',
 '..\valid_simple\simple_procNameEqualVarName'
 )
 
 $list_of_no_xml_tests = @(
-# '..\invalid_simple\simple_CondAsFalse',
-# '..\invalid_simple\simple_CondAsTrue'
-# '..\invalid_simple\simple_cyclicCalls',
-# '..\invalid_simple\simple_digitWithZero',
-# '..\invalid_simple\simple_logicExprNoBracket',
-# '..\invalid_simple\simple_logicExprNotInCond',
-# '..\invalid_simple\simple_nonDigitConstant',
-# '..\invalid_simple\simple_nonExistProcCall',
-# '..\invalid_simple\simple_printTwoVariables',
-'..\invalid_simple\simple_printXPrintY'
-# '..\invalid_simple\simple_procSameName',
-# '..\invalid_simple\simple_selfCalls'
+'..\invalid_simple\simple_CondAsFalse',
+'..\invalid_simple\simple_CondAsTrue',
+'..\invalid_simple\simple_cyclicCalls',
+# '..\invalid_simple\simple_digitWithZero,'
+'..\invalid_simple\simple_logicExprNoBracket',
+'..\invalid_simple\simple_logicExprNotInCond',
+'..\invalid_simple\simple_nonDigitConstant',
+'..\invalid_simple\simple_nonExistProcCall',
+'..\invalid_simple\simple_printTwoVariables',
+'..\invalid_simple\simple_printXPrintY',
+'..\invalid_simple\simple_procSameName',
+'..\invalid_simple\simple_selfCalls'
 )
 
 Try {
