@@ -72,6 +72,21 @@ namespace UnitTesting
             Assert::IsTrue(pkbNext.stmtListTable.get(4).getLast() == 5);
             Assert::IsTrue(pkbNext.stmtListTable.get(5).getFirst() == 6);
             Assert::IsTrue(pkbNext.stmtListTable.get(5).getLast() == 6);
+
+            std::vector<std::unordered_set<StmtId>> expectedResult = std::vector<std::unordered_set<StmtId>>({
+                std::unordered_set<StmtId>({ 1 }),
+                std::unordered_set<StmtId>({ 7 }),
+                std::unordered_set<StmtId>({ 5, 6 }),
+                std::unordered_set<StmtId>({ 5 }),
+                std::unordered_set<StmtId>({ 6 })
+            });
+            for (int i = 1; i <= expectedResult.size(); i++) {
+                std::unordered_set<StmtId>& current = pkbNext.stmtListTable.get(i).getAllEnds();
+                Assert::IsTrue(current.size() == expectedResult[i - 1].size());
+                for (StmtId sid : current) {
+                    Assert::IsTrue(expectedResult[i - 1].find(sid) != expectedResult[i - 1].end());
+                }
+            }
         }
 
         TEST_METHOD(updateStmtContainerId) {

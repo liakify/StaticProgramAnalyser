@@ -138,49 +138,48 @@ namespace UnitTesting {
             Assert::IsTrue(sid1 == STATEMENT_LIST_1.getStmtIds());
             Assert::IsTrue(STATEMENT_LIST_1 == STATEMENT_LIST_2);
 
-
-            Assert::ExpectException<std::invalid_argument>([&STATEMENT_LIST_2] { STATEMENT_LIST_2.addLast(0); });
             std::unordered_set<StmtId> expectedSet = std::unordered_set<StmtId>();
-            Assert::IsTrue(STATEMENT_LIST_2.getAllLast().size() == expectedSet.size());
+            Assert::IsTrue(STATEMENT_LIST_2.getAllEnds().size() == expectedSet.size());
             Assert::IsTrue(STATEMENT_LIST_2.getLast() == 2);
             for (StmtId i : expectedSet) {
-                Assert::IsTrue(STATEMENT_LIST_2.getAllLast().find(i) != STATEMENT_LIST_2.getAllLast().end());
+                Assert::IsTrue(STATEMENT_LIST_2.getAllEnds().find(i) != STATEMENT_LIST_2.getAllEnds().end());
             }
-            for (StmtId i : STATEMENT_LIST_2.getAllLast()) {
+            for (StmtId i : STATEMENT_LIST_2.getAllEnds()) {
                 Assert::IsTrue(expectedSet.find(i) != expectedSet.end());
             }
 
-            STATEMENT_LIST_2.addLast(3);
+            STATEMENT_LIST_2.addEnd(3);
             expectedSet.erase(2);
             expectedSet.insert(3);
-            Assert::IsTrue(STATEMENT_LIST_2.getAllLast().size() == expectedSet.size());
+            Assert::IsTrue(STATEMENT_LIST_2.getAllEnds().size() == expectedSet.size());
+            Assert::IsTrue(STATEMENT_LIST_2.getLast() == 2);
+            for (StmtId i : expectedSet) {
+                Assert::IsTrue(STATEMENT_LIST_2.getAllEnds().find(i) != STATEMENT_LIST_2.getAllEnds().end());
+            }
+            for (StmtId i : STATEMENT_LIST_2.getAllEnds()) {
+                Assert::IsTrue(expectedSet.find(i) != expectedSet.end());
+            }
+
+            STATEMENT_LIST_2.addEnd(5);
+            STATEMENT_LIST_2.setLast(3);
+            expectedSet.insert(5);
+            Assert::IsTrue(STATEMENT_LIST_2.getAllEnds().size() == expectedSet.size());
             Assert::IsTrue(STATEMENT_LIST_2.getLast() == 3);
             for (StmtId i : expectedSet) {
-                Assert::IsTrue(STATEMENT_LIST_2.getAllLast().find(i) != STATEMENT_LIST_2.getAllLast().end());
+                Assert::IsTrue(STATEMENT_LIST_2.getAllEnds().find(i) != STATEMENT_LIST_2.getAllEnds().end());
             }
-            for (StmtId i : STATEMENT_LIST_2.getAllLast()) {
+            for (StmtId i : STATEMENT_LIST_2.getAllEnds()) {
                 Assert::IsTrue(expectedSet.find(i) != expectedSet.end());
             }
 
-            STATEMENT_LIST_2.addLast(5);
-            expectedSet.insert(5);
-            Assert::IsTrue(STATEMENT_LIST_2.getAllLast().size() == expectedSet.size());
-            Assert::IsTrue(STATEMENT_LIST_2.getLast() == 5);
-            for (StmtId i : expectedSet) {
-                Assert::IsTrue(STATEMENT_LIST_2.getAllLast().find(i) != STATEMENT_LIST_2.getAllLast().end());
-            }
-            for (StmtId i : STATEMENT_LIST_2.getAllLast()) {
-                Assert::IsTrue(expectedSet.find(i) != expectedSet.end());
-            }
-
-            STATEMENT_LIST_2.addLast(4);
+            STATEMENT_LIST_2.addEnd(4);
             expectedSet.insert(4);
-            Assert::IsTrue(STATEMENT_LIST_2.getAllLast().size() == expectedSet.size());
-            Assert::IsTrue(STATEMENT_LIST_2.getLast() == 5);
+            Assert::IsTrue(STATEMENT_LIST_2.getAllEnds().size() == expectedSet.size());
+            Assert::IsTrue(STATEMENT_LIST_2.getLast() == 3);
             for (StmtId i : expectedSet) {
-                Assert::IsTrue(STATEMENT_LIST_2.getAllLast().find(i) != STATEMENT_LIST_2.getAllLast().end());
+                Assert::IsTrue(STATEMENT_LIST_2.getAllEnds().find(i) != STATEMENT_LIST_2.getAllEnds().end());
             }
-            for (StmtId i : STATEMENT_LIST_2.getAllLast()) {
+            for (StmtId i : STATEMENT_LIST_2.getAllEnds()) {
                 Assert::IsTrue(expectedSet.find(i) != expectedSet.end());
             }
 

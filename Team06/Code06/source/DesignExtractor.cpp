@@ -342,7 +342,10 @@ namespace FrontEnd {
 
     void DesignExtractor::populateNext() {
         for (ProcId pid = 1; pid <= pkb.procTable.size(); pid++) {
-            populateNextKB(pkb.procTable.get(pid).getStmtLstId());
+            StmtListId sid = pkb.procTable.get(pid).getStmtLstId();
+            StatementList& sl = pkb.stmtListTable.get(sid);
+            updateLastStmtId(sl);
+            populateNextKB(sid);
         }
     }
 
@@ -364,10 +367,10 @@ namespace FrontEnd {
                 populateNextKB(elseId);
                 pkb.nextKB.addNext(idList[i], elseSl.getFirst());
                 if (i < idList.size() - 1) {
-                    for (StmtId s : thenSl.getAllLast()) {
+                    for (StmtId s : thenSl.getAllEnds()) {
                         pkb.nextKB.addNext(s, idList[i + 1]);
                     }
-                    for (StmtId s : elseSl.getAllLast()) {
+                    for (StmtId s : elseSl.getAllEnds()) {
                         pkb.nextKB.addNext(s, idList[i + 1]);
                     }
                 }
@@ -378,7 +381,7 @@ namespace FrontEnd {
                 updateLastStmtId(whileSl);
                 populateNextKB(loopId);
                 pkb.nextKB.addNext(idList[i], whileSl.getFirst());
-                for (StmtId s : whileSl.getAllLast()) {
+                for (StmtId s : whileSl.getAllEnds()) {
                     pkb.nextKB.addNext(s, idList[i]);
                 }
                 if (i < idList.size() - 1) {
@@ -400,19 +403,21 @@ namespace FrontEnd {
             StatementList& elseSl = pkb.stmtListTable.get(ifs->getElseStmtLstId());
             updateLastStmtId(thenSl);
             updateLastStmtId(elseSl);
-            for (StmtId s : thenSl.getAllLast()) {
-                sl.addLast(s);
+            for (StmtId s : thenSl.getAllEnds()) {
+                sl.addEnd(s);
             }
-            for (StmtId s : elseSl.getAllLast()) {
-                sl.addLast(s);
+            for (StmtId s : elseSl.getAllEnds()) {
+                sl.addEnd(s);
             }
+            sl.setLast(elseSl.getLast());
         } else if (lastStmt->getType() == StmtType::WHILE) {
             WhileStmt* ws = dynamic_cast<WhileStmt*>(lastStmt.get());
             StatementList& newSl = pkb.stmtListTable.get(ws->getStmtLstId());
             updateLastStmtId(newSl);
-            sl.addLast(sl.getLast());
+            sl.addEnd(sl.getLast());
+            sl.setLast(newSl.getLast());
         } else {
-            sl.addLast(sl.getLast());
+            sl.addEnd(sl.getLast());
         }
     }
 
