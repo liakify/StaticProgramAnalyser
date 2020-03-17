@@ -29,15 +29,15 @@ $list_of_test_files = @(
 'patternWhile_0',
 'patternIf_operators', 
 'patternWhile_operators',
+'calls_0',
+'callsStar_0',
+'calls_1',
+'callsStar_1',
+'callsStar_twoDiamonds',
+'callsStar_threePronged',
 
 # ONLY MODIFY THE BELOW
 # '..\select_0'
-# '..\calls_0',
-# '..\callsStar_0'
-# '..\calls_1'
-# '..\callsStar_1'
-# '..\callsStar_twoDiamonds',
-# '..\callsStar_threePronged',
 '..\valid_simple\simple_procNameEqualVarName'
 )
 
