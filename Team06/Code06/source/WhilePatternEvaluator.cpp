@@ -68,7 +68,7 @@ namespace PQL {
 
             std::unordered_set<StmtId> stmts = database.stmtTable.getStmtsByType(StmtType::WHILE);
             for (StmtId stmt : stmts) {
-                SIMPLE::WhileStmt *whileStmt = (SIMPLE::WhileStmt*)database.stmtTable.get(stmt);
+                SIMPLE::WhileStmt *whileStmt = dynamic_cast<SIMPLE::WhileStmt*>(database.stmtTable.get(stmt).get());
                 std::unordered_set<VarId> vars = whileStmt->getCondExpr().getVarIds();
                 for (VarId var : vars) {
                     ClauseResultEntry resultEntry;
