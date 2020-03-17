@@ -1,0 +1,5 @@
+1 - test all operators
+variable v; if ifs;
+Select v pattern ifs (v, _, _)
+a, b1a, b1b, b1c, b2, c1, c2a, c2b, c2c
+5000
