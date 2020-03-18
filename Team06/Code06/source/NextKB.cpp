@@ -78,9 +78,9 @@ const std::unordered_set<StmtId>& NextKB::getAllNodes(StmtId s, NodeType type) {
 
 void NextKB::addToAll(StmtId s1, StmtId s2, NodeType type) {
     if (type == NodeType::SUCCESSOR) {
-        nextStarTable.at(s1).allNext.insert(s2);
+        nextStarTable[s1].allNext.insert(s2);
     } else {
-        nextStarTable.at(s1).allPrev.insert(s2);
+        nextStarTable[s1].allPrev.insert(s2);
     }
 }
 
@@ -95,7 +95,7 @@ bool NextKB::hasNext(StmtId s) {
 
 bool NextKB::hasPrev(StmtId s) {
     try {
-        return nextTable.at(s).directNext.size() != 0;
+        return nextTable.at(s).directPrev.size() != 0;
     }
     catch (const std::out_of_range&) {
         return false;
