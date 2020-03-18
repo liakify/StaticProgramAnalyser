@@ -45,7 +45,11 @@ namespace FrontEnd {
     }
 
     string Parser::integer() {
-        return consume(regex("[0-9]+"));
+        string result = consume(regex("[0-9]+"));
+        if (result[0] == '0' && result.length() > 1) {
+            throw invalid_argument("Syntax error in SIMPLE source.\n");
+        }
+        return result;
     }
 
     void Parser::program() {
