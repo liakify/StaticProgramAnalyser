@@ -28,6 +28,9 @@ namespace FrontEnd {
                 }
                 return false;
             } else {
+                if (s2 > rootParentStmtList.getLast() || s2 <= rootParent) {
+                    return false;
+                }
                 if (nextStarRecurse(s1, s1, s2)) {
                     addBiDirEdge(s1, s2);
                     return true;
