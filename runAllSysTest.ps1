@@ -37,26 +37,26 @@ $list_of_test_files = @(
 'callsStar_1',
 'callsStar_twoDiamonds',
 'callsStar_threePronged',
+'valid_simple\simple_procNameEqualVarName'
 
 # ONLY MODIFY THE BELOW
 # '..\select_0'
 # '..\suchthatPattern_1',
-'..\valid_simple\simple_procNameEqualVarName'
 )
 
 $list_of_no_xml_tests = @(
-'..\invalid_simple\simple_CondAsFalse',
-'..\invalid_simple\simple_CondAsTrue',
-'..\invalid_simple\simple_cyclicCalls',
-'..\invalid_simple\simple_digitWithZero,'
-'..\invalid_simple\simple_logicExprNoBracket',
-'..\invalid_simple\simple_logicExprNotInCond',
-'..\invalid_simple\simple_nonDigitConstant',
-'..\invalid_simple\simple_nonExistProcCall',
-'..\invalid_simple\simple_printTwoVariables',
-'..\invalid_simple\simple_printXPrintY',
-'..\invalid_simple\simple_procSameName',
-'..\invalid_simple\simple_selfCalls'
+'invalid_simple\simple_CondAsFalse',
+'invalid_simple\simple_CondAsTrue',
+'invalid_simple\simple_cyclicCalls',
+'invalid_simple\simple_digitWithZero,'
+'invalid_simple\simple_logicExprNoBracket',
+'invalid_simple\simple_logicExprNotInCond',
+'invalid_simple\simple_nonDigitConstant',
+'invalid_simple\simple_nonExistProcCall',
+'invalid_simple\simple_printTwoVariables',
+'invalid_simple\simple_printXPrintY',
+'invalid_simple\simple_procSameName',
+'invalid_simple\simple_selfCalls'
 )
 
 Try {
