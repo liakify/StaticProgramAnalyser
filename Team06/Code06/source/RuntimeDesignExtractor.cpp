@@ -56,7 +56,7 @@ namespace FrontEnd {
         std::shared_ptr<Statement>& currStmt = pkb->stmtTable.get(curr);
         StmtListId currStmtListId = currStmt->getContainerId();
         StatementList& currStmtList = pkb->stmtListTable.get(currStmtListId);
-        
+
         if (!pkb->parentKB.hasParent(curr)) {  // can only be an IfStmt
             if (!pkb->followsKB.hasFollower(curr)) {
                 return false;
