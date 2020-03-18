@@ -166,6 +166,7 @@
     <ClCompile Include="testCallsKB.cpp" />
     <ClCompile Include="testDesignExtractor_followsParent.cpp" />
     <ClCompile Include="testDesignExtractor_next.cpp" />
+    <ClCompile Include="testNextKB.cpp" />
     <ClCompile Include="testPatternKB.cpp" />
     <ClCompile Include="testModifiesKB.cpp" />
     <ClCompile Include="testQueryParser.cpp" />
