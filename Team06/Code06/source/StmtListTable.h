@@ -32,7 +32,7 @@ namespace PKB {
          *  Returns the statement list object at the given ID in the StmtLstTable. 
          *  Throws an exception if the ID is not found in the table.
          */
-        StatementList get(StmtListId stmtListId);
+        StatementList& get(StmtListId stmtListId);
 
         /**
          *  Returns the number of statements in the StmtTable.

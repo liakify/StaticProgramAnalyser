@@ -4,8 +4,8 @@
 // implementation code of WrapperFactory - do NOT modify the next 5 lines
 AbstractWrapper* WrapperFactory::wrapper = 0;
 AbstractWrapper* WrapperFactory::createWrapper() {
-  if (wrapper == 0) wrapper = new TestWrapper;
-  return wrapper;
+    if (wrapper == 0) wrapper = new TestWrapper;
+    return wrapper;
 }
 // Do not modify the following line
 volatile bool TestWrapper::GlobalStop = false;
@@ -22,7 +22,7 @@ TestWrapper::TestWrapper()
  *  @param      filename    filename of SIMPLE source program.
  */
 void TestWrapper::parse(std::string filename) {
-	// Create input file stream and char iterator
+    // Create input file stream and char iterator
     std::ifstream ifs(filename);
     std::string program((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());
 

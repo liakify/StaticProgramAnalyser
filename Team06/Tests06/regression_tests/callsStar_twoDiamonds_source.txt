@@ -1,0 +1,29 @@
+procedure DmdATop {
+  call DmdALeft;
+  call DmdBLeftOrARight;
+}
+
+procedure DmdBTop {
+  call DmdBLeftOrARight;
+  call DmdBRight;
+}
+
+procedure DmdALeft {
+  call DmdABottom;
+}
+
+procedure DmdBLeftOrARight {
+  call DmdARightRightOrBBottom;
+}
+
+procedure DmdARightRightOrBBottom {
+  call DmdABottom;
+}
+
+procedure DmdABottom {
+  print Acomplete;
+}
+
+procedure DmdBRight {
+  call DmdARightRightOrBBottom;
+}
