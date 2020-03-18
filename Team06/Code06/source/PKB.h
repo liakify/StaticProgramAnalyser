@@ -27,6 +27,10 @@ namespace PKB {
          */
     class PKB {
      public:
+        PKB();
+
+        void clear();
+
         VarTable varTable;
         ProcTable procTable;
         ConstTable constTable;
