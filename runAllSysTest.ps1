@@ -3,7 +3,7 @@
 # For cmd reference:
 # Autotester.exe ..\..\Tests06\_source.txt ..\..\Tests06\_queries.txt ..\..\Tests06\_out.xml
 # Autotester.exe ..\..\Tests06\invalid_simple\simple_printXPrintY_source.txt ..\..\Tests06\invalid_simple\simple_printXPrintY_queries.txt ..\..\Tests06\invalid_simple\simple_printXPrintY_out.xml
-# Autotester.exe ..\..\Tests06\patternIf_operators_source.txt ..\..\Tests06\patternIf_operators_queries.txt ..\..\Tests06\patternIf_operators_out.xml
+# Autotester.exe ..\..\Tests06\suchthatPatternIf_0_source.txt ..\..\Tests06\suchthatPatternIf_0_queries.txt ..\..\Tests06\suchthatPatternIf_0_out.xml
 
 $source_suffix = '_source.txt'
 $query_suffix = '_queries.txt'
@@ -29,6 +29,8 @@ $list_of_test_files = @(
 'patternWhile_0',
 'patternIf_operators', 
 'patternWhile_operators',
+'suchthatPatternIf_0',
+'suchthatPatternWhile_0',
 'calls_0',
 'callsStar_0',
 'calls_1',
@@ -38,6 +40,7 @@ $list_of_test_files = @(
 
 # ONLY MODIFY THE BELOW
 # '..\select_0'
+# '..\suchthatPattern_1',
 '..\valid_simple\simple_procNameEqualVarName'
 )
 
@@ -45,7 +48,7 @@ $list_of_no_xml_tests = @(
 '..\invalid_simple\simple_CondAsFalse',
 '..\invalid_simple\simple_CondAsTrue',
 '..\invalid_simple\simple_cyclicCalls',
-# '..\invalid_simple\simple_digitWithZero,'
+'..\invalid_simple\simple_digitWithZero,'
 '..\invalid_simple\simple_logicExprNoBracket',
 '..\invalid_simple\simple_logicExprNotInCond',
 '..\invalid_simple\simple_nonDigitConstant',
