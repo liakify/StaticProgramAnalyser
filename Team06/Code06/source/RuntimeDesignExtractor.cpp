@@ -50,11 +50,15 @@ namespace FrontEnd {
     }
 
     bool RuntimeDesignExtractor::nextStarRecurse(StmtId curr, StmtId last, StmtId s2) {
+        std::shared_ptr<Statement>& currStmt = pkb->stmtTable.get(curr);
+        StmtListId currStmtListId = currStmt->getContainerId();
+        StatementList& currStmtList = pkb->stmtListTable.get(currStmtListId);
+        
         if (!pkb->parentKB.hasParent(curr)) {  // can only be an IfStmt
             if (!pkb->followsKB.hasFollower(curr)) {
                 return false;
             }
-            return s2 >= pkb->followsKB.getFollower(curr);
+            return s2 >= pkb->followsKB.getFollower(curr) && s2 <= currStmtList.getLast();
         }
 
         StmtId parentId = pkb->parentKB.getParent(curr);
@@ -67,9 +71,6 @@ namespace FrontEnd {
             }
             return nextStarRecurse(parentId, whileSl.getLast(), s2);
         } else {  // parentStmt is IfStmt
-            std::shared_ptr<Statement>& currStmt = pkb->stmtTable.get(curr);
-            StmtListId currStmtListId = currStmt->getContainerId();
-            StatementList& currStmtList = pkb->stmtListTable.get(currStmtListId);
             if (s2 > last && s2 <= currStmtList.getLast()) {
                 return true;
             }
