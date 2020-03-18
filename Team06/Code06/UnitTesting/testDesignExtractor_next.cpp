@@ -83,9 +83,7 @@ namespace UnitTesting
             for (int i = 1; i <= expectedResult.size(); i++) {
                 std::unordered_set<StmtId>& current = pkbNext.stmtListTable.get(i).getAllEnds();
                 Assert::IsTrue(current.size() == expectedResult[i - 1].size());
-                for (StmtId sid : current) {
-                    Assert::IsTrue(expectedResult[i - 1].find(sid) != expectedResult[i - 1].end());
-                }
+                Assert::IsTrue(current == expectedResult[i - 1]);
             }
         }
 
