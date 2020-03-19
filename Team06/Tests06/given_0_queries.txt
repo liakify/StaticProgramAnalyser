@@ -41,50 +41,50 @@ None
 9 - Quiz 2 Q4
 
 Select BOOLEAN such that Parent* (2, 2)
-false
+FALSE
 5000
 10 - Quiz 2 Q4
 
 Select BOOLEAN such that Follows* (9, 11)
-false 
+FALSE 
 5000
 11 - Quiz 2 Q4
 
 Select BOOLEAN such that Follows* (4, 8)
-true
+TRUE
 5000
 12 - Quiz 2 Q4
 
 Select BOOLEAN such that Parent* (3, 7)
-true
+TRUE
 5000
 13 - Quiz 2 Q4
 
 Select BOOLEAN such that Parent* (5, 13)
-false
+FALSE
 5000
 14 - Quiz 2 Q4
 
 Select BOOLEAN such that Modifies (8, "if")
-false
+FALSE
 5000
 15 - Quiz 2 Q4
 
 Select BOOLEAN such that Uses (6, "c")
-true
+TRUE
 5000
 16 - Quiz 2 Q4
 
 Select BOOLEAN such that Uses ("PQL", "read")
-false
+FALSE
 5000
 17 - Quiz 2 Q4
 
 Select BOOLEAN such that Modifies ("SIMPLE", "c")
-true
+TRUE
 5000
 18 - Quiz 2 Q4
 
 Select BOOLEAN such that Uses (3, "c")
-true
+TRUE
 5000
