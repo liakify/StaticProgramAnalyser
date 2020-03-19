@@ -2,7 +2,6 @@
 #include <vector>
 
 #include "PKB.h"
-#include "RuntimeDesignExtractor.h"
 
 namespace PKB {
     bool PKB::nextStar(StmtId s1, StmtId s2) {

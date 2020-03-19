@@ -17,9 +17,7 @@
 #include "CallsKB.h"
 #include "NextKB.h"
 
-namespace FrontEnd {
-    class RuntimeDesignExtractor;
-}
+#include "RuntimeDesignExtractor.h"
 
 namespace PKB {
 
