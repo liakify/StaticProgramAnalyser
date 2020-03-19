@@ -1,9 +1,4 @@
 #include "NextKB.h"
-#include "PKB.h"
-
-NextKB::NextKB(PKB::PKB* pkb)
-    : pkb(pkb), rtDE(pkb) {
-}
 
 void NextKB::addNext(StmtId s1, StmtId s2) {
     nextRS& nRS1 = nextTable[s1];
