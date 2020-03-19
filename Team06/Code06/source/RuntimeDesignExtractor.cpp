@@ -2,11 +2,9 @@
 #include "RuntimeDesignExtractor.h"
 
 namespace FrontEnd {
-    RuntimeDesignExtractor::RuntimeDesignExtractor(PKB::PKB* pkb)
-        : pkb(pkb) {
-    }
+    bool RuntimeDesignExtractor::nextStar(StmtId s1, StmtId s2, PKB::PKB* pkb) {
+        this->pkb = pkb;
 
-    bool RuntimeDesignExtractor::nextStar(StmtId s1, StmtId s2) {
         std::shared_ptr<Statement>& stmtS1 = pkb->stmtTable.get(s1);
         StmtListId s1StmtListId = stmtS1->getContainerId();
         StatementList& s1StmtList = pkb->stmtListTable.get(s1StmtListId);
@@ -40,7 +38,9 @@ namespace FrontEnd {
         }
     }
 
-    void RuntimeDesignExtractor::processStmtAllNodes(StmtId s, NodeType type) {
+    void RuntimeDesignExtractor::processStmtAllNodes(StmtId s, NodeType type, PKB::PKB* pkb) {
+        this->pkb = pkb;
+
         std::unordered_set<StmtId> visited;
         NodeType reverseType = type == NodeType::SUCCESSOR ? NodeType::PREDECESSOR : NodeType::SUCCESSOR;
         nextStarDFS(s, s, visited, type);
