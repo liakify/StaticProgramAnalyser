@@ -17,6 +17,10 @@
 #include "CallsKB.h"
 #include "NextKB.h"
 
+namespace FrontEnd {
+    class RuntimeDesignExtractor;
+}
+
 namespace PKB {
 
     /**
@@ -27,7 +31,9 @@ namespace PKB {
          */
     class PKB {
      public:
-        PKB();
+        bool nextStar(StmtId s1, StmtId s2);
+
+        const std::unordered_set<StmtId>& PKB::nextStarGetAllNodes(StmtId s, NodeType type);
 
         void clear();
 
@@ -43,5 +49,8 @@ namespace PKB {
         ModifiesKB modifiesKB;
         PatternKB patternKB;
         NextKB nextKB;
+
+     private:
+         FrontEnd::RuntimeDesignExtractor rtDE;
     };
 }
