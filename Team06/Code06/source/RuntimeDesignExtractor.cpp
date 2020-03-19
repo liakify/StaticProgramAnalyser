@@ -86,7 +86,7 @@ namespace FrontEnd {
 
     void RuntimeDesignExtractor::nextStarDFS(StmtId root, StmtId curr, std::unordered_set<StmtId>& visited, NodeType type) {
         visited.insert(curr);
-        
+
         std::unordered_set<StmtId> neighbours = pkb->nextKB.getDirectNodes(curr, type);
 
         for (const auto& n : neighbours) {
