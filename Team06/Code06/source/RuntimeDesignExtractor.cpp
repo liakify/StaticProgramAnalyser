@@ -12,7 +12,7 @@ namespace FrontEnd {
         StatementList& s1StmtList = pkb->stmtListTable.get(s1StmtListId);
         if (!pkb->parentKB.hasParent(s1)) {
             if ((s2 > s1 && s2 <= s1StmtList.getLast()) || (s2 == s1 && stmtS1->getType() == StmtType::WHILE)) {
-                addBiDirEdge(s1, s2);
+                addBiDirEdge(s1, s2, NodeType::SUCCESSOR);
                 return true;
             }
             return false;
@@ -23,7 +23,7 @@ namespace FrontEnd {
             StatementList& rootParentStmtList = pkb->stmtListTable.get(rootParentStmtListId);
             if (rootParentStmt->getType() == StmtType::WHILE) {
                 if (s2 >= rootParent && s2 <= rootParentStmtList.getLast()) {
-                    addBiDirEdge(s1, s2);
+                    addBiDirEdge(s1, s2, NodeType::SUCCESSOR);
                     return true;
                 }
                 return false;
@@ -32,7 +32,7 @@ namespace FrontEnd {
                     return false;
                 }
                 if (nextStarRecurse(s1, s1, s2)) {
-                    addBiDirEdge(s1, s2);
+                    addBiDirEdge(s1, s2, NodeType::SUCCESSOR);
                     return true;
                 }
                 return false;
@@ -47,9 +47,10 @@ namespace FrontEnd {
         pkb->nextKB.setProcessedAll(s, type);
     }
 
-    void RuntimeDesignExtractor::addBiDirEdge(StmtId s1, StmtId s2) {
-        pkb->nextKB.addToAll(s1, s2, NodeType::SUCCESSOR);
-        pkb->nextKB.addToAll(s2, s1, NodeType::PREDECESSOR);
+    void RuntimeDesignExtractor::addBiDirEdge(StmtId s1, StmtId s2, NodeType type) {
+        NodeType reverseType = type == NodeType::SUCCESSOR ? NodeType::PREDECESSOR : NodeType::SUCCESSOR;
+        pkb->nextKB.addToAll(s1, s2, type);
+        pkb->nextKB.addToAll(s2, s1, reverseType);
     }
 
     bool RuntimeDesignExtractor::nextStarRecurse(StmtId curr, StmtId last, StmtId s2) {
@@ -90,7 +91,7 @@ namespace FrontEnd {
 
         for (const auto& n : neighbours) {
             // Add bi-directional edge first before cycle check for Next*(s, s)
-            addBiDirEdge(root, n);
+            addBiDirEdge(root, n, type);
             if (visited.find(n) != visited.end()) {
                 // Cycle Detected
                 return;

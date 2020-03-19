@@ -32,7 +32,7 @@ bool NextKB::nextStar(StmtId s1, StmtId s2) {
         if (allNext.find(s2) != allNext.end()) {  // cached
             return true;
         }
-        if (nextStarTable.at(s1).processedAllNext) {  // s1 fully processed, s2 not in execution sequence
+        if (processedAll(s1, NodeType::SUCCESSOR)) {  // s1 fully processed, s2 not in execution sequence
             return false;
         }
     }
@@ -59,11 +59,11 @@ const std::unordered_set<StmtId>& NextKB::getAllNodes(StmtId s, NodeType type) {
     }
     if (nextStarTable.find(s) != nextStarTable.end()) {
         if (type == NodeType::SUCCESSOR) {
-            if (nextStarTable.at(s).processedAllNext) {  // cached
+            if (processedAll(s, type)) {  // cached
                 return nextStarTable.at(s).allNext;
             }
         } else {
-            if (nextStarTable.at(s).processedAllPrev) {  // cached
+            if (processedAll(s, type)) {  // cached
                 return nextStarTable.at(s).allPrev;
             }
         }
@@ -98,6 +98,18 @@ bool NextKB::hasPrev(StmtId s) {
         return nextTable.at(s).directPrev.size() != 0;
     }
     catch (const std::out_of_range&) {
+        return false;
+    }
+}
+
+bool NextKB::processedAll(StmtId s, NodeType type) {
+    try {
+        if (type == NodeType::SUCCESSOR) {
+            return nextStarTable.at(s).processedAllNext;
+        } else {
+            return nextStarTable.at(s).processedAllPrev;
+        }
+    } catch (const std::out_of_range&) {
         return false;
     }
 }

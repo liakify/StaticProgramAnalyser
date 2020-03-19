@@ -69,6 +69,11 @@ class NextKB {
     bool hasPrev(StmtId s);
 
     /*
+        Returns processedAllNext/processedAllPrev of s for NodeType SUCCESSOR and PREDECESSOR respectively
+    */
+    bool processedAll(StmtId s, NodeType type);
+
+    /*
         Sets processedAllNext/processedAllPrev of s to TRUE for NodeType SUCCESSOR and PREDECESSOR respectively
     */
     void setProcessedAll(StmtId s, NodeType type);
