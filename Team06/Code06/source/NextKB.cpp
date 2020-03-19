@@ -18,20 +18,18 @@ bool NextKB::next(StmtId s1, StmtId s2) {
 }
 
 bool NextKB::nextStar(StmtId s1, StmtId s2) {
-    int numStmts = pkb->stmtTable.size();
-    if (s1 < 1 || s1 > numStmts || s2 < 1 || s2 > numStmts) {
+    if (nextTable.find(s1) == nextTable.end() || nextTable.find(s2) == nextTable.end()) {
         return false;
     }
-    if (nextStarTable.find(s1) != nextStarTable.end()) {
-        std::unordered_set<StmtId> allNext = nextStarTable.at(s1).allNext;
-        if (allNext.find(s2) != allNext.end()) {  // cached
-            return true;
-        }
-        if (processedAll(s1, NodeType::SUCCESSOR)) {  // s1 fully processed, s2 not in execution sequence
-            return false;
-        }
+    if (nextStarTable.find(s1) == nextStarTable.end()) {
+        initCache(s1);
     }
-    return rtDE.nextStar(s1, s2, pkb);
+    if (nextStarTable.find(s2) == nextStarTable.end()) {
+        initCache(s2);
+    }
+
+    std::unordered_set<StmtId> allNext = nextStarTable.at(s1).allNext;
+    return allNext.find(s2) != allNext.end();
 }
 
 const std::unordered_set<StmtId>& NextKB::getDirectNodes(StmtId s, NodeType type) {
@@ -48,22 +46,12 @@ const std::unordered_set<StmtId>& NextKB::getDirectNodes(StmtId s, NodeType type
 }
 
 const std::unordered_set<StmtId>& NextKB::getAllNodes(StmtId s, NodeType type) {
-    int numStmts = pkb->stmtTable.size();
-    if (s < 1 || s > numStmts) {
+    if (nextTable.find(s) == nextTable.end()) {
         return EMPTY_RESULT;
     }
-    if (nextStarTable.find(s) != nextStarTable.end()) {
-        if (type == NodeType::SUCCESSOR) {
-            if (processedAll(s, type)) {  // cached
-                return nextStarTable.at(s).allNext;
-            }
-        } else {
-            if (processedAll(s, type)) {  // cached
-                return nextStarTable.at(s).allPrev;
-            }
-        }
+    if (nextStarTable.find(s) == nextStarTable.end()) {
+        initCache(s);
     }
-    rtDE.processStmtAllNodes(s, type, pkb);
     if (type == NodeType::SUCCESSOR) {
         return nextStarTable.at(s).allNext;
     } else {
@@ -123,4 +111,10 @@ bool NextKB::hasNextRelation() {
 
 void NextKB::clear() {
     nextStarTable.clear();
+}
+
+void NextKB::initCache(StmtId s) {
+    nextRS& nxtRS = nextTable.at(s);
+    nextStarTable[s].allNext.insert(nxtRS.directNext.begin(), nxtRS.directNext.end());
+    nextStarTable[s].allPrev.insert(nxtRS.directPrev.begin(), nxtRS.directPrev.end());
 }
