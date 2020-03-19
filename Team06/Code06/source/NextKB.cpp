@@ -36,7 +36,7 @@ bool NextKB::nextStar(StmtId s1, StmtId s2) {
             return false;
         }
     }
-    return rtDE.nextStar(s1, s2);
+    return rtDE.nextStar(s1, s2, pkb);
 }
 
 const std::unordered_set<StmtId>& NextKB::getDirectNodes(StmtId s, NodeType type) {
@@ -68,7 +68,7 @@ const std::unordered_set<StmtId>& NextKB::getAllNodes(StmtId s, NodeType type) {
             }
         }
     }
-    rtDE.processStmtAllNodes(s, type);
+    rtDE.processStmtAllNodes(s, type, pkb);
     if (type == NodeType::SUCCESSOR) {
         return nextStarTable.at(s).allNext;
     } else {
