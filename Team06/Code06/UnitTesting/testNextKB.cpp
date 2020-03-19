@@ -1,8 +1,11 @@
 #include "stdafx.h"
+
 #include "CppUnitTest.h"
 #include "PKB.h"
+#include "Simple.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
+using namespace SIMPLE;
 
 namespace UnitTesting {
     PKB::PKB pkb;
