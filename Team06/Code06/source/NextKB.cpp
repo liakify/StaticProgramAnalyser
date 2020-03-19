@@ -98,10 +98,14 @@ bool NextKB::processedAll(StmtId s, NodeType type) {
 }
 
 void NextKB::setProcessedAll(StmtId s, NodeType type) {
-    if (type == NodeType::SUCCESSOR) {
-        nextStarTable.at(s).processedAllNext = true;
-    } else {
-        nextStarTable.at(s).processedAllPrev = true;
+    try {
+        if (type == NodeType::SUCCESSOR) {
+            nextStarTable.at(s).processedAllNext = true;
+        } else {
+            nextStarTable.at(s).processedAllPrev = true;
+        }
+    } catch (const std::out_of_range&) {
+        return;
     }
 }
 
