@@ -1,12 +1,11 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 #include "PKB.h"
-#include "NextKB.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace UnitTesting {
-    PKB::PKB pkb = PKB::PKB();
+    PKB::PKB pkb;
 
     TEST_CLASS(TestNextKB) {
     public:
