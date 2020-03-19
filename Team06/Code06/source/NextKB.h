@@ -5,12 +5,7 @@
 #include "unordered_set"
 
 #include "Constants.h"
-#include "RuntimeDesignExtractor.h"
 #include "Types.h"
-
-namespace PKB {
-    class PKB;
-}
 
 struct nextRS {
     std::unordered_set<StmtId> directPrev;
@@ -26,8 +21,6 @@ struct nextStarRS {
 
 class NextKB {
  public:
-    NextKB(PKB::PKB* pkb);
-
     /*
         Adds Next(s1, s2) to the nextTable where s2 can be executed immediately after s1
     */
@@ -89,9 +82,8 @@ class NextKB {
     void clear();
 
  private:
-    PKB::PKB* pkb;
-    FrontEnd::RuntimeDesignExtractor rtDE;
-
     std::unordered_map<StmtId, nextRS> nextTable;
     std::unordered_map<StmtId, nextStarRS> nextStarTable;
+
+    void initCache(StmtId s);
 };
