@@ -75,9 +75,17 @@ namespace FrontEnd {
             }
             return nextStarRecurse(parentId, whileSl.getLast(), s2);
         } else {  // parentStmt is IfStmt
-            if (s2 > last && s2 <= currStmtList.getLast()) {
-                return true;
+            if (currStmt->getType() == StmtType::IF) {
+                if (s2 > last && s2 <= currStmtList.getLast()) {
+                    return true;
+                }
             }
+            if (currStmt->getType() == StmtType::WHILE) {
+                if (s2 >= last && s2 <= currStmtList.getLast()) {
+                    return true;
+                }
+            }
+
             IfStmt* ifs = dynamic_cast<IfStmt*>(parentStmt.get());
             StatementList& elseSl = pkb->stmtListTable.get(ifs->getElseStmtLstId());
             return nextStarRecurse(parentId, elseSl.getLast(), s2);
