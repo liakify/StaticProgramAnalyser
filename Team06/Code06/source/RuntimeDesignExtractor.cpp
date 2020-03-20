@@ -25,7 +25,7 @@ namespace FrontEnd {
                     return true;
                 }
                 return false;
-            } else {
+            } else {  // rootParent is an IFStmt
                 if (s2 > rootParentStmtList.getLast() || s2 <= rootParent) {
                     return false;
                 }
@@ -42,7 +42,6 @@ namespace FrontEnd {
         this->pkb = pkb;
 
         std::unordered_set<StmtId> visited;
-        NodeType reverseType = type == NodeType::SUCCESSOR ? NodeType::PREDECESSOR : NodeType::SUCCESSOR;
         nextStarDFS(s, s, visited, type);
         pkb->nextKB.setProcessedAll(s, type);
     }
