@@ -43,13 +43,13 @@ namespace FrontEnd {
 
         std::unordered_set<StmtId> visited;
         nextStarDFS(s, s, visited, type);
-        pkb->nextKB.setProcessedAll(s, type);
+        pkb->nextStarSetProcessedAll(s, type);
     }
 
     void RuntimeDesignExtractor::addBiDirEdge(StmtId s1, StmtId s2, NodeType type) {
         NodeType reverseType = type == NodeType::SUCCESSOR ? NodeType::PREDECESSOR : NodeType::SUCCESSOR;
-        pkb->nextKB.addToAll(s1, s2, type);
-        pkb->nextKB.addToAll(s2, s1, reverseType);
+        pkb->nextStarAddToAll(s1, s2, type);
+        pkb->nextStarAddToAll(s2, s1, reverseType);
     }
 
     bool RuntimeDesignExtractor::nextStarRecurse(StmtId curr, StmtId last, StmtId s2) {
@@ -88,7 +88,7 @@ namespace FrontEnd {
     void RuntimeDesignExtractor::nextStarDFS(StmtId root, StmtId curr, std::unordered_set<StmtId>& visited, NodeType type) {
         visited.insert(curr);
 
-        std::unordered_set<StmtId> neighbours = pkb->nextKB.getDirectNodes(curr, type);
+        std::unordered_set<StmtId> neighbours = pkb->nextStarGetDirectNodes(curr, type);
 
         for (const auto& n : neighbours) {
             // Add bi-directional edge first before cycle check for Next*(s, s)

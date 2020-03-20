@@ -4,6 +4,14 @@
 #include "PKB.h"
 
 namespace PKB {
+    void PKB::addNext(StmtId s1, StmtId s2) {
+        nextKB.addNext(s1, s2);
+    }
+
+    bool PKB::next(StmtId s1, StmtId s2) {
+        return nextKB.next(s1, s2);
+    }
+
     bool PKB::nextStar(StmtId s1, StmtId s2) {
         int numStmts = stmtTable.size();
         if (s1 < 1 || s1 > numStmts || s2 < 1 || s2 > numStmts) {
@@ -18,6 +26,10 @@ namespace PKB {
         return rtDE.nextStar(s1, s2, this);
     }
 
+    const std::unordered_set<StmtId>& PKB::nextStarGetDirectNodes(StmtId s, NodeType type) {
+        return nextKB.getDirectNodes(s, type);
+    }
+
     const std::unordered_set<StmtId>& PKB::nextStarGetAllNodes(StmtId s, NodeType type) {
         int numStmts = stmtTable.size();
         if (s < 1 || s > numStmts) {
@@ -28,6 +40,30 @@ namespace PKB {
         }
         rtDE.processNextStarStmtAllNodes(s, type, this);
         return nextKB.getAllNodes(s, type);
+    }
+
+    void PKB::nextStarAddToAll(StmtId s1, StmtId s2, NodeType type) {
+        nextKB.addToAll(s1, s2, type);
+    }
+
+    bool PKB::hasNext(StmtId s) {
+        return nextKB.hasNext(s);
+    }
+
+    bool PKB::hasPrev(StmtId s) {
+        return nextKB.hasPrev(s);
+    }
+
+    bool PKB::nextStarProcessedAll(StmtId s, NodeType type) {
+        return nextKB.processedAll(s, type);
+    }
+
+    void PKB::nextStarSetProcessedAll(StmtId s, NodeType type) {
+        nextKB.setProcessedAll(s, type);
+    }
+
+    bool PKB::hasNextRelation() {
+        return nextKB.hasNextRelation();
     }
 
     void PKB::clear() {

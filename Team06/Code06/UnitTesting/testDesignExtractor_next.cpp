@@ -98,62 +98,62 @@ namespace UnitTesting
         }
 
         TEST_METHOD(populateNext) {
-            Assert::IsTrue(pkbNext.nextKB.next(2, 3));
-            Assert::IsTrue(pkbNext.nextKB.next(3, 4));
-            Assert::IsTrue(pkbNext.nextKB.next(3, 7));
-            Assert::IsTrue(pkbNext.nextKB.next(4, 5));
-            Assert::IsTrue(pkbNext.nextKB.next(4, 6));
-            Assert::IsTrue(pkbNext.nextKB.next(5, 3));
-            Assert::IsTrue(pkbNext.nextKB.next(6, 3));
+            Assert::IsTrue(pkbNext.next(2, 3));
+            Assert::IsTrue(pkbNext.next(3, 4));
+            Assert::IsTrue(pkbNext.next(3, 7));
+            Assert::IsTrue(pkbNext.next(4, 5));
+            Assert::IsTrue(pkbNext.next(4, 6));
+            Assert::IsTrue(pkbNext.next(5, 3));
+            Assert::IsTrue(pkbNext.next(6, 3));
 
-            Assert::IsFalse(pkbNext.nextKB.next(1, 1));
-            Assert::IsFalse(pkbNext.nextKB.next(2, 2));
-            Assert::IsFalse(pkbNext.nextKB.next(3, 3));
-            Assert::IsFalse(pkbNext.nextKB.next(4, 4));
-            Assert::IsFalse(pkbNext.nextKB.next(5, 5));
-            Assert::IsFalse(pkbNext.nextKB.next(6, 6));
-            Assert::IsFalse(pkbNext.nextKB.next(7, 7));
+            Assert::IsFalse(pkbNext.next(1, 1));
+            Assert::IsFalse(pkbNext.next(2, 2));
+            Assert::IsFalse(pkbNext.next(3, 3));
+            Assert::IsFalse(pkbNext.next(4, 4));
+            Assert::IsFalse(pkbNext.next(5, 5));
+            Assert::IsFalse(pkbNext.next(6, 6));
+            Assert::IsFalse(pkbNext.next(7, 7));
 
-            Assert::IsFalse(pkbNext.nextKB.next(1, 2));
-            Assert::IsFalse(pkbNext.nextKB.next(1, 3));
-            Assert::IsFalse(pkbNext.nextKB.next(1, 4));
-            Assert::IsFalse(pkbNext.nextKB.next(1, 5));
-            Assert::IsFalse(pkbNext.nextKB.next(1, 6));
-            Assert::IsFalse(pkbNext.nextKB.next(1, 7));
-            Assert::IsFalse(pkbNext.nextKB.next(2, 1));
-            Assert::IsFalse(pkbNext.nextKB.next(3, 1));
-            Assert::IsFalse(pkbNext.nextKB.next(4, 1));
-            Assert::IsFalse(pkbNext.nextKB.next(5, 1));
-            Assert::IsFalse(pkbNext.nextKB.next(6, 1));
-            Assert::IsFalse(pkbNext.nextKB.next(7, 1));
+            Assert::IsFalse(pkbNext.next(1, 2));
+            Assert::IsFalse(pkbNext.next(1, 3));
+            Assert::IsFalse(pkbNext.next(1, 4));
+            Assert::IsFalse(pkbNext.next(1, 5));
+            Assert::IsFalse(pkbNext.next(1, 6));
+            Assert::IsFalse(pkbNext.next(1, 7));
+            Assert::IsFalse(pkbNext.next(2, 1));
+            Assert::IsFalse(pkbNext.next(3, 1));
+            Assert::IsFalse(pkbNext.next(4, 1));
+            Assert::IsFalse(pkbNext.next(5, 1));
+            Assert::IsFalse(pkbNext.next(6, 1));
+            Assert::IsFalse(pkbNext.next(7, 1));
 
-            Assert::IsFalse(pkbNext.nextKB.next(2, 4));
-            Assert::IsFalse(pkbNext.nextKB.next(2, 5));
-            Assert::IsFalse(pkbNext.nextKB.next(2, 6));
-            Assert::IsFalse(pkbNext.nextKB.next(2, 7));
-            Assert::IsFalse(pkbNext.nextKB.next(3, 2));
-            Assert::IsFalse(pkbNext.nextKB.next(4, 2));
-            Assert::IsFalse(pkbNext.nextKB.next(5, 2));
-            Assert::IsFalse(pkbNext.nextKB.next(6, 2));
-            Assert::IsFalse(pkbNext.nextKB.next(7, 2));
+            Assert::IsFalse(pkbNext.next(2, 4));
+            Assert::IsFalse(pkbNext.next(2, 5));
+            Assert::IsFalse(pkbNext.next(2, 6));
+            Assert::IsFalse(pkbNext.next(2, 7));
+            Assert::IsFalse(pkbNext.next(3, 2));
+            Assert::IsFalse(pkbNext.next(4, 2));
+            Assert::IsFalse(pkbNext.next(5, 2));
+            Assert::IsFalse(pkbNext.next(6, 2));
+            Assert::IsFalse(pkbNext.next(7, 2));
 
-            Assert::IsFalse(pkbNext.nextKB.next(3, 5));
-            Assert::IsFalse(pkbNext.nextKB.next(3, 6));
-            Assert::IsFalse(pkbNext.nextKB.next(4, 3));
-            Assert::IsFalse(pkbNext.nextKB.next(7, 3));
+            Assert::IsFalse(pkbNext.next(3, 5));
+            Assert::IsFalse(pkbNext.next(3, 6));
+            Assert::IsFalse(pkbNext.next(4, 3));
+            Assert::IsFalse(pkbNext.next(7, 3));
 
-            Assert::IsFalse(pkbNext.nextKB.next(4, 7));
-            Assert::IsFalse(pkbNext.nextKB.next(5, 4));
-            Assert::IsFalse(pkbNext.nextKB.next(6, 4));
-            Assert::IsFalse(pkbNext.nextKB.next(7, 4));
+            Assert::IsFalse(pkbNext.next(4, 7));
+            Assert::IsFalse(pkbNext.next(5, 4));
+            Assert::IsFalse(pkbNext.next(6, 4));
+            Assert::IsFalse(pkbNext.next(7, 4));
 
-            Assert::IsFalse(pkbNext.nextKB.next(5, 6));
-            Assert::IsFalse(pkbNext.nextKB.next(5, 7));
-            Assert::IsFalse(pkbNext.nextKB.next(6, 5));
-            Assert::IsFalse(pkbNext.nextKB.next(7, 5));
+            Assert::IsFalse(pkbNext.next(5, 6));
+            Assert::IsFalse(pkbNext.next(5, 7));
+            Assert::IsFalse(pkbNext.next(6, 5));
+            Assert::IsFalse(pkbNext.next(7, 5));
 
-            Assert::IsFalse(pkbNext.nextKB.next(6, 7));
-            Assert::IsFalse(pkbNext.nextKB.next(7, 6));
+            Assert::IsFalse(pkbNext.next(6, 7));
+            Assert::IsFalse(pkbNext.next(7, 6));
         }
     };
 }
