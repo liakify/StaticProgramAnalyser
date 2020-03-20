@@ -75,7 +75,7 @@ namespace FrontEnd {
             }
             return nextStarRecurse(parentId, whileSl.getLast(), s2);
         } else {  // parentStmt is IfStmt
-            if ((s2 > last && s2 <= currStmtList.getLast()) || 
+            if ((s2 > last && s2 <= currStmtList.getLast()) ||
                 (currStmt->getType() == StmtType::WHILE && s2 == last)) {
                 return true;
             }
