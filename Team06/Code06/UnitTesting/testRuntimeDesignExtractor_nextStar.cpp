@@ -415,9 +415,9 @@ namespace UnitTesting {
             Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(17, NodeType::SUCCESSOR) == EMPTY_RESULT);
             Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(17, NodeType::PREDECESSOR) == whileLoopAndBef);
 
-            std::unordered_set<StmtId> allInIf = { 19, 20, 21, 22, 23, 24 };
-            std::unordered_set<StmtId> allAftIf = { 19, 20, 21 };
-            std::unordered_set<StmtId> allAftIfInclIf = { 18, 19, 20, 21 };
+            std::unordered_set<StmtId> allInIf { 19, 20, 21, 22, 23, 24 };
+            std::unordered_set<StmtId> allAftIf { 19, 20, 21 };
+            std::unordered_set<StmtId> allAftIfInclIf { 18, 19, 20, 21 };
 
             Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(18, NodeType::SUCCESSOR) == allInIf);
             Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(18, NodeType::PREDECESSOR) == EMPTY_RESULT);
@@ -431,8 +431,8 @@ namespace UnitTesting {
             Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(21, NodeType::SUCCESSOR) == allAftIf);
             Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(21, NodeType::PREDECESSOR) == allAftIfInclIf);
 
-            std::unordered_set<StmtId> allAftElse = { 22, 23, 24 };
-            std::unordered_set<StmtId> allAftElseInclIf = { 18, 22, 23, 24 };
+            std::unordered_set<StmtId> allAftElse { 22, 23, 24 };
+            std::unordered_set<StmtId> allAftElseInclIf { 18, 22, 23, 24 };
 
             Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(22, NodeType::SUCCESSOR) == allAftElse);
             Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(22, NodeType::PREDECESSOR) == allAftElseInclIf);
@@ -459,6 +459,39 @@ namespace UnitTesting {
 
             Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(29, NodeType::SUCCESSOR) == procDWhile);
             Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(29, NodeType::PREDECESSOR) == procDWhile);
+
+            Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(30, NodeType::SUCCESSOR) == std::unordered_set<StmtId> {31, 32, 33, 34, 35, 36, 37, 38, 39, 40});
+            Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(30, NodeType::PREDECESSOR) == EMPTY_RESULT);
+
+            Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(31, NodeType::SUCCESSOR) == std::unordered_set<StmtId> {32, 33, 34, 35, 36, 37, 38, 39, 40});
+            Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(31, NodeType::PREDECESSOR) == std::unordered_set<StmtId> {30});
+
+            Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(32, NodeType::SUCCESSOR) == std::unordered_set<StmtId> {33, 34, 35, 40});
+            Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(32, NodeType::PREDECESSOR) == std::unordered_set<StmtId> {30, 31});
+
+            Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(33, NodeType::SUCCESSOR) == std::unordered_set<StmtId> {34, 35, 40});
+            Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(33, NodeType::PREDECESSOR) == std::unordered_set<StmtId> {30, 31, 32});
+
+            Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(34, NodeType::SUCCESSOR) == std::unordered_set<StmtId> {40});
+            Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(34, NodeType::PREDECESSOR) == std::unordered_set<StmtId> {30, 31, 32, 33});
+
+            Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(35, NodeType::SUCCESSOR) == std::unordered_set<StmtId> {40});
+            Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(35, NodeType::PREDECESSOR) == std::unordered_set<StmtId> {30, 31, 32, 33});
+
+            Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(36, NodeType::SUCCESSOR) == std::unordered_set<StmtId> {37, 38, 39, 40});
+            Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(36, NodeType::PREDECESSOR) == std::unordered_set<StmtId> {30, 31});
+
+            Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(37, NodeType::SUCCESSOR) == std::unordered_set<StmtId> {39, 40});
+            Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(37, NodeType::PREDECESSOR) == std::unordered_set<StmtId> {30, 31, 36});
+
+            Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(38, NodeType::SUCCESSOR) == std::unordered_set<StmtId> {39, 40});
+            Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(38, NodeType::PREDECESSOR) == std::unordered_set<StmtId> {30, 31, 36});
+
+            Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(39, NodeType::SUCCESSOR) == std::unordered_set<StmtId> {40});
+            Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(39, NodeType::PREDECESSOR) == std::unordered_set<StmtId> {30, 31, 36, 37, 38});
+
+            Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(40, NodeType::SUCCESSOR) == EMPTY_RESULT);
+            Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(40, NodeType::PREDECESSOR) == std::unordered_set<StmtId> {30, 31, 32, 33, 34, 35, 36, 37, 38, 39});
 
             Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(0, NodeType::SUCCESSOR) == EMPTY_RESULT);
             Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(0, NodeType::PREDECESSOR) == EMPTY_RESULT);
