@@ -1,0 +1,10 @@
+procedure p {
+    read x;
+    print y;
+    if (x > y) then {
+        y = y + 5; } else {
+        call p2; } }
+procedure p2 {
+    z = 3;
+    while (z > 0) {
+        z = x + a; } }

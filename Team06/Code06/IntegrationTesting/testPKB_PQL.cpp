@@ -1,7 +1,9 @@
 #include "stdafx.h"
 #include "CppUnitTest.h"
 #include "PQL.h"
+#include "PKB.h"
 #include "Simple.h"
+#include "Types.h"
 
 using std::string;
 
@@ -24,7 +26,7 @@ namespace IntegrationTesting {
         string query_selectDesignEntity_IF = "if ifs; Select ifs";
         string query_selectDesignEntity_ASSIGN = "assign a; Select a";
         string query_selectDesignEntity_VAR = "variable v; Select v";
-        string query_selectDesignEntity_CONST = "variable v; Select v";
+        string query_selectDesignEntity_CONST = "constant cn; Select cn";
         string query_selectDesignEntity_PROGLINE = "prog_line n; Select n";
         string query_selectDesignEntity_PROC = "procedure p; Select p";
         
@@ -42,14 +44,22 @@ namespace IntegrationTesting {
         string query_relCond_NextStar = "prog_line n1, n2; Select BOOLEAN such that Next*(n1, n2)";
         string query_relCond_Affects = "assign a1, a2; Select a1 such that Affects(n1, n2)";
         string query_relCond_AffectsStar = "assign a1, a2; Select BOOLEAN such that Affects*(n1, n2)";
+
+        string query_patternCond_Assign = "assign a; Select a pattern a (_, _"a"_)";
+        string query_patternCond_If = "if ifs; variable v; Select v pattern ifs (v, _, _)";
+        string query_patternCond_While = "while w; variable v; Select v pattern w (v, _)";
         
         std::list<string> testQueryResult = {"1", "2", "3"};
 
     TEST_CLASS_INITIALIZE(setup) {
         PKB::PKB pkb = PKB::PKB();
-        pkb.stmtTable.insertStmt(&ReadStmt(1));
-        pkb.stmtTable.insertStmt(&ReadStmt(2));
-        pkb.stmtTable.insertStmt(&ReadStmt(3));
+        pkb.stmtListTable.insertStmtList(StatementList(std::vector<StmtId>({1, 2, 3, 4, 5, 6, 7, 8, 9, 10})));
+        pkb.procTable.insertProc(Procedure("p", 1));
+        pkb.procTable.insertProc(Procedure("p2", 2));
+        pkb.varTable.insertVar("x"); //VarId 1
+        pkb.varTable.insertVar("y"); //VarId 2
+        pkb.stmtTable.insertStmt(std::shared_ptr<Statement>(new ReadStmt(1)); //read x;
+        pkb.stmtTable.insertStmt(std::shared_ptr<Statement>(new PrintStmt(2)); //print x;
         pkb.parentKB.addParent(2, 3);
         pql = PQL::PQLManager(pkb);
     }
