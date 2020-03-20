@@ -26,7 +26,7 @@ namespace PKB {
         if (nextKB.processedAll(s, type)) {  // cached
             return nextKB.getAllNodes(s, type);
         }
-        rtDE.processStmtAllNodes(s, type, this);
+        rtDE.processNextStarStmtAllNodes(s, type, this);
         return nextKB.getAllNodes(s, type);
     }
 

@@ -38,7 +38,7 @@ namespace FrontEnd {
         }
     }
 
-    void RuntimeDesignExtractor::processStmtAllNodes(StmtId s, NodeType type, PKB::PKB* pkb) {
+    void RuntimeDesignExtractor::processNextStarStmtAllNodes(StmtId s, NodeType type, PKB::PKB* pkb) {
         this->pkb = pkb;
 
         std::unordered_set<StmtId> visited;

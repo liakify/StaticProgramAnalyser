@@ -17,7 +17,7 @@ namespace FrontEnd {
      public:
         bool nextStar(StmtId s1, StmtId s2, PKB::PKB* pkb);
 
-        void processStmtAllNodes(StmtId s, NodeType type, PKB::PKB* pkb);
+        void processNextStarStmtAllNodes(StmtId s, NodeType type, PKB::PKB* pkb);
 
      private:
         PKB::PKB* pkb;
