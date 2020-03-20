@@ -85,6 +85,9 @@ namespace FrontEnd {
                     return true;
                 }
             }
+            if (s2 > last && s2 <= currStmtList.getLast()) {  // curr is neither IF nor WHILE stmt
+                return true;
+            }
 
             IfStmt* ifs = dynamic_cast<IfStmt*>(parentStmt.get());
             StatementList& elseSl = pkb->stmtListTable.get(ifs->getElseStmtLstId());
