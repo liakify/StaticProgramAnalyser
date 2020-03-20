@@ -2,7 +2,7 @@
 #include "RuntimeDesignExtractor.h"
 
 namespace FrontEnd {
-    bool RuntimeDesignExtractor::nextStar(StmtId s1, StmtId s2, PKB::PKB* pkb) {
+    bool RuntimeDesignExtractor::processNextStar(StmtId s1, StmtId s2, PKB::PKB* pkb) {
         this->pkb = pkb;
 
         std::shared_ptr<Statement>& stmtS1 = pkb->stmtTable.get(s1);
@@ -38,7 +38,7 @@ namespace FrontEnd {
         }
     }
 
-    void RuntimeDesignExtractor::processNextStarStmtAllNodes(StmtId s, NodeType type, PKB::PKB* pkb) {
+    void RuntimeDesignExtractor::processNextStarGetAllNodes(StmtId s, NodeType type, PKB::PKB* pkb) {
         this->pkb = pkb;
 
         std::unordered_set<StmtId> visited;

@@ -23,7 +23,7 @@ namespace PKB {
         if (nextKB.processedAll(s1, NodeType::SUCCESSOR)) {  // allNext is fully processed for s1, i.e. no path from s1 to s2
             return false;
         }
-        return rtDE.nextStar(s1, s2, this);
+        return rtDE.processNextStar(s1, s2, this);
     }
 
     const std::unordered_set<StmtId>& PKB::nextStarGetDirectNodes(StmtId s, NodeType type) {
@@ -38,7 +38,7 @@ namespace PKB {
         if (nextKB.processedAll(s, type)) {  // cached
             return nextKB.getAllNodes(s, type);
         }
-        rtDE.processNextStarStmtAllNodes(s, type, this);
+        rtDE.processNextStarGetAllNodes(s, type, this);
         return nextKB.getAllNodes(s, type);
     }
 

@@ -15,9 +15,9 @@ namespace PKB {
 namespace FrontEnd {
     class RuntimeDesignExtractor {
      public:
-        bool nextStar(StmtId s1, StmtId s2, PKB::PKB* pkb);
+        bool processNextStar(StmtId s1, StmtId s2, PKB::PKB* pkb);
 
-        void processNextStarStmtAllNodes(StmtId s, NodeType type, PKB::PKB* pkb);
+        void processNextStarGetAllNodes(StmtId s, NodeType type, PKB::PKB* pkb);
 
      private:
         PKB::PKB* pkb;
