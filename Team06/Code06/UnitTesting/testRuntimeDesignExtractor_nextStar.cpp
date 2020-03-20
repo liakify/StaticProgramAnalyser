@@ -504,7 +504,22 @@ namespace UnitTesting {
         }
 
         TEST_METHOD(caching) {
+            /*
+                Currently can only be manually verified that previous clauses are cached by stepping into the functions.
+                Cache currently only saves relations that are TRUE i.e. can be represented by a bi-directional edge.
+            */
+            Assert::IsTrue(pkbNextStar.nextStar(2, 4));
+            Assert::IsTrue(pkbNextStar.nextStar(2, 4));
 
+            std::unordered_set<StmtId> whileLoopAndAft{ 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17 };
+            Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(2, NodeType::SUCCESSOR) == whileLoopAndAft);
+            Assert::IsTrue(pkbNextStar.nextStar(2, 4));
+            Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(2, NodeType::SUCCESSOR) == whileLoopAndAft);
+
+            std::unordered_set<StmtId> procDWhile = { 25, 26, 27, 28, 29 };
+            Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(26, NodeType::PREDECESSOR) == procDWhile);
+            Assert::IsTrue(pkbNextStar.nextStar(25, 26));
+            Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(26, NodeType::PREDECESSOR) == procDWhile);
         }
     };
 }
