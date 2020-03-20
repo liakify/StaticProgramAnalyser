@@ -47,7 +47,7 @@ namespace UnitTesting {
             }
 
             procedure c {
-            18.    if (cond) {
+            18.    if (cond) then {
             19.        while (cond) {
             20.            while (cond) {
             21.                read;
@@ -61,11 +61,41 @@ namespace UnitTesting {
                        }
                    }
             }
+
+            procedure d {
+            25.    while (cond) {
+            26.        read;
+            27.        while (cond) {
+            28.            read;
+                       }
+            29.        read;
+                   }
+            }
+
+            procedure e {
+            30.    read;
+            31.    if (cond) then {
+                       read;
+            32.        if (cond) then {
+            33.            read;
+                       } else {
+            34.            read;
+                       }
+                   } else {
+            35.        if (cond) then {
+            36.            read;
+                       } else {
+            37.            read;
+                       }
+                       read;
+                   }
+            38.    read;
+            }
             */
             pkbNextStar = PKB::PKB();
             pkbNextStar.procTable.insertProc(Procedure("a", 1));
             pkbNextStar.procTable.insertProc(Procedure("b", 2));
-            pkbNextStar.procTable.insertProc(Procedure("c", 3));
+            pkbNextStar.procTable.insertProc(Procedure("c", 10));
 
             StatementList sl1 = StatementList(std::vector<StmtId>{1});
             pkbNextStar.stmtListTable.insertStmtLst(sl1);
@@ -131,63 +161,85 @@ namespace UnitTesting {
         }
 
         TEST_METHOD(nextStar) {
-            //Assert::IsTrue(pkbNextStar.nextStar(2, 4));
-            //Assert::IsTrue(pkbNextStar.nextStar(2, 3));
-            //Assert::IsTrue(pkbNextStar.nextStar(3, 4));
-            //Assert::IsTrue(pkbNextStar.nextStar(3, 7));
-            //Assert::IsTrue(pkbNextStar.nextStar(4, 5));
-            //Assert::IsTrue(pkbNextStar.nextStar(4, 6));
-            //Assert::IsTrue(pkbNextStar.nextStar(5, 3));
-            //Assert::IsTrue(pkbNextStar.nextStar(6, 3));
+            int numStmts = pkbNextStar.stmtTable.size();
 
-            //Assert::IsFalse(pkbNextStar.nextStar(1, 1));
-            //Assert::IsFalse(pkbNextStar.nextStar(2, 2));
-            //Assert::IsFalse(pkbNextStar.nextStar(3, 3));
-            //Assert::IsFalse(pkbNextStar.nextStar(4, 4));
-            //Assert::IsFalse(pkbNextStar.nextStar(5, 5));
-            //Assert::IsFalse(pkbNextStar.nextStar(6, 6));
-            //Assert::IsFalse(pkbNextStar.nextStar(7, 7));
+            for (int i = 1; i <= numStmts; i++) {
+                Assert::IsFalse(pkbNextStar.nextStar(1, i));
+                Assert::IsFalse(pkbNextStar.nextStar(i, 1));
+            }
 
-            //Assert::IsFalse(pkbNextStar.nextStar(1, 2));
-            //Assert::IsFalse(pkbNextStar.nextStar(1, 3));
-            //Assert::IsFalse(pkbNextStar.nextStar(1, 4));
-            //Assert::IsFalse(pkbNextStar.nextStar(1, 5));
-            //Assert::IsFalse(pkbNextStar.nextStar(1, 6));
-            //Assert::IsFalse(pkbNextStar.nextStar(1, 7));
-            //Assert::IsFalse(pkbNextStar.nextStar(2, 1));
-            //Assert::IsFalse(pkbNextStar.nextStar(3, 1));
-            //Assert::IsFalse(pkbNextStar.nextStar(4, 1));
-            //Assert::IsFalse(pkbNextStar.nextStar(5, 1));
-            //Assert::IsFalse(pkbNextStar.nextStar(6, 1));
-            //Assert::IsFalse(pkbNextStar.nextStar(7, 1));
+            StmtId procBLastStmt = 17;
+            StmtId whileLastStmt = 16;
 
-            //Assert::IsFalse(pkbNextStar.nextStar(2, 4));
-            //Assert::IsFalse(pkbNextStar.nextStar(2, 5));
-            //Assert::IsFalse(pkbNextStar.nextStar(2, 6));
-            //Assert::IsFalse(pkbNextStar.nextStar(2, 7));
-            //Assert::IsFalse(pkbNextStar.nextStar(3, 2));
-            //Assert::IsFalse(pkbNextStar.nextStar(4, 2));
-            //Assert::IsFalse(pkbNextStar.nextStar(5, 2));
-            //Assert::IsFalse(pkbNextStar.nextStar(6, 2));
-            //Assert::IsFalse(pkbNextStar.nextStar(7, 2));
+            Assert::IsFalse(pkbNextStar.nextStar(2, 2));
+            for (int i = 3; i <= numStmts; i++) {
+                if (i <= procBLastStmt) {
+                    Assert::IsTrue(pkbNextStar.nextStar(2, i));
+                } else {
+                    Assert::IsFalse(pkbNextStar.nextStar(2, i));
+                }
+                Assert::IsFalse(pkbNextStar.nextStar(i, 2));
+            }
 
-            //Assert::IsFalse(pkbNextStar.nextStar(3, 5));
-            //Assert::IsFalse(pkbNextStar.nextStar(3, 6));
-            //Assert::IsFalse(pkbNextStar.nextStar(4, 3));
-            //Assert::IsFalse(pkbNextStar.nextStar(7, 3));
+            for (int j = 3; j <= whileLastStmt; j++) {
+                for (int i = j; i <= numStmts; i++) {
+                    if (i <= procBLastStmt) {
+                        Assert::IsTrue(pkbNextStar.nextStar(j, i));
+                        if (i <= whileLastStmt) {
+                            Assert::IsTrue(pkbNextStar.nextStar(i, j));
+                        } else {
+                            Assert::IsFalse(pkbNextStar.nextStar(i, j));
+                        }
+                    } else {
+                        Assert::IsFalse(pkbNextStar.nextStar(j, i));
+                        Assert::IsFalse(pkbNextStar.nextStar(i, j));
+                    }
+                }
+            }
 
-            //Assert::IsFalse(pkbNextStar.nextStar(4, 7));
-            //Assert::IsFalse(pkbNextStar.nextStar(5, 4));
-            //Assert::IsFalse(pkbNextStar.nextStar(6, 4));
-            //Assert::IsFalse(pkbNextStar.nextStar(7, 4));
+            for (int i = 17; i <= numStmts; i++) {
+                Assert::IsFalse(pkbNextStar.nextStar(17, i));
+                Assert::IsFalse(pkbNextStar.nextStar(i, 17));
+            }
 
-            //Assert::IsFalse(pkbNextStar.nextStar(5, 6));
-            //Assert::IsFalse(pkbNextStar.nextStar(5, 7));
-            //Assert::IsFalse(pkbNextStar.nextStar(6, 5));
-            //Assert::IsFalse(pkbNextStar.nextStar(7, 5));
+            StmtId procCFirstStmt = 18;
+            StmtId procCLastStmt = 24;
 
-            //Assert::IsFalse(pkbNextStar.nextStar(6, 7));
-            //Assert::IsFalse(pkbNextStar.nextStar(7, 6));
+            Assert::IsFalse(pkbNextStar.nextStar(18, 18));
+            for (int i = procCFirstStmt + 1; i <= numStmts; i++) {
+                if (i <= procCLastStmt) {
+                    Assert::IsTrue(pkbNextStar.nextStar(18, i));
+                } else {
+                    Assert::IsFalse(pkbNextStar.nextStar(18, i));
+                }
+                Assert::IsFalse(pkbNextStar.nextStar(i, 18));
+            }
+
+            for (int j = 19; j <= 21; j++) {
+                for (int i = j; i <= numStmts; i++) {
+                    if (i <= 21) {
+                        Assert::IsTrue(pkbNextStar.nextStar(j, i));
+                        Assert::IsTrue(pkbNextStar.nextStar(i, j));
+                    } else {
+                        Assert::IsFalse(pkbNextStar.nextStar(j, i));
+                        Assert::IsFalse(pkbNextStar.nextStar(i, j));
+                    }
+                }
+            }
+
+            for (int j = 22; j <= 24; j++) {
+                for (int i = j; i <= numStmts; i++) {
+                    if (i <= 24) {
+                        Assert::IsTrue(pkbNextStar.nextStar(j, i));
+                        Assert::IsTrue(pkbNextStar.nextStar(i, j));
+                    } else {
+                        Assert::IsFalse(pkbNextStar.nextStar(j, i));
+                        Assert::IsFalse(pkbNextStar.nextStar(i, j));
+                    }
+                }
+            }
+
+            
         }
 
         TEST_METHOD(processStmtAllNodes) {
@@ -245,32 +297,33 @@ namespace UnitTesting {
             Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(17, NodeType::SUCCESSOR) == EMPTY_RESULT);
             Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(17, NodeType::PREDECESSOR) == whileLoopAndBef);
 
-            //std::unordered_set<StmtId> allAftIf = { 19, 20, 21 };
-            //std::unordered_set<StmtId> allAftIfInclIf = { 18, 19, 20, 21 };
+            std::unordered_set<StmtId> allInIf = { 19, 20, 21, 22, 23, 24 };
+            std::unordered_set<StmtId> allAftIf = { 19, 20, 21 };
+            std::unordered_set<StmtId> allAftIfInclIf = { 18, 19, 20, 21 };
 
-            //Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(18, NodeType::SUCCESSOR) == allAftIf);
-            //Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(18, NodeType::PREDECESSOR) == EMPTY_RESULT);
+            Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(18, NodeType::SUCCESSOR) == allInIf);
+            Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(18, NodeType::PREDECESSOR) == EMPTY_RESULT);
 
-            //Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(19, NodeType::SUCCESSOR) == allAftIf);
-            //Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(19, NodeType::PREDECESSOR) == allAftIfInclIf);
+            Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(19, NodeType::SUCCESSOR) == allAftIf);
+            Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(19, NodeType::PREDECESSOR) == allAftIfInclIf);
 
-            //Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(20, NodeType::SUCCESSOR) == allAftIf);
-            //Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(20, NodeType::PREDECESSOR) == allAftIfInclIf);
+            Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(20, NodeType::SUCCESSOR) == allAftIf);
+            Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(20, NodeType::PREDECESSOR) == allAftIfInclIf);
 
-            //Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(21, NodeType::SUCCESSOR) == allAftIf);
-            //Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(21, NodeType::PREDECESSOR) == allAftIfInclIf);
+            Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(21, NodeType::SUCCESSOR) == allAftIf);
+            Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(21, NodeType::PREDECESSOR) == allAftIfInclIf);
 
-            //std::unordered_set<StmtId> allAftElse = { 22, 23, 24 };
-            //std::unordered_set<StmtId> allAftElseInclIf = { 18, 22, 23, 24 };
+            std::unordered_set<StmtId> allAftElse = { 22, 23, 24 };
+            std::unordered_set<StmtId> allAftElseInclIf = { 18, 22, 23, 24 };
 
-            //Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(22, NodeType::SUCCESSOR) == allAftElse);
-            //Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(22, NodeType::PREDECESSOR) == allAftElseInclIf);
+            Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(22, NodeType::SUCCESSOR) == allAftElse);
+            Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(22, NodeType::PREDECESSOR) == allAftElseInclIf);
 
-            //Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(23, NodeType::SUCCESSOR) == allAftElse);
-            //Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(23, NodeType::PREDECESSOR) == allAftElseInclIf);
+            Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(23, NodeType::SUCCESSOR) == allAftElse);
+            Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(23, NodeType::PREDECESSOR) == allAftElseInclIf);
 
-            //Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(24, NodeType::SUCCESSOR) == allAftElse);
-            //Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(24, NodeType::PREDECESSOR) == allAftElseInclIf);
+            Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(24, NodeType::SUCCESSOR) == allAftElse);
+            Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(24, NodeType::PREDECESSOR) == allAftElseInclIf);
 
             Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(0, NodeType::SUCCESSOR) == EMPTY_RESULT);
             Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(0, NodeType::PREDECESSOR) == EMPTY_RESULT);
@@ -278,8 +331,12 @@ namespace UnitTesting {
             Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(-1, NodeType::SUCCESSOR) == EMPTY_RESULT);
             Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(-1, NodeType::PREDECESSOR) == EMPTY_RESULT);
 
-            Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(25, NodeType::SUCCESSOR) == EMPTY_RESULT);
-            Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(25, NodeType::PREDECESSOR) == EMPTY_RESULT);
+            Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(39, NodeType::SUCCESSOR) == EMPTY_RESULT);
+            Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(39, NodeType::PREDECESSOR) == EMPTY_RESULT);
+        }
+
+        TEST_METHOD(caching) {
+
         }
     };
 }
