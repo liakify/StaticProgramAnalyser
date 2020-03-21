@@ -127,14 +127,14 @@ namespace PQL {
                 }
 
                 if (synonymTable[syn2] == DesignEntity::CALL || synonymTable[syn2] == DesignEntity::READ || synonymTable[syn2] == DesignEntity::PRINT) {
-                    result1 = getStmtDataPairs(database, SPA::TypeUtils::getStmtTypeFromDesignEntity(synonymTable[syn2]));
+                    result2 = getStmtDataPairs(database, SPA::TypeUtils::getStmtTypeFromDesignEntity(synonymTable[syn2]));
                 } else if (synonymTable[syn2] == DesignEntity::VARIABLE) {
                     for (VarId i = 1; i <= database.varTable.size(); i++) {
-                        result1.insert(std::make_pair(database.varTable.get(i), 0));
+                        result2.insert(std::make_pair(database.varTable.get(i), 0));
                     }
                 } else if (synonymTable[syn2] == DesignEntity::PROCEDURE) {
                     for (ProcId i = 1; i <= database.procTable.size(); i++) {
-                        result1.insert(std::make_pair(database.procTable.get(i).getName(), 0));
+                        result2.insert(std::make_pair(database.procTable.get(i).getName(), 0));
                     }
                 }
 
