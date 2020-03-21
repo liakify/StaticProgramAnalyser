@@ -14,7 +14,7 @@ procedure SelectSuchThatPattern {
     e = e; } else {
     if (c2 == a1) then {
       c1 = f; } else {
-      print nested; }
+      print nested; } }
   while (c1 == a4) {
     nested = patternMatch; 
     if (c2 == a2) then {

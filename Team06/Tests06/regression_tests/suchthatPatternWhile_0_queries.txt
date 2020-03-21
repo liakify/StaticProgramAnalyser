@@ -1,27 +1,27 @@
 1 - case 0a: no relation between any synonym (true, true)
 while w; stmt s1, s2, s3; variable v;
 Select s1 such that Follows(s2, s3) pattern w (v, _)
-
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26
 5000
 2 - case 0a: (false, false)
-assign a; stmt s1, s2; variable v;
-Select s1 such that Parent(1, s2) pattern w (v, _)
-
+while w; stmt s1, s2; variable v;
+Select BOOLEAN such that Parent(1, s2) pattern w (v, _)
+FALSE
 5000
 3 - case 0a: (true, false)
 while w; stmt s1, s2;
-Select s1 such that Uses(s2, "b") pattern w ("notFound", _)
-
+Select BOOLEAN such that Uses(s2, "b") pattern w ("notFound", _)
+FALSE
 5000
 4 - case 0a: (false, true)
 while w; stmt s1, s2;
-Select s1 such that Modifies(s2, "notFound") pattern w ("notFound", _)
-
+Select BOOLEAN such that Modifies(s2, "notFound") pattern w ("notFound", _)
+FALSE
 5000
 5 - case 0b: result-cl related to either such-that or pattern clause (related-true, unrelated-true)
 while w; stmt s; variable v;
-Select s such that Modifies(s, v) pattern w ("a", _)
-
+Select s such that Modifies(s, v) pattern w ("c1", _)
+2, 3, 4, 6, 7, 8, 9, 10, 14, 15, 16, 17, 21, 22, 25, 26
 5000
 6 - case 0b: (related-true, unrelated-false)
 while w; stmt s; variable v;
@@ -36,102 +36,102 @@ Select w such that Modifies(s, "notFound") pattern w (v, _)
 8 - case 1a1: Connected clauses | Follows | while as left arg
 while w; stmt s; variable v;
 Select w such that Follows(w, s) pattern w (v, _)
-
+9, 21, 23
 5000
 9 - case 1a1: limiting pattern
 while w; stmt s; variable v;
 Select w such that Follows(w, s) pattern w ("a2", _)
-
+9
 5000
 10 - case 1a2: while as right arg
 while w; stmt s; variable v;
 Select w such that Follows(s, w) pattern w (v, _)
-
+9, 14, 19, 21, 23
 5000
 11 - case 1a2:  limiting pattern
 while w; stmt s; variable v;
 Select w such that Follows(s, w) pattern w ("a6", _)
-
+21
 5000
 12 - case 1a0: Follows => empty
 while w; stmt s; variable v;
-Select w such that Follows(w, 9) pattern w (v, _)
-
+Select BOOLEAN such that Follows(w, 9) pattern w (v, _)
+FALSE
 5000
 13 - case 1a0: pattern => empty
 while w; stmt s; variable v;
-Select w such that Follows(w, s) pattern w ("notFound", _)
-
+Select BOOLEAN such that Follows(w, s) pattern w ("notFound", _)
+FALSE
 5000
 14 - case 1b1: Connected clauses | Follows* | while as left argument
 while w; variable v; stmt s;
 Select w such that Follows*(w, s) pattern w (v, _)
-
+9, 21, 23
 5000
-15 - case 1b1
+15 - case 1b1: limiting pattern
 while w; variable v; stmt s;
-Select s such that Follows*(a, s) pattern w (v, _)
-
+Select s such that Follows*(w, s) pattern w ("usedHereOnly", _)
+25, 26
 5000
 16 - case 1b2: while as right argument
 while w; variable v; assign a;
 Select w such that Follows*(a, w) pattern w (v, _)
-14
+9, 14, 21, 23
 5000
-17 - case 1b2
+17 - case 1b2: limiting pattern
 while w; variable v; assign a;
-Select a such that Follows*(a, w) pattern w (v, _)
-10
+Select a such that Follows*(a, w) pattern w ("usedHereOnly", _)
+2, 3, 4
 5000
 18 - case 1b0: Follows* => empty
 while w; variable v;
-Select w such that Follows* (w, 1) pattern w (v, _)
-
+Select BOOLEAN such that Follows* (w, 1) pattern w (v, _)
+FALSE
 5000
 19 - case 1b0: pattern => empty
 while w; stmt s;
-Select w such that Follows*(w, s) pattern w ("notFound", _)
-
+Select BOOLEAN such that Follows*(w, s) pattern w ("notFound", _)
+FALSE
 5000
 20 - case 1c1: Connected clauses | Parent | while as left arg
 while w; variable v; stmt s;
 Select w such that Parent(w, s) pattern w (v, _)
-
+9, 14, 19, 21, 23
 5000
 21 - case 1c1
 while w; variable v; stmt s;
 Select s such that Parent(w, s) pattern w (v, _)
-
+10, 11, 14, 15, 16, 20, 22, 24
 5000
 22 - case 1c1: limiting pattern
 while w; variable v; stmt s;
 Select s such that Parent(w, s) pattern w ("a2", _)
-
+10, 11, 14
 5000
-23 - case 1c1: limiting pattern
-while w; variable v; stmt s;
-Select w such that Parent(w, s) pattern w ("c1", _)
-
-5000
-24 - case 1c2: while as right arg
+23 - case 1c2: while as right arg
 while w; variable v; stmt s;
 Select w such that Parent(s, w) pattern w (v, _)
-
+14, 19
+5000
+24 - case 1c2: limiting pattern
+while w; variable v; stmt s;
+Select s such that Parent(s, w) pattern w ("c4", _)
+16
 5000
 25 - case 1c0: Parent => empty
 while w; variable v;
-Select w such that Parent (1, a) pattern w (v, _)
-
+Select BOOLEAN such that Parent (1, w) pattern w (v, _)
+FALSE
 5000
 26 - case 1c0: pattern => empty
 while w;
-Select w such that Parent (_, _) pattern w ("notFound", _)
-
+Select BOOLEAN such that Parent (_, _) pattern w ("notFound", _)
+FALSE
 5000
 27 - case 1d1: Connected clauses | Parent* | while as left arg
 while w; stmt s; variable v;
 Select w such that Parent*(w, s) pattern w (v, _)
-13, 15
+9, 14, 19, 21, 23
 5000
 28 - case 1d1: limiting pattern
 while w; stmt s; variable v;
@@ -150,151 +150,151 @@ Select s such that Parent*(w, s) pattern w ("c4", _)
 5000
 31 - case 1d0: Parent* => empty
 while w; variable v;
-Select w such that Parent* (1, w) pattern w (v, _)
-
+Select BOOLEAN such that Parent* (1, w) pattern w (v, _)
+FALSE
 5000
 32 - case 1d0: pattern => empty
 while w;
-Select w such that Parent* (_, _) pattern w ("notFound", _)
-
+Select BOOLEAN such that Parent* (_, _) pattern w ("notFound", _)
+FALSE
 5000
 33 - case 1e1: Connected clauses | Uses | common by while
 while w; variable v;
 Select w such that Uses(w, "patternMatch") pattern w (v, _)
-
+9, 14
 5000
 34 - case 1e1: nested
 while w; variable v;
 Select w such that Uses(w, "patternMatch") pattern w ("c2", _)
-
+14
 5000
 35 - case 1e1
 while w; variable v1, v2;
 Select v1 such that Uses(w, v1) pattern w (v2, _)
-c1, a2, nested, patternMatch, c2, a3, nested2, a4, c3, a5, nested3, a6
+c1, a2, patternMatch, c2, a3, nested2, a4, c3, a5, nested3, a6, a7, c4, nested4, usedHereOnly, noAssignment
 5000
 36 - case 1e1
 while w; variable v;
 Select v such that Uses(w, v) pattern w ("a6", _)
-c1, a6
+c1, a6, nested2, noAssignment
 5000
 37 - case 1e1
 while w; variable v1, v2;
 Select v2 such that Uses(w, v1) pattern w (v2, _)
-c1, a2, nested, patternMatch, c2, a3, nested2, a4, c3, a5, nested3, a6
+c1, a2, c2, a4, a6, a7, c4, usedHereOnly, nested2, noAssignment
 5000
 38 - case 1e2: Connected clauses | Uses | common by variable
 while w; stmt s; variable v;
 Select s such that Uses(s, v) pattern w (v, _)
-6, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19
+5, 6, 9, 11, 12, 13, 14, 16, 19, 21, 23, 24
 5000
 39 - case 1e2
 while w; variable v; stmt s;
 Select w such that Uses(s, v) pattern w (v, _)
-
+9, 14, 19, 21, 23
 5000
 40 - case 1e2
 while w; stmt s; variable v;
 Select v such that Uses(s, v) pattern w (v, _)
-
+a2, a4, a6, a7, c1, c2, c4, usedHereOnly, noAssignment, nested2
 5000
 41 - case 1e3: Connected clauses | Uses | common by variable: Uses stmtRef =/= pattern assign stmt number
 while w; print pn; variable v;
 Select pn such that Uses(pn, v) pattern w (v, _)
-12, 13, 17, 18, 22
+5, 12, 13, 24
 5000
 42 - case 1e3
 while w; print pn; variable v;
 Select v such that Uses(pn, v) pattern w (v, _)
-
+a2, usedHereOnly, nested2
 5000
 43 - case 1e3
 while w; print pn; variable v;
 Select w such that Uses(pn, v) pattern w (v, _)
-
+9, 21, 23
 5000
 44 - case 1e4: Connected clauses | Uses | common by both while and variable
 while w; variable v;
 Select w such that Uses(w, v) pattern w (v, _)
-
+9, 14, 19, 21, 23
 5000
 45 - case 1e4
 while w; variable v;
 Select v such that Uses(w, v) pattern w (v, _)
-
+a2, a4, a6, a7, c1, c2, c4, usedHereOnly, noAssignment, nested2
 5000
 46 - case 1e0: Uses => empty set
 while w; variable v;
-Select w such that Uses(w, "notFound") pattern w (v, _)
-
+Select BOOLEAN such that Uses(w, "notFound") pattern w (v, _)
+FALSE
 5000
 47 - case 1e0: Pattern => empty set
 while w; variable v; stmt s;
-Select s such that Uses(s, v) pattern w (v, _)
-
+Select BOOLEAN such that Uses(s, v) pattern w ("notFound", _)
+FALSE
 5000
 48 - case 1f1: Connected clauses | Modifies | common by while
 while w; variable v1, v2;
 Select w such that Modifies(w, v1) pattern w (v2, _)
-
+9, 14, 21
 5000
 49 - case 1f1
 while w; variable v1, v2;
 Select v1 such that Modifies(w, v1) pattern w (v2, _)
-
+nested, nested2, nested3, noAssignment
 5000
 50 - case 1f1
 while w; variable v1, v2;
 Select v2 such that Modifies(w, v1) pattern w (v2, _)
-
+a2, a4, a6, c1, c2, noAssignment, nested2
 5000
 51 - case 1f2: Connected clauses | Modifies | common by variable
 while w1, w2; variable v;
 Select w1 such that Modifies(w1, v) pattern w2 (v, _)
-14
+9, 14, 21
 5000
 52 - case 1f2
 while w1, w2; variable v;
 Select w2 such that Modifies(w1, v) pattern w2 (v, _)
-9
+21
 5000
 53 - case 1f2
 while w1, w2; variable v;
 Select v such that Modifies(w1, v) pattern w2 (v, _)
-nested2
+noAssignment, nested2
 5000
 54 - case 1f3: Connected clauses | Modifies | common by variable: Modifies StmtRef =/= pattern assign stmt number
 read r; variable v;  while w;
 Select r such that Modifies(r, v) pattern w (v, _)
-15
+15, 22
 5000
 55 - case 1f3
 read r; variable v; while w; 
 Select v such that Modifies(r, v) pattern w (v, _)
-nested2
+noAssignment, nested2
 5000
 56 - case 1f3
 read r; variable v; while w;
 Select w such that Modifies(r, v) pattern w (v, _)
-9
+21
 5000
 57 - case 1f4: Connected clauses | Modifies | common by while and variable
 while w; variable v;
 Select w such that Modifies(w, v) pattern w (v, _)
-
+21
 5000
 58 - case 1f4
 while w; variable v;
 Select v such that Modifies (w, v) pattern w (v, _)
-
+noAssignment
 5000
 59 - case 1f0: Modifes => empty set
 while w; variable v;
-Select w such that Modifies(w, "notFound") pattern w (v, _)
-
+Select BOOLEAN such that Modifies(w, "notFound") pattern w (v, _)
+FALSE
 5000
 60 - case 1f0: pattern => empty set
 while w; variable v;
-Select w such that Modifies(w, v) pattern w ("notFound", _)
-
+Select BOOLEAN such that Modifies(w, v) pattern w ("notFound", _)
+FALSE
 5000
