@@ -3,7 +3,7 @@
 # For cmd reference:
 # Autotester.exe ..\..\Tests06\_source.txt ..\..\Tests06\_queries.txt ..\..\Tests06\_out.xml
 # Autotester.exe ..\..\Tests06\invalid_simple\simple_printXPrintY_source.txt ..\..\Tests06\invalid_simple\simple_printXPrintY_queries.txt ..\..\Tests06\invalid_simple\simple_printXPrintY_out.xml
-# Autotester.exe ..\..\Tests06\patternIf_operators_source.txt ..\..\Tests06\patternIf_operators_queries.txt ..\..\Tests06\patternIf_operators_out.xml
+# Autotester.exe ..\..\Tests06\suchthatPatternIf_0_source.txt ..\..\Tests06\suchthatPatternIf_0_queries.txt ..\..\Tests06\suchthatPatternIf_0_out.xml
 
 $source_suffix = '_source.txt'
 $query_suffix = '_queries.txt'
@@ -29,31 +29,50 @@ $list_of_test_files = @(
 'patternWhile_0',
 'patternIf_operators', 
 'patternWhile_operators',
+'suchthatPatternIf_0',
+'suchthatPatternWhile_0',
 'calls_0',
 'callsStar_0',
 'calls_1',
 'callsStar_1',
 'callsStar_twoDiamonds',
 'callsStar_threePronged',
+'valid_simple\simple_procNameEqualVarName'
 
 # ONLY MODIFY THE BELOW
-# '..\select_0'
-'..\valid_simple\simple_procNameEqualVarName'
+# '..\select_syn',
+# '..\select_attr',
+# '..\select_valid',
+# '..\select_invalid',
+# '..\suchthatPattern_1',
+# '..\patternIf_0fix',
+# '..\patternWhile_0fix',
+# '..\tuples_0'
+# '..\tuples_invalid'
+# '..\affects_0'
+# '..\affects_1'
+# '..\affects_2'
+# '..\affects_3'
+# '..\affects_invalidArgs'
+# '..\affectsStar_0'
+# '..\affectsStar_1'
+# '..\affectsStar_invalidArgs'
+# '..\suchthatPattern_affects+Star'
 )
 
 $list_of_no_xml_tests = @(
-'..\invalid_simple\simple_CondAsFalse',
-'..\invalid_simple\simple_CondAsTrue',
-'..\invalid_simple\simple_cyclicCalls',
-# '..\invalid_simple\simple_digitWithZero,'
-'..\invalid_simple\simple_logicExprNoBracket',
-'..\invalid_simple\simple_logicExprNotInCond',
-'..\invalid_simple\simple_nonDigitConstant',
-'..\invalid_simple\simple_nonExistProcCall',
-'..\invalid_simple\simple_printTwoVariables',
-'..\invalid_simple\simple_printXPrintY',
-'..\invalid_simple\simple_procSameName',
-'..\invalid_simple\simple_selfCalls'
+'invalid_simple\simple_CondAsFalse',
+'invalid_simple\simple_CondAsTrue',
+'invalid_simple\simple_cyclicCalls',
+'invalid_simple\simple_digitWithZero,'
+'invalid_simple\simple_logicExprNoBracket',
+'invalid_simple\simple_logicExprNotInCond',
+'invalid_simple\simple_nonDigitConstant',
+'invalid_simple\simple_nonExistProcCall',
+'invalid_simple\simple_printTwoVariables',
+'invalid_simple\simple_printXPrintY',
+'invalid_simple\simple_procSameName',
+'invalid_simple\simple_selfCalls'
 )
 
 Try {

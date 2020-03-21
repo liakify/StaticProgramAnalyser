@@ -82,18 +82,18 @@ const std::unordered_set<StmtId>& FollowsKB::getAllFollowing(StmtId stmtId) {
     }
 }
 
-void FollowsKB::setAllFollowers(StmtId stmtId, std::unordered_set<StmtId> followers) {
+void FollowsKB::setAllFollowers(StmtId stmtId, const std::unordered_set<StmtId>& followers) {
     try {
-        followsTable.at(stmtId).allFollowers = followers;
+        followsTable.at(stmtId).allFollowers.insert(followers.begin(), followers.end());
     }
     catch (const std::out_of_range &) {
         return;
     }
 }
 
-void FollowsKB::setAllFollowing(StmtId stmtId, std::unordered_set<StmtId> following) {
+void FollowsKB::setAllFollowing(StmtId stmtId, const std::unordered_set<StmtId>& following) {
     try {
-        followsTable.at(stmtId).allFollowing = following;
+        followsTable.at(stmtId).allFollowing.insert(following.begin(), following.end());
     }
     catch (const std::out_of_range &) {
         return;
