@@ -40,7 +40,10 @@ $list_of_test_files = @(
 'valid_simple\simple_procNameEqualVarName'
 
 # ONLY MODIFY THE BELOW
-# '..\select_0'
+# '..\select_syn',
+# '..\select_attr',
+# '..\select_valid',
+# '..\select_invalid',
 # '..\suchthatPattern_1',
 # '..\patternIf_0fix',
 # '..\patternWhile_0fix',
