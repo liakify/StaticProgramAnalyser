@@ -1,0 +1,6 @@
+procedure WithPatternWhile {
+  while (c1 == nested1) {
+    while (c2 == nested2) {
+      print a; }
+    while (c3 == nested2) {
+      print a; } } }
