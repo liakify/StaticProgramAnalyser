@@ -58,6 +58,7 @@ $list_of_test_files = @(
 # '..\affectsStar_1'
 # '..\affectsStar_invalidArgs'
 # '..\suchthatPattern_affects+Star'
+# '..\mixed_0'
 )
 
 $list_of_no_xml_tests = @(
