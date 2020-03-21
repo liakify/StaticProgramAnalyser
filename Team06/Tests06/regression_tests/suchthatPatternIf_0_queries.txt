@@ -1,7 +1,7 @@
 1 - case 0a: no relation between any synonyms (true, true)
 if ifs; stmt s1, s2, s3; variable v;
 Select s1 such that Follows(s2, s3) pattern ifs (v, _, _)
-
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30
 5000
 2 - case 0a: (false, false)
 stmt s1, s2; variable v; if ifs;
@@ -21,7 +21,7 @@ Select s1 such that Modifies(s2, "notFound") pattern ifs (v, _, _)
 5 - case 0b: result-cl related to either such-that or pattern clause (related-true, unrelated-true)
 if ifs; stmt s1, s2; variable v;
 Select s1 such that Modifies(s1, v) pattern ifs ("c1", _, _)
-
+2, 3, 4, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 17, 18, 22, 23, 24, 25, 27, 28, 29, 30
 5000
 6 - case 0b: (related-true, unrelated-false)
 if ifs; stmt s1, s2; variable v;
@@ -34,44 +34,44 @@ Select ifs such that Modifies(s, "b") pattern ifs (v, _, _)
 
 5000
 8 - case 1ifs: Connected clauses | Follows | assign
-if ifs; variable v;
+if ifs; variable v; stmt s;
 Select ifs such that Follows(ifs, s) pattern ifs (v, _, _)
-
+6, 9, 12, 19
 5000
 9 - case 1a1: 
-if ifs; variable v;
-Select such that Follows(ifs) pattern ifs (v, _, _)
-
+if ifs; variable v; stmt s;
+Select s such that Follows(ifs, s) pattern ifs (v, _, _)
+9, 12, 17, 22
 5000
 10 - case 1a1: limiting pattern
-if ifs; 
-Select ifs such that Follows(ifs) pattern ifs ("a2", _, _)
-6
+if ifs; stmt s;
+Select ifs such that Follows(ifs, s) pattern ifs ("a2", _, _)
+9, 19
 5000
 11 - case 1a1: limiting pattern
-if ifs; 
-Select such that Follows(ifs) pattern ifs ("a2", _, _)
-
+if ifs; stmt s;
+Select s such that Follows(ifs, s) pattern ifs ("a2", _, _)
+12, 22
 5000
 12 - case 1a0: Follows => empty
 if ifs; variable v;
-Select ifs such that Follows(ifs, 1) pattern ifs (v, _)
-
+Select BOOLEAN such that Follows(ifs, 1) pattern ifs (v, _, _)
+FALSE
 5000
 13 - case 1a0: pattern => empty
 if ifs; stmt s;
-Select ifs such that Follows(ifs, s) pattern ifs ("notFound",_, _)
-
+Select BOOLEAN such that Follows(ifs, s) pattern ifs ("notFound",_, _)
+FALSE
 5000
 14 - case 1b1: Connected clauses | Follows* | assign as left argument
 if ifs; variable v; read r;
 Select ifs such that Follows*(ifs, r) pattern ifs (v, _, _)
-
+6, 9, 12
 5000
 15 - case 1b1
 if ifs; variable v; read r;
 Select r such that Follows*(ifs, r) pattern ifs (v, _, _)
-22
+30
 5000
 16 - case 1b2: assign as right argument
 if ifs; variable v; print pn;
@@ -85,148 +85,148 @@ Select pn such that Follows*(pn, ifs) pattern ifs (v, _, _)
 5000
 18 - case 1b0: Follows* => empty
 if ifs; variable v;
-Select ifs such that Follows* (ifs, 1) pattern ifs (v, _, _)
-
+Select BOOLEAN such that Follows* (ifs, 1) pattern ifs (v, _, _)
+FALSE
 5000
 19 - case 1b0: pattern => empty
 if ifs; stmt s;
-Select ifs such that Follows*(ifs, s) pattern ifs ("notFound", _, _)
-
+Select BOOLEAN such that Follows*(ifs, s) pattern ifs ("notFound", _, _)
+FALSE
 5000
 20 - case 1c1: Connected clauses | Parent | if on LHS
-if ifs; variable v;
+if ifs; variable v; stmt s;
 Select ifs such that Parent(ifs, s) pattern ifs (v, _, _)
-
+6, 9, 12, 14, 19, 24
 5000
 21 - case 1c1: swapping result-cl
-if ifs; variable v;
+if ifs; variable v; stmt s;
 Select s such that Parent(ifs, s) pattern ifs (v, _, _)
-
+7, 8, 10, 11, 13, 14, 15, 16, 20, 21, 25, 26
 5000
 22 - case 1c1: limiting pattern
-if ifs; variable v;
+if ifs; variable v; stmt s;
 Select ifs such that Parent(ifs, s) pattern ifs ("a2", _, _)
-9
+9, 19
 5000
 23 - case 1c1: limiting pattern
-if ifs; 
+if ifs;  stmt s;
 Select s such that Parent(ifs, s) pattern ifs ("a2", _, _)
-10, 11
+10, 11, 20, 21
 5000
 24 - case 1c2: Connected clauses | Parent | if on RHS
-if ifs; variable v;
+if ifs; variable v; stmt s;
 Select ifs such that Parent(s, ifs) pattern ifs (v, _, _)
-
+14, 19, 24
 5000
 25 - case 1c2: swapping result-cl
-if ifs; variable v;
+if ifs; variable v; stmt s;
 Select s such that Parent(s, ifs) pattern ifs (v, _, _)
-
+12, 17, 22
 5000
 26 - case 1c2: limiting pattern
-if ifs; variable v;
+if ifs; variable v; stmt s;
 Select ifs such that Parent(s, ifs) pattern ifs ("c3", _, _)
 24
 5000
 27 - case 1c2: limiting pattern
-if ifs; 
+if ifs;  stmt s;
 Select s such that Parent(s, ifs) pattern ifs ("c3", _, _)
 22
 5000
 28 - case 1c0: Parent => empty
 if ifs; variable v;
-Select ifs such that Parent (1, ifs) pattern ifs (v, _, _)
-
+Select BOOLEAN such that Parent (1, ifs) pattern ifs (v, _, _)
+FALSE
 5000
 29 - case 1c0: pattern => empty
 if ifs;
-Select ifs such that Parent (_, _) pattern ifs ("notFound", _, _)
-
+Select BOOLEAN such that Parent (_, _) pattern ifs ("notFound", _, _)
+FALSE
 5000
 30 - case 1d1: Connected clauses | Parent* | ifs on LHS
 if ifs; variable v; stmt s;
 Select ifs such that Parent*(ifs, s) pattern ifs (v, _, _)
-
+6, 9, 12, 14, 19, 24
 5000
 31 - case 1d1
 if ifs; stmt s; variable v;
 Select s such that Parent*(ifs, s) pattern ifs (v, _, _)
-
+7, 8, 10, 11, 13, 14, 15, 16, 20, 21, 25, 26
 5000
 32 - case 1d1: limiting pattern
 if ifs; stmt s; variable v;
-Select ifs such that Parent*(ifs, s) pattern ifs ("ifs", _, _)
-7
+Select ifs such that Parent*(ifs, s) pattern ifs ("a3", _, _)
+12, 24
 5000
 33 - case 1d2: Connected clauses | Parent* | ifs on LHS
 if ifs; variable v; stmt s;
-Select ifs such that Parifs2t*(s, ifs) pattern ifs (v, _, _)
-
+Select ifs such that Parent*(s, ifs) pattern ifs (v, _, _)
+14, 19, 24
 5000
 34 - case 1d2
 if ifs; stmt s; variable v;
 Select s such that Parent*(s, ifs) pattern ifs (v, _, _)
-
+12, 17, 22
 5000
 35 - case 1d2: limiting pattern
 if ifs; stmt s; variable v;
-Select ifs such that Parent*(s, ifs) pattern ifs ("a2", _, _)
-19
+Select s such that Parent*(s, ifs) pattern ifs ("c2", _, _)
+12, 17
 5000
 36 - case 1d0: Parent* => empty
-if ifs; variable v;
-Select ifs such that Parent* (1, a) pattern ifs (v, _)
-
+if ifs; variable v; stmt s;
+Select BOOLEAN such that Parent* (1, s) pattern ifs (v, _, _)
+FALSE
 5000
 37 - case 1d0: pattern => empty
 if ifs;
-Select ifs such that Parent* (_, _) pattern ifs ("notFound", "notFound")
-
+Select BOOLEAN such that Parent* (_, _) pattern ifs ("notFound", _ , _)
+FALSE
 5000
 38 - case 1e1: Connected clauses | Uses | common by if
 if ifs; variable v1, v2;
 Select ifs such that Uses(ifs, v1) pattern ifs (v2, _, _)
-
+6, 9, 12, 14, 19, 24
 5000
 39 - case 1e1
 if ifs; variable v1, v2;
 Select v1 such that Uses(ifs, v1) pattern ifs (v2, _, _)
-
+a1, a2, a3, c1, c2, c3, e, f, nested, nested2, nested3, patternMatch, patternNoMatch
 5000
 40 - case 1e1
 if ifs; variable v1, v2;
 Select v2 such that Uses(ifs, v1) pattern ifs (v2, _, _)
-
+a1, a2, a3, c1, c2, c3
 5000
 41 - case 1e1
 if ifs; variable v;
 Select ifs such that Uses(ifs, "patternMatch") pattern ifs (v, _, _)
-
+6, 24
 5000
 42 - case 1e1
 if ifs; variable v;
 Select v such that Uses(ifs, v) pattern ifs ("a3", _, _)
-
+a1, a3, c1, c2, c3, e, f, nested, nested3, patternMatch
 5000
 43 - case 1e1
 if ifs; variable v;
 Select ifs such that Uses(ifs, "patternMatch") pattern ifs ("a3", _, _)
-
+24
 5000
 44 - case 1e2: Connected clauses | Uses | common by variable
 if ifs1, ifs2; variable v;
 Select ifs1 such that Uses(ifs1, v) pattern ifs2(v, _, _)
-
+6, 9, 12, 14, 19, 24
 5000
 45 - case 1e2
 if ifs1, ifs2; variable v;
 Select ifs2 such that Uses(ifs1, v) pattern ifs2(v, _, _)
-
+6, 9, 12, 14, 19, 24
 5000
 46 - case 1e2
 if ifs1, ifs2; variable v;
 Select v such that Uses(ifs1, v) pattern ifs2(v, _, _)
-
+a1, a2, a3, c1, c2, c3
 5000
 47 - case 1e3: Connected clauses | Uses | common by variable: Uses stmtRef =/= pattern assign stmt number
 if ifs; print pn; variable v;
@@ -236,85 +236,85 @@ Select pn such that Uses(pn, v) pattern ifs(v, _, _)
 48 - case 1e4: Connected clauses | Uses | common by both assign and variable
 if ifs; variable v;
 Select ifs such that Uses(ifs, v) pattern ifs (v, _, _)
-
+6, 9, 12, 14, 19, 24
 5000
 49 - case 1e4
 if ifs; variable v;
-Select v such that Uses(ifs, v) pattern ifs (v, _. _)
-
+Select v such that Uses(ifs, v) pattern ifs (v, _, _)
+a1, a2, a3, c1, c2, c3
 5000
 50 - case 1e0: Uses => empty set
 if ifs; variable v;
-Select ifs such that Uses(ifs, "notFound") pattern ifs (v, _, _)
-
+Select BOOLEAN such that Uses(ifs, "notFound") pattern ifs (v, _, _)
+FALSE
 5000
 51 - case 1e0: Pattern => empty set
 if ifs; variable v; stmt s;
-Select s such that Uses(s, v) pattern ifs ("notFound", _, _)
-
+Select BOOLEAN such that Uses(s, v) pattern ifs ("notFound", _, _)
+FALSE
 5000
 52 - case 1f1: Connected clauses | Modifies | common by if
 if ifs; variable v1, v2;
 Select ifs such that Modifies(ifs, v1) pattern ifs (v2, _, _)
-
+6, 9, 12, 14, 24
 5000
 53 - case 1f1
 if ifs; variable v1, v2;
 Select v1 such that Modifies(ifs, v1) pattern ifs (v2, _, _)
-
+a2, c1, e, nested, nested3, noAssignment
 5000
 54 - case 1f1
 if ifs; variable v1, v2;
 Select v2 such that Modifies(ifs, v1) pattern ifs (v2, _, _)
-
+a1, a2, a3, c1, c2, c3
 5000
 55 - case 1f2: Connected clauses | Modifies | common by variable
 if ifs1, ifs2; variable v;
 Select ifs1 such that Modifies(ifs1, v) pattern ifs2 (v, _, _)
-
+9, 12, 14
 5000
 56 - case 1f2
 if ifs1, ifs2; variable v;
 Select ifs2 such that Modifies(ifs1, v) pattern ifs2 (v, _, _)
-
+6, 9, 12, 19
 5000
 57 - case 1f2
 if ifs1, ifs2; variable v;
 Select v such that Modifies(ifs1, v) pattern ifs2 (v, _, _)
-
+a2, c1
 5000
 58 - case 1f3: Connected clauses | Modifies | common by variable: Modifies StmtRef =/= pattern assign stmt number
 read r; variable v; if ifs;
 Select r such that Modifies(r, v) pattern ifs (v, _, _)
-
+11
 5000
 59 - case 1f3
 read r; variable v; if ifs;
 Select v such that Modifies(r, v) pattern ifs (v, _, _)
-
+a2
 5000
 60 - case 1f3
 read r; variable v; if ifs;
 Select ifs such that Modifies(r, v) pattern ifs (v, _, _)
-
+9, 19
 5000
 61 - case 1f4: Connected clauses | Modifies | common by if and variable
 if ifs; variable v;
-Select ifs such that Modifies(ifs, v) pattern ifs (v, _)
-
+Select ifs such that Modifies(ifs, v) pattern ifs (v, _, _)
+9, 12
 5000
 62 - case 1f4
 if ifs; variable v;
-Select v such that Modifies(ifs, v) pattern ifs (v, _)
-
+Select v such that Modifies(ifs, v) pattern ifs (v, _, _)
+a2, c1
 5000
 63 - case 1f0: Modifes => empty set
 if ifs; variable v;
-Select ifs such that Modifies(ifs, "notFound") pattern ifs (v, _, _)
-
+Select BOOLEAN such that Modifies(ifs, "notFound") pattern ifs (v, _, _)
+FALSE
 5000
 64 - case 1f0: pattern => empty set
 if ifs; variable v;
-Select ifs such that Modifies(ifs, v) pattern ifs ("notFound", _, _)
-
+Select BOOLEAN such that Modifies(ifs, v) pattern ifs ("notFound", _, _)
+FALSE
 5000
