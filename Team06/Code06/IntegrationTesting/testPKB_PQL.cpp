@@ -178,7 +178,7 @@ namespace IntegrationTesting {
         results.clear();
 
         pql.evaluateQuery(query_selectDesignEntity_VAR, results);
-        Assert::IsTrue(results == std::list<string>({ "x", "y", "z", "a" }));
+        Assert::IsTrue(results == std::list<string>({ "x", "y", "a", "z" }));
         results.clear();
 
         pql.evaluateQuery(query_selectDesignEntity_CONST, results);
