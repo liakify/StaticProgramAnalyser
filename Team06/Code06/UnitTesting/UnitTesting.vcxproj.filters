@@ -80,5 +80,11 @@
     <ClCompile Include="testDesignExtractor_next.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="testNextKB.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="testRuntimeDesignExtractor_nextStar.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
