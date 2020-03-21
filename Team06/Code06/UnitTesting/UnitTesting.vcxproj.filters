@@ -62,9 +62,6 @@
     <ClCompile Include="testPatternKB.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="testDesignExtractor.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="testQueryUtils.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -75,6 +72,18 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="testDesignExtractor_calls.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="testDesignExtractor_followsParent.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="testDesignExtractor_next.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="testNextKB.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="testRuntimeDesignExtractor_nextStar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

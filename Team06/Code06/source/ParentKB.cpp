@@ -47,6 +47,10 @@ const std::unordered_set<StmtId>& ParentKB::getDirectChildren(StmtId stmtId) {
     }
 }
 
+StmtId ParentKB::getRootParent(StmtId stmtId) {
+    return parentTable.at(stmtId).rootParent;
+}
+
 bool ParentKB::hasParent(StmtId stmtId) {
     try {
         return parentTable.at(stmtId).parent != 0;
@@ -83,18 +87,22 @@ const std::unordered_set<StmtId>& ParentKB::getAllChildren(StmtId stmtId) {
     }
 }
 
-void ParentKB::setAllChildren(StmtId stmtId, std::unordered_set<StmtId> children) {
+void ParentKB::setAllChildren(StmtId stmtId, const std::unordered_set<StmtId>& children) {
     try {
-        parentTable.at(stmtId).allChildren = children;
+        parentTable.at(stmtId).allChildren.insert(children.begin(), children.end());
     }
     catch (const std::out_of_range &) {
         return;
     }
 }
 
-void ParentKB::setAllParents(StmtId stmtId, std::unordered_set<StmtId> parents) {
+void ParentKB::setAllParents(StmtId stmtId, const std::unordered_set<StmtId>& parents) {
     try {
-        parentTable.at(stmtId).allParents = parents;
+        parentRS& pRS = parentTable.at(stmtId);
+        for (const auto& p : parents) {
+            pRS.allParents.insert(p);
+            pRS.rootParent = std::min(pRS.rootParent, p);
+        }
     }
     catch (const std::out_of_range &) {
         return;

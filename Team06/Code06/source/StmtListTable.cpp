@@ -15,7 +15,7 @@ namespace PKB {
         return thisId;
     }
 
-    StatementList StmtListTable::get(StmtListId stmtListId) {
+    StatementList& StmtListTable::get(StmtListId stmtListId) {
         return idStmtListTable.at(stmtListId);
     }
 

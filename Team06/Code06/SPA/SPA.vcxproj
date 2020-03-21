@@ -33,6 +33,7 @@
     <ClCompile Include="..\source\PQL.cpp" />
     <ClCompile Include="..\source\ProcTable.cpp" />
     <ClCompile Include="..\source\QueryEvaluator.cpp" />
+    <ClCompile Include="..\source\RuntimeDesignExtractor.cpp" />
     <ClCompile Include="..\source\TypeUtils.cpp" />
     <ClCompile Include="..\source\UsesEvaluator.cpp" />
     <ClCompile Include="..\source\QueryParser.cpp" />
@@ -75,6 +76,7 @@
     <ClInclude Include="..\source\QueryParser.h" />
     <ClInclude Include="..\source\QueryProjector.h" />
     <ClInclude Include="..\source\QueryUtils.h" />
+    <ClInclude Include="..\source\RuntimeDesignExtractor.h" />
     <ClInclude Include="..\source\StmtListTable.h" />
     <ClInclude Include="..\source\StmtTable.h" />
     <ClInclude Include="..\source\Simple.h" />

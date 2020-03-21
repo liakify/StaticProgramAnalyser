@@ -1,5 +1,6 @@
-#include "Simple.h"
 #include <stdexcept>
+
+#include "Simple.h"
 
 namespace SIMPLE {
     Expression::Expression(Expression left, Expression right, char op)
@@ -83,6 +84,14 @@ namespace SIMPLE {
         return this->stmtType;
     }
 
+    void Statement::setContainerId(StmtListId sid) {
+        this->containerId = sid;
+    }
+
+    StmtListId Statement::getContainerId() {
+        return this->containerId;
+    }
+
     PrintStmt::PrintStmt(VarId var)
         : var(var) {
         this->stmtType = StmtType::PRINT;
@@ -154,7 +163,8 @@ namespace SIMPLE {
     }
 
     StatementList::StatementList(std::vector<StmtId>& statements)
-        : statements(statements) {
+        : statements(statements), first(statements.front()), maxLast(statements.back()) {
+        this->allEnds = std::unordered_set<StmtId>();
     }
 
     bool StatementList::operator== (const StatementList& other) {
@@ -163,6 +173,26 @@ namespace SIMPLE {
 
     std::vector<StmtId> StatementList::getStmtIds() {
         return this->statements;
+    }
+
+    void StatementList::setMaxLast(StmtId last) {
+        this->maxLast = last;
+    }
+
+    void StatementList::addEnd(StmtId end) {
+        this->allEnds.insert(end);
+    }
+
+    StmtId StatementList::getFirst() {
+        return this->first;
+    }
+
+    StmtId StatementList::getMaxLast() {
+        return this->maxLast;
+    }
+
+    std::unordered_set<StmtId>& StatementList::getAllEnds() {
+        return this->allEnds;
     }
 
     Procedure::Procedure(ProcName procName, StmtListId stmtLstId)

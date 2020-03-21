@@ -42,6 +42,8 @@ namespace FrontEnd {
         void populateUses();
         void populateModifies();
         void populatePattern();
+        void populateNext();
+        void updateStmtContainerId();
 
         // Helper functions
         void populateParentKB(StmtId stmtId, StmtListId stmtLstId);
@@ -63,5 +65,8 @@ namespace FrontEnd {
         std::unordered_set<ProcId> getAllCalls(StmtListId sid);
         void processCallStar(int numProc, std::vector<ProcId>& visited, NodeType type);
         void callStarDFS(ProcId root, std::vector<ProcId>& visited, NodeType type);
+
+        void populateNextKB(StmtListId sid);
+        void updateLastStmtId(StatementList& sl);
     };
 }

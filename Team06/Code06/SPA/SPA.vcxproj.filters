@@ -107,6 +107,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\source\WithEvaluator.cpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClCompile Include="..\source\RuntimeDesignExtractor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -229,6 +232,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\source\WithEvaluator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\RuntimeDesignExtractor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
