@@ -164,6 +164,8 @@ namespace PQL {
                 SPA::LoggingUtils::LogErrorMessage("WithEvaluator::evaluateIdentifierEqual: Invalid ArgTypes for identifier With clause. argType1 = %d, argType2 = %d\n", argType1, argType2);
                 return {};
             }
+
+            return {};
         }
 
         /**
@@ -189,37 +191,75 @@ namespace PQL {
             ArgType argType2 = arg2.first;
 
             if ((argType1 == ArgType::ATTRIBUTE || argType1 == ArgType::SYNONYM) && argType2 == ArgType::INTEGER) {
+                Synonym syn1 = arg1.second.first;
+
                 // Case 1: LHS is a synonym, RHS is an integer
-                ClauseResultEntry resultEntry;
-                resultEntry[arg1.second.first] = arg2.second.first;
-                return { resultEntry };
+                if (synonymTable[syn1] == DesignEntity::CONSTANT) {
+                    if (database.constTable.getConstId(arg2.second.first) != -1) {
+                        ClauseResultEntry resultEntry;
+                        resultEntry[syn1] = arg2.second.first;
+                        return { resultEntry };
+                    }
+                    return {};
+                } else if (synonymTable[syn1] == DesignEntity::STATEMENT) {
+                    StmtId stmtNumber = std::stoi(arg2.second.first);
+                    if (1 <= stmtNumber && stmtNumber <= database.stmtTable.size()) {
+                        ClauseResultEntry resultEntry;
+                        resultEntry[syn1] = arg2.second.first;
+                        return { resultEntry };
+                    }
+                    return {};
+                } else {
+                    std::unordered_set<StmtId> stmts = database.stmtTable.getStmtsByType(SPA::TypeUtils::getStmtTypeFromDesignEntity(synonymTable[syn1]));
+                    if (stmts.find(std::stoi(arg2.second.first)) != stmts.end()) {
+                        ClauseResultEntry resultEntry;
+                        resultEntry[syn1] = arg2.second.first;
+                        return { resultEntry };
+                    }
+                    return {};
+                }
 
             } else if ((argType1 == ArgType::ATTRIBUTE || argType1 == ArgType::SYNONYM) && (argType2 == ArgType::ATTRIBUTE || argType2 == ArgType::SYNONYM)) {
                 // Case 2: Both LHS and RHS are synonyms
-                std::unordered_set<StmtId> result1;
-                std::unordered_set<StmtId> result2;
+                std::unordered_set<std::string> result1;
+                std::unordered_set<std::string> result2;
 
                 if (synonymTable[arg1.second.first] == DesignEntity::STATEMENT || synonymTable[arg1.second.first] == DesignEntity::PROG_LINE) {
                     for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
-                        result1.insert(i);
+                        result1.insert(std::to_string(i));
                     }
-                } else {
-                    result1 = database.stmtTable.getStmtsByType(SPA::TypeUtils::getStmtTypeFromDesignEntity(synonymTable[arg1.second.first]));
+                } else if (synonymTable[arg1.second.first] == DesignEntity::CONSTANT) {
+                    for (ConstId i = 1; i <= database.constTable.size(); i++) {
+                        result1.insert(database.constTable.get(i));
+                    }
+                }  else {
+                    std::unordered_set<StmtId> stmts = database.stmtTable.getStmtsByType(SPA::TypeUtils::getStmtTypeFromDesignEntity(synonymTable[arg1.second.first]));
+                    for (StmtId stmt : stmts) {
+                        result1.insert(std::to_string(stmt));
+                    }
                 }
-                if (synonymTable[arg1.second.first] == DesignEntity::STATEMENT || synonymTable[arg1.second.first] == DesignEntity::PROG_LINE) {
+
+                if (synonymTable[arg2.second.first] == DesignEntity::STATEMENT || synonymTable[arg2.second.first] == DesignEntity::PROG_LINE) {
                     for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
-                        result2.insert(i);
+                        result2.insert(std::to_string(i));
+                    }
+                } else if (synonymTable[arg2.second.first] == DesignEntity::CONSTANT) {
+                    for (ConstId i = 1; i <= database.constTable.size(); i++) {
+                        result2.insert(database.constTable.get(i));
                     }
                 } else {
-                    result2 = database.stmtTable.getStmtsByType(SPA::TypeUtils::getStmtTypeFromDesignEntity(synonymTable[arg2.second.first]));
+                    std::unordered_set<StmtId> stmts = database.stmtTable.getStmtsByType(SPA::TypeUtils::getStmtTypeFromDesignEntity(synonymTable[arg2.second.first]));
+                    for (StmtId stmt : stmts) {
+                        result2.insert(std::to_string(stmt));
+                    }
                 }
 
                 ClauseResult clauseResult;
-                for (StmtId stmt : result1) {
-                    if (result2.find(stmt) != result2.end()) {
+                for (std::string result : result1) {
+                    if (result2.find(result) != result2.end()) {
                         ClauseResultEntry resultEntry;
-                        resultEntry[arg1.second.first] = std::to_string(stmt);
-                        resultEntry[arg2.second.first] = std::to_string(stmt);
+                        resultEntry[arg1.second.first] = result;
+                        resultEntry[arg2.second.first] = result;
                         clauseResult.emplace_back(resultEntry);
                     }
                 }
