@@ -163,7 +163,7 @@ namespace SIMPLE {
     }
 
     StatementList::StatementList(std::vector<StmtId>& statements)
-        : statements(statements), first(statements.front()), last(statements.back()) {
+        : statements(statements), first(statements.front()), maxLast(statements.back()) {
         this->allEnds = std::unordered_set<StmtId>();
     }
 
@@ -175,8 +175,8 @@ namespace SIMPLE {
         return this->statements;
     }
 
-    void StatementList::setLast(StmtId last) {
-        this->last = last;
+    void StatementList::setMaxLast(StmtId last) {
+        this->maxLast = last;
     }
 
     void StatementList::addEnd(StmtId end) {
@@ -187,8 +187,8 @@ namespace SIMPLE {
         return this->first;
     }
 
-    StmtId StatementList::getLast() {
-        return this->last;
+    StmtId StatementList::getMaxLast() {
+        return this->maxLast;
     }
 
     std::unordered_set<StmtId>& StatementList::getAllEnds() {

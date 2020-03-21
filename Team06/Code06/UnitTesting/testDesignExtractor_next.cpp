@@ -63,15 +63,15 @@ namespace UnitTesting
 
         TEST_METHOD(updateLastStmtId) {
             Assert::IsTrue(pkbNext.stmtListTable.get(1).getFirst() == 1);
-            Assert::IsTrue(pkbNext.stmtListTable.get(1).getLast() == 1);
+            Assert::IsTrue(pkbNext.stmtListTable.get(1).getMaxLast() == 1);
             Assert::IsTrue(pkbNext.stmtListTable.get(2).getFirst() == 2);
-            Assert::IsTrue(pkbNext.stmtListTable.get(2).getLast() == 7);
+            Assert::IsTrue(pkbNext.stmtListTable.get(2).getMaxLast() == 7);
             Assert::IsTrue(pkbNext.stmtListTable.get(3).getFirst() == 4);
-            Assert::IsTrue(pkbNext.stmtListTable.get(3).getLast() == 6);
+            Assert::IsTrue(pkbNext.stmtListTable.get(3).getMaxLast() == 6);
             Assert::IsTrue(pkbNext.stmtListTable.get(4).getFirst() == 5);
-            Assert::IsTrue(pkbNext.stmtListTable.get(4).getLast() == 5);
+            Assert::IsTrue(pkbNext.stmtListTable.get(4).getMaxLast() == 5);
             Assert::IsTrue(pkbNext.stmtListTable.get(5).getFirst() == 6);
-            Assert::IsTrue(pkbNext.stmtListTable.get(5).getLast() == 6);
+            Assert::IsTrue(pkbNext.stmtListTable.get(5).getMaxLast() == 6);
 
             std::vector<std::unordered_set<StmtId>> expectedResult = std::vector<std::unordered_set<StmtId>>({
                 std::unordered_set<StmtId>({ 1 }),
