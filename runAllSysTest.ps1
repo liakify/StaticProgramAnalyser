@@ -87,13 +87,23 @@ Try {
       exit 1
     }
 
+    $status = $true
+
     foreach ($query in $output.test_results.queries.query) {
       if ($null -eq $query.passed) {
-        "[FAILED] TEST SUITE: " + $test + " [" + $(If ($timing.Seconds -ne "0") { $timing.Seconds } else {""}) + $timing.Milliseconds + " ms]"
-        "`nTERMINATING SYSTEM TESTS PREMATURELY...`n"
-        exit 1
+        if ($status) {
+          "[FAILED] TEST SUITE: " + $test + " [" + $(If ($timing.Seconds -ne "0") { $timing.Seconds } else {""}) + $timing.Milliseconds + " ms]"
+        }
+        $status = $false
+        "    | Failed TC #" + $query.id.'#text' + ": " + $query.querystr."#cdata-section"
       }
     }
+
+    if (-not $status) {
+      "`nTERMINATING SYSTEM TESTS PREMATURELY...`n"
+      exit 1
+    }
+
     "[PASSED] TEST SUITE: " + $test + " [" + $(If ($timing.Seconds -ne "0") { $timing.Seconds } else {""}) + $timing.Milliseconds + " ms]"
   }
 }
@@ -105,7 +115,7 @@ foreach ($test in $list_of_no_xml_tests) {
   [timespan]$timing = Measure-Command { .\Team06\Code06\Debug\AutoTester.exe $regression_test_path$test$source_suffix $regression_test_path$test$query_suffix $regression_test_path$test$output_suffix *>$null }
 
   if (Test-Path $regression_test_path$test$output_suffix) {
-    "[ERROR] TEST SUITE: " + $test + $output_suffix + " found when it should not be generated!"
+    "[FAILED] TEST SUITE: " + $test + $output_suffix + " found when it should not be generated!"
     exit 1
   }
   "[PASSED] TEST SUITE: " + $test + " [" + $(If ($timing.Seconds -ne "0") { $timing.Seconds } else {""}) + $timing.Milliseconds + " ms]"
