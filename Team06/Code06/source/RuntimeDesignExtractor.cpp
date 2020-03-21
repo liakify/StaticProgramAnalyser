@@ -9,7 +9,7 @@ namespace FrontEnd {
         StmtListId s1StmtListId = stmtS1->getContainerId();
         StatementList& s1StmtList = pkb->stmtListTable.get(s1StmtListId);
         if (!pkb->parentKB.hasParent(s1)) {
-            if ((s2 > s1 && s2 <= s1StmtList.getLast()) || (s2 == s1 && stmtS1->getType() == StmtType::WHILE)) {
+            if ((s2 > s1 && s2 <= s1StmtList.getMaxLast()) || (s2 == s1 && stmtS1->getType() == StmtType::WHILE)) {
                 addBiDirEdge(s1, s2, NodeType::SUCCESSOR);
                 return true;
             }
@@ -20,13 +20,13 @@ namespace FrontEnd {
             StmtListId rootParentStmtListId = rootParentStmt->getContainerId();
             StatementList& rootParentStmtList = pkb->stmtListTable.get(rootParentStmtListId);
             if (rootParentStmt->getType() == StmtType::WHILE) {
-                if (s2 >= rootParent && s2 <= rootParentStmtList.getLast()) {
+                if (s2 >= rootParent && s2 <= rootParentStmtList.getMaxLast()) {
                     addBiDirEdge(s1, s2, NodeType::SUCCESSOR);
                     return true;
                 }
                 return false;
             } else {  // rootParent is an IFStmt
-                if (s2 > rootParentStmtList.getLast() || s2 <= rootParent) {
+                if (s2 > rootParentStmtList.getMaxLast() || s2 <= rootParent) {
                     return false;
                 }
                 if (nextStarRecurse(s1, s1, s2)) {
@@ -61,7 +61,7 @@ namespace FrontEnd {
             if (!pkb->followsKB.hasFollower(curr)) {
                 return false;
             }
-            return s2 >= pkb->followsKB.getFollower(curr) && s2 <= currStmtList.getLast();
+            return s2 >= pkb->followsKB.getFollower(curr) && s2 <= currStmtList.getMaxLast();
         }
 
         StmtId parentId = pkb->parentKB.getParent(curr);
@@ -69,19 +69,19 @@ namespace FrontEnd {
         if (parentStmt->getType() == StmtType::WHILE) {
             WhileStmt* ws = dynamic_cast<WhileStmt*>(parentStmt.get());
             StatementList& whileSl = pkb->stmtListTable.get(ws->getStmtLstId());
-            if (s2 >= parentId && s2 <= whileSl.getLast()) {
+            if (s2 >= parentId && s2 <= whileSl.getMaxLast()) {
                 return true;
             }
-            return nextStarRecurse(parentId, whileSl.getLast(), s2);
+            return nextStarRecurse(parentId, whileSl.getMaxLast(), s2);
         } else {  // parentStmt is IfStmt
-            if ((s2 > last && s2 <= currStmtList.getLast()) ||
+            if ((s2 > last && s2 <= currStmtList.getMaxLast()) ||
                 (currStmt->getType() == StmtType::WHILE && s2 == last)) {
                 return true;
             }
 
             IfStmt* ifs = dynamic_cast<IfStmt*>(parentStmt.get());
             StatementList& elseSl = pkb->stmtListTable.get(ifs->getElseStmtLstId());
-            return nextStarRecurse(parentId, elseSl.getLast(), s2);
+            return nextStarRecurse(parentId, elseSl.getMaxLast(), s2);
         }
     }
 
