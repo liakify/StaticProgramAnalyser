@@ -1,4 +1,4 @@
-"STARTING SYSTEM TESTS"
+"`n########################## RUNNING SYSTEM TESTS ###########################`n"
 
 # For cmd reference:
 # Autotester.exe ..\..\Tests06\_source.txt ..\..\Tests06\_queries.txt ..\..\Tests06\_out.xml
@@ -83,24 +83,34 @@ $list_of_no_xml_tests = @(
 
 Try {
   foreach ($test in $list_of_test_files) {
-    .\Team06\Code06\Debug\AutoTester.exe $regression_test_path$test$source_suffix $regression_test_path$test$query_suffix $regression_test_path$test$output_suffix *>$null
+    [timespan]$timing = Measure-Command { .\Team06\Code06\Debug\AutoTester.exe $regression_test_path$test$source_suffix $regression_test_path$test$query_suffix $regression_test_path$test$output_suffix *>$null }
     # Remove-Item $regression_test_path$test$output_suffix
-    
+
     [XML]$output = Get-Content $regression_test_path$test$output_suffix
     
     if ($null -eq $output) {
-      "SYSTEM TEST FAILED in: " + $test
-      $test + $output_suffix + " not found. "
+      "[ERROR] TEST SUITE: " + $test + $output_suffix + " not found!"
       exit 1
     }
 
+    $status = $true
+
     foreach ($query in $output.test_results.queries.query) {
       if ($null -eq $query.passed) {
-        "SYSTEM TEST FAILED in: " + $test
-        exit 1
+        if ($status) {
+          "[FAILED] TEST SUITE: " + $test + " [" + $(If ($timing.Seconds -ne "0") { $timing.Seconds } else {""}) + $timing.Milliseconds + " ms]"
+        }
+        $status = $false
+        "    | Failed TC #" + $query.id.'#text' + ": " + $query.querystr."#cdata-section"
       }
     }
-    'TEST CASES in ' + $test + ' PASSED'
+
+    if (-not $status) {
+      "`nTERMINATING SYSTEM TESTS PREMATURELY...`n"
+      exit 1
+    }
+
+    "[PASSED] TEST SUITE: " + $test + " [" + $(If ($timing.Seconds -ne "0") { $timing.Seconds } else {""}) + $timing.Milliseconds + " ms]"
   }
 }
 Catch {
@@ -108,14 +118,13 @@ Catch {
 }
 
 foreach ($test in $list_of_no_xml_tests) {
-  .\Team06\Code06\Debug\AutoTester.exe $regression_test_path$test$source_suffix $regression_test_path$test$query_suffix $regression_test_path$test$output_suffix *>$null
-    
+  [timespan]$timing = Measure-Command { .\Team06\Code06\Debug\AutoTester.exe $regression_test_path$test$source_suffix $regression_test_path$test$query_suffix $regression_test_path$test$output_suffix *>$null }
+
   if (Test-Path $regression_test_path$test$output_suffix) {
-    "SYSTEM TEST FAILED in: " + $test
-    $test + $output_suffix + " found when it should not be generated "
+    "[FAILED] TEST SUITE: " + $test + $output_suffix + " found when it should not be generated!"
     exit 1
   }
-  'TEST CASES in ' + $test + ' PASSED'
+  "[PASSED] TEST SUITE: " + $test + " [" + $(If ($timing.Seconds -ne "0") { $timing.Seconds } else {""}) + $timing.Milliseconds + " ms]"
 }
 
-"ALL SYSTEM TESTS PASSED"
+"`nALL SYSTEM TESTS PASSED`n"

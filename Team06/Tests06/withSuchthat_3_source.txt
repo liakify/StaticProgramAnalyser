@@ -1,0 +1,13 @@
+procedure UsesAndModifies {
+  call ModifiesOnly1;
+  call ModifiesOnly2;
+  call UsesOnly1;
+  call UsesOnly2;   }
+procedure ModifiesOnly1 {
+  read m1; }
+procedure ModifiesOnly2 {
+  read m2; }
+procedure UsesOnly1 {
+  print u1; }
+procedure UsesOnly2 {
+  print u2; }

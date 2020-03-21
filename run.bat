@@ -37,10 +37,12 @@ if not exist "Team06/Code06/Debug/SPA.lib" (
 	exit 1
 )
 
+echo.
 echo ########################### RUNNING UNIT TESTS ############################
 
 call "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe" Team06/Code06/Debug/UnitTesting.dll
 
+echo.
 echo ######################## RUNNING INTEGRATION TESTS ########################
 
 call "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe" Team06/Code06/Debug/IntegrationTesting.dll

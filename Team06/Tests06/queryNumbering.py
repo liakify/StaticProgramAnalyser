@@ -12,8 +12,8 @@ for (root, dirs, files) in os.walk('.'):
       queryNo = 1
       for i in range(0, len(queries), 5):
         comment = queries[i]
-        startpos = comment.find(' - ')
-        queries[i] = str(queryNo) + comment[startpos:]
+        startpos = comment.find('- ')
+        queries[i] = str(queryNo) + ' ' + comment[startpos:]
         queryNo += 1
 
       with open(pathname, 'w') as updatedfile:
