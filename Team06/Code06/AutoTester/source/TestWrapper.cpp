@@ -46,4 +46,5 @@ void TestWrapper::parse(std::string filename) {
 void TestWrapper::evaluate(std::string query, std::list<std::string>& results) {
     // Evaluate query and store result into provided list
     this->pql.evaluateQuery(query, results);
+    this->pkb.clear();
 }

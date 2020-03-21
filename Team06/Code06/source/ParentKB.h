@@ -1,5 +1,7 @@
 #pragma once
 
+#include <algorithm>
+#include <climits>
 #include <unordered_map>
 #include <unordered_set>
 #include <vector>
@@ -12,6 +14,7 @@ struct parentRS {
     std::unordered_set<StmtId> directChildren;
     std::unordered_set<StmtId> allParents;
     std::unordered_set<StmtId> allChildren;
+    StmtId rootParent = INT_MAX;
 };
 
 class ParentKB {
@@ -44,6 +47,12 @@ class ParentKB {
     const std::unordered_set<StmtId>& getDirectChildren(StmtId stmtId);
 
     /*
+        Returns the root parent of stmtId i.e. smallest StmtId s1 for which Parent*(s1, stmtId) is true,
+        returns INT_MAX if no such root parent exists.
+    */
+    StmtId getRootParent(StmtId stmtId);
+
+    /*
         Returns TRUE if stmtId has a parent, FALSE otherwise.
     */
     bool hasParent(StmtId stmtId);
@@ -66,12 +75,12 @@ class ParentKB {
     /*
         Sets allChildren of stmtId to children
     */
-    void setAllChildren(StmtId stmtId, std::unordered_set<StmtId> children);
+    void setAllChildren(StmtId stmtId, const std::unordered_set<StmtId>& children);
 
     /*
         Sets allParents of stmtId to parents
     */
-    void setAllParents(StmtId stmtId, std::unordered_set<StmtId> parents);
+    void setAllParents(StmtId stmtId, const std::unordered_set<StmtId>& parents);
 
     /*
         Returns TRUE if any Parent relation is present, FALSE otherwise.

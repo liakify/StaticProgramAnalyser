@@ -19,9 +19,10 @@ procedure SelectSuchThatPatternWhile {
         print nested3; 
         while (c4 == a7) {
           print nested4;  }} }}
-  while (c1 == a6) {
+  while ((c1 == a6) || (noAssignment == nested2)) {
     read noAssignment; }
-  while (usedHereOnly == usedHereOnly) {
+  while (!(usedHereOnly == usedHereOnly)) {
     print usedHereOnly; }
   d = d;
-  read a; }
+  read a; 
+}

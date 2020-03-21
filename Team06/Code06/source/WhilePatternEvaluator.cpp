@@ -14,15 +14,18 @@ namespace PQL {
         * @param    database    The PKB to evaluate the clause on.
         * @return   The result of the evaluation.
         */
-        ClauseResult evaluateWhilePatternClauseWild(PKB::PKB& database) {
-            // Here, we just need to check if there is at least one while statement in the program
-            if (database.stmtTable.getStmtsByType(StmtType::WHILE).size() > 0) {
+        ClauseResult evaluateWhilePatternClauseWild(PKB::PKB& database, PatternClause& clause) {
+            std::unordered_set<StmtId> stmts = database.patternKB.getAllWhileStmtsWithCtrlVars();
+
+            Synonym arg0 = clause.synonym;
+
+            ClauseResult clauseResult;
+            for (StmtId stmt : stmts) {
                 ClauseResultEntry resultEntry;
-                resultEntry["_RESULT"] = "TRUE";
-                return { resultEntry };
-            } else {
-                return {};
+                resultEntry[arg0] = std::to_string(stmt);
+                clauseResult.emplace_back(resultEntry);
             }
+            return clauseResult;
         }
 
         /**
@@ -88,7 +91,7 @@ namespace PQL {
 
             if (argType1 == ArgType::WILDCARD) {
                 // 1 wildcard
-                return evaluateWhilePatternClauseWild(database);
+                return evaluateWhilePatternClauseWild(database, clause);
             } else if (argType1 == ArgType::IDENTIFIER) {
                 // 1 identifier
                 return evaluateWhilePatternClauseId(database, clause, synonymTable);

@@ -66,12 +66,12 @@ class FollowsKB {
     /*
         Sets allFollowers of stmtId to followers.
     */
-    void setAllFollowers(StmtId stmtId, std::unordered_set<StmtId> followers);
+    void setAllFollowers(StmtId stmtId, const std::unordered_set<StmtId>& followers);
 
     /*
         Sets allFollowing of stmtId to following.
     */
-    void setAllFollowing(StmtId stmtId, std::unordered_set<StmtId> following);
+    void setAllFollowing(StmtId stmtId, const std::unordered_set<StmtId>& following);
 
     /*
         Returns TRUE if any Follows relation is present, FALSE otherwise.

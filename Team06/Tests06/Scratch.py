@@ -1,3 +1,5 @@
+from sys import argv
+
 # Note:
 # For invalid queries:
 #   test all argument input types (syn, attr, _, INT, IDENT), on all arguments
@@ -58,10 +60,13 @@ for de in designEntities:
   #   # query += "\n"
   #   query += "5000"
   
-  print(query)
+  # print(query)
 
 
 # answer = ""
 # for x in range(1, 13):
 #   answer += str(x) + ", "
 # print(answer)
+
+unsorted = list(int(i) for i in argv[1].split(','))
+print(sorted(unsorted))
