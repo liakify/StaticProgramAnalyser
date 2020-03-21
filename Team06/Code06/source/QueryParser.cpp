@@ -296,11 +296,15 @@ namespace PQL {
                         return false;
                     }
 
-                    // Evaluate return type by checking the design entity of that synonym
-                    DesignEntity synonymType = synonymMapping->second;
-                    arg.first = synonymType == DesignEntity::PROCEDURE || synonymType == DesignEntity::VARIABLE
-                        ? ArgType::IDENTIFIER
-                        : ArgType::INTEGER;
+                    // Only accept synonyms of the prog_line design entity for with clauses
+                    if (synonymMapping->second != DesignEntity::PROG_LINE) {
+                        // SEMANTIC ERROR: synonym arg design entity type error (non-PROGRAM LINE)
+                        query.status = SEMANTIC_ERR_WITH_CLAUSE_NON_PROG_LINE_SYNONYM_ARG;
+                        return false;
+                    }
+
+                    // Return type of prog_line design entity is an INTEGER
+                    arg.first = ArgType::INTEGER;
                 } else if (arg.first == ArgType::ATTRIBUTE) {
                     // First validate the synonym used in the attribute ref has been declared
                     auto synonymMapping = synonymTable.find(arg.second.first);
