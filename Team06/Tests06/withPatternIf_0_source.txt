@@ -1,0 +1,8 @@
+procedure WithPatternIf {
+  if (c1 == nested1) then {
+    if (c2 == nested2) then {
+      print a; } else {
+      print b; }  } else {
+    if (c3 == nested2) then {
+      print a; } else {
+      print b; } }  }

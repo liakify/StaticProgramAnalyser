@@ -17,6 +17,7 @@
 #include "UsesEvaluator.h"
 #include "TypeUtils.h"
 #include "WhilePatternEvaluator.h"
+#include "WithEvaluator.h"
 
 namespace PQL {
 
@@ -43,6 +44,11 @@ namespace PQL {
         // Evaluate Pattern Clauses
         for (PatternClause pattern : query.patterns) {
             clauseResults.emplace_back(evaluatePatternClause(pattern, query.synonymTable));
+        }
+
+        // Evaluate With Clauses
+        for (WithClause with : query.equalities) {
+            clauseResults.emplace_back(evaluateWithClause(with, query.synonymTable));
         }
 
         // Combine Results
@@ -229,15 +235,19 @@ namespace PQL {
             break;
         case RelationType::NEXT:
             SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluateRelationClause: Next relationship not implemented!");
+            return {};
             break;
         case RelationType::NEXTT:
             SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluateRelationClause: Next* relationship not implemented!");
+            return {};
             break;
         case RelationType::AFFECTS:
             SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluateRelationClause: Affects relationship not implemented!");
+            return {};
             break;
         case RelationType::AFFECTST:
             SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluateRelationClause: Affects* relationship not implemented!");
+            return {};
             break;
         default:
             SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluateRelationClause: Unknown relation type %d\n", relationClause.type);
@@ -262,6 +272,13 @@ namespace PQL {
             SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluatePatternClause: Unknown pattern type %d\n", patternClause.type);
             return {};
         }
+
+    }
+
+    ClauseResult QueryEvaluator::evaluateWithClause(WithClause& withClause,
+        std::unordered_map<std::string, DesignEntity>& synonymTable) {
+
+        return WithEvaluator::evaluateWithClause(this->database, withClause, synonymTable);
 
     }
 
