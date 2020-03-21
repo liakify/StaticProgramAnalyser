@@ -133,30 +133,30 @@ namespace UnitTesting {
             sid2.push_back(STMT_ID_1);
             StatementList STATEMENT_LIST_1 = StatementList(sid1);
             Assert::IsTrue(STMT_ID_1 == STATEMENT_LIST_1.getFirst());
-            Assert::IsTrue(STMT_ID_2 == STATEMENT_LIST_1.getLast());
+            Assert::IsTrue(STMT_ID_2 == STATEMENT_LIST_1.getMaxLast());
             StatementList STATEMENT_LIST_2 = StatementList(sid1);
             Assert::IsTrue(sid1 == STATEMENT_LIST_1.getStmtIds());
             Assert::IsTrue(STATEMENT_LIST_1 == STATEMENT_LIST_2);
 
             std::unordered_set<StmtId> expectedSet = std::unordered_set<StmtId>();
-            Assert::IsTrue(STATEMENT_LIST_2.getLast() == 2);
+            Assert::IsTrue(STATEMENT_LIST_2.getMaxLast() == 2);
             Assert::IsTrue(STATEMENT_LIST_2.getAllEnds() == expectedSet);
 
             STATEMENT_LIST_2.addEnd(3);
             expectedSet.erase(2);
             expectedSet.insert(3);
-            Assert::IsTrue(STATEMENT_LIST_2.getLast() == 2);
+            Assert::IsTrue(STATEMENT_LIST_2.getMaxLast() == 2);
             Assert::IsTrue(STATEMENT_LIST_2.getAllEnds() == expectedSet);
 
             STATEMENT_LIST_2.addEnd(5);
-            STATEMENT_LIST_2.setLast(3);
+            STATEMENT_LIST_2.setMaxLast(3);
             expectedSet.insert(5);
-            Assert::IsTrue(STATEMENT_LIST_2.getLast() == 3);
+            Assert::IsTrue(STATEMENT_LIST_2.getMaxLast() == 3);
             Assert::IsTrue(STATEMENT_LIST_2.getAllEnds() == expectedSet);
 
             STATEMENT_LIST_2.addEnd(4);
             expectedSet.insert(4);
-            Assert::IsTrue(STATEMENT_LIST_2.getLast() == 3);
+            Assert::IsTrue(STATEMENT_LIST_2.getMaxLast() == 3);
             Assert::IsTrue(STATEMENT_LIST_2.getAllEnds() == expectedSet);
 
             Assert::IsTrue(STATEMENT_LIST_1 == STATEMENT_LIST_2);

@@ -419,7 +419,7 @@ namespace FrontEnd {
     }
 
     void DesignExtractor::updateLastStmtId(StatementList& sl) {
-        shared_ptr<Statement>& lastStmt = pkb.stmtTable.get(sl.getLast());
+        shared_ptr<Statement> lastStmt = pkb.stmtTable.get(sl.getStmtIds().back());
         if (lastStmt->getType() == StmtType::IF) {
             IfStmt* ifs = dynamic_cast<IfStmt*>(lastStmt.get());
             StatementList& thenSl = pkb.stmtListTable.get(ifs->getThenStmtLstId());
@@ -432,15 +432,15 @@ namespace FrontEnd {
             for (StmtId s : elseSl.getAllEnds()) {
                 sl.addEnd(s);
             }
-            sl.setLast(elseSl.getLast());
+            sl.setMaxLast(elseSl.getMaxLast());
         } else if (lastStmt->getType() == StmtType::WHILE) {
             WhileStmt* ws = dynamic_cast<WhileStmt*>(lastStmt.get());
             StatementList& newSl = pkb.stmtListTable.get(ws->getStmtLstId());
             updateLastStmtId(newSl);
-            sl.addEnd(sl.getLast());
-            sl.setLast(newSl.getLast());
+            sl.addEnd(sl.getStmtIds().back());
+            sl.setMaxLast(newSl.getMaxLast());
         } else {
-            sl.addEnd(sl.getLast());
+            sl.addEnd(sl.getMaxLast());
         }
     }
 
