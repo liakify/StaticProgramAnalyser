@@ -108,317 +108,132 @@ prog_line n; assign a;
 Select a such that Next(n, a)
 
 5000
-23 - arg variant (a, n)
-prog_line n; assign a;
-Select a such that Next(a, n)
-
-5000
-24 - arg variant (n, c)
+23 - arg variant (n, c)
 prog_line n; call c;
 Select c such that Next(n, c)
 
 5000
-25 - arg variant (c, n)
-prog_line n; call c;
-Select c such that Next(c, n)
-
-5000
-26 - arg variant (n, r)
+24 - arg variant (n, r)
 prog_line n; read r;
 Select r such that Next(n, r)
 
 5000
-27 - arg variant (r, n)
-prog_line n; read r;
-Select r such that Next(r, n)
-
-5000
-28 - arg variant (n, pn)
+25 - arg variant (n, pn)
 prog_line n; print pn;
 Select pn such that Next(n, pn)
 
 5000
-29 - arg variant (pn, n)
-prog_line n; print pn;
-Select pn such that Next(pn, n)
-
-5000
-30 - arg variant (n, ifs)
+26 - arg variant (n, ifs)
 prog_line n; if ifs;
 Select ifs such that Next(n, ifs)
 
 5000
-31 - arg variant (ifs, n)
-prog_line n; if ifs;
-Select ifs such that Next(ifs, n)
-
-5000
-32 - arg variant (n, w)
+27 - arg variant (n, w)
 prog_line n; while w;
 Select w such that Next(n, w)
 
 5000
-33 - arg variant (w, n)
-prog_line n; while w;
-Select w such that Next(w, n)
-
-5000
-34 - arg variant (s, s)
-stmt s1, s2;
-Select s1 such that Next(s1, s2)
-
-5000
-35 - arg variant (s, a)
-stmt s; assign a;
-Select a such that Next(s, a)
-
-5000
-36 - arg variant (a, s)
-stmt s; assign a;
-Select a such that Next(a, s)
-
-5000
-37 - arg variant (s, c)
-stmt s; call c;
-Select c such that Next(s, c)
-
-5000
-38 - arg variant (c, s)
-stmt s; call c;
-Select c such that Next(c, s)
-
-5000
-39 - arg variant (s, r)
-stmt s; read r;
-Select r such that Next(s, r)
-
-5000
-40 - arg variant (r, s)
-stmt s; read r;
-Select r such that Next(r, s)
-
-5000
-41 - arg variant (s, pn)
-stmt s; print pn;
-Select pn such that Next(s, pn)
-
-5000
-42 - arg variant (pn, s)
-stmt s; print pn;
-Select pn such that Next(pn, s)
-
-5000
-43 - arg variant (s, ifs)
-stmt s; if ifs;
-Select ifs such that Next(s, ifs)
-
-5000
-44 - arg variant (ifs, s)
-stmt s; if ifs;
-Select ifs such that Next(ifs, s)
-
-5000
-45 - arg variant (s, w)
-stmt s; while w;
-Select w such that Next(s, w)
-
-5000
-46 - arg variant (w, s)
-stmt s; while w;
-Select w such that Next(w, s)
-
-5000
-47 - arg variant (a1, a2)
-assign a1, a2;
-Select a1 such that Next(a1, a2)
-
-5000
-48 - arg variant (a, c)
+28 - arg variant (a, c)
 assign a; call c;
 Select c such that Next(a, c)
 
 5000
-49 - arg variant (c, a)
-assign a; call c;
-Select c such that Next(c, a)
-
-5000
-50 - arg variant (a, r)
+29 - arg variant (a, r)
 assign a; read r;
 Select r such that Next(a, r)
 
 5000
-51 - arg variant (r, a)
-assign a; read r;
-Select r such that Next(r, a)
-
-5000
-52 - arg variant (a, pn)
+30 - arg variant (a, pn)
 assign a; print pn;
 Select pn such that Next(a, pn)
 
 5000
-53 - arg variant (pn, a)
-assign a; print pn;
-Select pn such that Next(pn, a)
-
-5000
-54 - arg variant (a, ifs)
+31 - arg variant (a, ifs)
 assign a; if ifs;
 Select ifs such that Next(a, ifs)
 
 5000
-55 - arg variant (ifs, a)
-assign a; if ifs;
-Select ifs such that Next(ifs, a)
-
-5000
-56 - arg variant (a, w)
+32 - arg variant (a, w)
 assign a; while w;
 Select w such that Next(a, w)
 
 5000
-57 - arg variant (w, a)
-assign a; while w;
-Select w such that Next(w, a)
-
-5000
-58 - arg variant (c1, c2)
-call c1, c2;
-Select c1 such that Next(c1, c2)
-
-5000
-59 - arg variant (c, r)
+33 - arg variant (c, r)
 call c; read r;
 Select r such that Next(c, r)
 
 5000
-60 - arg variant (r, c)
-call c; read r;
-Select r such that Next(r, c)
-
-5000
-61 - arg variant (c, pn)
+34 - arg variant (c, pn)
 call c; print pn;
 Select pn such that Next(c, pn)
 
 5000
-62 - arg variant (pn, c)
-call c; print pn;
-Select pn such that Next(pn, c)
-
-5000
-63 - arg variant (c, ifs)
+35 - arg variant (c, ifs)
 call c; if ifs;
 Select ifs such that Next(c, ifs)
 
 5000
-64 - arg variant (ifs, c)
-call c; if ifs;
-Select ifs such that Next(ifs, c)
-
-5000
-65 - arg variant (c, w)
+36 - arg variant (c, w)
 call c; while w;
 Select w such that Next(c, w)
 
 5000
-66 - arg variant (w, c)
-call c; while w;
-Select w such that Next(w, c)
-
-5000
-67 - arg variant (r1, r2)
-read r1, r2;
-Select r1 such that Next(r1, r2)
-
-5000
-68 - arg variant (r, pn)
+37 - arg variant (r, pn)
 read r; print pn;
 Select pn such that Next(r, pn)
 
 5000
-69 - arg variant (pn, r)
-read r; print pn;
-Select pn such that Next(pn, r)
-
-5000
-70 - arg variant (r, ifs)
+38 - arg variant (r, ifs)
 read r; if ifs;
 Select ifs such that Next(r, ifs)
 
 5000
-71 - arg variant (ifs, r)
-read r; if ifs;
-Select ifs such that Next(ifs, r)
-
-5000
-72 - arg variant (r, w)
+39 - arg variant (r, w)
 read r; while w;
 Select w such that Next(r, w)
 
 5000
-73 - arg variant (w, r)
-read r; while w;
-Select w such that Next(w, r)
-
-5000
-74 - arg variant (pn1, pn2)
-print pn1, pn2;
-Select pn1 such that Next(pn1, pn2)
-
-5000
-75 - arg variant (pn, ifs)
+40 - arg variant (pn, ifs)
 print pn; if ifs;
 Select ifs such that Next(pn, ifs)
 
 5000
-76 - arg variant (ifs, pn)
-print pn; if ifs;
-Select ifs such that Next(ifs, pn)
-
-5000
-77 - arg variant (pn, w)
+41 - arg variant (pn, w)
 print pn; while w;
 Select w such that Next(pn, w)
 
 5000
-78 - arg variant (w, pn)
-print pn; while w;
-Select w such that Next(w, pn)
-
-5000
-79 - arg variant (w, ifs): Nested if in while
+42 - arg variant (w, ifs): Nested if in while
 while w; if ifs;
 Select w such that Next(w, ifs)
 
 5000
-80 - arg variant (ifs, w): Nested while in if
+43 - arg variant (ifs, w): Nested while in if
 while w; if ifs;
 Select ifs such that Next(ifs, w)
 
 5000
-81 - arg variant (w1, w2): Nested while in while
+44 - arg variant (w1, w2): Nested while in while
 while w1, w2;
 Select w2 such that Next(w1, w2)
 
 5000
-82 - arg variant (if, ifs): Nested if in if
+45 - arg variant (if, ifs): Nested if in if
 if if, ifs;
 Select ifs such that Next(if, ifs)
 
 5000
-83 - Across procedures
+46 - Across procedures
 
 Select BOOLEAN such that Next(11, 12)
 FALSE
 5000
-84 - Single line procedure: no predecessor
+47 - Single line procedure: no predecessor
 prog_line n;
 Select BOOLEAN such that Next(n, 22)
 FALSE
 5000
-85 - Single line procedure: no successor
+48 - Single line procedure: no successor
 prog_line n;
 Select BOOLEAN such that Next(22, n)
 FALSE
