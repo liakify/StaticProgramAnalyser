@@ -151,15 +151,15 @@ namespace SIMPLE {
         StatementList(std::vector<StmtId>& statements);
         bool operator== (const StatementList& other);
         std::vector<StmtId> getStmtIds();
-        void setLast(StmtId last);
+        void setMaxLast(StmtId last);
         void addEnd(StmtId end);
         StmtId getFirst();
-        StmtId getLast();
+        StmtId getMaxLast();
         std::unordered_set<StmtId>& getAllEnds();
      private:
         std::vector<StmtId> statements;
         StmtId first;
-        StmtId last;  // Final stmt ID among all nesting levels of all statements in statement list
+        StmtId maxLast;  // Final stmt ID among all nesting levels of all statements in statement list
         std::unordered_set<StmtId> allEnds;  // Set of all possible ending execution paths
     };
 

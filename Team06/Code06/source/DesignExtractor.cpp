@@ -432,15 +432,15 @@ namespace FrontEnd {
             for (StmtId s : elseSl.getAllEnds()) {
                 sl.addEnd(s);
             }
-            sl.setLast(elseSl.getLast());
+            sl.setMaxLast(elseSl.getMaxLast());
         } else if (lastStmt->getType() == StmtType::WHILE) {
             WhileStmt* ws = dynamic_cast<WhileStmt*>(lastStmt.get());
             StatementList& newSl = pkb.stmtListTable.get(ws->getStmtLstId());
             updateLastStmtId(newSl);
             sl.addEnd(sl.getStmtIds().back());
-            sl.setLast(newSl.getLast());
+            sl.setMaxLast(newSl.getMaxLast());
         } else {
-            sl.addEnd(sl.getLast());
+            sl.addEnd(sl.getMaxLast());
         }
     }
 
