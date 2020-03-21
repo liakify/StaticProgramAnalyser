@@ -35,5 +35,29 @@ namespace SPA {
             }
         }
 
+        StmtType getStmtTypeFromDesignEntity(DesignEntity designEntity) {
+            switch (designEntity) {
+            case DesignEntity::READ:
+                return StmtType::READ;
+                break;
+            case DesignEntity::PRINT:
+                return StmtType::PRINT;
+                break;
+            case DesignEntity::CALL:
+                return StmtType::CALL;
+                break;
+            case DesignEntity::WHILE:
+                return StmtType::WHILE;
+                break;
+            case DesignEntity::IF:
+                return StmtType::IF;
+                break;
+            case DesignEntity::ASSIGN:
+                return StmtType::ASSIGN;
+                break;
+            }
+            return StmtType::INVALID;
+        }
+
     }
 }

@@ -1,0 +1,80 @@
+1 - parent: linked by s1
+stmt s1, s2;
+Select s2 such that Parent (s1, s2) with s1.stmt# = 1
+2, 8
+5000
+2 - parent: linked by s2
+if ifs; print pn;
+Select ifs such that Parent (ifs, pn) with 3 == pn.stmt#
+
+5000
+3 - parent*: linked by s1
+while w; print pn;
+Select pn such that Parent* (w, pn) with w.stmt# = 2
+6, 7
+5000
+4 - parent*: linked by s2
+while w; print pn;
+Select w such that Parent* (w, pn) with "a" = pn.varName
+1, 2
+5000
+5 - follows: linked by s1
+stmt s2; call c;
+Select s2 such that Follows (c, s2) with c.procName = "ModifiesB"
+9
+5000
+6 - follows: linked by s2
+stmt s; assign a;
+Select s such that Follows (s, a) with 15 == a.stmt#
+16
+5000
+7 - follows*: linked by s1
+stmt s; read r;
+Select s such that Follows* (r, s) with r.stmt# = 17
+19. 20
+5000
+8 - follows*: linked by s2
+while w; stmt s;
+Select w such that Follows* (w, s) with s.stmt# = cn.value
+1, 2
+5000
+9 - affects: linked by a1
+assign a1, a2; 
+Select <a1, a2> such that Affects (a1, a2)  with a1.stmt# = 3
+3 15
+5000
+10 - affects: linked by a2
+assign a1, a2; 
+Select <a1, a2> such that Affects (a1, a2) with 15 == a2.stmt#
+3 15, 14 15
+5000
+11 - affects*: linked by a1
+assign a1, a2; 
+Select <a1, a2> such that Affects*(a1, a2)  with a1.stmt# = 14
+14 15, 14 16
+5000
+12 - affects*: linked by a2
+assign a1, a2; 
+Select <a1, a2> such that Affects*(a1, a2)  with 16 = a2.stmt#
+14 16
+5000
+13 - next: linked by s1
+stmt s; call c;
+Select c such that Next(s, c) with s.stmt# = 10
+11
+5000
+14 - next: linkec by s2
+read r1, r2;
+Select r1 such that Next(r1, r2) with "B" = r2.varName
+
+5000
+15 - next*: linked by s1
+assign a1; stmt s;
+Select s such that Next* (a1, s) with a1.stmt# = 18
+19
+5000
+16 - next*: linkec by s2
+stmt s; read r;
+Select s such that Next* (s, r) with r.stmt# = 5
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+5000

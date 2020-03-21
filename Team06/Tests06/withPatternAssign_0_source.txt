@@ -1,0 +1,7 @@
+procedure WithPatternAssign {
+  a1 = b;
+  a2 = b;
+  a3 = b;
+  a4 = b;
+  read notAnAssignment; 
+  a2 = 333; }

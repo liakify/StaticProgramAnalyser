@@ -47,6 +47,7 @@
     <ClCompile Include="..\source\ModifiesKB.cpp" />
     <ClCompile Include="..\source\PatternKB.cpp" />
     <ClCompile Include="..\source\WhilePatternEvaluator.cpp" />
+    <ClCompile Include="..\source\WithEvaluator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\CallsEvaluator.h" />
@@ -89,6 +90,7 @@
     <ClInclude Include="..\source\PatternKB.h" />
     <ClInclude Include="..\source\DesignExtractor.h" />
     <ClInclude Include="..\source\WhilePatternEvaluator.h" />
+    <ClInclude Include="..\source\WithEvaluator.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ClassDiagram.cd" />
