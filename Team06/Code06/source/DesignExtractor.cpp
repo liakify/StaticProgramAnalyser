@@ -1,6 +1,10 @@
+#include <memory>
+#include <stdexcept>
+
 #include "DesignExtractor.h"
 
 using std::unordered_set;
+using std::shared_ptr;
 
 namespace FrontEnd {
     PKB::PKB DesignExtractor::run(PKB::PKB& pkb) {
@@ -14,26 +18,51 @@ namespace FrontEnd {
         populateUses();
         populateModifies();
         populatePattern();
+        populateNext();
+        updateStmtContainerId();
         return this->pkb;
     }
 
     void DesignExtractor::populateCalls() {
         for (ProcId i = 1; i <= pkb.procTable.size(); i++) {
-            StmtListId slid = pkb.procTable.get(i).getStmtLstId();
-            std::vector<StmtId> idList = pkb.stmtListTable.get(slid).getStmtIds();
-            for (StmtId id : idList) {
-                Statement* s = pkb.stmtTable.get(id);
-                if (s->getType() != StmtType::CALL) {
-                    continue;
-                }
-                CallStmt* cs = reinterpret_cast<CallStmt*>(s);
+            StmtListId sid = pkb.procTable.get(i).getStmtLstId();
+            for (ProcId p : getAllCalls(sid)) {
+                pkb.callsKB.addCalls(i, p);
+            }
+        }
+    }
+
+    unordered_set<ProcId> DesignExtractor::getAllCalls(StmtListId sid) {
+        std::vector<StmtId> idList = pkb.stmtListTable.get(sid).getStmtIds();
+        unordered_set<ProcId> result = unordered_set<ProcId>();
+        for (StmtId id : idList) {
+            std::shared_ptr<Statement>& s = pkb.stmtTable.get(id);
+            if (s->getType() == StmtType::CALL) {
+                CallStmt* cs = dynamic_cast<CallStmt*>(s.get());
                 ProcId calledId = pkb.procTable.getProcId(cs->getProc());
                 if (calledId == -1) {  // ProcId not found
                     throw std::invalid_argument("Invalid procedure call detected");
                 }
-                pkb.callsKB.addCalls(i, calledId);
+                result.insert(calledId);
+            } else if (s->getType() == StmtType::IF) {
+                IfStmt* ifs = dynamic_cast<IfStmt*>(s.get());
+                unordered_set<ProcId> thenSet = getAllCalls(ifs->getThenStmtLstId());
+                for (ProcId pid : thenSet) {
+                    result.insert(pid);
+                }
+                unordered_set<ProcId> elseSet = getAllCalls(ifs->getElseStmtLstId());
+                for (ProcId pid : elseSet) {
+                    result.insert(pid);
+                }
+            } else if (s->getType() == StmtType::WHILE) {
+                WhileStmt* ws = dynamic_cast<WhileStmt*>(s.get());
+                unordered_set<ProcId> pidSet = getAllCalls(ws->getStmtLstId());
+                for (ProcId pid : pidSet) {
+                    result.insert(pid);
+                }
             }
         }
+        return result;
     }
 
     void DesignExtractor::populateCallStar() {
@@ -116,12 +145,12 @@ namespace FrontEnd {
     void DesignExtractor::populateParent() {
         unordered_set<StmtId> whileSet = pkb.stmtTable.getStmtsByType(StmtType::WHILE);
         for (StmtId id : whileSet) {
-            WhileStmt* ws = reinterpret_cast<WhileStmt*>(pkb.stmtTable.get(id));
+            WhileStmt* ws = dynamic_cast<WhileStmt*>(pkb.stmtTable.get(id).get());
             populateParentKB(id, ws->getStmtLstId());
         }
         unordered_set<StmtId> ifSet = pkb.stmtTable.getStmtsByType(StmtType::IF);
         for (StmtId id : ifSet) {
-            IfStmt* ifs = reinterpret_cast<IfStmt*>(pkb.stmtTable.get(id));
+            IfStmt* ifs = dynamic_cast<IfStmt*>(pkb.stmtTable.get(id).get());
             populateParentKB(id, ifs->getThenStmtLstId());
             populateParentKB(id, ifs->getElseStmtLstId());
         }
@@ -170,29 +199,29 @@ namespace FrontEnd {
     }
 
     void DesignExtractor::populateStmtUses(StmtId id) {
-        Statement* s = pkb.stmtTable.get(id);
+        shared_ptr<Statement>& s = pkb.stmtTable.get(id);
         StmtType type = s->getType();
         if (type == StmtType::PRINT) {
-            PrintStmt* ps = reinterpret_cast<PrintStmt*>(s);
+            PrintStmt* ps = dynamic_cast<PrintStmt*>(s.get());
             pkb.usesKB.addStmtUses(id, ps->getVar());
         } else if (type == StmtType::WHILE) {
-            WhileStmt* ws = reinterpret_cast<WhileStmt*>(s);
+            WhileStmt* ws = dynamic_cast<WhileStmt*>(s.get());
             StmtListId stmtLstId = ws->getStmtLstId();
             populateStmtUsesKB(id, ws->getCondExpr().getVarIds());
             populateStmtUsesKB(id, getAllUses(stmtLstId));
         } else if (type == StmtType::IF) {
-            IfStmt* ifs = reinterpret_cast<IfStmt*>(s);
+            IfStmt* ifs = dynamic_cast<IfStmt*>(s.get());
             StmtListId stmtLstId1 = ifs->getThenStmtLstId();
             StmtListId stmtLstId2 = ifs->getElseStmtLstId();
             populateStmtUsesKB(id, ifs->getCondExpr().getVarIds());
             populateStmtUsesKB(id, getAllUses(stmtLstId1));
             populateStmtUsesKB(id, getAllUses(stmtLstId2));
         } else if (type == StmtType::ASSIGN) {
-            AssignStmt* as = reinterpret_cast<AssignStmt*>(s);
+            AssignStmt* as = dynamic_cast<AssignStmt*>(s.get());
             Expression exp = as->getExpr();
             populateStmtUsesKB(id, exp.getVarIds());
         } else if (type == StmtType::CALL) {
-            CallStmt* cs = reinterpret_cast<CallStmt*>(s);
+            CallStmt* cs = dynamic_cast<CallStmt*>(s.get());
             ProcId pid = pkb.procTable.getProcId(cs->getProc());
             StmtListId stmtLstId = pkb.procTable.get(pid).getStmtLstId();
 
@@ -236,27 +265,27 @@ namespace FrontEnd {
     }
 
     void DesignExtractor::populateStmtModifies(StmtId id) {
-        Statement* s = pkb.stmtTable.get(id);
+        shared_ptr<Statement>& s = pkb.stmtTable.get(id);
         StmtType type = s->getType();
         if (type == StmtType::READ) {
-            ReadStmt* rs = reinterpret_cast<ReadStmt*>(s);
+            ReadStmt* rs = dynamic_cast<ReadStmt*>(s.get());
             pkb.modifiesKB.addStmtModifies(id, rs->getVar());
         } else if (type == StmtType::WHILE) {
-            WhileStmt* ws = reinterpret_cast<WhileStmt*>(s);
+            WhileStmt* ws = dynamic_cast<WhileStmt*>(s.get());
             StmtListId stmtLstId = ws->getStmtLstId();
             populateStmtModifiesKB(id, getAllModifies(stmtLstId));
         } else if (type == StmtType::IF) {
-            IfStmt* ifs = reinterpret_cast<IfStmt*>(s);
+            IfStmt* ifs = dynamic_cast<IfStmt*>(s.get());
             StmtListId stmtLstId1 = ifs->getThenStmtLstId();
             StmtListId stmtLstId2 = ifs->getElseStmtLstId();
             populateStmtModifiesKB(id, getAllModifies(stmtLstId1));
             populateStmtModifiesKB(id, getAllModifies(stmtLstId2));
         } else if (type == StmtType::ASSIGN) {
-            AssignStmt* as = reinterpret_cast<AssignStmt*>(s);
+            AssignStmt* as = dynamic_cast<AssignStmt*>(s.get());
             Expression exp = as->getExpr();
             pkb.modifiesKB.addStmtModifies(id, as->getVar());
         } else if (type == StmtType::CALL) {
-            CallStmt* cs = reinterpret_cast<CallStmt*>(s);
+            CallStmt* cs = dynamic_cast<CallStmt*>(s.get());
             ProcId pid = pkb.procTable.getProcId(cs->getProc());
             StmtListId stmtLstId = pkb.procTable.get(pid).getStmtLstId();
 
@@ -294,17 +323,133 @@ namespace FrontEnd {
     void DesignExtractor::populatePattern() {
         unordered_set<StmtId> assignSet = pkb.stmtTable.getStmtsByType(StmtType::ASSIGN);
         for (StmtId id : assignSet) {
-            AssignStmt* as = reinterpret_cast<AssignStmt*>(pkb.stmtTable.get(id));
+            AssignStmt* as = dynamic_cast<AssignStmt*>(pkb.stmtTable.get(id).get());
             Expression exp = as->getExpr();
-            populatePatternKB(id, exp);
+            populateAssignPatternKB(id, exp);
+        }
+        unordered_set<StmtId> ifSet = pkb.stmtTable.getStmtsByType(StmtType::IF);
+        for (StmtId id : ifSet) {
+            IfStmt* ifs = dynamic_cast<IfStmt*>(pkb.stmtTable.get(id).get());
+            CondExpr cond = ifs->getCondExpr();
+            populateIfPatternKB(id, cond);
+        }
+        unordered_set<StmtId> whileSet = pkb.stmtTable.getStmtsByType(StmtType::WHILE);
+        for (StmtId id : whileSet) {
+            WhileStmt* ws = dynamic_cast<WhileStmt*>(pkb.stmtTable.get(id).get());
+            CondExpr cond = ws->getCondExpr();
+            populateWhilePatternKB(id, cond);
         }
     }
 
-    void DesignExtractor::populatePatternKB(StmtId stmtId, Expression exp) {
+    void DesignExtractor::populateAssignPatternKB(StmtId stmtId, Expression exp) {
         pkb.patternKB.addAssignPattern(exp.getStr(), stmtId);
         unordered_set<Pattern> patterns = exp.getPatterns();
         for (Pattern p : patterns) {
             pkb.patternKB.addAssignPattern(p, stmtId);
+        }
+    }
+
+    void DesignExtractor::populateIfPatternKB(StmtId stmtId, CondExpr cond) {
+        unordered_set<VarId> varSet = cond.getVarIds();
+        for (VarId id : varSet) {
+            pkb.patternKB.addIfPattern(id, stmtId);
+        }
+    }
+
+    void DesignExtractor::populateWhilePatternKB(StmtId stmtId, CondExpr cond) {
+        unordered_set<VarId> varSet = cond.getVarIds();
+        for (VarId id : varSet) {
+            pkb.patternKB.addWhilePattern(id, stmtId);
+        }
+    }
+
+    void DesignExtractor::populateNext() {
+        for (ProcId pid = 1; pid <= pkb.procTable.size(); pid++) {
+            StmtListId sid = pkb.procTable.get(pid).getStmtLstId();
+            StatementList& sl = pkb.stmtListTable.get(sid);
+            updateLastStmtId(sl);
+            populateNextKB(sid);
+        }
+    }
+
+    void DesignExtractor::populateNextKB(StmtListId sid) {
+        StatementList sl = pkb.stmtListTable.get(sid);
+        std::vector<StmtId> idList = sl.getStmtIds();
+        for (size_t i = 0; i < idList.size(); i++) {
+            shared_ptr<Statement> s = pkb.stmtTable.get(idList[i]);
+            if (s->getType() == StmtType::IF) {
+                IfStmt* ifs = dynamic_cast<IfStmt*>(s.get());
+                StmtListId thenId = ifs->getThenStmtLstId();
+                StatementList& thenSl = pkb.stmtListTable.get(thenId);
+                updateLastStmtId(thenSl);
+                populateNextKB(thenId);
+                pkb.nextKB.addNext(idList[i], thenSl.getFirst());
+                StmtListId elseId = ifs->getElseStmtLstId();
+                StatementList& elseSl = pkb.stmtListTable.get(elseId);
+                updateLastStmtId(elseSl);
+                populateNextKB(elseId);
+                pkb.nextKB.addNext(idList[i], elseSl.getFirst());
+                if (i < idList.size() - 1) {
+                    for (StmtId s : thenSl.getAllEnds()) {
+                        pkb.nextKB.addNext(s, idList[i + 1]);
+                    }
+                    for (StmtId s : elseSl.getAllEnds()) {
+                        pkb.nextKB.addNext(s, idList[i + 1]);
+                    }
+                }
+            } else if (s->getType() == StmtType::WHILE) {
+                WhileStmt* ws = dynamic_cast<WhileStmt*>(s.get());
+                StmtListId loopId = ws->getStmtLstId();
+                StatementList& whileSl = pkb.stmtListTable.get(loopId);
+                updateLastStmtId(whileSl);
+                populateNextKB(loopId);
+                pkb.nextKB.addNext(idList[i], whileSl.getFirst());
+                for (StmtId s : whileSl.getAllEnds()) {
+                    pkb.nextKB.addNext(s, idList[i]);
+                }
+                if (i < idList.size() - 1) {
+                    pkb.nextKB.addNext(idList[i], idList[i + 1]);
+                }
+            } else {
+                if (i < idList.size() - 1) {
+                    pkb.nextKB.addNext(idList[i], idList[i + 1]);
+                }
+            }
+        }
+    }
+
+    void DesignExtractor::updateLastStmtId(StatementList& sl) {
+        shared_ptr<Statement>& lastStmt = pkb.stmtTable.get(sl.getLast());
+        if (lastStmt->getType() == StmtType::IF) {
+            IfStmt* ifs = dynamic_cast<IfStmt*>(lastStmt.get());
+            StatementList& thenSl = pkb.stmtListTable.get(ifs->getThenStmtLstId());
+            StatementList& elseSl = pkb.stmtListTable.get(ifs->getElseStmtLstId());
+            updateLastStmtId(thenSl);
+            updateLastStmtId(elseSl);
+            for (StmtId s : thenSl.getAllEnds()) {
+                sl.addEnd(s);
+            }
+            for (StmtId s : elseSl.getAllEnds()) {
+                sl.addEnd(s);
+            }
+            sl.setLast(elseSl.getLast());
+        } else if (lastStmt->getType() == StmtType::WHILE) {
+            WhileStmt* ws = dynamic_cast<WhileStmt*>(lastStmt.get());
+            StatementList& newSl = pkb.stmtListTable.get(ws->getStmtLstId());
+            updateLastStmtId(newSl);
+            sl.addEnd(sl.getLast());
+            sl.setLast(newSl.getLast());
+        } else {
+            sl.addEnd(sl.getLast());
+        }
+    }
+
+    void DesignExtractor::updateStmtContainerId() {
+        for (StmtListId sid = 1; sid <= pkb.stmtListTable.size(); sid++) {
+            StatementList sl = pkb.stmtListTable.get(sid);
+            for (StmtId id : sl.getStmtIds()) {
+                pkb.stmtTable.get(id)->setContainerId(sid);
+            }
         }
     }
 }

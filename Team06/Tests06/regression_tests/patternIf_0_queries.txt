@@ -25,76 +25,76 @@ Select ifs pattern ifs ("notFound", _, _)
 5000
 6
 variable v; if ifs;
-Select v such that pattern ifs (v, _)
+Select v pattern ifs (v, _)
 
 5000
 7 - invalid: 4 arguments
 variable v; if ifs;
-Select v such that pattern ifs (v, _, _, _)
+Select v pattern ifs (v, _, _, _)
 
 5000
 8 - invalid: argument type
 variable v; if ifs;
-Select v such that pattern ifs (_, _, v)
+Select v pattern ifs (_, _, v)
 
 5000
 9 - invalid: argument type
 variable v; if ifs;
-Select v such that pattern ifs (_, v, _)
+Select v pattern ifs (_, v, _)
 
 5000
 10 - invalid: argument type
 if ifs;
-Select ifs such that pattern ifs (1, _, _)
+Select ifs pattern ifs (1, _, _)
 
 5000
 11 - invalid: argument type
 stmt s; if ifs;
-Select s such that pattern ifs (s, _, _)
+Select s pattern ifs (s, _, _)
 
 5000
 12 - invalid: argument type
 read r; if ifs;
-Select r such that pattern ifs (r, _, _)
+Select r pattern ifs (r, _, _)
 
 5000
 13 - invalid: argument type
 print pn; if ifs;
-Select pn such that pattern ifs (pn, _, _)
+Select pn pattern ifs (pn, _, _)
 
 5000
 14 - invalid: argument type
 call c; if ifs;
-Select c such that pattern ifs (c, _, _)
+Select c pattern ifs (c, _, _)
 
 5000
 15 - invalid: argument type
 while w; if ifs;
-Select w such that pattern ifs (w, _, _)
+Select w pattern ifs (w, _, _)
 
 5000
 16 - invalid: argument type
 if ifs, ifs1;
-Select ifs1 such that pattern ifs (ifs1, _, _)
+Select ifs1 pattern ifs (ifs1, _, _)
 
 5000
 17 - invalid: argument type
 assign a; if ifs;
-Select a such that pattern ifs (a, _, _)
+Select a pattern ifs (a, _, _)
 
 5000
 18 - invalid: argument type
 constant cn; if ifs;
-Select cn such that pattern ifs (cn, _, _)
+Select cn pattern ifs (cn, _, _)
 
 5000
 19 - invalid: argument type
 procedure p; if ifs;
-Select p such that pattern ifs (p, _, _)
+Select p pattern ifs (p, _, _)
 
 5000
 20 - invalid: argument type
 prog_line pl; if ifs;
-Select pl such that pattern ifs (pl, _, _)
+Select pl pattern ifs (pl, _, _)
 
 5000

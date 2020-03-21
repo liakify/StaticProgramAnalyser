@@ -1,0 +1,37 @@
+procedure SelectAffects {
+  a = b;
+  d = a;
+  b = notRelated;
+  print a;
+  print b;
+  read b;
+  while (c1 == c2) {
+    if (a == b) then {
+      read x;
+      print b; } else {
+      read a; } }
+  b = 1 + 2 * x / y - z % a; }
+procedure NotAffects1{
+  a = b;
+  a = b;
+  b = a; }
+procedure NotAffects2{
+  a = b;
+  a = c;
+  b = a; }
+procedure NotAffects3{
+  a = b;
+  a = a;
+  b = a; }
+procedure NotAffects4{
+  a = b;
+  read a;
+  b = a; }
+procedure NotAffects5 {
+  a = b;
+  call ModifiesA;
+  b = a; }
+procedure ModifiesA {
+  if (c1 == c2 ) then {
+    a = modified; } else {
+    print b; } }

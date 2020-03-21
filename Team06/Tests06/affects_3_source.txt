@@ -1,0 +1,7 @@
+procedure Affects3 {
+	while (x > 1) {
+		y = x + 1;
+		x = y * z;
+		while (y < x) {
+			x = x % z;
+			z = y - 1; } }}

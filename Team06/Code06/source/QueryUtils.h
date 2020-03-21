@@ -17,12 +17,12 @@ namespace PQL {
     namespace QueryUtils {
 
         /**
-         *  Validates an input string as a valid integer.
+         *  Validates an input string as a valid non-negative integer.
          *
          *  @param      input       candidate integer string.
-         *  @return     boolean describing if the string is an integer.
+         *  @return     boolean describing if the string is a non-negative integer.
          */
-        bool isInteger(std::string input);
+        bool isValidInteger(std::string input);
 
         /**
          *  Validates an input string as a valid identifier or synonym.
@@ -31,6 +31,14 @@ namespace PQL {
          *  @return     boolean describing if the string is a valid identifier.
          */
         bool isValidIdentifier(std::string input);
+
+        /**
+         *  Validates an input string as a literal (variable or procedure name).
+         *
+         *  @param      input       candidate literal.
+         *  @return     boolean describing if the string is a valid literal.
+         */
+        bool isValidLiteral(std::string input);
 
         /**
          *  Validates if an input string is a valid statement reference argument.
@@ -56,6 +64,14 @@ namespace PQL {
          *              a synonym.
          */
         bool isValidAttrRef(std::string input);
+
+        /**
+         *  Validates if an input string is a valid reference argument (for with clauses).
+         *
+         *  @param      input       candidate reference string.
+         *  @return     boolean describing is a valid expression in an equality.
+         */
+        bool isValidRef(std::string input);
 
         /**
          *  Returns the input string stripped of leading spaces and newline characters.
