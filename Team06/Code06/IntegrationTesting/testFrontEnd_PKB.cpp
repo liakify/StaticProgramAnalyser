@@ -17,7 +17,8 @@ namespace IntegrationTesting {
 
         std::unordered_set<VarName> allVars = std::unordered_set<VarName>({"x", "y", "z", "a"});
 
-        std::unordered_set<VarName> allModifiedVars = std::unordered_set<VarName>({"x", "y", "z"});
+        std::unordered_set<VarName> allModifiedVars_p = std::unordered_set<VarName>({"x", "y", "z"});
+        std::unordered_set<VarName> allModifiedVars_p2 = std::unordered_set<VarName>({"y"});
         std::unordered_map<VarName, std::unordered_set<StmtId>> allModifiedVarWithStmt =
         {
             std::make_pair("x", std::unordered_set<StmtId>({1})),
@@ -25,7 +26,8 @@ namespace IntegrationTesting {
             std::make_pair("z", std::unordered_set<StmtId>({3, 4}))
         };
 
-        std::unordered_set<VarName> allUsedVars = std::unordered_set<VarName>({"x", "y", "a"});
+        std::unordered_set<VarName> allUsedVars_p = std::unordered_set<VarName>({"x", "y", "a"});
+        std::unordered_set<VarName> allUsedVars_p2 = std::unordered_set<VarName>({});
         std::unordered_map<VarName, std::unordered_set<StmtId>> allUsedVarWithStmt =
         {
             std::make_pair("x", std::unordered_set<StmtId>({3, 4})),
@@ -73,7 +75,7 @@ namespace IntegrationTesting {
             }
             Assert::IsTrue(constants == allConstants);
 
-            Assert::IsTrue(pkb.procTable.size() == 2);
+            Assert::IsTrue(pkb.procTable.size() == procCount);
             Assert::IsTrue(pkb.procTable.getProcId(procName_p) == 1);
             Assert::IsTrue(pkb.procTable.getProcId(procName_p2) == 2);
 
@@ -121,25 +123,33 @@ namespace IntegrationTesting {
             Assert::IsTrue(pkb.parentKB.getAllChildren(7) == std::unordered_set<StmtId>({}));
 
             std::unordered_set<VarName> modifiedVarNames;
-            for (int i = 1; i <= procCount; i++) {
-                std::unordered_set<VarId> modifiedVarIds = pkb.modifiesKB.getAllVarsModifiedByProc(i);
-                for (auto itr = modifiedVarIds.begin(); itr != modifiedVarIds.end(); itr++) {
-                    modifiedVarNames.insert(pkb.varTable.get(*itr));
-                }
+            std::unordered_set<VarId> modifiedVarIds = pkb.modifiesKB.getAllVarsModifiedByProc(pkb.procTable.getProcId(procName_p));
+            for (auto itr = modifiedVarIds.begin(); itr != modifiedVarIds.end(); itr++) {
+                modifiedVarNames.insert(pkb.varTable.get(*itr));
             }
-            Assert::IsTrue(modifiedVarNames == allModifiedVars);
+            Assert::IsTrue(modifiedVarNames == allModifiedVars_p);
+            modifiedVarNames.clear();
+            modifiedVarIds = pkb.modifiesKB.getAllVarsModifiedByProc(pkb.procTable.getProcId(procName_p2));
+            for (auto itr = modifiedVarIds.begin(); itr != modifiedVarIds.end(); itr++) {
+                modifiedVarNames.insert(pkb.varTable.get(*itr));
+            }
+            Assert::IsTrue(modifiedVarNames == allModifiedVars_p2);
             Assert::IsTrue(pkb.modifiesKB.getAllStmtsModifyVar(pkb.varTable.getVarId("x")) == allModifiedVarWithStmt.at("x"));
             Assert::IsTrue(pkb.modifiesKB.getAllStmtsModifyVar(pkb.varTable.getVarId("y")) == allModifiedVarWithStmt.at("y"));
             Assert::IsTrue(pkb.modifiesKB.getAllStmtsModifyVar(pkb.varTable.getVarId("z")) == allModifiedVarWithStmt.at("z"));
 
             std::unordered_set<VarName> usedVarNames;
-            for (int i = 1; i <= procCount; i++) {
-                std::unordered_set<VarId> usedVarIds = pkb.usesKB.getAllVarsUsedByProc(i);
-                for (auto itr = usedVarIds.begin(); itr != usedVarIds.end(); itr++) {
-                    usedVarNames.insert(pkb.varTable.get(*itr));
-                }
+            std::unordered_set<VarId> usedVarIds = pkb.usesKB.getAllVarsUsedByProc(pkb.procTable.getProcId(procName_p));
+            for (auto itr = usedVarIds.begin(); itr != usedVarIds.end(); itr++) {
+                usedVarNames.insert(pkb.varTable.get(*itr));
             }
-            Assert::IsTrue(usedVarNames == allUsedVars);
+            Assert::IsTrue(usedVarNames == allUsedVars_p);
+            usedVarNames.clear();
+            usedVarIds = pkb.usesKB.getAllVarsUsedByProc(pkb.procTable.getProcId(procName_p2));
+            for (auto itr = usedVarIds.begin(); itr != usedVarIds.end(); itr++) {
+                usedVarNames.insert(pkb.varTable.get(*itr));
+            }
+            Assert::IsTrue(usedVarNames == allUsedVars_p2);
             Assert::IsTrue(pkb.usesKB.getAllStmtsUsingVar(pkb.varTable.getVarId("x")) == allUsedVarWithStmt.at("x"));
             Assert::IsTrue(pkb.usesKB.getAllStmtsUsingVar(pkb.varTable.getVarId("y")) == allUsedVarWithStmt.at("y"));
             Assert::IsTrue(pkb.usesKB.getAllStmtsUsingVar(pkb.varTable.getVarId("a")) == allUsedVarWithStmt.at("a"));
