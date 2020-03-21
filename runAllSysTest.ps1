@@ -1,3 +1,5 @@
+ls -r
+
 "STARTING SYSTEM TESTS"
 
 # For cmd reference:
