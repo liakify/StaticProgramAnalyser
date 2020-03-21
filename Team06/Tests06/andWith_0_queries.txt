@@ -1,0 +1,20 @@
+1
+stmt s;
+Select BOOLEAN with 1 = 1 and 2 = 2 and s.stmt# = 1
+TRUE
+5000
+2
+stmt s1, s2, s3; prog_line pl; constant cn;
+Select <s1, s2, s3> with 1 = 1 and s1.stmt# = s2.stmt# and s2.stmt# = s3.stmt# and s3.stmt# = pl with cn.value = pl
+2 2 2
+5000
+3
+variable v1, v2; procedure p; call c; print pn; read r;
+Select <v1, v2> with pn.varName = "c" with p.procName = v2.varName and and v2.varName = r.varName and c.varName = v1.varName
+Name Name
+5000
+4
+stmt s1, s2, s3;
+Select BOOLEAN with 1 = 1 and s1.stmt# = s2.stmt# and s2.stmt# = s3.stmt# and 2 = 2000
+FALSE
+5000
