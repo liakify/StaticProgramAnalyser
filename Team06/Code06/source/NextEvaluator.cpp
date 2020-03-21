@@ -80,6 +80,136 @@ namespace PQL {
             }
         }
 
+        /**
+        * Evaluates a single Next clause on the given PKB where the input contains a StmtId and a synonym.
+        *
+        * @param    database    The PKB to evaluate the clause on.
+        * @param    clause      The clause to evaluate.
+        * @param    synonymTable    The synonym table associated with the query containing the clause.
+        * @return   The result of the evaluation.
+        */
+        ClauseResult evaluateNextClauseIntSyn(PKB::PKB& database, RelationClause clause,
+            unordered_map<std::string, DesignEntity>& synonymTable) {
+            ArgType argType1 = clause.getArgs().first.first;
+            ArgType argType2 = clause.getArgs().second.first;
+
+            if (argType1 == ArgType::INTEGER && argType2 == ArgType::SYNONYM) {
+                // Case 1: Integer, Synonym
+                StmtId arg1 = std::stoi(clause.getArgs().first.second);
+                Synonym arg2 = clause.getArgs().second.second;
+
+                std::unordered_set<StmtId> stmts = database.nextStarGetDirectNodes(arg1, NodeType::SUCCESSOR);
+                ClauseResult clauseResult;
+                for (StmtId stmt : stmts) {
+                    if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(stmt)->getType(), synonymTable[arg2])) {
+                        ClauseResultEntry resultEntry;
+                        resultEntry[arg2] = std::to_string(stmt);
+                        clauseResult.emplace_back(resultEntry);
+                    }
+                }
+                return clauseResult;
+            } else {
+                // Case 2: Synonym, Integer
+                Synonym arg1 = clause.getArgs().second.second;
+                StmtId arg2 = std::stoi(clause.getArgs().first.second);
+
+                std::unordered_set<StmtId> stmts = database.nextStarGetDirectNodes(arg2, NodeType::PREDECESSOR);
+                ClauseResult clauseResult;
+                for (StmtId stmt : stmts) {
+                    if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(stmt)->getType(), synonymTable[arg1])) {
+                        ClauseResultEntry resultEntry;
+                        resultEntry[arg1] = std::to_string(stmt);
+                        clauseResult.emplace_back(resultEntry);
+                    }
+                }
+                return clauseResult;
+            }
+        }
+
+        /**
+        * Evaluates a single Next clause on the given PKB where the input contains a wildcard and a synonym.
+        *
+        * @param    database    The PKB to evaluate the clause on.
+        * @param    clause      The clause to evaluate.
+        * @param    synonymTable    The synonym table associated with the query containing the clause.
+        * @return   The result of the evaluation.
+        */
+        ClauseResult evaluateNextClauseWildSyn(PKB::PKB& database, RelationClause clause,
+            unordered_map<std::string, DesignEntity>& synonymTable) {
+            ArgType argType1 = clause.getArgs().first.first;
+            ArgType argType2 = clause.getArgs().second.first;
+
+            if (argType1 == ArgType::WILDCARD && argType2 == ArgType::SYNONYM) {
+                // Case 1: Wildcard, Synonym
+                Synonym arg2 = clause.getArgs().second.second;
+
+                ClauseResult clauseResult;
+                for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
+                    if (database.hasPrev(i)) {
+                        if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i)->getType(), synonymTable[arg2])) {
+                            ClauseResultEntry resultEntry;
+                            resultEntry[arg2] = std::to_string(i);
+                            clauseResult.emplace_back(resultEntry);
+                        }
+                    }
+                }
+                return clauseResult;
+            } else {
+                // Case 2: Synonym, Wildcard
+                Synonym arg1 = clause.getArgs().second.second;
+                
+                ClauseResult clauseResult;
+                for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
+                    if (database.hasNext(i)) {
+                        if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i)->getType(), synonymTable[arg2])) {
+                            ClauseResultEntry resultEntry;
+                            resultEntry[arg1] = std::to_string(i);
+                            clauseResult.emplace_back(resultEntry);
+                        }
+                    }
+                }
+                return clauseResult;
+            }
+        }
+
+        /**
+        * Evaluates a single Next clause on the given PKB where the input contains two synonyms.
+        *
+        * @param    database    The PKB to evaluate the clause on.
+        * @param    clause      The clause to evaluate.
+        * @param    synonymTable    The synonym table associated with the query containing the clause.
+        * @return   The result of the evaluation.
+        */
+        ClauseResult evaluateNextClauseSynSyn(PKB::PKB& database, RelationClause clause,
+            unordered_map<std::string, DesignEntity>& synonymTable) {
+            Synonym arg1 = clause.getArgs().first.second;
+            Synonym arg2 = clause.getArgs().second.second;
+
+            bool singleSynonym = (arg1 == arg2);
+
+            ClauseResult clauseResult;
+            for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
+                std::unordered_set<StmtId> nextStmts = database.nextStarGetDirectNodes(i, NodeType::SUCCESSOR);
+                for (StmtId nextStmt : nextStmts) {
+                    if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i)->getType(), synonymTable[arg1]) &&
+                        SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(nextStmt)->getType(), synonymTable[arg2])) {
+                        if (!singleSynonym) {
+                            ClauseResultEntry resultEntry;
+                            resultEntry[arg1] = std::to_string(i);
+                            resultEntry[arg2] = std::to_string(nextStmt);
+                            clauseResult.emplace_back(resultEntry);
+                        } else {
+                            if (i == nextStmt) {
+                                ClauseResultEntry resultEntry;
+                                resultEntry[arg1] = std::to_string(i);
+                                clauseResult.emplace_back(resultEntry);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         ClauseResult evaluateNextClause(PKB::PKB& database, RelationClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable) {
 
