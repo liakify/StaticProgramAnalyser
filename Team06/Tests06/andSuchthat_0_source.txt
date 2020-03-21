@@ -1,0 +1,12 @@
+procedure AndSuchthat {
+  if(c1 == c2 ) then {
+    read var; } else {
+    call Calls2; }
+  var = a + a; 
+  a = var;  }
+procedure Calls1 {
+  call Calls2; }
+procedure Calls2 {
+  call Calls3; }
+procedure Calls3 {
+  print var; }
