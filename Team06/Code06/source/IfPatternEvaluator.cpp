@@ -12,17 +12,21 @@ namespace PQL {
         * Evaluates a single if pattern clause on the given PKB where the inputs is one wildcard.
         *
         * @param    database    The PKB to evaluate the clause on.
+        * @param    clause      The clause to evaluate.
         * @return   The result of the evaluation.
         */
-        ClauseResult evaluateIfPatternClauseWild(PKB::PKB& database) {
-            // Here, we just need to check if there is at least one if statement in the program
-            if (database.stmtTable.getStmtsByType(StmtType::IF).size() > 0) {
+        ClauseResult evaluateIfPatternClauseWild(PKB::PKB& database, PatternClause& clause) {
+            std::unordered_set<StmtId> stmts = database.patternKB.getAllIfStmtsWithCtrlVars();
+
+            Synonym arg0 = clause.synonym;
+
+            ClauseResult clauseResult;
+            for (StmtId stmt : stmts) {
                 ClauseResultEntry resultEntry;
-                resultEntry["_RESULT"] = "TRUE";
-                return { resultEntry };
-            } else {
-                return {};
+                resultEntry[arg0] = std::to_string(stmt);
+                clauseResult.emplace_back(resultEntry);
             }
+            return clauseResult;
         }
 
         /**
@@ -88,7 +92,7 @@ namespace PQL {
 
             if (argType1 == ArgType::WILDCARD) {
                 // 1 wildcard
-                return evaluateIfPatternClauseWild(database);
+                return evaluateIfPatternClauseWild(database, clause);
             } else if (argType1 == ArgType::IDENTIFIER) {
                 // 1 identifier
                 return evaluateIfPatternClauseId(database, clause, synonymTable);
