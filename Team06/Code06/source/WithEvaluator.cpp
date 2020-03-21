@@ -87,12 +87,22 @@ namespace PQL {
                     }
                     return clauseResult;
 
-                } else {
-                    Synonym syn1 = arg1.second.first;
-                    ClauseResultEntry resultEntry;
-                    resultEntry[syn1] = arg2.second.first;
-
-                    return { resultEntry };
+                } else if (synonymTable[syn1] == DesignEntity::PROCEDURE) {
+                    ClauseResult clauseResult;
+                    if (database.procTable.getProcId(arg2.second.first) != -1) {
+                        ClauseResultEntry resultEntry;
+                        resultEntry[syn1] = arg2.second.first;
+                        clauseResult.emplace_back(resultEntry);
+                    }
+                    return clauseResult;
+                } else if (synonymTable[syn1] == DesignEntity::VARIABLE) {
+                    ClauseResult clauseResult;
+                    if (database.varTable.getVarId(arg2.second.first) != -1) {
+                        ClauseResultEntry resultEntry;
+                        resultEntry[syn1] = arg2.second.first;
+                        clauseResult.emplace_back(resultEntry);
+                    }
+                    return clauseResult;
                 }
 
             } else if (argType1 == ArgType::ATTRIBUTE && argType2 == ArgType::ATTRIBUTE) {
