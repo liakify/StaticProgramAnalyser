@@ -42,6 +42,19 @@ $list_of_test_files = @(
 # ONLY MODIFY THE BELOW
 # '..\select_0'
 # '..\suchthatPattern_1',
+# '..\patternIf_0fix',
+# '..\patternWhile_0fix',
+# '..\tuples_0'
+# '..\tuples_invalid'
+# '..\affects_0'
+# '..\affects_1'
+# '..\affects_2'
+# '..\affects_3'
+# '..\affects_invalidArgs'
+# '..\affectsStar_0'
+# '..\affectsStar_1'
+# '..\affectsStar_invalidArgs'
+# '..\suchthatPattern_affects+Star'
 )
 
 $list_of_no_xml_tests = @(
