@@ -26,7 +26,10 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TestFrontEnd.cpp">
+    <ClCompile Include="testPKB_PQL.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="testFrontEnd_PKB.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
