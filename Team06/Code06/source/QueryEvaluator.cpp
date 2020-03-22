@@ -25,6 +25,68 @@ namespace PQL {
         this->database = database;
     }
 
+    ClauseResult QueryEvaluator::getClauseResultWithAllValues(Synonym synonym, DesignEntity designEntity) {
+        
+        ClauseResult clauseResult;
+        
+        switch (designEntity) {
+        case DesignEntity::ASSIGN:
+        case DesignEntity::CALL:
+        case DesignEntity::IF:
+        case DesignEntity::PRINT:
+        case DesignEntity::READ:
+        case DesignEntity::WHILE: {
+            std::unordered_set<StmtId> stmts = database.stmtTable.getStmtsByType(SPA::TypeUtils::getStmtTypeFromDesignEntity(designEntity));
+            for (StmtId stmt : stmts) {
+                ClauseResultEntry resultEntry;
+                resultEntry[synonym] = std::to_string(stmt);
+                clauseResult.emplace_back(resultEntry);
+            }
+            return clauseResult;
+            break;
+        }
+        case DesignEntity::PROG_LINE:
+        case DesignEntity::STATEMENT: {
+            for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
+                ClauseResultEntry resultEntry;
+                resultEntry[synonym] = std::to_string(i);
+                clauseResult.emplace_back(resultEntry);
+            }
+            return clauseResult;
+            break;
+        }
+        case DesignEntity::CONSTANT: {
+            for (ConstId i = 1; i <= database.constTable.size(); i++) {
+                ClauseResultEntry resultEntry;
+                resultEntry[synonym] = database.constTable.get(i);
+                clauseResult.emplace_back(resultEntry);
+            }
+            return clauseResult;
+            break;
+        }
+        case DesignEntity::PROCEDURE: {
+            for (ProcId i = 1; i <= database.procTable.size(); i++) {
+                ClauseResultEntry resultEntry;
+                resultEntry[synonym] = database.procTable.get(i).getName();
+                clauseResult.emplace_back(resultEntry);
+            }
+            return clauseResult;
+            break;
+        }
+        case DesignEntity::VARIABLE: {
+            std::unordered_set<VarName> allVars = database.varTable.getAllVars();
+            for (VarName var : allVars) {
+                ClauseResultEntry resultEntry;
+                resultEntry[synonym] = var;
+                clauseResult.emplace_back(resultEntry);
+            }
+            return clauseResult;
+            break;
+        }
+        }
+        return {};
+    }
+
     ClauseResult QueryEvaluator::evaluateQuery(Query &query) {
         // Results of Clauses
         std::vector<ClauseResult> clauseResults;
@@ -49,6 +111,13 @@ namespace PQL {
         // Evaluate With Clauses
         for (WithClause with : query.equalities) {
             clauseResults.emplace_back(evaluateWithClause(with, query.synonymTable));
+        }
+
+        // For all synonyms that do not appear in any clause, add a table
+        for (Ref synonym : query.targetEntities) {
+            if (query.synonymTable.find(synonym.first) == query.synonymTable.end()) {
+                clauseResults.emplace_back(getClauseResultWithAllValues(synonym.first, query.synonymTable[synonym.first]));
+            }
         }
 
         // Combine Results
