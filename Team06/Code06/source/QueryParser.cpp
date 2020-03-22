@@ -75,7 +75,7 @@ namespace PQL {
         // PQL declaration syntax of form <keyword> <synonym>(, <synonym>)*;
         int numDeclarations = statements.size() - 1;
         for (int i = 0; i < numDeclarations; i++) {
-            if (!regex_search(statements.at(i), dmatch, VALID_DECLARATION)) {
+            if (!regex_search(statements.at(i), dmatch, VALID_DECLARATION, MODE_CONSUME)) {
                 // SYNTAX ERROR: invalid declaration
                 query.status = SYNTAX_ERR_INVALID_DECLARATION;
                 return false;
@@ -86,7 +86,7 @@ namespace PQL {
         regex VALID_QUERY_BODY("^Select(?:(?=\\s*<)\\s*<|\\s)[\\w<>=#.\\(\\),\"\\+\\-\\*\\/\\%\\s]+(?!;)$");
         smatch qbmatch;
 
-        if (!regex_search(statements.at(numDeclarations), qbmatch, VALID_QUERY_BODY)) {
+        if (!regex_search(statements.at(numDeclarations), qbmatch, VALID_QUERY_BODY, MODE_CONSUME)) {
             query.status = SYNTAX_ERR_MISSING_SELECT_OR_UNKNOWN_CHAR;
             return false;
         }
@@ -296,11 +296,15 @@ namespace PQL {
                         return false;
                     }
 
-                    // Evaluate return type by checking the design entity of that synonym
-                    DesignEntity synonymType = synonymMapping->second;
-                    arg.first = synonymType == DesignEntity::PROCEDURE || synonymType == DesignEntity::VARIABLE
-                        ? ArgType::IDENTIFIER
-                        : ArgType::INTEGER;
+                    // Only accept synonyms of the prog_line design entity for with clauses
+                    if (synonymMapping->second != DesignEntity::PROG_LINE) {
+                        // SEMANTIC ERROR: synonym arg design entity type error (non-PROGRAM LINE)
+                        query.status = SEMANTIC_ERR_WITH_CLAUSE_NON_PROG_LINE_SYNONYM_ARG;
+                        return false;
+                    }
+
+                    // Return type of prog_line design entity is an INTEGER
+                    arg.first = ArgType::INTEGER;
                 } else if (arg.first == ArgType::ATTRIBUTE) {
                     // First validate the synonym used in the attribute ref has been declared
                     auto synonymMapping = synonymTable.find(arg.second.first);
@@ -346,10 +350,10 @@ namespace PQL {
     vector<string> QueryParser::splitStatements(string queryString) {
         vector<string> statements;
 
-        regex DECLARATION("[\\w,\\s]+;");
+        regex DECLARATION("^[^;]+;");
         smatch stmatch;
 
-        while (regex_search(queryString, stmatch, DECLARATION)) {
+        while (regex_search(queryString, stmatch, DECLARATION, MODE_CONSUME)) {
             string stmt = stmatch.str();
             stmt.pop_back();
             statements.push_back(QueryUtils::trimString(stmt));
@@ -385,12 +389,12 @@ namespace PQL {
         while (queryBodySuffix.length() > 0) {
             // Attempt to consume either a relation, pattern or with compound clause, then decompose it
             // If this fails, then the query string is synctactically invalid
-            if (regex_search(queryBodySuffix, ccmatch, COMPOUND_RELATION_CLAUSE)) {
+            if (regex_search(queryBodySuffix, ccmatch, COMPOUND_RELATION_CLAUSE, MODE_CONSUME)) {
                 // Consume a compound relation clause and extract individual relation clauses
                 vector<string> relations = QueryUtils::matchAll(ccmatch.str(), RELATION_CLAUSE);
                 relationClauses.insert(relationClauses.end(), relations.begin(), relations.end());
-            } else if (regex_search(queryBodySuffix, ccmatch, COMPOUND_PATTERN_PREFIX)) {
-                if (!regex_search(queryBodySuffix, ccmatch, COMPOUND_PATTERN_CLAUSE)) {
+            } else if (regex_search(queryBodySuffix, ccmatch, COMPOUND_PATTERN_PREFIX, MODE_CONSUME)) {
+                if (!regex_search(queryBodySuffix, ccmatch, COMPOUND_PATTERN_CLAUSE, MODE_CONSUME)) {
                     // SYNTAX ERROR: first arg has zero length or other args violate pattern string syntax
                     query.status = SYNTAX_ERR_MISSING_OR_MALFORMED_PATTERN_ARG;
                     return false;
@@ -399,7 +403,7 @@ namespace PQL {
                 // Consume a compound pattern clause and extract individual pattern clauses
                 vector<string> patterns = QueryUtils::matchAll(ccmatch.str(), PATTERN_CLAUSE);
                 patternClauses.insert(patternClauses.end(), patterns.begin(), patterns.end());
-            } else if (regex_search(queryBodySuffix, ccmatch, COMPOUND_WITH_CLAUSE)) {
+            } else if (regex_search(queryBodySuffix, ccmatch, COMPOUND_WITH_CLAUSE, MODE_CONSUME)) {
                 // Consume a compound with clause and extract individual with clauses (equalities)
                 vector<string> equalities = QueryUtils::matchAll(ccmatch.str(), WITH_CLAUSE);
                 withClauses.insert(withClauses.end(), equalities.begin(), equalities.end());
@@ -426,7 +430,7 @@ namespace PQL {
             string stmt = statements.at(i);
 
             // Each declaration is a string of form "<entity-name> <synonym>(, <synonym>)*"
-            assert(regex_search(stmt, kmatch, DECLARATION_KEYWORD));
+            assert(regex_search(stmt, kmatch, DECLARATION_KEYWORD, MODE_CONSUME));
             string entityName = kmatch.str();
             string synonymString = kmatch.suffix().str();
 
@@ -470,7 +474,7 @@ namespace PQL {
         smatch tmatch;
 
         // Attempt to match a single return type, otherwise match a tuple return type
-        if (regex_search(queryBody, tmatch, SINGLE_RETURN)) {
+        if (regex_search(queryBody, tmatch, SINGLE_RETURN, MODE_CONSUME)) {
             // Strip leading "Select"
             string targetEntity = QueryUtils::leftTrim(tmatch.str().erase(0, 6));
             if (targetEntity == "BOOLEAN") {
@@ -479,7 +483,7 @@ namespace PQL {
                 query.returnsBool = false;
                 tokens.push_back(targetEntity);
             }
-        } else if (regex_search(queryBody, tmatch, TUPLE_RETURN)) {
+        } else if (regex_search(queryBody, tmatch, TUPLE_RETURN, MODE_CONSUME)) {
             // Retrieve first match - a string of form "Select <x1, x2, ...>"
             // Then strip leading "Select"
             string targetTuple = QueryUtils::leftTrim(tmatch.str().erase(0, 6));

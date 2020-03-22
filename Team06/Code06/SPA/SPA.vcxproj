@@ -24,7 +24,9 @@
     <ClCompile Include="..\source\IfPatternEvaluator.cpp" />
     <ClCompile Include="..\source\LoggingUtils.cpp" />
     <ClCompile Include="..\source\ModifiesEvaluator.cpp" />
+    <ClCompile Include="..\source\NextEvaluator.cpp" />
     <ClCompile Include="..\source\NextKB.cpp" />
+    <ClCompile Include="..\source\NextStarEvaluator.cpp" />
     <ClCompile Include="..\source\ParentEvaluator.cpp" />
     <ClCompile Include="..\source\ParentKB.cpp" />
     <ClCompile Include="..\source\ParentStarEvaluator.cpp" />
@@ -63,7 +65,9 @@
     <ClInclude Include="..\source\IfPatternEvaluator.h" />
     <ClInclude Include="..\source\LoggingUtils.h" />
     <ClInclude Include="..\source\ModifiesEvaluator.h" />
+    <ClInclude Include="..\source\NextEvaluator.h" />
     <ClInclude Include="..\source\NextKB.h" />
+    <ClInclude Include="..\source\NextStarEvaluator.h" />
     <ClInclude Include="..\source\ParentEvaluator.h" />
     <ClInclude Include="..\source\ParentStarEvaluator.h" />
     <ClInclude Include="..\source\Parser.h" />
@@ -130,6 +134,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

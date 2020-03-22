@@ -115,5 +115,14 @@ namespace PQL {
         * @return   The combined clause result.
         */
         ClauseResult combineClauseResults(std::vector<ClauseResult> clauseResults);
+
+        /**
+        * Constructs a ClauseResult structure with all values of a DesignEntity for a given synonym.
+        *
+        * @param    synonym         The synonym to construct the ClauseResult for.
+        * @param    designEntity    The DesignEntity of the synonym
+        * @return   The construct ClauseResult structure.
+        */
+        ClauseResult getClauseResultWithAllValues(Synonym synonym, DesignEntity designEntity);
     };
 }

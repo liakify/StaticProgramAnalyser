@@ -11,6 +11,12 @@
 #include "PQLTypes.h"
 #include "QueryUtils.h"
 
+/**
+ *  Bitmask used to ensure C++ regex_search searches for the first match from the
+ *  beginning of the input string and not mid-way through the string.
+ */
+const auto MODE_CONSUME = std::regex_constants::match_continuous;
+
 namespace PQL {
 
     /**
