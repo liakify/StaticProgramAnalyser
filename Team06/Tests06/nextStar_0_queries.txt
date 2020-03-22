@@ -240,6 +240,11 @@ FALSE
 5000
 49 - arg variant (cn, cn): Test NextStarHeuristic
 
+Select BOOLEAN such that Next*(8, 8)
+FALSE
+5000
+49 - arg variant (cn, cn): Test NextStarHeuristic
+
 Select BOOLEAN such that Next*(8, 9)
 TRUE
 5000
@@ -277,6 +282,11 @@ FALSE
 
 Select BOOLEAN such that Next*(8, 28)
 TRUE
+5000
+57 - arg variant (cn, cn): Test NextStarHeuristic
+
+Select BOOLEAN such that Next*(9, 9)
+FALSE
 5000
 57 - arg variant (cn, cn): Test NextStarHeuristic
 
