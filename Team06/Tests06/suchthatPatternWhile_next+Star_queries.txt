@@ -1,0 +1,70 @@
+1 - Next, No relation with any synonym
+prog_line n1, n2, n3; while w; variable v;
+Select n3 such that Next(n1, n2) pattern w (v, _)
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26
+5000
+2 - Next, Connected Clauses
+assign a; while w; variable v;
+Select a such that Next(w, a) pattern w (v, _)
+10, 25
+5000
+3 - Next, Connected Clauses: Select w
+assign a; while w; variable v;
+Select w such that Next(w, a) pattern w (v, _)
+9, 23
+5000
+4 - Next, Connected Clauses: Limiting pattern
+prog_line n; while w;
+Select n such that Next(w, n) pattern w ("usedHereOnly", _)
+24, 25
+5000
+5 - Next, Connected Clauses: Limiting pattern, select w
+prog_line n; while w;
+Select w such that Next(w, n) pattern w ("usedHereOnly", _)
+23
+5000
+6 - Next*, Connected Clauses
+assign a; while w; variable v;
+Select a such that Next*(w, a) pattern w (v, _)
+10, 17, 25
+5000
+7 - Next*, Connected Clauses: Incorrect pattern syntax
+assign a; while w; variable v;
+Select a such that Next*(w, a) pattern w (v, _, _)
+
+5000
+8 - Next*, Connected Clauses: Select w
+assign a; while w; variable v;
+Select w such that Next*(w, a) pattern w (v, _)
+9, 14, 19, 21, 23
+5000
+9 - Next*, Connected Clauses: Limiting pattern
+prog_line n; while w;
+Select n such that Next*(w, n) pattern w ("usedHereOnly", _)
+24, 25, 26
+5000
+10 - Next*, Connected Clauses: Limiting pattern, select w
+prog_line n; while w;
+Select w such that Next*(w, n) pattern w ("usedHereOnly", _)
+23
+5000
+11 - Next, Next => empty
+prog_line n; while w; variable v;
+Select n such that Next(n, 1) pattern w (v, _)
+
+5000
+12 - Next, Pattern => empty
+prog_line n1, n2; while w;
+Select n1 such that Next(n1, n2) pattern w ("notFound", _)
+
+5000
+13 - Next*, Next* => empty
+prog_line n; while w; variable v;
+Select n such that Next*(n, 1) pattern w (v, _)
+
+5000
+14 - Next*, Pattern => empty
+prog_line n1, n2; while w;
+Select n1 such that Next*(n1, n2) pattern w ("notFound", _)
+
+5000
