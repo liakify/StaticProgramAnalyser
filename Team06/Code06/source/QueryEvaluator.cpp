@@ -26,9 +26,9 @@ namespace PQL {
     }
 
     ClauseResult QueryEvaluator::getClauseResultWithAllValues(Synonym synonym, DesignEntity designEntity) {
-        
+
         ClauseResult clauseResult;
-        
+
         switch (designEntity) {
         case DesignEntity::ASSIGN:
         case DesignEntity::CALL:
