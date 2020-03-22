@@ -16,11 +16,11 @@ namespace PQL {
         * @return   The result of the evaluation.
         */
         ClauseResult evaluateAssignPatternClauseWildWild(PKB::PKB& database, PatternClause &clause) {
-            
+
             Synonym arg0 = clause.synonym;
-            
+
             std::unordered_set<StmtId> stmts = database.stmtTable.getStmtsByType(StmtType::ASSIGN);
-            
+
             ClauseResult clauseResult;
             for (StmtId stmt : stmts) {
                 ClauseResultEntry resultEntry;
@@ -194,7 +194,6 @@ namespace PQL {
 
             ArgType argType1 = clause.getArgs().first.first;
             ArgType argType2 = clause.getArgs().second.first;
-
 
             if (argType1 == ArgType::WILDCARD && argType2 == ArgType::WILDCARD) {
                 // 2 wildcards
