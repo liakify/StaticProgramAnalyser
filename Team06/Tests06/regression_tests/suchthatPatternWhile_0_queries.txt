@@ -295,6 +295,6 @@ FALSE
 5000
 60 - case 1f0: pattern => empty set
 while w; variable v;
-Select BOOLEAN such that Modifies(w, v) pattern w ("notFound", _)
-FALSE
+Select w such that Modifies(w, v) pattern w ("notFound", _)
+
 5000

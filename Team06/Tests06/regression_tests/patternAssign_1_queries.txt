@@ -15,12 +15,12 @@ Select a pattern a (1, _)
 5000
 4 - invalid: pattern a(_, 1)
 assign a;
-Select a pattern a (1, _)
+Select a pattern a (_, 1)
 
 5000
 5 - invalid: pattern a(1, 1)
 assign a;
-Select a pattern a (1, _)
+Select a pattern a (1, 1)
 
 5000
 6 - invalid: argument type

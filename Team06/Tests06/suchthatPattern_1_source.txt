@@ -4,6 +4,8 @@ procedure suchthatPattern1 {
 
 procedure P2 {
   a = b;
+  a = c;
+  a = d;
   while (c1 == c2) {
     call P3;
   }
@@ -12,6 +14,7 @@ procedure P2 {
   } else {
     call P4;
   }
+  a = a;
 }
 
 procedure P3 {
