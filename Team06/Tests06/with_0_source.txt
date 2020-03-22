@@ -1,0 +1,6 @@
+procedure SelectWith {
+    read x;
+    x = y + 5;
+    call SelectWith2;  }
+procedure SelectWith2 {
+    print SelectWith2;  }
