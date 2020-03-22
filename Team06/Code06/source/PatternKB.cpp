@@ -7,10 +7,14 @@ void PatternKB::addAssignPattern(Pattern pattern, StmtId stmtId) {
 
 void PatternKB::addIfPattern(VarId varId, StmtId stmtId) {
     ifTable[varId].insert(stmtId);
+
+    allIfStmtsWithCtrlVars.insert(stmtId);
 }
 
 void PatternKB::addWhilePattern(VarId varId, StmtId stmtId) {
     whileTable[varId].insert(stmtId);
+
+    allWhileStmtsWithCtrlVars.insert(stmtId);
 }
 
 const std::unordered_set<StmtId>& PatternKB::getAssignPatternStmts(Pattern pattern) {
@@ -38,4 +42,12 @@ const std::unordered_set<StmtId>& PatternKB::getWhilePatternStmts(VarId varId) {
     catch (const std::out_of_range&) {
         return EMPTY_RESULT;
     }
+}
+
+const std::unordered_set<StmtId>& PatternKB::getAllIfStmtsWithCtrlVars() {
+    return allIfStmtsWithCtrlVars;
+}
+
+const std::unordered_set<StmtId>& PatternKB::getAllWhileStmtsWithCtrlVars() {
+    return allWhileStmtsWithCtrlVars;
 }

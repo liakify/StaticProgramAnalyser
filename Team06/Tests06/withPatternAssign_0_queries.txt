@@ -1,0 +1,40 @@
+1 - unrelated synonyms (true, true)
+assign a1, a2; variable v;
+Select a2 with a1.stmt# = 1 pattern a2 (v, _)
+1, 2, 3, 4
+5000
+2 - unrelated synonyms (true, false)
+assign a1, a2; variable v;
+Select a1 with a1.stmt# = 1 pattern a2 ("notFound", _)
+
+5000
+3 - unrelated synonyms (false, true)
+assign a1, a2; variable v;
+Select a2 with a1.stmt# = 5 pattern a2 (v, _)
+
+5000
+4 - unrelated synonyms (false, false)
+assign a1, a2; variable v;
+Select a2 with a1.stmt# = 5 pattern a2 ("notFound", _)
+
+5000
+5 - related by a
+assign a; variable v;
+Select v with a.stmt# = 1 pattern a (v, _)
+a1
+5000
+6 - related by a, limit pattern by v
+assign a; variable v;
+Select v with a.stmt# = 1 pattern a ("notFound", _)
+
+5000
+7 - related by v
+assign a; variable v;
+Select a with v.varName = "a2" pattern a (v, _)
+2, 6
+5000
+8 - related by v, limit pattern by expression
+assign a; variable v;
+Select a with v.varName = "a2" pattern a (v, "333")
+6
+5000
