@@ -91,6 +91,13 @@ namespace PQL {
         // Results of Clauses
         std::vector<ClauseResult> clauseResults;
 
+        // Add table containing "TRUE"
+        ClauseResult trueResult;
+        ClauseResultEntry trueResultEntry;
+        trueResultEntry["_RESULT"] = "TRUE";
+        trueResult.emplace_back(trueResultEntry);
+        clauseResults.emplace_back(trueResult);
+
         // Construct set of all target synonyms
         std::unordered_set<Synonym> targetSynonyms;
         for (Ref ref : query.targetEntities) {
