@@ -30,14 +30,14 @@ namespace UnitTesting {
         string SIMPLE_VALID_ATTRIBUTES_QUERY = "while w; read rd; Select <w.stmt#, rd, rd.varName> such that Parent*(w, rd)";
         string SIMPLE_PATTERN_STRING_QUERY = "assign a; Select a pattern a(_, \"x + 1 - 2 * y / z % 3\")";
         string SIMPLE_LITERAL_INTEGER_EQUALITY_QUERY = "Select BOOLEAN with 1231 = 4231";
-        string SIMPLE_LITERAL_IDENTIFIER_EQUALITY_QUERY = "prog_line l; variable v; Select <l, v> with \"bLeong\" = \"satan\"";
+        string SIMPLE_LITERAL_IDENTIFIER_EQUALITY_QUERY = "constant c; variable v; Select <c, v> with \"bLeong\" = \"satan\"";
         string SIMPLE_MIXED_EQUALITY_QUERY = "call cl; Select cl with cl.procName = \"procedure\"";
-        string SIMPLE_INTEGER_EQUALITY_QUERY = "print pn; constant c; Select <pn, c> with pn.stmt# = c";
-        string SIMPLE_IDENTIFIER_EQUALITY_QUERY = "procedure p; variable v; Select <p, v> with p = v.varName";
+        string SIMPLE_INTEGER_EQUALITY_QUERY = "print pn; prog_line l; Select <pn, l> with pn.stmt# = l";
+        string SIMPLE_IDENTIFIER_EQUALITY_QUERY = "procedure p; variable v; Select <p, v> with p.procName = v.varName";
         string COMPLEX_VALID_BASIC_QUERY = "assign pattern; while Modifies; variable while, constant; Select pattern such that Uses(Modifies, while) pattern pattern(constant, _\"1\"_)";
         string COMPLEX_VALID_ATTRIBUTES_QUERY = "assign a; call cl; variable v; Select <a, cl, cl.procName, v.varName> pattern a(v, _) such that Follows(a, cl)";
         string COMPLEX_PATTERN_STRING_QUERY = "assign a; Select a pattern a(\"var\", _\"((p) - (q / 2) % r) * 3 - ((s + t % 5) - u) + v / 7\"_)";
-        string COMPLEX_VALID_ADVANCED_QUERY = "read rd; while w; variable v; print pn; Select <w, rd.varName> with rd.varName = v pattern w(v, _) such that Uses(pn, v)";
+        string COMPLEX_VALID_ADVANCED_QUERY = "read rd; while w; variable v; print pn; Select <w, rd.varName> with rd.varName = v.varName pattern w(v, _) such that Uses(pn, v)";
         string CHAINED_BOOLEAN_QUERY = "Select BOOLEAN such that Parent*(16, 25) and Uses(16, \"i\") and Modifies(25, \"i\")";
         string CHAINED_BASIC_RELATIONS_QUERY = "prog_line l; variable v; if ifs; read rd; Select <l, rd, v> such that Follows(l, ifs) and Parent*(ifs, rd) such that Uses(ifs, v) and Modifies(rd, v)";
         string CHAINED_PROCEDURE_RELATIONS_QUERY = "Select BOOLEAN such that Modifies(\"main\", \"argv\") and Uses(\"main\", \"argv\")";
@@ -48,21 +48,23 @@ namespace UnitTesting {
         string CHAINED_AFFECTS_QUERY = "stmt s; assign a; Select <s, a> such that Affects*(1, s) and Affects*(a, s) and Affects(s, _)";
         string CHAINED_STMT_PROG_LINE_QUERY = "stmt s; prog_line l1, l2; variable v; Select <l1, v> such that Parent*(l1, s) and Next*(s, l2) and Affects(l2, l1) and Uses(l1, v) and Modifies(l1, _)";
         string CHAINED_ADV_RELATIONS_QUERY = "prog_line l; call cl; assign a; variable v; Select <l, a, v> such that Uses(\"error\", v) and Modifies(a, v) such that Affects(l, a) and Next*(a, cl) and Calls*(_, \"error\")";
-        string CHAINED_EQUALITIES_QUERY = "constant c; print pn; if ifs; variable v; procedure p; Select <c, v, p> with p = \"lambda\" with ifs.stmt# = 8 and v = pn.varName with 0 = c";
+        string CHAINED_EQUALITIES_QUERY = "constant c; prog_line l; print pn; if ifs; variable v; procedure p; Select <c, v, p> with p.procName = \"lambda\" with ifs.stmt# = 8 and v.varName = pn.varName with l = c.value";
         string CHAINED_ALL_RELATIONS_QUERY = "procedure p; stmt s; prog_line l; call cl; assign a; variable v; Select <p, v> such that Calls(_, p) and Uses(p, v) and Parent(s, cl) and Modifies(cl, v) and Follows*(cl, l) and Next(l, a) and Affects*(a, a)";
         string CHAINED_ALL_PATTERNS_QUERY = "while w; assign a; if ifs; variable v; Select <a, v> pattern ifs(v, _, _) and a(\"x\", _) pattern w(v, _)";
-        string CHAINED_ALL_NON_LITERAL_EQUALITIES_QUERY = "call cl; read rd; print pn; constant c1, c2; procedure p1, p2; variable v1, v2; Select BOOLEAN with cl.stmt# = 22 and rd = pn and p1 = \"main\" with p2.procName = v1.varName with 0 = c2 and rd.varName = \"x\" with c1.value = pn.stmt# and v2 = cl.procName with p1 = v1 and c1 = c1.value";
-        string CHAINED_NO_WHITESPACE_QUERY = "assign a;while w;variable v;print pn;Select<a,w,v,pn>pattern a(v,_)and w(v,_)with pn.varName=v and 6=9 such that Modifies(a,v)and Modifies(w,v)";
-        string CHAINED_EXTRA_WHITESPACE_QUERY = "\nprocedure  p\f;\rwhile\tw ;assign\va\r;  variable\fv1,  v2\n;\tcall\rcl\t;\nSelect\f<\vp. procName\r,\tw\n,  cl\f,\ncl\t.\rprocName\v,\fa >\n pattern\ta(  v1,\r_\"\t69-\v 420\"_ )\nwith\tv2  =\t\"i\f\"\vand  17\r=w\t.  stmt#\nsuch  that\fModifies\r(p\t,v1)\fand\rUses(\tw\v,  v1\n)  pattern\tw  (v2, _\v\f) such\t\tthat  Next*\f (\ta, w\v)\rand\tFollows(\na\r,\fcl  )\vwith p\n.\fprocName\r=\n\" function\t\"  and\rcl\v.\fprocName\n=  p  .\tprocName\n";
+        string CHAINED_ALL_NON_LITERAL_EQUALITIES_QUERY = "constant c1, c2; call cl; read rd; print pn; prog_line l1, l2, l3; Select BOOLEAN with l3 = 420 and rd.varName = pn.varName with l1 = l2 with cl.procName = \"lambda\" and l1 = rd.stmt# and pn.stmt# = c1.value with c2.value = 666";
+        string CHAINED_NO_WHITESPACE_QUERY = "assign a;while w;variable v;call cl;print pn;Select<a,w,v,pn>pattern a(v,_)and w(v,_)with pn.varName=cl.procName and 6=9 and \"xyz\"=\"xyz\" such that Modifies(a,v)and Modifies(w,v)";
+        string CHAINED_EXTRA_WHITESPACE_QUERY = "\nprocedure  p\v;\rwhile\tw ;assign\va\r;  variable\fv1,  v2\n;\tcall\ncl\t;\vprog_line\rl\f;\nSelect\f<\vp. procName\r,\tw\n,  cl\f,\ncl\t.\rprocName\v,\fa >\n pattern\ta(  v1,\r_\"\t69-\v 420\"_ )\nwith\t\"i\"  =\r\"i\"\vand  17\r=w\t.  stmt#  and\fl\n=\tcl\r.\vstmt#\nsuch  that\fModifies\r(p\t,v1)\fand\rUses(\tw\v,  v1\n)  pattern\tw  (v2, _\v\f) such\t\tthat  Next*\f (\ta, w\v)\rand\tFollows(\na\r,\fcl  )\vwith p\n.\fprocName\r=\n\" function\t\"  and\rcl\v.\fprocName\n=  v2  .\tvarName\n";
 
         // Invalid queries that fail in validateQuerySyntax
         string EMPTY_QUERY = "";
-        string INCORRECT_DECLARATION_QUERY = "read r1 & r2; Select r1";
+        string FOREIGN_CHARACTER_IN_DECLARATION_QUERY = "assign a; read r1 & r2; Select r1";
+        string INCORRECT_DECLARATION_SYNTAX_QUERY = "if ifs; while w1 w2; Select ifs";
         string DUPLICATE_BODY_QUERY = "prog_line l1, l2; Select l1; Select l2";
+        string MISSING_BODY_QUERY = "print pn;";
         string MISSING_BODY_SUFFIX_QUERY = "read rd; Select ";
         string MISSING_SELECT_QUERY = "stmt s; select s";
         string ENDING_SEMICOLON_QUERY = "procedure p; Select p;";
-        string FOREIGN_CHARACTER_QUERY = "constant c; Select | c";
+        string FOREIGN_CHARACTER_IN_BODY_QUERY = "constant c; Select | c";
         string INVALID_AND_RELATION_QUERY = "while w1, w2; Select w1 such that Parent(w1, w2) and such that Follows(w2, _)";
         string INVALID_AND_PATTERN_QUERY = "assign a1, a2; variable v; Select v pattern a1(v, _) and pattern a2(v, _)";
         string INVALID_AND_WITH_QUERY = "Select BOOLEAN with 1 = 2 and with \"bob\" = \"theBuilder\"";
@@ -94,13 +96,14 @@ namespace UnitTesting {
         string PATTERN_MISSING_SYNONYM_QUERY = "assign a; Select a pattern a(v, \"x\")";
         string PATTERN_NON_VARIABLE_ARG_QUERY = "call cl; assign a; Select cl pattern a(cl, _)";
         string WITH_DIFFERING_LITERAL_ARG_TYPE_QUERY = "Select BOOLEAN with 1 = \"one\"";
-        string WITH_MISSING_SYNONYM_ARG_QUERY = "stmt s; Select s with s.stmt# = c";
+        string WITH_MISSING_SYNONYM_ARG_QUERY = "stmt s; Select s with s.stmt# = l";
+        string WITH_NON_PROG_LINE_SYNONYM_ARG_QUERY = "constant c; prog_line l; Select c with c = l";
         string WITH_MISSING_SYNONYM_IN_ATTRIBUTE_ARG_QUERY = "read rd; Select rd.varName with rd.varName = pn.varName";
         string WITH_INVALID_SYNONYM_ATTRIBUTE_TYPE_QUERY = "variable v; Select v with v.value = 0";
-        string WITH_INVALID_LITERAL_SYNONYM_ARGS_QUERY = "stmt s; Select s with \"procedure\" = s";
-        string WITH_INVALID_LITERAL_ATTRIBUTE_ARGS_QUERY = "call cl; Select BOOLEAN with cl.procName = 737";
-        string WITH_INVALID_SYNONYM_SYNONYM_ARGS_QUERY = "procedure p; read rd; Select BOOLEAN with rd = p";
-        string WITH_INVALID_SYNONYM_ATTRIBUTE_ARGS_QUERY = "print pn; constant c; Select c with c = pn.varName";
+        string WITH_INVALID_LITERAL_SYNONYM_ARGS_QUERY = "prog_line l; Select l with l = \"ll\"";
+        string WITH_INVALID_LITERAL_INTEGER_ATTRIBUTE_ARGS_QUERY = "assign a; Select a with \"procedure\" = a.stmt#";
+        string WITH_INVALID_LITERAL_IDENTIFIER_ATTRIBUTE_ARGS_QUERY = "call cl; Select BOOLEAN with cl.procName = 737";
+        string WITH_INVALID_SYNONYM_ATTRIBUTE_ARGS_QUERY = "prog_line l; print pn; Select pn with l = pn.varName";
         string WITH_INVALID_ATTRIBUTE_ATTRIBUTE_ARGS_QUERY = "while w; call cl; Select BOOLEAN with cl.procName = w.stmt#";
 
         // Invalid queries that fail in splitClauses
@@ -119,7 +122,7 @@ namespace UnitTesting {
         string INVALID_SYNONYM_PATTERN_STRING_QUERY = "assign a; variable v; Select v pattern a(\"notFound\", v)";
         string WITH_INCORRECT_EQUALITY_OPERATOR_QUERY = "Select BOOLEAN with \"big\" == \"bang\"";
         string WITH_INVALID_OPERATOR_QUERY = "constant c; Select c with c > 7";
-        string WITH_INVALID_WILDCARD_ARG_QUERY = "constant c; Select c with c = _";
+        string WITH_INVALID_WILDCARD_ARG_QUERY = "constant c; Select c with c.value = _";
         string WITH_UNQUOTED_IDENTIFIER_ARG_QUERY = "Select BOOLEAN with \"ok\" = \"missingQuote";
 
         // Invalid queries that fail in parseDeclarations
@@ -172,8 +175,8 @@ namespace UnitTesting {
 
         // Invalid queries that fail in parseWithClauses
         string WITH_INVALID_INTEGER_ARG_QUERY = "Select BOOLEAN with 9.11 = 2001";
-        string WITH_INVALID_IDENTIFIER_ARG_QUERY = "procedure p; Select p with p = \"2020\"";
-        string WITH_INVALID_SYNONYM_ARG_QUERY = "print pn; Select pn with \"i\" = 1pn";
+        string WITH_INVALID_IDENTIFIER_ARG_QUERY = "procedure p; Select p with p.procName = \"2020\"";
+        string WITH_INVALID_SYNONYM_ARG_QUERY = "print pn; Select pn with \"i\" = 1ol";
         string WITH_INVALID_ATTRIBUTE_SYNTAX_QUERY = "stmt s; Select s with s.stmt#.value = 1";
         string WITH_INVALID_ATTRIBUTE_KEYWORD_QUERY = "assign a; Select a with 666 = a.stmtNo";
 
@@ -198,8 +201,9 @@ namespace UnitTesting {
         // proper query semantics
         vector<string> INVALID_QUERIES = {
             // validateQuerySyntax
-            EMPTY_QUERY, INCORRECT_DECLARATION_QUERY, DUPLICATE_BODY_QUERY,
-            MISSING_BODY_SUFFIX_QUERY, MISSING_SELECT_QUERY, ENDING_SEMICOLON_QUERY, FOREIGN_CHARACTER_QUERY,
+            EMPTY_QUERY, FOREIGN_CHARACTER_IN_DECLARATION_QUERY, INCORRECT_DECLARATION_SYNTAX_QUERY,
+            DUPLICATE_BODY_QUERY, MISSING_BODY_QUERY, MISSING_BODY_SUFFIX_QUERY,
+            MISSING_SELECT_QUERY, ENDING_SEMICOLON_QUERY, FOREIGN_CHARACTER_IN_BODY_QUERY,
             INVALID_AND_RELATION_QUERY, INVALID_AND_PATTERN_QUERY, INVALID_AND_WITH_QUERY,
             // validateQuerySemantics
             AMBIGUOUS_BOOLEAN_QUERY, INCORRECT_BOOLEAN_KEYWORD_QUERY,
@@ -215,10 +219,10 @@ namespace UnitTesting {
             PARENT_NON_STMT_ARG_QUERY, NEXT_NON_STMT_ARG_QUERY, AFFECTS_NON_ASSIGN_ARG_QUERY,
             PATTERN_MISSING_SYNONYM_QUERY, PATTERN_NON_VARIABLE_ARG_QUERY,
             WITH_DIFFERING_LITERAL_ARG_TYPE_QUERY, WITH_MISSING_SYNONYM_ARG_QUERY,
-            WITH_MISSING_SYNONYM_IN_ATTRIBUTE_ARG_QUERY, WITH_INVALID_SYNONYM_ATTRIBUTE_TYPE_QUERY,
-            WITH_INVALID_LITERAL_SYNONYM_ARGS_QUERY, WITH_INVALID_LITERAL_ATTRIBUTE_ARGS_QUERY,
-            WITH_INVALID_SYNONYM_SYNONYM_ARGS_QUERY, WITH_INVALID_SYNONYM_ATTRIBUTE_ARGS_QUERY,
-            WITH_INVALID_ATTRIBUTE_ATTRIBUTE_ARGS_QUERY,
+            WITH_NON_PROG_LINE_SYNONYM_ARG_QUERY, WITH_MISSING_SYNONYM_IN_ATTRIBUTE_ARG_QUERY,
+            WITH_INVALID_SYNONYM_ATTRIBUTE_TYPE_QUERY, WITH_INVALID_LITERAL_SYNONYM_ARGS_QUERY,
+            WITH_INVALID_LITERAL_INTEGER_ATTRIBUTE_ARGS_QUERY, WITH_INVALID_LITERAL_IDENTIFIER_ATTRIBUTE_ARGS_QUERY,
+            WITH_INVALID_SYNONYM_ATTRIBUTE_ARGS_QUERY, WITH_INVALID_ATTRIBUTE_ATTRIBUTE_ARGS_QUERY,
             // splitClauses
             INCORRECT_RELATION_KEYWORD_QUERY, INCORRECT_PATTERN_KEYWORD_QUERY, INCORRECT_EQUALITY_KEYWORD_QUERY,
             RELATION_INVALID_ARG_CHARACTER_QUERY, RELATION_INVALID_ATTRIBUTE_ARG_QUERY,
@@ -261,7 +265,7 @@ namespace UnitTesting {
         TEST_METHOD(parseQueryValidCases) {
             for (auto query : VALID_QUERIES) {
                 Query result = parser.parseQuery(query);
-                Assert::IsTrue(result.status == "success");
+                Assert::IsTrue(result.status == PQL::SUCCESS);
             }
         }
 
