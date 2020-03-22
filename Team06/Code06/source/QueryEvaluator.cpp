@@ -91,28 +91,61 @@ namespace PQL {
         // Results of Clauses
         std::vector<ClauseResult> clauseResults;
 
+        // Construct set of all target synonyms
+        std::unordered_set<Synonym> targetSynonyms;
+        for (Ref ref : query.targetEntities) {
+            targetSynonyms.insert(ref.first);
+        }
+
         // Evaluate Relation Clauses
         for (RelationClause relation : query.relations) {
             clauseResults.emplace_back(evaluateRelationClause(relation, query.synonymTable));
+            // Remove all present synonyms from target synonyms
+            std::pair<ArgType, std::string> arg1, arg2;
+            arg1 = relation.getArgs().first;
+            arg2 = relation.getArgs().second;
+            if (arg1.first == ArgType::SYNONYM) {
+                targetSynonyms.erase(arg1.second);
+            }
+            if (arg2.first == ArgType::SYNONYM) {
+                targetSynonyms.erase(arg2.second);
+            }
         }
 
         // Evaluate Pattern Clauses
         for (PatternClause pattern : query.patterns) {
             clauseResults.emplace_back(evaluatePatternClause(pattern, query.synonymTable));
+            // Remove all present synonyms from target synonyms
+            std::pair<ArgType, std::string> arg1, arg2;
+            arg1 = pattern.getArgs().first;
+            arg2 = pattern.getArgs().second;
+            targetSynonyms.erase(pattern.synonym);
+            if (arg1.first == ArgType::SYNONYM) {
+                targetSynonyms.erase(arg1.second);
+            }
+            if (arg2.first == ArgType::SYNONYM) {
+                targetSynonyms.erase(arg2.second);
+            }
         }
 
         // Evaluate With Clauses
         for (WithClause with : query.equalities) {
             clauseResults.emplace_back(evaluateWithClause(with, query.synonymTable));
+            // Remove all present synonyms from target synonyms
+            std::pair<ArgType, Ref> arg1, arg2;
+            arg1 = with.getArgs().first;
+            arg2 = with.getArgs().second;
+            if (arg1.first == ArgType::SYNONYM) {
+                targetSynonyms.erase(arg1.second.first);
+            }
+            if (arg2.first == ArgType::SYNONYM) {
+                targetSynonyms.erase(arg2.second.first);
+            }
         }
 
-        // For all synonyms that do not appear in any clause, add a table
-        if (!query.returnsBool) {
-            for (Ref synonym : query.targetEntities) {
-                if (query.synonymTable.find(synonym.first) == query.synonymTable.end()) {
-                    clauseResults.emplace_back(getClauseResultWithAllValues(synonym.first, query.synonymTable[synonym.first]));
-                }
-            }
+        // Add a table for each synonym not present in any clause
+        for (Synonym synonym : targetSynonyms) {
+            clauseResults.emplace_back(getClauseResultWithAllValues(synonym, query.synonymTable[synonym]));
         }
 
         // Combine Results
