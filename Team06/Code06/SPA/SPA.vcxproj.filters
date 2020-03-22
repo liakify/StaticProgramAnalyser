@@ -108,7 +108,7 @@
     </ClCompile>
     <ClCompile Include="..\source\WithEvaluator.cpp">
       <Filter>Header Files</Filter>
-    </ClInclude>
+    </ClCompile>
     <ClCompile Include="..\source\RuntimeDesignExtractor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
