@@ -12,17 +12,23 @@ namespace PQL {
         * Evaluates a single assign pattern clause on the given PKB where the inputs are two wildcards.
         *
         * @param    database    The PKB to evaluate the clause on.
+        * @param    clause      The clause to evaluate.
         * @return   The result of the evaluation.
         */
-        ClauseResult evaluateAssignPatternClauseWildWild(PKB::PKB& database) {
-            // Here, we just need to check if there is at least one assignment in the program
-            if (database.stmtTable.getStmtsByType(StmtType::ASSIGN).size() > 0) {
+        ClauseResult evaluateAssignPatternClauseWildWild(PKB::PKB& database, PatternClause &clause) {
+            
+            Synonym arg0 = clause.synonym;
+            
+            std::unordered_set<StmtId> stmts = database.stmtTable.getStmtsByType(StmtType::ASSIGN);
+            
+            ClauseResult clauseResult;
+            for (StmtId stmt : stmts) {
                 ClauseResultEntry resultEntry;
-                resultEntry["_RESULT"] = "TRUE";
-                return { resultEntry };
-            } else {
-                return {};
+                resultEntry[arg0] = std::to_string(stmt);
+                clauseResult.emplace_back(resultEntry);
             }
+
+            return clauseResult;
         }
 
         /**
@@ -192,7 +198,7 @@ namespace PQL {
 
             if (argType1 == ArgType::WILDCARD && argType2 == ArgType::WILDCARD) {
                 // 2 wildcards
-                return evaluateAssignPatternClauseWildWild(database);
+                return evaluateAssignPatternClauseWildWild(database, clause);
             } else if (argType1 == ArgType::WILDCARD &&
                 (argType2 == ArgType::EXACT_PATTERN || argType2 == ArgType::INCLUSIVE_PATTERN)) {
                 // 1 wildcard, 1 pattern
