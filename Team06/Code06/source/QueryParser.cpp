@@ -350,7 +350,7 @@ namespace PQL {
     vector<string> QueryParser::splitStatements(string queryString) {
         vector<string> statements;
 
-        regex DECLARATION("^[\\w,\\s]+;");
+        regex DECLARATION("^[^;]+;");
         smatch stmatch;
 
         while (regex_search(queryString, stmatch, DECLARATION, MODE_CONSUME)) {
