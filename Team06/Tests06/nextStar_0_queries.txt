@@ -243,112 +243,112 @@ FALSE
 Select BOOLEAN such that Next*(8, 8)
 FALSE
 5000
-49 - arg variant (cn, cn): Test NextStarHeuristic
+50 - arg variant (cn, cn): Test NextStarHeuristic
 
 Select BOOLEAN such that Next*(8, 9)
 TRUE
 5000
-50 - arg variant (cn, cn): Test NextStarHeuristic
+51 - arg variant (cn, cn): Test NextStarHeuristic
 
 Select BOOLEAN such that Next*(8, 10)
 TRUE
 5000
-51 - arg variant (cn, cn): Test NextStarHeuristic
+52 - arg variant (cn, cn): Test NextStarHeuristic
 
 Select BOOLEAN such that Next*(8, 11)
 TRUE
 5000
-52 - arg variant (cn, cn): Test NextStarHeuristic
+53 - arg variant (cn, cn): Test NextStarHeuristic
 
 Select BOOLEAN such that Next*(8, 12)
 FALSE
 5000
-53 - arg variant (cn, cn): Test NextStarHeuristic
+54 - arg variant (cn, cn): Test NextStarHeuristic
 
 Select BOOLEAN such that Next*(8, 13)
 FALSE
 5000
-54 - arg variant (cn, cn): Test NextStarHeuristic
+55 - arg variant (cn, cn): Test NextStarHeuristic
 
 Select BOOLEAN such that Next*(8, 16)
 TRUE
 5000
-55 - arg variant (cn, cn): Test NextStarHeuristic
+56 - arg variant (cn, cn): Test NextStarHeuristic
 
 Select BOOLEAN such that Next*(8, 17)
 FALSE
 5000
-56 - arg variant (cn, cn): Test NextStarHeuristic
+57 - arg variant (cn, cn): Test NextStarHeuristic
 
 Select BOOLEAN such that Next*(8, 28)
 TRUE
 5000
-57 - arg variant (cn, cn): Test NextStarHeuristic
+58 - arg variant (cn, cn): Test NextStarHeuristic
 
 Select BOOLEAN such that Next*(9, 9)
 FALSE
 5000
-57 - arg variant (cn, cn): Test NextStarHeuristic
+59 - arg variant (cn, cn): Test NextStarHeuristic
 
 Select BOOLEAN such that Next*(9, 10)
 FALSE
 5000
-58 - arg variant (cn, cn): Test NextStarHeuristic
+60 - arg variant (cn, cn): Test NextStarHeuristic
 
 Select BOOLEAN such that Next*(9, 11)
 TRUE
 5000
-59 - arg variant (cn, cn): Test NextStarHeuristic
+61 - arg variant (cn, cn): Test NextStarHeuristic
 
 Select BOOLEAN such that Next*(9, 12)
 FALSE
 5000
-60 - arg variant (cn, cn): Test NextStarHeuristic
+62 - arg variant (cn, cn): Test NextStarHeuristic
 
 Select BOOLEAN such that Next*(9, 13)
 FALSE
 5000
-61 - arg variant (cn, cn): Test NextStarHeuristic
+63 - arg variant (cn, cn): Test NextStarHeuristic
 
 Select BOOLEAN such that Next*(9, 16)
 TRUE
 5000
-62 - arg variant (cn, cn): Test NextStarHeuristic
+64 - arg variant (cn, cn): Test NextStarHeuristic
 
 Select BOOLEAN such that Next*(9, 17)
 FALSE
 5000
-63 - arg variant (cn, cn): Test NextStarHeuristic
+65 - arg variant (cn, cn): Test NextStarHeuristic
 
 Select BOOLEAN such that Next*(9, 28)
 TRUE
 5000
-64 - arg variant (cn, cn): Test NextStarHeuristic
+66 - arg variant (cn, cn): Test NextStarHeuristic
 
 Select BOOLEAN such that Next*(13, 13)
 TRUE
 5000
-65 - arg variant (cn, cn): Test NextStarHeuristic
+67 - arg variant (cn, cn): Test NextStarHeuristic
 
 Select BOOLEAN such that Next*(13, 14)
 TRUE
 5000
-66 - arg variant (cn, cn): Test NextStarHeuristic
+68 - arg variant (cn, cn): Test NextStarHeuristic
 
 Select BOOLEAN such that Next*(13, 15)
 TRUE
 5000
-67 - arg variant (cn, cn): Test NextStarHeuristic
+69 - arg variant (cn, cn): Test NextStarHeuristic
 
 Select BOOLEAN such that Next*(13, 16)
 TRUE
 5000
-68 - arg variant (cn, cn): Test NextStarHeuristic
+70 - arg variant (cn, cn): Test NextStarHeuristic
 
 Select BOOLEAN such that Next*(13, 17)
 FALSE
 5000
-69 - arg variant (cn, cn): Test NextStarHeuristic
+71 - arg variant (cn, cn): Test NextStarHeuristic
 
 Select BOOLEAN such that Next*(13, 28)
 TRUE
