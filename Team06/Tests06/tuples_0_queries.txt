@@ -1,16 +1,16 @@
 1 - Select tuple with 1 element: stmt
 stmt s;
-Select <s>;
+Select <s>
 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14
 5000
 2 - Select tuple with 1 element: read
 read r;
-Select <r>;
+Select <r>
 2, 8, 14
 5000
 3 - Select tuple with 1 element: print
 print pn;
-Select <pn>;
+Select <pn>
 3, 5, 7, 10, 12
 5000
 4 - Select tuple with 1 element: while
@@ -20,37 +20,37 @@ Select <w>;
 5000
 5 - Select tuple with 1 element: if
 if ifs;
-Select <ifs>;
+Select <ifs>
 4
 5000
 6 - Select tuple with 1 element: assign
 assign a;
-Select <a>;
+Select <a>
 1
 5000
 7 - Select tuple with 1 element: constant
 constant c;
-Select <c>;
+Select <c>
 456, 123
 5000
 8 - Select tuple with 1 element: variable
 variable v;
-Select <v>;
+Select <v>
 a, b, b1, b2, b3, b4, b5, c, d, e, f, g, h, i, k, l, m, n, o, p, q, r, s, t
 5000
 9 - Select tuple with 1 element: procedure
 procedure p;
-Select <p>;
+Select <p>
 Tuples, Tuples2
 5000
 10 - Select tuple with 1 element: prog_line
 prog_line pl;
-Select <pl>;
+Select <pl>
 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14
 5000
 11 - Select tuple with 1 element: call
 call c;
-Select <c>;
+Select <c>
 13
 5000
 12 - Select tuple no common synonym => true
