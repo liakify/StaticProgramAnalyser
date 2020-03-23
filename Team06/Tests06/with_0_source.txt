@@ -1,5 +1,5 @@
 procedure SelectWith {
-    while (x = x) {
+    while (x == x) {
         while (x > y) {
             x = y + 5;  }
         if (x < y) then {

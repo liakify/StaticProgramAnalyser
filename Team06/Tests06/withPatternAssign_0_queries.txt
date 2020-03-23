@@ -1,7 +1,7 @@
 1 - unrelated synonyms (true, true)
 assign a1, a2; variable v;
 Select a2 with a1.stmt# = 1 pattern a2 (v, _)
-1, 2, 3, 4
+1, 2, 3, 4, 6
 5000
 2 - unrelated synonyms (true, false)
 assign a1, a2; variable v;
