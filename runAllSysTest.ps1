@@ -43,6 +43,7 @@ $list_of_test_files = @(
 '..\select_syn',
 '..\select_valid',
 '..\select_invalid',
+'..\suchthatPattern_1',
 '..\patternIf_0fix',
 '..\patternWhile_0fix',
 '..\tuples_invalid'
@@ -59,7 +60,6 @@ $list_of_test_files = @(
 # '..\nextStar_0',
 # '..\suchthatPatternIf_next+Star',
 # '..\suchthatPatternWhile_next+Star',
-# '..\suchthatPattern_1',
 # '..\with_0',
 # '..\withPatternAssign_0',
 # '..\withPatternIf_0',

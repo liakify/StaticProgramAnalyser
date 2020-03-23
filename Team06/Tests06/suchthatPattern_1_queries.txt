@@ -5,7 +5,7 @@ suchthatPattern1, P2
 5000
 2 - calls: 0 common synonyms => non-empty
 if ifs; procedure p, q;
-Select p such that Calls* (p, q) pattern if (v, _, _)
+Select p such that Calls* (p, q) pattern ifs (_, _, _)
 suchthatPattern1, P2
 5000
 3 - calls: 0 common synonyms => non-empty
