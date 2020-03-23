@@ -201,10 +201,10 @@ namespace PQL {
                     } else if (target.second == AttrType::VAR_NAME) {
                         if (query.synonymTable[target.first] == DesignEntity::READ) {
                             ReadStmt* readStmt = dynamic_cast<ReadStmt*>(database.stmtTable.get(std::stoi(resultEntry[target.first])).get());
-                            finalResultEntry[target.first + ".varName"] = readStmt->getVar();
+                            finalResultEntry[target.first + ".varName"] = database.varTable.get(readStmt->getVar());
                         } else if (query.synonymTable[target.first] == DesignEntity::PRINT) {
                             PrintStmt* printStmt = dynamic_cast<PrintStmt*>(database.stmtTable.get(std::stoi(resultEntry[target.first])).get());
-                            finalResultEntry[target.first + ".varName"] = printStmt->getVar();
+                            finalResultEntry[target.first + ".varName"] = database.varTable.get(printStmt->getVar());
                         } else {
                             finalResultEntry[target.first + ".varName"] = resultEntry[target.first];
                         }
