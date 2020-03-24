@@ -1,18 +1,39 @@
+#include "PQLTypes.h"
 #include "QueryProjector.h"
 
 namespace PQL {
 
-    void QueryProjector::formatResult(ClauseResult& result, std::list<std::string>& resultList) {
+    void QueryProjector::formatResult(ClauseResult& result, PQL::Query& query, std::list<std::string>& resultList) {
         // Use a set to remove duplicates
         std::unordered_set<std::string> uniqueResultSet;
 
-        for (auto itr1 = result.begin(); itr1 != result.end(); ++itr1) {
-            ClauseResultEntry clauseResultEntry = *itr1;
-            for (auto itr2 = clauseResultEntry.begin(); itr2 != clauseResultEntry.end(); ++itr2) {
-                std::stringstream s;
-                s << itr2->second;
-                uniqueResultSet.insert(s.str());
+        if (query.returnsBool) {
+            resultList.push_back(result[0]["_BOOLEAN"]);
+            return;
+        }
+
+        for (ClauseResultEntry& resultEntry : result) {
+            std::stringstream s;
+            bool first = true;
+            for (Ref& targetEntitity : query.targetEntities) {
+                if (first) {
+                    first = false;
+                } else {
+                    s << " ";
+                }
+                if (targetEntitity.second == AttrType::PROC_NAME) {
+                    s << resultEntry[targetEntitity.first + ".procName"];
+                } else if (targetEntitity.second == AttrType::VAR_NAME) {
+                    s << resultEntry[targetEntitity.first + ".varName"];
+                } else if (targetEntitity.second == AttrType::STMT_NUM) {
+                    s << resultEntry[targetEntitity.first + ".stmt#"];
+                } else if (targetEntitity.second == AttrType::VALUE) {
+                    s << resultEntry[targetEntitity.first + ".value"];
+                } else {
+                    s << resultEntry[targetEntitity.first];
+                }
             }
+            uniqueResultSet.insert(s.str());
         }
 
         for (auto itr3 = uniqueResultSet.begin(); itr3 != uniqueResultSet.end(); ++itr3) {
