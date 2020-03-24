@@ -8,12 +8,12 @@ procedure p; variable v;
 Select p such that Uses (p, v) with "u1" = v.varName
 UsesAndModifes, UsesOnly1
 5000
-3  - modifies: linked by p
+3 - modifies: linked by p
 procedure p; variable v;
 Select v such that Uses (p, v) with "ModifiesOnly2" = p.procName
 m2
 5000
-4  - uses: linked by p
+4 - uses: linked by p
 procedure p; variable v;
 Select v such that Uses (p, v) with p.procName = "UsesAndModifies"
 u1, u2
