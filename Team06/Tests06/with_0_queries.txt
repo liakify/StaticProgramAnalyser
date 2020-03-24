@@ -16,7 +16,7 @@ FALSE
 4 - IDENT = INT: Same value
 
 Select BOOLEAN with "2" = 2
-FALSE
+
 5000
 5 - IDENT = attrRef
 procedure p;
@@ -36,7 +36,7 @@ FALSE
 8 - INT = IDENT: Same value
 
 Select BOOLEAN with 2 = "2"
-FALSE
+
 5000
 9 - INT = INT: Same INT
 
@@ -71,7 +71,7 @@ TRUE
 15 - attrRef = IDENT: Invalid attrRef
 assign a;
 Select BOOLEAN with a.stmt# = "1"
-FALSE
+
 5000
 16 - attrRef = INT: Valid attrRef
 stmt s;
@@ -296,7 +296,7 @@ FALSE
 60 - prog_line = IDENT: Valid value
 prog_line n;
 Select BOOLEAN with n = "1"
-FALSE
+
 5000
 61 - prog_line = INT: Valid
 prog_line n;
