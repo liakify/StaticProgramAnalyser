@@ -831,7 +831,9 @@ namespace PQL {
         } else if (QueryUtils::isValidIdentifier(arg)) {
             return { true, { ArgType::SYNONYM, { arg, AttrType::NONE } } };
         } else if (arg.find('\"') != string::npos) {
-            return { true, { ArgType::IDENTIFIER, { arg, AttrType::NONE } } };
+            // An identifier - strip leading and trailing "
+            arg.pop_back();
+            return { true, { ArgType::IDENTIFIER, { QueryUtils::trimString(arg.erase(0, 1)), AttrType::NONE } } };
         } else {
             bool hasValidAttributeType;
             Ref parsedAttribute;
