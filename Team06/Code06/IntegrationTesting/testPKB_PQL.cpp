@@ -194,17 +194,14 @@ namespace IntegrationTesting {
         Assert::IsTrue(results == std::list<string>({ "5", "3", "0" }));
         results.clear();
 
-        //Wait for https://github.com/nus-cs3203/team06-win-spa-19s2/issues/159 fix
         pql.evaluateQuery(query_selectDesignEntity_PROGLINE, results);
-        //Assert::IsTrue(results == std::list<string>({ "1", "2", "3", "4", "5", "6", "7", "8" }));
+        Assert::IsTrue(results == std::list<string>({ "1", "2", "3", "4", "5", "6", "7", "8" }));
         results.clear();
 
-        //Wait for https://github.com/nus-cs3203/team06-win-spa-19s2/issues/158 fix
         pql.evaluateQuery(query_selectDesignEntity_PROC, results);
         //Assert::IsTrue(results == std::list<string>({ "p", "p2"}));
         results.clear();
 
-        //Wait for https://github.com/nus-cs3203/team06-win-spa-19s2/issues/158 fix
         pql.evaluateQuery(query_relCond_ModifiesP, results);
         //Assert::IsTrue(results == std::list<string>({ "p", "p2" }));
         results.clear();
@@ -213,7 +210,6 @@ namespace IntegrationTesting {
         Assert::IsTrue(results == std::list<string>({ "4", "6", "8" }));
         results.clear();
 
-        //Wait for https://github.com/nus-cs3203/team06-win-spa-19s2/issues/158 fix
         pql.evaluateQuery(query_relCond_UsesP, results);
         //Assert::IsTrue(results == std::list<string>({ "p", "p2" }));
         results.clear();
@@ -234,9 +230,8 @@ namespace IntegrationTesting {
         Assert::IsTrue(results == std::list<string>({ "1", "2", "6" }));
         results.clear();
 
-        //Not implemented yet https://github.com/nus-cs3203/team06-win-spa-19s2/issues/182
-        //pql.evaluateQuery(query_relCond_Next, results);
-        //Assert::IsTrue(results == std::list<string>({ "1", "2", "3", "6", "7" }));
+        pql.evaluateQuery(query_relCond_Next, results);
+        Assert::IsTrue(results == std::list<string>({ "1", "2", "3", "6", "7" }));
         results.clear();
 
         //pql.evaluateQuery(query_relCond_Affects, results);
