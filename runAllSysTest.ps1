@@ -69,6 +69,12 @@ $list_of_test_files = @(
 # '..\withSuchthat_3',
 # '..\withSuchthat_4',
 # '..\withSuchthat_5',
+# '..\andPattern_0',
+# '..\andPattern_invalid',
+# '..\andSuchthat_0',
+# '..\andSuchthat_invalid',
+# '..\andWith_0',
+# '..\andWith_invalid'
 
 # '..\affects_0'
 # '..\affects_1'
@@ -79,6 +85,7 @@ $list_of_test_files = @(
 # '..\affectsStar_1'
 # '..\affectsStar_invalidArgs'
 # '..\suchthatPattern_affects+Star'
+# '..\mixed_0'
 )
 
 $list_of_no_xml_tests = @(

@@ -1,0 +1,18 @@
+procedure AndPattern {
+  a1 = 1;
+  a6 = 1;
+  if (c1 == a1) then {
+    print a;} else {
+    read a; }
+  if (c1 == a2) then {
+    print a;} else {
+    read a; }
+  if (c1 == a3) then {
+    print a;} else {
+    read a; }
+  while (c1 == a4) {
+    print a;  } 
+  while (c1 == a5) {
+    print a;  }     
+  while (c1 == a6) {
+    print a;  } }
