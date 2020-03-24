@@ -13,4 +13,4 @@ stmt s1, s2; procedure p; variable v;
 Select <s1, v> such that Modifies(s1, v) and Uses (p, v) such that Parent (s2, s1)
 2 var
 5000
-4
+44
