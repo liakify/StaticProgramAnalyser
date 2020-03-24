@@ -22,6 +22,7 @@ namespace PQL {
         Query query;
         query.status = OK;
         query.queryString = queryString;
+        query.returnsBool = false;
         queryCount += 1;
 
         vector<string> statements = splitStatements(queryString);
