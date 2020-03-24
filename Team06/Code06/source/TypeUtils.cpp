@@ -10,6 +10,7 @@ namespace SPA {
         bool isStmtTypeDesignEntity(StmtType stmtType, DesignEntity designEntity) {
             switch (designEntity) {
             case DesignEntity::STATEMENT:
+            case DesignEntity::PROG_LINE:
                 return true;
                 break;
             case DesignEntity::READ:
