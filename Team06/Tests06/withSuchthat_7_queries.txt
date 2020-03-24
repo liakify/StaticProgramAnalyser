@@ -13,7 +13,7 @@ assign a1, a2;
 Select <a1, a2> such that Affects*(a1, a2)  with a1.stmt# = 14
 14 15, 14 16
 5000
-9 - affects*: linked by a2
+4 - affects*: linked by a2
 assign a1, a2; 
 Select <a1, a2> such that Affects*(a1, a2)  with 16 = a2.stmt#
 14 16
