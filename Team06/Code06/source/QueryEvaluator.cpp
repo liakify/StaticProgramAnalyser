@@ -88,6 +88,7 @@ namespace PQL {
     }
 
     ClauseResult QueryEvaluator::evaluateQuery(Query &query) {
+
         // Results of Clauses
         std::vector<ClauseResult> clauseResults;
 

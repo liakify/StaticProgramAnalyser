@@ -26,7 +26,7 @@ namespace PQL {
         ClauseResult rawResults = this->evaluator.evaluateQuery(query);
 
         // Process the list of results into a single output string
-        this->formatter.formatResult(rawResults, resultList);
+        this->formatter.formatResult(rawResults, query, resultList);
 
         return;
     }
