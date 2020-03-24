@@ -69,6 +69,12 @@ $list_of_test_files = @(
 # '..\withSuchthat_3',
 # '..\withSuchthat_4',
 # '..\withSuchthat_5',
+# '..\andPattern_0',
+# '..\andPattern_invalid',
+# '..\andSuchthat_0',
+# '..\andSuchthat_invalid',
+# '..\andWith_0',
+# '..\andWith_invalid'
 
 # '..\affects_0'
 # '..\affects_1'
