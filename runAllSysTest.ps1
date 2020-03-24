@@ -92,7 +92,7 @@ $list_of_no_xml_tests = @(
 'invalid_simple\simple_CondAsFalse',
 'invalid_simple\simple_CondAsTrue',
 'invalid_simple\simple_cyclicCalls',
-'invalid_simple\simple_digitWithZero,'
+'invalid_simple\simple_digitWithZero',
 'invalid_simple\simple_logicExprNoBracket',
 'invalid_simple\simple_logicExprNotInCond',
 'invalid_simple\simple_nonDigitConstant',
@@ -136,6 +136,8 @@ Try {
   }
 }
 Catch {
+  "[ERROR] TEST SUITE: " + $test + $source_suffix + " OR " + $test + $query_suffix + " not found!"
+  "`nTERMINATING SYSTEM TESTS DUE TO FILE ERRORS...`n"
   exit 1
 }
 
