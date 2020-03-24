@@ -42,7 +42,6 @@ $list_of_test_files = @(
 # STAGED TESTS
 '..\select_syn',
 '..\select_valid',
-'..\suchthatPattern_1',
 '..\patternIf_0fix',
 '..\patternWhile_0fix',
 '..\tuples_invalid'
@@ -53,6 +52,7 @@ $list_of_test_files = @(
 '..\withSuchthat_6'
 
 # ONLY MODIFY THE BELOW
+# '..\suchthatPattern_1',
 # '..\select_invalid',
 # '..\select_attr',
 # '..\tuples_0',
