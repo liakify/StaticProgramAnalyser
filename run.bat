@@ -19,30 +19,30 @@ if errorlevel 1 (
 	exit 1
 )
 
-cmd.exe /c ""C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\MSBuild\15.0\Bin\MSBuild.exe" "Team06/Code06/StartupSPASolution.sln" "/p:PlatformToolset=v141" "/p:UseEnv=true" "/p:Configuration=Debug" "/p:Platform=Win32" "/verbosity:minimal""
+cmd.exe /c ""C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\MSBuild\15.0\Bin\MSBuild.exe" "Team06/Code06/StartupSPASolution.sln" "/p:PlatformToolset=v141" "/p:UseEnv=true" "/p:Configuration=Release" "/p:Platform=Win32" "/verbosity:minimal""
 
-if not exist "Team06/Code06/Debug/UnitTesting.dll" (
+if not exist "Team06/Code06/Release/UnitTesting.dll" (
 	exit 1
 )
 
-if not exist "Team06/Code06/Debug/IntegrationTesting.dll" (
+if not exist "Team06/Code06/Release/IntegrationTesting.dll" (
 	exit 1
 )
 
-if not exist "Team06/Code06/Debug/AutoTester.exe" (
+if not exist "Team06/Code06/Release/AutoTester.exe" (
 	exit 1
 )
 
-if not exist "Team06/Code06/Debug/SPA.lib" (
+if not exist "Team06/Code06/Release/SPA.lib" (
 	exit 1
 )
 
 echo.
 echo ########################### RUNNING UNIT TESTS ############################
 
-call "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe" Team06/Code06/Debug/UnitTesting.dll
+call "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe" Team06/Code06/Release/UnitTesting.dll
 
 echo.
 echo ######################## RUNNING INTEGRATION TESTS ########################
 
-call "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe" Team06/Code06/Debug/IntegrationTesting.dll
+call "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe" Team06/Code06/Release/IntegrationTesting.dll
