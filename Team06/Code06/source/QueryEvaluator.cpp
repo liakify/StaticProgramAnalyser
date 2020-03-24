@@ -11,6 +11,8 @@
 #include "IfPatternEvaluator.h"
 #include "LoggingUtils.h"
 #include "ModifiesEvaluator.h"
+#include "NextEvaluator.h"
+#include "NextStarEvaluator.h"
 #include "ParentEvaluator.h"
 #include "ParentStarEvaluator.h"
 #include "QueryEvaluator.h"
@@ -322,11 +324,11 @@ namespace PQL {
             return CallsStarEvaluator::evaluateCallsStarClause(this->database, relationClause, synonymTable);
             break;
         case RelationType::NEXT:
-            SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluateRelationClause: Next relationship not implemented!");
+            return NextEvaluator::evaluateNextClause(this->database, relationClause, synonymTable);
             return {};
             break;
         case RelationType::NEXTT:
-            SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluateRelationClause: Next* relationship not implemented!");
+            return NextStarEvaluator::evaluateNextStarClause(this->database, relationClause, synonymTable);
             return {};
             break;
         case RelationType::AFFECTS:
