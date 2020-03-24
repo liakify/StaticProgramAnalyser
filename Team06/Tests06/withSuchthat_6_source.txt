@@ -6,7 +6,7 @@ procedure Works {
     modified4 = 366 + a8;  }
   if (c1 == c2) then {
     modified5 = 20 * a9;    } else {
-    modified6 = 102 + a10;  
+    modified6 = 102 + a10;  }
   while (c1 == c2) {
     read a;
     print a; }

@@ -13,3 +13,88 @@ procedure p, q; while w;
 Select q such that Calls* (p, q) pattern w (_, _)
 P2, P3, P4
 5000
+4 - Next, No relation with any synonym
+prog_line n; assign a1, a2, a3; variable v;
+Select n such that Next(a1, a2) pattern a3 (v, _)
+
+5000
+5 - Next, Connected Clauses
+assign a1, a2; variable v;
+Select a1 such that Next(a1, a2) pattern a1 (v, _)
+
+5000
+6 - Next, Connected Clauses: Select a2
+assign a1, a2; variable v;
+Select a2 such that Next(a1, a2) pattern a1 (v, _)
+
+5000
+7 - Next, Connected Clauses: pattern a2
+assign a1, a2; variable v;
+Select a1 such that Next(a1, a2) pattern a2 (v, _)
+
+5000
+8 - Next, Connected Clauses: pattern a2, Select a2
+assign a1, a2; variable v;
+Select a2 such that Next(a1, a2) pattern a2 (v, _)
+
+5000
+9 - Next, Connected Clauses: Limiting pattern
+assign a1, a2; variable v;
+Select a1 such that Next(a1, a2) pattern a2 (v, _"c"_)
+
+5000
+10 - Next, Connected Clauses: Limiting pattern, select a2
+assign a1, a2; variable v;
+Select a2 such that Next(a1, a2) pattern a2 (v, _"c"_)
+
+5000
+11 - Next*, Connected Clauses
+assign a1, a2; variable v;
+Select a1 such that Next*(a1, a2) pattern a1 (v, _)
+
+5000
+12 - Next*, Connected Clauses: Select a2
+assign a1, a2; variable v;
+Select a2 such that Next*(a1, a2) pattern a1 (v, _)
+
+5000
+13 - Next*, Connected Clauses: pattern a2
+assign a1, a2; variable v;
+Select a1 such that Next*(a1, a2) pattern a2 (v, _)
+
+5000
+14 - Next*, Connected Clauses: pattern a2, Select a2
+assign a1, a2; variable v;
+Select a2 such that Next*(a1, a2) pattern a2 (v, _)
+
+5000
+15 - Next*, Connected Clauses: Limiting pattern
+assign a1, a2; variable v;
+Select a1 such that Next*(a1, a2) pattern a2 (v, _"c"_)
+
+5000
+16 - Next*, Connected Clauses: Limiting pattern, select a2
+assign a1, a2; variable v;
+Select a2 such that Next*(a1, a2) pattern a2 (v, _"c"_)
+
+5000
+17 - Next, Next => empty
+assign a; variable v;
+Select a such that Next(a, 1) pattern a (v, _)
+
+5000
+18 - Next, Pattern => empty
+assign a; prog_line n;
+Select a such that Next(a, n) pattern a("notFound", "notFound")
+
+5000
+19 - Next*, Next* => empty
+assign a; variable v;
+Select a such that Next*(a, 1) pattern a (v, _)
+
+5000
+20 - Next*, Pattern => empty
+assign a; prog_line n;
+Select a such that Next*(a, n) pattern a("notFound", "notFound")
+
+5000

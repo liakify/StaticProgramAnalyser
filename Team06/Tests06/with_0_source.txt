@@ -1,0 +1,9 @@
+procedure SelectWith {
+    while (x == x) {
+        while (x > y) {
+            x = y + 5;  }
+        if (x < y) then {
+            read SelectWith;  } else {
+            call SelectWith2;  }  }  }
+procedure SelectWith2 {
+    print SelectWith2;  }

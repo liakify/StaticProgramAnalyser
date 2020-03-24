@@ -2,8 +2,8 @@
 
 # For cmd reference:
 # Autotester.exe ..\..\Tests06\_source.txt ..\..\Tests06\_queries.txt ..\..\Tests06\_out.xml
-# Autotester.exe ..\..\Tests06\invalid_simple\simple_printXPrintY_source.txt ..\..\Tests06\invalid_simple\simple_printXPrintY_queries.txt ..\..\Tests06\invalid_simple\simple_printXPrintY_out.xml
-# Autotester.exe ..\..\Tests06\suchthatPatternIf_0_source.txt ..\..\Tests06\suchthatPatternIf_0_queries.txt ..\..\Tests06\suchthatPatternIf_0_out.xml
+# Autotester.exe ..\..\Tests06\withSuchthat_5_source.txt ..\..\Tests06\withSuchthat_5_queries.txt ..\..\Tests06\withSuchthat_5_out.xml
+# Autotester.exe ..\..\Tests06\select_attr_source.txt ..\..\Tests06\select_attr_queries.txt ..\..\Tests06\select_attr_out.xml
 
 $source_suffix = '_source.txt'
 $query_suffix = '_queries.txt'
@@ -39,31 +39,52 @@ $list_of_test_files = @(
 'callsStar_threePronged',
 'valid_simple\simple_procNameEqualVarName'
 
+# STAGED TESTS
+'..\select_syn',
+'..\select_valid',
+'..\select_invalid',
+'..\patternIf_0fix',
+'..\patternWhile_0fix',
+'..\tuples_invalid'
+'..\next_invalidArgs',
+'..\nextStar_invalidArgs',
+'..\invalid_doubleClause',
+'..\withSuchthat_0',
+'..\withSuchthat_6'
+
 # ONLY MODIFY THE BELOW
-# '..\select_syn',
 # '..\select_attr',
-# '..\select_valid',
-# '..\select_invalid',
+# '..\tuples_0',
+# '..\next_0',
+# '..\nextStar_0',
+# '..\suchthatPatternIf_next+Star',
+# '..\suchthatPatternWhile_next+Star',
 # '..\suchthatPattern_1',
-# '..\patternIf_0fix',
-# '..\patternWhile_0fix',
-# '..\tuples_0'
-# '..\tuples_invalid',
-# '..\affects_0',
-# '..\affects_1',
-# '..\affects_2',
-# '..\affects_3',
-# '..\affects_invalidArgs',
-# '..\affectsStar_0',
-# '..\affectsStar_1',
-# '..\affectsStar_invalidArgs',
-# '..\suchthatPattern_affects+Star',
+# '..\with_0',
+# '..\withPatternAssign_0',
+# '..\withPatternIf_0',
+# '..\withPatternWhile_0',
+# '..\withSuchthat_1',
+# '..\withSuchthat_2',
+# '..\withSuchthat_3',
+# '..\withSuchthat_4',
+# '..\withSuchthat_5',
 # '..\andPattern_0',
 # '..\andPattern_invalid',
 # '..\andSuchthat_0',
 # '..\andSuchthat_invalid',
 # '..\andWith_0',
 # '..\andWith_invalid'
+
+# '..\affects_0'
+# '..\affects_1'
+# '..\affects_2'
+# '..\affects_3'
+# '..\affects_invalidArgs'
+# '..\affectsStar_0'
+# '..\affectsStar_1'
+# '..\affectsStar_invalidArgs'
+# '..\suchthatPattern_affects+Star'
 )
 
 $list_of_no_xml_tests = @(

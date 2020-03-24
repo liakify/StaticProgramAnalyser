@@ -1,0 +1,45 @@
+procedure SelectNext {
+    x = 5;
+    y = 6;
+    print x;
+    if (x < y) then {
+        if (y > 0) then {
+            if (x == x) then {
+                print x;  } else {
+                print y;  }
+            x = x; } else {
+            while (x == y) {
+                x = y;  }
+            x = x;  }
+        call Next2; } else {
+        while (x > 0) {
+            if (y == y) then {
+                y = y;  } else {
+                read y;  }
+            while (x == 0) {
+                print x;  }
+            x = x;  }
+        print y;  }  
+    x = x;  }
+procedure Next2 {
+    read y;
+    while (x < y) {
+        while (x > y) {
+            while (x == x) {
+                print y;  }
+            if (y == y) then {
+                read y;  } else {
+                print y;  }
+            print x;  }
+        if (x == y) then {
+            while (y > y) {
+                y = y;  }
+            if (y > x) then {
+                y = y;  } else {
+                x = x;  }
+            print x;  } else {
+            call Next3;  }
+        print y;  }
+    read y; }
+procedure Next3 {
+    print y;  }
