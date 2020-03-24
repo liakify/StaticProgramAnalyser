@@ -6,7 +6,7 @@ wget --no-check-certificate https://infocommsociety.com/~zhijian/cs3203/cppunitt
 set "INCLUDE=C:\Users\travis\build\nus-cs3203\team06-win-spa-19s2\CppUnitTest\include\;%INCLUDE%"
 set "LIB=C:\Users\travis\build\nus-cs3203\team06-win-spa-19s2\CppUnitTest\lib\;%LIB%"
 del Team06/Code06/StartupSPASolution.sln
-wget --no-check-certificate http://infocommsociety.com/~zhijian/cs3203/StartupSPASolution.sln
+wget --no-check-certificate http://infocommsociety.com/~zhijian/cs3203/release/StartupSPASolution.sln
 move StartupSPASolution.sln Team06\Code06\
 wget --no-check-certificate https://github.com/cpplint/cpplint/archive/master.zip
 7z x master.zip
