@@ -69,6 +69,12 @@ $list_of_test_files = @(
 # '..\withSuchthat_3',
 # '..\withSuchthat_4',
 # '..\withSuchthat_5',
+# '..\andPattern_0',
+# '..\andPattern_invalid',
+# '..\andSuchthat_0',
+# '..\andSuchthat_invalid',
+# '..\andWith_0',
+# '..\andWith_invalid'
 
 # '..\affects_0'
 # '..\affects_1'
@@ -79,13 +85,14 @@ $list_of_test_files = @(
 # '..\affectsStar_1'
 # '..\affectsStar_invalidArgs'
 # '..\suchthatPattern_affects+Star'
+# '..\mixed_0'
 )
 
 $list_of_no_xml_tests = @(
 'invalid_simple\simple_CondAsFalse',
 'invalid_simple\simple_CondAsTrue',
 'invalid_simple\simple_cyclicCalls',
-'invalid_simple\simple_digitWithZero,'
+'invalid_simple\simple_digitWithZero',
 'invalid_simple\simple_logicExprNoBracket',
 'invalid_simple\simple_logicExprNotInCond',
 'invalid_simple\simple_nonDigitConstant',
@@ -129,6 +136,8 @@ Try {
   }
 }
 Catch {
+  "[ERROR] TEST SUITE: " + $test + $source_suffix + " OR " + $test + $query_suffix + " not found!"
+  "`nTERMINATING SYSTEM TESTS DUE TO FILE ERRORS...`n"
   exit 1
 }
 

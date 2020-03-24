@@ -1,0 +1,45 @@
+1
+stmt s1, s2;
+Select BOOLEAN and Follows(s1, s2)
+
+5000
+2
+stmt s1, s2;
+Select BOOLEAN such that and Parents*(s1, s2)
+
+5000
+3
+stmt s1, s2;
+Select BOOLEAN such that Follows*(s1, s2) and
+
+5000
+4
+stmt s1, s2; variable v;
+Select BOOLEAN such that Follows(s1, s2) and such that Modifies(s1, v)
+
+5000
+5
+stmt s1, s2; variable v; procedure p, q;
+Select BOOLEAN such that Follows(s1, s2) and Calls (p, q) and such that Modifies(s1, v)
+
+5000
+6
+stmt s1, s2; variable v;
+Select BOOLEAN such that Follows(s1, s2) and Modifies(s1, v) and with s1.stmt# = 3
+
+5000
+7
+stmt s1, s2; variable v;
+Select BOOLEAN such that Follows(s1, s2) and Modifies(s1, v) and s1.stmt# = 3
+
+5000
+8
+stmt s1, s2; variable v; if ifs;
+Select BOOLEAN such that Follows(s1, s2) and Modifies(s1, v) and pattern ifs (v, _, _)
+
+5000
+9
+stmt s1, s2; variable v; if ifs;
+Select BOOLEAN such that Follows(s1, s2) and Modifies(s1, v) and ifs (v, _, _)
+
+5000

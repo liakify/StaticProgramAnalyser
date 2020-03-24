@@ -1,0 +1,45 @@
+1
+stmt s1, s2; variable v; assign a;
+Select BOOLEAN and pattern a (v, _)
+
+5000
+2
+stmt s1, s2; variable v; assign a;
+Select BOOLEAN pattern and a (v, _)
+
+5000
+3
+stmt s1, s2; variable v; assign a;
+Select BOOLEAN pattern a (v, _) and
+
+5000
+4
+variable v; if ifs; while w;
+Select BOOLEAN pattern ifs (v, _, _) and pattern w (v, _)
+
+5000
+5
+variable v;  if ifs; while w; assign a;
+Select BOOLEAN pattern ifs (v, _, _) and w(v, _) and pattern a (v, _)
+
+5000
+6
+stmt s1, s2; variable v; if ifs; while w; assign a;
+Select BOOLEAN pattern ifs (v, _, _) and w(v, _) and with s1.stmt# = 3
+
+5000
+7
+stmt s1, s2; variable v; if ifs; while w; assign a;
+Select BOOLEAN pattern ifs (v, _, _) and w(v, _) and s1.stmt# = 3
+
+5000
+8
+stmt s1, s2; variable v; if ifs; while w; assign a;
+Select BOOLEAN pattern ifs (v, _, _) and w(v, _) and such that Follows(s1, s2)
+
+5000
+9
+stmt s1, s2; variable v; if ifs; while w; assign a;
+Select BOOLEAN pattern ifs (v, _, _) and w(v, _) and Follows(s1, s2)
+
+5000
