@@ -201,7 +201,7 @@ namespace PQL {
                         return { resultEntry };
                     }
                     return {};
-                } else if (synonymTable[syn1] == DesignEntity::STATEMENT) {
+                } else if (synonymTable[syn1] == DesignEntity::STATEMENT || synonymTable[syn1] == DesignEntity::PROG_LINE) {
                     StmtId stmtNumber = std::stoi(arg2.second.first);
                     if (1 <= stmtNumber && stmtNumber <= database.stmtTable.size()) {
                         ClauseResultEntry resultEntry;

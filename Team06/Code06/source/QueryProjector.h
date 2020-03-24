@@ -5,6 +5,7 @@
 #include <string>
 #include <unordered_set>
 
+#include "PQLTypes.h"
 #include "Types.h"
 
 namespace PQL {
@@ -21,7 +22,7 @@ namespace PQL {
          *
          *  @param      resultList  empty list of strings to populate with query results.
          */
-        void formatResult(ClauseResult& results, std::list<std::string>& resultList);
+        void formatResult(ClauseResult& results, PQL::Query& query, std::list<std::string>& resultList);
     };
 
 }
