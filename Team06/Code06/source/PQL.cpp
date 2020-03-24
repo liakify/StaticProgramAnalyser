@@ -19,6 +19,11 @@ namespace PQL {
         if (query.status != SUCCESS) {
             // Terminate early if parsing or validation failed
             SPA::LoggingUtils::LogErrorMessage(query.status);
+
+            // Return FALSE for queries with BOOLEAN return type
+            if (query.returnsBool && query.status.find("semantic error") != string::npos) {
+                resultList.push_back("FALSE");
+            }
             return;
         }
 
