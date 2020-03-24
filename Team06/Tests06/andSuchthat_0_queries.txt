@@ -5,7 +5,7 @@ Select s such that Follows(s, c) and Next* (p1, p2)
 5000
 2
 procedure p, q, r;
-Select p such that Calls(p, q) and Calls (q, r) and Modifies (p, "var")
+Select p such that Calls(p, q) such that Calls (q, r) and Modifies (p, "var")
 AndSuchthat
 5000
 3
@@ -14,7 +14,3 @@ Select <s1, v> such that Modifies(s1, v) and Uses (p, v) such that Parent (s2, s
 2 var
 5000
 4
-stmt s1, s2; assign a1, a2;
-Select BOOLEAN such that Follows(a1, a2) and Affects(a2, a1)
-FALSE
-5000
