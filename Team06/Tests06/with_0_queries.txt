@@ -16,7 +16,7 @@ FALSE
 4 - IDENT = INT: Same value
 
 Select BOOLEAN with "2" = 2
-FALSE
+
 5000
 5 - IDENT = attrRef
 procedure p;
@@ -36,7 +36,7 @@ FALSE
 8 - INT = IDENT: Same value
 
 Select BOOLEAN with 2 = "2"
-FALSE
+
 5000
 9 - INT = INT: Same INT
 
@@ -71,7 +71,7 @@ TRUE
 15 - attrRef = IDENT: Invalid attrRef
 assign a;
 Select BOOLEAN with a.stmt# = "1"
-FALSE
+
 5000
 16 - attrRef = INT: Valid attrRef
 stmt s;
@@ -90,12 +90,12 @@ TRUE
 5000
 19 - attrRef = attrRef: p.procName = c.procName, Valid RHS attrRef
 procedure p; call c;
-Select p.procName such that p.procName = c.procName
+Select p.procName with p.procName = c.procName
 SelectWith2
 5000
 20 - attrRef = attrRef: p.procName = cn.value, Invalid RHS attrRef
 procedure p; constant cn;
-Select BOOLEAN such that p.procName = cn.value
+Select BOOLEAN with p.procName = cn.value
 FALSE
 5000
 21 - attrRef = attrRef: c1.procName = c2.procName
@@ -105,12 +105,12 @@ TRUE
 5000
 22 - attrRef = attrRef: c.procName = v.varName, Valid RHS attrRef
 call c; variable v;
-Select c.procName such that c.procName = v.varName
+Select c.procName with c.procName = v.varName
 SelectWith2
 5000
 23 - attrRef = attrRef: c.procName = s.stmt#, Invalid RHS attrRef
 call c; stmt s;
-Select BOOLEAN such that p.procName = s.stmt#
+Select BOOLEAN with p.procName = s.stmt#
 FALSE
 5000
 24 - attrRef = attrRef: v1.varName = v2.varName
@@ -120,12 +120,12 @@ TRUE
 5000
 25 - attrRef = attrRef: v.varName = pn.varName , Valid RHS attrRef
 variable v; print pn;
-Select v.varName such that v.varName = pn.varName
+Select v.varName with v.varName = pn.varName
 SelectWith2
 5000
 26 - attrRef = attrRef: v.varName = r.stmt#, Invalid RHS attrRef
 variable v; read r;
-Select BOOLEAN such that v.varName = r.stmt#
+Select BOOLEAN with v.varName = r.stmt#
 FALSE
 5000
 27 - attrRef = attrRef: r1.varName = r2.varName
@@ -135,12 +135,12 @@ TRUE
 5000
 28 - attrRef = attrRef: r.varName = p.procName , Valid RHS attrRef
 read r; variable v;
-Select r.varName such that r.varName = p.procName
+Select r.varName with r.varName = p.procName
 SelectWith
 5000
 29 - attrRef = attrRef: r.varName = pn.stmt#, Invalid RHS attrRef
 read r; print pn;
-Select BOOLEAN such that r.varName = pn.stmt#
+Select BOOLEAN with r.varName = pn.stmt#
 FALSE
 5000
 30 - attrRef = attrRef: pn1.varName = pn2.varName
@@ -150,12 +150,12 @@ TRUE
 5000
 31 - attrRef = attrRef: pn.varName = p.procName , Valid RHS attrRef
 print pn; procedure p;
-Select pn.varName such that pn.varName = p.procName
+Select pn.varName with pn.varName = p.procName
 SelectWith2
 5000
 32 - attrRef = attrRef: pn.varName = c.stmt#, Invalid RHS attrRef
 print pn; call c;
-Select BOOLEAN such that pn.varName = c.stmt#
+Select BOOLEAN with pn.varName = c.stmt#
 FALSE
 5000
 33 - attrRef = attrRef: cn1.value = cn2.value
@@ -296,7 +296,7 @@ FALSE
 60 - prog_line = IDENT: Valid value
 prog_line n;
 Select BOOLEAN with n = "1"
-FALSE
+
 5000
 61 - prog_line = INT: Valid
 prog_line n;

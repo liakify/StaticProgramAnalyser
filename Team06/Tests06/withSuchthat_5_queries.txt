@@ -1,12 +1,12 @@
 1 - 
 prog_line pl; stmt s;
 Select s such that Follows(pl, s) with pl = 1
-2
+13
 5000
 2 - 
 prog_line pl; stmt s;
-Select s such that Follows(s, pl) with pl = 3
-2
+Select s such that Follows(s, pl) with pl = 8
+7
 5000
 3 - 
 prog_line pl; stmt s;
@@ -21,7 +21,7 @@ Select s such that Follows*(s, pl) with pl = 4
 5 - 
 prog_line pl; stmt s;
 Select s such that Parent (pl, s) with pl = 2
-1
+3, 4, 7, 8, 9, 10
 5000
 6 - 
 prog_line pl; stmt s;
