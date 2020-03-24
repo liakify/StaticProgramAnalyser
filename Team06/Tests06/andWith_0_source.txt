@@ -4,5 +4,5 @@ procedure AndWith {
   call Name2; }
 procedure Name {
   print c; }
-procedrue Name2 {
+procedure Name2 {
   read Name;}
