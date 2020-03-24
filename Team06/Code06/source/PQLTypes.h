@@ -157,6 +157,7 @@ namespace PQL {
     const std::string SEMANTIC_ERR_PATTERN_NON_VARIABLE_FIRST_SYNONYM = "semantic error: synonym as first arg in pattern clause not a VARIABLE";
     const std::string SEMANTIC_ERR_WITH_CLAUSE_DIFF_LITERAL_TYPE = "semantic error: literal values on both sides of with (equality) clause have different type";
     const std::string SEMANTIC_ERR_WITH_CLAUSE_UNDECLARED_SYNONYM_ARG = "semantic error: undeclared synonym as arg in with (equality) clause";
+    const std::string SEMANTIC_ERR_WITH_CLAUSE_NON_PROG_LINE_SYNONYM_ARG = "semantic error: synonym argument in with (equality) clause not a PROG_LINE";
     const std::string SEMANTIC_ERR_WITH_CLAUSE_UNDECLARED_SYNONYM_IN_ATTRIBUTE_ARG = "semantic error: undeclared synonym part of attribute arg in with (equality) clause";
     const std::string SEMANTIC_ERR_WITH_CLAUSE_INVALID_SYNONYM_ATTRIBUTE_PAIR_ARG = "semantic error: attribute not defined for synonym part of attribute arg in with (equality) clause";
     const std::string SEMANTIC_ERR_WITH_CLAUSE_DIFF_RETURN_TYPE_OF_ARGS = "semantic error: expressions on both sides of with (equality) clause evaluate to different type";

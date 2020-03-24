@@ -1,4 +1,4 @@
-procedure withSuchThatProgLine {
+procedure WithSuchThatProgLine {
   while (c1 == nested1) {
     while (c2 == nested2) {
       a = modified;
@@ -15,3 +15,12 @@ procedure withSuchThatProgLine {
   B = modified;
   affected = a + B - X / (12 - 14);
   affected = B; }
+procedure ModifiesX {
+  X = x1;
+  X = x2;
+  X = x3; }
+procedure ModifiesB {
+  read B;
+  read B;
+  read B;
+  read B;  }

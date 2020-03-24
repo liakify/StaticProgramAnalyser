@@ -165,7 +165,7 @@ Select s such that Follows (p, s)
 5000
 34
 procedure p; stmt s;
-Select s such that Follows (p, s)
+Select s such that Follows (s, p)
 
 5000
 35
