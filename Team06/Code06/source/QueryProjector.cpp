@@ -7,6 +7,11 @@ namespace PQL {
         // Use a set to remove duplicates
         std::unordered_set<std::string> uniqueResultSet;
 
+        if (query.returnsBool) {
+            resultList.push_back(result[0]["_BOOLEAN"]);
+            return;
+        }
+
         for (ClauseResultEntry& resultEntry : result) {
             std::stringstream s;
             bool first = true;
