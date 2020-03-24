@@ -110,8 +110,8 @@ namespace PQL {
                 return clauseResult;
             } else {
                 // Case 2: Synonym, Integer
-                Synonym arg1 = clause.getArgs().second.second;
-                StmtId arg2 = std::stoi(clause.getArgs().first.second);
+                Synonym arg1 = clause.getArgs().first.second;
+                StmtId arg2 = std::stoi(clause.getArgs().second.second);
 
                 std::unordered_set<StmtId> stmts = database.nextStarGetDirectNodes(arg2, NodeType::PREDECESSOR);
                 ClauseResult clauseResult;
