@@ -81,7 +81,7 @@ TRUE
 17 - attrRef = INT: Invalid attrRef
 print pn;
 Select BOOLEAN with pn.varName = 1
-TRUE
+FALSE
 5000
 18 - attrRef = attrRef: p1.procName = p2.procName
 procedure p1, p2;
@@ -134,7 +134,7 @@ Select BOOLEAN with r1.varName = r2.varName
 TRUE
 5000
 28 - attrRef = attrRef: r.varName = p.procName , Valid RHS attrRef
-read r; variable v;
+read r; variable v; procedure p;
 Select r.varName with r.varName = p.procName
 SelectWith
 5000

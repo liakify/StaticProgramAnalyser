@@ -15,7 +15,7 @@ Select <pn>
 5000
 4 - Select tuple with 1 element: while
 while w;
-Select <w>;
+Select <w>
 6, 9, 11
 5000
 5 - Select tuple with 1 element: if
@@ -91,7 +91,7 @@ Select <pn, v> such that Uses (pn, v)
 19 - Select tuple 2 common synonyms: stmtRef, entRef | reverse order
 read r; variable v;
 Select <v, r> such that Modifies (r, v)
-c 2, 8 j, 14 a
+c 2, j 8, a 14
 5000
 20 - Select tuple 2 common synonyms: stmtRef, stmtRef
 stmt s1, s2;
