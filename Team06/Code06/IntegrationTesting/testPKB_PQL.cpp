@@ -199,11 +199,11 @@ namespace IntegrationTesting {
         results.clear();
 
         pql.evaluateQuery(query_selectDesignEntity_PROC, results);
-        //Assert::IsTrue(results == std::list<string>({ "p", "p2"}));
+        Assert::IsTrue(results == std::list<string>({ "p2", "p"}));
         results.clear();
 
         pql.evaluateQuery(query_relCond_ModifiesP, results);
-        //Assert::IsTrue(results == std::list<string>({ "p", "p2" }));
+        Assert::IsTrue(results == std::list<string>({ "p2", "p" }));
         results.clear();
 
         pql.evaluateQuery(query_relCond_ModifiesS, results);
@@ -211,7 +211,7 @@ namespace IntegrationTesting {
         results.clear();
 
         pql.evaluateQuery(query_relCond_UsesP, results);
-        //Assert::IsTrue(results == std::list<string>({ "p", "p2" }));
+        Assert::IsTrue(results == std::list<string>({ "p2", "p" }));
         results.clear();
 
         pql.evaluateQuery(query_relCond_UsesS, results);
