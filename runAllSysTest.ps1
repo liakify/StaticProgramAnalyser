@@ -105,7 +105,7 @@ $list_of_no_xml_tests = @(
 
 Try {
   foreach ($test in $list_of_test_files) {
-    [timespan]$timing = Measure-Command { .\Team06\Code06\Debug\AutoTester.exe $regression_test_path$test$source_suffix $regression_test_path$test$query_suffix $regression_test_path$test$output_suffix *>$null }
+    [timespan]$timing = Measure-Command { .\Team06\Code06\Release\AutoTester.exe $regression_test_path$test$source_suffix $regression_test_path$test$query_suffix $regression_test_path$test$output_suffix *>$null }
     # Remove-Item $regression_test_path$test$output_suffix
 
     [XML]$output = Get-Content $regression_test_path$test$output_suffix
@@ -142,7 +142,7 @@ Catch {
 }
 
 foreach ($test in $list_of_no_xml_tests) {
-  [timespan]$timing = Measure-Command { .\Team06\Code06\Debug\AutoTester.exe $regression_test_path$test$source_suffix $regression_test_path$test$query_suffix $regression_test_path$test$output_suffix *>$null }
+  [timespan]$timing = Measure-Command { .\Team06\Code06\Release\AutoTester.exe $regression_test_path$test$source_suffix $regression_test_path$test$query_suffix $regression_test_path$test$output_suffix *>$null }
 
   if (Test-Path $regression_test_path$test$output_suffix) {
     "[FAILED] TEST SUITE: " + $test + $output_suffix + " found when it should not be generated!"
