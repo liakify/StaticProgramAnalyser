@@ -38,22 +38,22 @@ while w; stmt s;
 Select w such that Follows* (w, s) with s.stmt# = cn.value
 1, 2
 5000
-10 - next: linked by s1
+9 - next: linked by s1
 stmt s; call c;
 Select c such that Next(s, c) with s.stmt# = 10
 11
 5000
-11 - next: linkec by s2
+10 - next: linkec by s2
 read r1, r2;
 Select r1 such that Next(r1, r2) with "B" = r2.varName
 
 5000
-12 - next*: linked by s1
+11 - next*: linked by s1
 assign a1; stmt s;
 Select s such that Next* (a1, s) with a1.stmt# = 18
 19
 5000
-13 - next*: linkec by s2
+12 - next*: linkec by s2
 stmt s; read r;
 Select s such that Next* (s, r) with r.stmt# = 5
 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
