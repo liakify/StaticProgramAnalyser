@@ -106,8 +106,8 @@ namespace PQL {
      *  validation of a PQL query. All but the OK and SUCCESS messages indicate
      *  either a syntax or semantic error with the query.
      */
-    const std::string OK = "ok";
-    const std::string SUCCESS = "success";
+    const std::string STATUS_OK = "ok";
+    const std::string STATUS_SUCCESS = "success";
     const std::string SYNTAX_ERR_EMPTY_QUERY = "syntax error: empty query";
     const std::string SYNTAX_ERR_INVALID_DECLARATION = "syntax error: declaration statement has incorrect syntax";
     const std::string SYNTAX_ERR_MISSING_SELECT_OR_UNKNOWN_CHAR = "syntax error: query missing 'Select' keyword or has unrecognised characters";
