@@ -89,5 +89,8 @@
     <ClCompile Include="testRuntimeDesignExtractor_affects.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="testAffectsKB.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -10,8 +10,13 @@ namespace PKB {
     }
 
     bool PKB::affects(StmtId s1, StmtId s2) {
-        std::shared_ptr<Statement> x = stmtTable.get(s1);
-        std::shared_ptr<Statement> y = stmtTable.get(s2);
+        std::shared_ptr<Statement> x, y;
+        try {
+            x = stmtTable.get(s1);
+            y = stmtTable.get(s2);
+        } catch (std::out_of_range&) {
+            return false;
+        }
         if (x->getType() != StmtType::ASSIGN || y->getType() != StmtType::ASSIGN) {
             return false;
         }
@@ -25,9 +30,13 @@ namespace PKB {
     }
 
     const std::unordered_set<StmtId>& PKB::affectsGetDirectNodes(StmtId s, NodeType type) {
-        int numStmts = stmtTable.size();
-        std::shared_ptr<Statement> x = stmtTable.get(s);
-        if (s < 1 || s > numStmts || x->getType() != StmtType::ASSIGN) {
+        std::shared_ptr<Statement> x;
+        try {
+            x = stmtTable.get(s);
+        } catch (std::out_of_range&) {
+            return EMPTY_RESULT;
+        }
+        if (x->getType() != StmtType::ASSIGN) {
             return EMPTY_RESULT;
         }
         if (affectsKB.processedAllAffects(s, type)) {  // cached

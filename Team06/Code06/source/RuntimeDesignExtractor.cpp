@@ -189,7 +189,7 @@ namespace FrontEnd {
                     result.insert(curr);
                 }
                 if (usedId.size() == 0 || curr == root) {
-                    // Since the reverse DFS traverses all possible reverse paths, 
+                    // Since the reverse DFS traverses all possible reverse paths,
                     // there will be no need to search beyond a single cycle back to the root
                     return;
                 }
