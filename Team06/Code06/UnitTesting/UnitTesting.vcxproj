@@ -163,6 +163,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="testRuntimeDesignExtractor_affects.cpp" />
     <ClCompile Include="testRuntimeDesignExtractor_nextStar.cpp" />
     <ClCompile Include="testDesignExtractor_calls.cpp" />
     <ClCompile Include="testCallsKB.cpp" />

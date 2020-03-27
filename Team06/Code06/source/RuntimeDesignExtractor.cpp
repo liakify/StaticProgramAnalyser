@@ -172,7 +172,7 @@ namespace FrontEnd {
     }
 
 
-    void RuntimeDesignExtractor::affectedByDFS(StmtId root, std::unordered_set<VarId>& usedId, StmtId curr,
+    void RuntimeDesignExtractor::affectedByDFS(StmtId root, std::unordered_set<VarId> usedId, StmtId curr,
             std::unordered_set<StmtId>& visited, std::unordered_set<StmtId>& result) {
         if (curr != root || visited.size() != 0) {
             visited.insert(curr);
@@ -188,7 +188,9 @@ namespace FrontEnd {
                 if (s->getType() == StmtType::ASSIGN && isModified) {
                     result.insert(curr);
                 }
-                if (usedId.size() == 0) {
+                if (usedId.size() == 0 || curr == root) {
+                    // Since the reverse DFS traverses all possible reverse paths, 
+                    // there will be no need to search beyond a single cycle back to the root
                     return;
                 }
             }
@@ -196,9 +198,8 @@ namespace FrontEnd {
 
         std::unordered_set<StmtId> neighbours = pkb->nextStarGetDirectNodes(curr, NodeType::PREDECESSOR);
         for (StmtId prev : neighbours) {
-            if (visited.find(prev) == visited.end()) {
-                affectedByDFS(root, usedId, prev, visited, result);
-            }
+            // Cannot check visited here because the DFS needs to search all possible paths backwards
+            affectedByDFS(root, usedId, prev, visited, result);
         }
     }
 }

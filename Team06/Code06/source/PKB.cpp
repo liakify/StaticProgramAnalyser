@@ -26,7 +26,8 @@ namespace PKB {
 
     const std::unordered_set<StmtId>& PKB::affectsGetDirectNodes(StmtId s, NodeType type) {
         int numStmts = stmtTable.size();
-        if (s < 1 || s > numStmts) {
+        std::shared_ptr<Statement> x = stmtTable.get(s);
+        if (s < 1 || s > numStmts || x->getType() != StmtType::ASSIGN) {
             return EMPTY_RESULT;
         }
         if (affectsKB.processedAllAffects(s, type)) {  // cached
