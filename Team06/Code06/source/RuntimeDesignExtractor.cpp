@@ -104,6 +104,9 @@ namespace FrontEnd {
     bool RuntimeDesignExtractor::processAffects(StmtId s1, StmtId s2, PKB::PKB* pkb) {
         assert(pkb->stmtTable.get(s1)->getType() == StmtType::ASSIGN);
         assert(pkb->stmtTable.get(s2)->getType() == StmtType::ASSIGN);
+        if (!pkb->nextStar(s1, s2)) {
+            return false;
+        }
 
         AssignStmt* a1 = dynamic_cast<AssignStmt*>(pkb->stmtTable.get(s1).get());
         std::unordered_set<VarId> usedVars = pkb->usesKB.getAllVarsUsedByStmt(s2);
@@ -116,19 +119,28 @@ namespace FrontEnd {
         for (StmtId id : result) {
             pkb->addAffects(s1, id);
         }
-        return pkb->affects(s1, s2);
+        return result.find(s2) != result.end();
     }
 
-    void RuntimeDesignExtractor::processAllAffects(StmtId s, NodeType type, PKB::PKB* pkb) {
+    void RuntimeDesignExtractor::processAffectsGetAllNodes(StmtId s, NodeType type, PKB::PKB* pkb) {
         assert(pkb->stmtTable.get(s)->getType() == StmtType::ASSIGN);
         AssignStmt* a = dynamic_cast<AssignStmt*>(pkb->stmtTable.get(s).get());
-        VarId modifiedId = a->getVar();
         std::unordered_set<StmtId> visited, result;
-        affectsDFS(s, modifiedId, s, visited, result);
-        for (StmtId id : result) {
-            pkb->addAffects(s, id);
+        if (type == NodeType::SUCCESSOR) {
+            VarId modifiedId = a->getVar();
+            affectsDFS(s, modifiedId, s, visited, result);
+            for (StmtId id : result) {
+                pkb->addAffects(s, id);
+            }
+            pkb->affectsSetProcessedAll(s, NodeType::SUCCESSOR);
+        } else {
+            std::unordered_set<VarId> usedId = a->getExpr().getVarIds();
+            affectedByDFS(s, usedId, s, visited, result);
+            for (StmtId id : result) {
+                pkb->addAffects(id, s);
+            }
+            pkb->affectsSetProcessedAll(s, NodeType::PREDECESSOR);
         }
-        pkb->affectsSetProcessedAll(s, NodeType::SUCCESSOR);
     }
 
     void RuntimeDesignExtractor::affectsDFS(StmtId root, VarId modifiedId, StmtId curr,

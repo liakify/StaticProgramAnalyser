@@ -18,14 +18,13 @@ bool AffectsKB::affects(StmtId s1, StmtId s2) {
 }
 
 const std::unordered_set<StmtId>& AffectsKB::getDirectNodes(StmtId s, NodeType type) {
-    try {
-        if (type == NodeType::SUCCESSOR) {
-            return affectsTable.at(s).directAffects;
-        } else {
-            return affectsTable.at(s).directAffectedBy;
-        }
-    } catch (const std::out_of_range&) {
+    if (affectsTable.find(s) == affectsTable.end()) {
         return EMPTY_RESULT;
+    }
+    if (type == NodeType::SUCCESSOR) {
+        return affectsTable.at(s).directAffects;
+    } else {
+        return affectsTable.at(s).directAffectedBy;
     }
 }
 

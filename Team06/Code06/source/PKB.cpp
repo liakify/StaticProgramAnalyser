@@ -25,6 +25,14 @@ namespace PKB {
     }
 
     const std::unordered_set<StmtId>& PKB::affectsGetDirectNodes(StmtId s, NodeType type) {
+        int numStmts = stmtTable.size();
+        if (s < 1 || s > numStmts) {
+            return EMPTY_RESULT;
+        }
+        if (affectsKB.processedAllAffects(s, type)) {  // cached
+            return affectsKB.getDirectNodes(s, type);
+        }
+        rtDE.processAffectsGetAllNodes(s, type, this);
         return affectsKB.getDirectNodes(s, type);
     }
 
