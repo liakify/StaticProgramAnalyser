@@ -102,6 +102,7 @@ namespace FrontEnd {
     }
 
     bool RuntimeDesignExtractor::processAffects(StmtId s1, StmtId s2, PKB::PKB* pkb) {
+        this->pkb = pkb;
         assert(pkb->stmtTable.get(s1)->getType() == StmtType::ASSIGN);
         assert(pkb->stmtTable.get(s2)->getType() == StmtType::ASSIGN);
         if (!pkb->nextStar(s1, s2)) {
@@ -123,6 +124,7 @@ namespace FrontEnd {
     }
 
     void RuntimeDesignExtractor::processAffectsGetAllNodes(StmtId s, NodeType type, PKB::PKB* pkb) {
+        this->pkb = pkb;
         assert(pkb->stmtTable.get(s)->getType() == StmtType::ASSIGN);
         AssignStmt* a = dynamic_cast<AssignStmt*>(pkb->stmtTable.get(s).get());
         std::unordered_set<StmtId> visited, result;
@@ -148,18 +150,20 @@ namespace FrontEnd {
         if (curr != root || visited.size() != 0) {
             visited.insert(curr);
             std::shared_ptr<Statement> s = pkb->stmtTable.get(curr);
-            if (s->getType() != StmtType::IF && s->getType() != StmtType::WHILE && pkb->usesKB.stmtUses(curr, modifiedId)) {
-                if (s->getType() == StmtType::ASSIGN) {
+            if (s->getType() != StmtType::IF && s->getType() != StmtType::WHILE) {
+                if (s->getType() == StmtType::ASSIGN && pkb->usesKB.stmtUses(curr, modifiedId)) {
                     result.insert(curr);
                 }
-                return;
+                if (pkb->modifiesKB.stmtModifies(curr, modifiedId)) {
+                    return;
+                }
             }
         }
 
         std::unordered_set<StmtId> neighbours = pkb->nextStarGetDirectNodes(curr, NodeType::SUCCESSOR);
         for (StmtId next : neighbours) {
             if (visited.find(next) == visited.end()) {
-                affectsDFS(root, modifiedId, next, visited, result);
+                affectsDFS(root, modifiedId, next, visited, result, goal);
                 if (next == goal) {
                     break;
                 }
