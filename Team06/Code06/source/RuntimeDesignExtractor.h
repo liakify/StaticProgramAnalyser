@@ -18,6 +18,8 @@ namespace FrontEnd {
         bool processNextStar(StmtId s1, StmtId s2, PKB::PKB* pkb);
 
         void processNextStarGetAllNodes(StmtId s, NodeType type, PKB::PKB* pkb);
+        
+        bool processAffects(StmtId s1, StmtId s2, PKB::PKB* pkb);
 
      private:
         PKB::PKB* pkb;

@@ -98,4 +98,8 @@ namespace FrontEnd {
             }
         }
     }
+
+    bool RuntimeDesignExtractor::processAffects(StmtId s1, StmtId s2, PKB::PKB* pkb) {
+        return true;
+    }
 }

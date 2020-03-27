@@ -4,6 +4,21 @@
 #include "PKB.h"
 
 namespace PKB {
+    bool PKB::affects(StmtId s1, StmtId s2) {
+        std::shared_ptr<Statement> x = stmtTable.get(s1);
+        std::shared_ptr<Statement> y = stmtTable.get(s2);
+        if (x->getType() != StmtType::ASSIGN || y->getType() != StmtType::ASSIGN) {
+            return false;
+        }
+        if (affectsKB.affects(s1, s2)) {  // cached
+            return true;
+        }
+        if (affectsKB.processedAllAffects(s1, NodeType::SUCCESSOR)) {  // allNext is fully processed for s1, i.e. no path from s1 to s2
+            return false;
+        }
+        return rtDE.processAffects(s1, s2, this);
+    }
+
     void PKB::addNext(StmtId s1, StmtId s2) {
         nextKB.addNext(s1, s2);
     }
@@ -68,5 +83,6 @@ namespace PKB {
 
     void PKB::clear() {
         nextKB.clear();
+        affectsKB.clear();
     }
 }

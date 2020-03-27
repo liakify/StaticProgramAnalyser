@@ -17,6 +17,7 @@
 #include "PatternKB.h"
 #include "CallsKB.h"
 #include "NextKB.h"
+#include "AffectsKB.h"
 
 #include "RuntimeDesignExtractor.h"
 
@@ -30,6 +31,11 @@ namespace PKB {
          */
     class PKB {
      public:
+        /*
+            Returns TRUE if Affects(s1, s2) is true, FALSE otherwise
+        */
+        bool affects(StmtId s1, StmtId s2);
+
         /*
             Adds Next(s1, s2) to NextKB where s2 can be executed immediately after s1
         */
@@ -104,6 +110,7 @@ namespace PKB {
 
      private:
         NextKB nextKB;
+        AffectsKB affectsKB;
 
         FrontEnd::RuntimeDesignExtractor rtDE;
     };
