@@ -101,7 +101,25 @@ namespace FrontEnd {
         }
     }
 
-    void RuntimeDesignExtractor::processAllAffects(StmtId s, PKB::PKB* pkb) {
+    bool RuntimeDesignExtractor::processAffects(StmtId s1, StmtId s2, PKB::PKB* pkb) {
+        assert(pkb->stmtTable.get(s1)->getType() == StmtType::ASSIGN);
+        assert(pkb->stmtTable.get(s2)->getType() == StmtType::ASSIGN);
+
+        AssignStmt* a1 = dynamic_cast<AssignStmt*>(pkb->stmtTable.get(s1).get());
+        std::unordered_set<VarId> usedVars = pkb->usesKB.getAllVarsUsedByStmt(s2);
+        VarId modifiedId = a1->getVar();
+        if (usedVars.find(modifiedId) == usedVars.end()) {
+            return false;
+        }
+        std::unordered_set<StmtId> visited, result;
+        affectsDFS(s1, modifiedId, s1, visited, result, s2);
+        for (StmtId id : result) {
+            pkb->addAffects(s1, id);
+        }
+        return pkb->affects(s1, s2);
+    }
+
+    void RuntimeDesignExtractor::processAllAffects(StmtId s, NodeType type, PKB::PKB* pkb) {
         assert(pkb->stmtTable.get(s)->getType() == StmtType::ASSIGN);
         AssignStmt* a = dynamic_cast<AssignStmt*>(pkb->stmtTable.get(s).get());
         VarId modifiedId = a->getVar();
@@ -114,7 +132,7 @@ namespace FrontEnd {
     }
 
     void RuntimeDesignExtractor::affectsDFS(StmtId root, VarId modifiedId, StmtId curr,
-            std::unordered_set<StmtId>& visited, std::unordered_set<StmtId>& result) {
+            std::unordered_set<StmtId>& visited, std::unordered_set<StmtId>& result, StmtId goal) {
         if (curr != root || visited.size() != 0) {
             visited.insert(curr);
             std::shared_ptr<Statement> s = pkb->stmtTable.get(curr);
@@ -130,6 +148,40 @@ namespace FrontEnd {
         for (StmtId next : neighbours) {
             if (visited.find(next) == visited.end()) {
                 affectsDFS(root, modifiedId, next, visited, result);
+                if (next == goal) {
+                    break;
+                }
+            }
+        }
+    }
+
+
+    void RuntimeDesignExtractor::affectedByDFS(StmtId root, std::unordered_set<VarId>& usedId, StmtId curr,
+            std::unordered_set<StmtId>& visited, std::unordered_set<StmtId>& result) {
+        if (curr != root || visited.size() != 0) {
+            visited.insert(curr);
+            std::shared_ptr<Statement> s = pkb->stmtTable.get(curr);
+            if (s->getType() != StmtType::IF && s->getType() != StmtType::WHILE) {
+                bool isModified = false;
+                for (VarId id : pkb->modifiesKB.getAllVarsModifiedByStmt(curr)) {
+                    if (usedId.find(id) != usedId.end()) {
+                        isModified = true;
+                        usedId.erase(id);
+                    }
+                }
+                if (s->getType() == StmtType::ASSIGN && isModified) {
+                    result.insert(curr);
+                }
+                if (usedId.size() == 0) {
+                    return;
+                }
+            }
+        }
+
+        std::unordered_set<StmtId> neighbours = pkb->nextStarGetDirectNodes(curr, NodeType::PREDECESSOR);
+        for (StmtId prev : neighbours) {
+            if (visited.find(prev) == visited.end()) {
+                affectedByDFS(root, usedId, prev, visited, result);
             }
         }
     }
