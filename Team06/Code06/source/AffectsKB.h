@@ -31,12 +31,12 @@ class AffectsKB {
         Returns a reference to directAffects/directAffected of s for NodeType SUCCESSOR and PREDECESSOR respectively
     */
     const std::unordered_set<StmtId>& getDirectNodes(StmtId s, NodeType type);
-    
+
     /*
         Returns processedAllAffects/processedAllAffectedBy of s for NodeType SUCCESSOR and PREDECESSOR respectively
     */
     bool processedAllAffects(StmtId s, NodeType type);
-    
+
     /*
        Sets processedAllAffects/processedAllAffectedBy of s to TRUE for NodeType SUCCESSOR and PREDECESSOR respectively
     */
@@ -47,6 +47,6 @@ class AffectsKB {
     */
     void clear();
 
-private:
+ private:
     std::unordered_map<StmtId, affectsRS> affectsTable;
 };

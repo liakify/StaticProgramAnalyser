@@ -32,9 +32,29 @@ namespace PKB {
     class PKB {
      public:
         /*
-            Returns TRUE if Affects(s1, s2) is true, FALSE otherwise
+            Adds Affects(s1, s2) to the affectsTable where s2 is affected by s1
+        */
+        void addAffects(StmtId s1, StmtId s2);
+
+        /*
+            Returns TRUE if s2 cis affected by s1, FALSE otherwise
         */
         bool affects(StmtId s1, StmtId s2);
+
+        /*
+            Returns a reference to directAffects/directAffected of s for NodeType SUCCESSOR and PREDECESSOR respectively
+        */
+        const std::unordered_set<StmtId>& affectsGetDirectNodes(StmtId s, NodeType type);
+
+        /*
+            Returns processedAllAffects/processedAllAffectedBy of s for NodeType SUCCESSOR and PREDECESSOR respectively
+        */
+        bool affectsProcessedAll(StmtId s, NodeType type);
+
+        /*
+           Sets processedAllAffects/processedAllAffectedBy of s to TRUE for NodeType SUCCESSOR and PREDECESSOR respectively
+        */
+        void affectsSetProcessedAll(StmtId s, NodeType type);
 
         /*
             Adds Next(s1, s2) to NextKB where s2 can be executed immediately after s1
@@ -92,7 +112,7 @@ namespace PKB {
         bool hasNextRelation();
 
         /*
-            Clears NextKB's nextStarTable
+            Clears the cached results
         */
         void clear();
 

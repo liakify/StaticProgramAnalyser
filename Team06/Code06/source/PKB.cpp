@@ -1,9 +1,14 @@
+#include <memory>
 #include <string>
 #include <vector>
 
 #include "PKB.h"
 
 namespace PKB {
+    void PKB::addAffects(StmtId s1, StmtId s2) {
+        affectsKB.addAffects(s1, s2);
+    }
+
     bool PKB::affects(StmtId s1, StmtId s2) {
         std::shared_ptr<Statement> x = stmtTable.get(s1);
         std::shared_ptr<Statement> y = stmtTable.get(s2);
@@ -17,6 +22,18 @@ namespace PKB {
             return false;
         }
         return rtDE.processAffects(s1, s2, this);
+    }
+
+    const std::unordered_set<StmtId>& PKB::affectsGetDirectNodes(StmtId s, NodeType type) {
+        return affectsKB.getDirectNodes(s, type);
+    }
+
+    bool PKB::affectsProcessedAll(StmtId s, NodeType type) {
+        return affectsKB.processedAllAffects(s, type);
+    }
+
+    void PKB::affectsSetProcessedAll(StmtId s, NodeType type) {
+        affectsKB.setProcessedAllAffects(s, type);
     }
 
     void PKB::addNext(StmtId s1, StmtId s2) {

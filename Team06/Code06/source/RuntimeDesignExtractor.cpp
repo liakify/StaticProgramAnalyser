@@ -1,3 +1,5 @@
+#include <cassert>
+
 #include "PKB.h"
 #include "RuntimeDesignExtractor.h"
 
@@ -99,7 +101,36 @@ namespace FrontEnd {
         }
     }
 
-    bool RuntimeDesignExtractor::processAffects(StmtId s1, StmtId s2, PKB::PKB* pkb) {
-        return true;
+    void RuntimeDesignExtractor::processAllAffects(StmtId s, PKB::PKB* pkb) {
+        assert(pkb->stmtTable.get(s)->getType() == StmtType::ASSIGN);
+        AssignStmt* a = dynamic_cast<AssignStmt*>(pkb->stmtTable.get(s).get());
+        VarId modifiedId = a->getVar();
+        std::unordered_set<StmtId> visited, result;
+        affectsDFS(s, modifiedId, s, visited, result);
+        for (StmtId id : result) {
+            pkb->addAffects(s, id);
+        }
+        pkb->affectsSetProcessedAll(s, NodeType::SUCCESSOR);
+    }
+
+    void RuntimeDesignExtractor::affectsDFS(StmtId root, VarId modifiedId, StmtId curr,
+            std::unordered_set<StmtId>& visited, std::unordered_set<StmtId>& result) {
+        if (curr != root || visited.size() != 0) {
+            visited.insert(curr);
+            std::shared_ptr<Statement> s = pkb->stmtTable.get(curr);
+            if (s->getType() != StmtType::IF && s->getType() != StmtType::WHILE && pkb->usesKB.stmtUses(curr, modifiedId)) {
+                if (s->getType() == StmtType::ASSIGN) {
+                    result.insert(curr);
+                }
+                return;
+            }
+        }
+
+        std::unordered_set<StmtId> neighbours = pkb->nextStarGetDirectNodes(curr, NodeType::SUCCESSOR);
+        for (StmtId next : neighbours) {
+            if (visited.find(next) == visited.end()) {
+                affectsDFS(root, modifiedId, next, visited, result);
+            }
+        }
     }
 }
