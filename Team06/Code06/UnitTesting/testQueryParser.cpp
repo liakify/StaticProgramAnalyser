@@ -265,7 +265,7 @@ namespace UnitTesting {
         TEST_METHOD(parseQueryValidCases) {
             for (auto query : VALID_QUERIES) {
                 Query result = parser.parseQuery(query);
-                Assert::IsTrue(result.status == PQL::SUCCESS);
+                Assert::IsTrue(result.status == PQL::STATUS_SUCCESS);
             }
         }
 
