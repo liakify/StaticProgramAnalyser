@@ -10,7 +10,7 @@ Select <s1, s2, s3> with 1 = 1 and s1.stmt# = s2.stmt# and s2.stmt# = s3.stmt# a
 5000
 3
 variable v1, v2; procedure p; call c; print pn; read r;
-Select <v1, v2> with pn.varName = "c" with p.procName = v2.varName and v2.varName = r.varName and c.varName = v1.varName
+Select <v1, v2> with pn.varName = "c" with p.procName = v2.varName and v2.varName = r.varName and c.procName = v1.varName
 Name Name
 5000
 4

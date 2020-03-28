@@ -41,7 +41,7 @@ Select w such that Next*(w, a) pattern w (v, _)
 9 - Next*, Connected Clauses: Limiting pattern
 prog_line n; while w;
 Select n such that Next*(w, n) pattern w ("usedHereOnly", _)
-24, 25, 26
+23, 24, 25, 26
 5000
 10 - Next*, Connected Clauses: Limiting pattern, select w
 prog_line n; while w;
