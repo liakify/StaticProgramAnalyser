@@ -23,7 +23,7 @@ namespace PKB {
         if (affectsKB.affects(s1, s2)) {  // cached
             return true;
         }
-        if (affectsKB.processedDirectAffects(s1, NodeType::SUCCESSOR)) {  // allNext is fully processed for s1, i.e. no path from s1 to s2
+        if (affectsKB.processedDirectAffects(s1, NodeType::SUCCESSOR)) {  // directAffects is fully processed for s1 i.e. s1 does not affect s2
             return false;
         }
         return rtDE.processAffects(s1, s2, this);
