@@ -92,5 +92,8 @@
     <ClCompile Include="QueryParserStub.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="testPQL.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
