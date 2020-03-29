@@ -23,7 +23,7 @@ namespace PKB {
         if (affectsKB.affects(s1, s2)) {  // cached
             return true;
         }
-        if (affectsKB.processedAllAffects(s1, NodeType::SUCCESSOR)) {  // allNext is fully processed for s1, i.e. no path from s1 to s2
+        if (affectsKB.processedDirectAffects(s1, NodeType::SUCCESSOR)) {  // allNext is fully processed for s1, i.e. no path from s1 to s2
             return false;
         }
         return rtDE.processAffects(s1, s2, this);
@@ -39,19 +39,19 @@ namespace PKB {
         if (x->getType() != StmtType::ASSIGN) {
             return EMPTY_RESULT;
         }
-        if (affectsKB.processedAllAffects(s, type)) {  // cached
+        if (affectsKB.processedDirectAffects(s, type)) {  // cached
             return affectsKB.getDirectNodes(s, type);
         }
         rtDE.processAffectsGetAllNodes(s, type, this);
         return affectsKB.getDirectNodes(s, type);
     }
 
-    bool PKB::affectsProcessedAll(StmtId s, NodeType type) {
-        return affectsKB.processedAllAffects(s, type);
+    bool PKB::affectsProcessedDirect(StmtId s, NodeType type) {
+        return affectsKB.processedDirectAffects(s, type);
     }
 
-    void PKB::affectsSetProcessedAll(StmtId s, NodeType type) {
-        affectsKB.setProcessedAllAffects(s, type);
+    void PKB::affectsSetProcessedDirect(StmtId s, NodeType type) {
+        affectsKB.setProcessedDirectAffects(s, type);
     }
 
     void PKB::addNext(StmtId s1, StmtId s2) {

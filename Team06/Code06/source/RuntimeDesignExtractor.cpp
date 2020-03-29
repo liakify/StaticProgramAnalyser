@@ -134,14 +134,14 @@ namespace FrontEnd {
             for (StmtId id : result) {
                 pkb->addAffects(s, id);
             }
-            pkb->affectsSetProcessedAll(s, NodeType::SUCCESSOR);
+            pkb->affectsSetProcessedDirect(s, NodeType::SUCCESSOR);
         } else {
             std::unordered_set<VarId> usedId = a->getExpr().getVarIds();
             affectedByDFS(s, usedId, s, visited, result);
             for (StmtId id : result) {
                 pkb->addAffects(id, s);
             }
-            pkb->affectsSetProcessedAll(s, NodeType::PREDECESSOR);
+            pkb->affectsSetProcessedDirect(s, NodeType::PREDECESSOR);
         }
     }
 

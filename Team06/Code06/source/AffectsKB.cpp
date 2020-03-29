@@ -28,24 +28,24 @@ const std::unordered_set<StmtId>& AffectsKB::getDirectNodes(StmtId s, NodeType t
     }
 }
 
-bool AffectsKB::processedAllAffects(StmtId s, NodeType type) {
+bool AffectsKB::processedDirectAffects(StmtId s, NodeType type) {
     try {
         if (type == NodeType::SUCCESSOR) {
-            return affectsTable.at(s).processedAllAffects;
+            return affectsTable.at(s).processedDirectAffects;
         } else {
-            return affectsTable.at(s).processedAllAffectedBy;
+            return affectsTable.at(s).processedDirectAffectedBy;
         }
     } catch (const std::out_of_range&) {
         return false;
     }
 }
 
-void AffectsKB::setProcessedAllAffects(StmtId s, NodeType type) {
+void AffectsKB::setProcessedDirectAffects(StmtId s, NodeType type) {
     try {
         if (type == NodeType::SUCCESSOR) {
-            affectsTable.at(s).processedAllAffects = true;
+            affectsTable.at(s).processedDirectAffects = true;
         } else {
-            affectsTable.at(s).processedAllAffectedBy = true;
+            affectsTable.at(s).processedDirectAffectedBy = true;
         }
     } catch (const std::out_of_range&) {
         return;

@@ -22,12 +22,12 @@ namespace UnitTesting {
 
             aKB.addAffects(1, 2);
             aKB.addAffects(2, 3);
-            aKB.affectsSetProcessedAll(1, NodeType::SUCCESSOR);
-            aKB.affectsSetProcessedAll(2, NodeType::SUCCESSOR);
-            aKB.affectsSetProcessedAll(3, NodeType::SUCCESSOR);
-            aKB.affectsSetProcessedAll(3, NodeType::PREDECESSOR);
-            aKB.affectsSetProcessedAll(2, NodeType::PREDECESSOR);
-            aKB.affectsSetProcessedAll(1, NodeType::PREDECESSOR);
+            aKB.affectsSetProcessedDirect(1, NodeType::SUCCESSOR);
+            aKB.affectsSetProcessedDirect(2, NodeType::SUCCESSOR);
+            aKB.affectsSetProcessedDirect(3, NodeType::SUCCESSOR);
+            aKB.affectsSetProcessedDirect(3, NodeType::PREDECESSOR);
+            aKB.affectsSetProcessedDirect(2, NodeType::PREDECESSOR);
+            aKB.affectsSetProcessedDirect(1, NodeType::PREDECESSOR);
         }
 
         TEST_METHOD(addAffects) {
@@ -64,17 +64,17 @@ namespace UnitTesting {
             Assert::IsTrue(aKB.affectsGetDirectNodes(-1, NodeType::PREDECESSOR) == emptyResult);
         }
 
-        TEST_METHOD(affectsSetProcessedAll) {
-            Assert::IsTrue(aKB.affectsProcessedAll(1, NodeType::SUCCESSOR));
-            Assert::IsTrue(aKB.affectsProcessedAll(2, NodeType::SUCCESSOR));
-            Assert::IsTrue(aKB.affectsProcessedAll(3, NodeType::SUCCESSOR));
+        TEST_METHOD(affectsSetProcessedDirect) {
+            Assert::IsTrue(aKB.affectsProcessedDirect(1, NodeType::SUCCESSOR));
+            Assert::IsTrue(aKB.affectsProcessedDirect(2, NodeType::SUCCESSOR));
+            Assert::IsTrue(aKB.affectsProcessedDirect(3, NodeType::SUCCESSOR));
 
-            Assert::IsTrue(aKB.affectsProcessedAll(1, NodeType::PREDECESSOR));
-            Assert::IsTrue(aKB.affectsProcessedAll(2, NodeType::PREDECESSOR));
-            Assert::IsTrue(aKB.affectsProcessedAll(3, NodeType::PREDECESSOR));
+            Assert::IsTrue(aKB.affectsProcessedDirect(1, NodeType::PREDECESSOR));
+            Assert::IsTrue(aKB.affectsProcessedDirect(2, NodeType::PREDECESSOR));
+            Assert::IsTrue(aKB.affectsProcessedDirect(3, NodeType::PREDECESSOR));
 
-            Assert::IsFalse(aKB.affectsProcessedAll(4, NodeType::SUCCESSOR));
-            Assert::IsFalse(aKB.affectsProcessedAll(4, NodeType::PREDECESSOR));
+            Assert::IsFalse(aKB.affectsProcessedDirect(4, NodeType::SUCCESSOR));
+            Assert::IsFalse(aKB.affectsProcessedDirect(4, NodeType::PREDECESSOR));
         }
     };
 }

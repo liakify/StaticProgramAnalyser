@@ -47,14 +47,14 @@ namespace PKB {
         const std::unordered_set<StmtId>& affectsGetDirectNodes(StmtId s, NodeType type);
 
         /*
-            Returns processedAllAffects/processedAllAffectedBy of s for NodeType SUCCESSOR and PREDECESSOR respectively
+            Returns processedDirectAffects/processedDirectAffectedBy of s for NodeType SUCCESSOR and PREDECESSOR respectively
         */
-        bool affectsProcessedAll(StmtId s, NodeType type);
+        bool affectsProcessedDirect(StmtId s, NodeType type);
 
         /*
-           Sets processedAllAffects/processedAllAffectedBy of s to TRUE for NodeType SUCCESSOR and PREDECESSOR respectively
+           Sets processedDirectAffects/processedDirectAffectedBy of s to TRUE for NodeType SUCCESSOR and PREDECESSOR respectively
         */
-        void affectsSetProcessedAll(StmtId s, NodeType type);
+        void affectsSetProcessedDirect(StmtId s, NodeType type);
 
         /*
             Adds Next(s1, s2) to NextKB where s2 can be executed immediately after s1

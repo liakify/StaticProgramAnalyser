@@ -11,8 +11,8 @@
 struct affectsRS {
     std::unordered_set<StmtId> directAffects;
     std::unordered_set<StmtId> directAffectedBy;
-    bool processedAllAffects = false;
-    bool processedAllAffectedBy = false;
+    bool processedDirectAffects = false;
+    bool processedDirectAffectedBy = false;
 };
 
 class AffectsKB {
@@ -23,7 +23,7 @@ class AffectsKB {
     void addAffects(StmtId s1, StmtId s2);
 
     /*
-        Returns TRUE if s2 cis affected by s1, FALSE otherwise
+        Returns TRUE if s2 is affected by s1, FALSE otherwise
     */
     bool affects(StmtId s1, StmtId s2);
 
@@ -33,14 +33,14 @@ class AffectsKB {
     const std::unordered_set<StmtId>& getDirectNodes(StmtId s, NodeType type);
 
     /*
-        Returns processedAllAffects/processedAllAffectedBy of s for NodeType SUCCESSOR and PREDECESSOR respectively
+        Returns processedDirectAffects/processedDirectAffectedBy of s for NodeType SUCCESSOR and PREDECESSOR respectively
     */
-    bool processedAllAffects(StmtId s, NodeType type);
+    bool processedDirectAffects(StmtId s, NodeType type);
 
     /*
-       Sets processedAllAffects/processedAllAffectedBy of s to TRUE for NodeType SUCCESSOR and PREDECESSOR respectively
+       Sets processedDirectAffects/processedDirectAffectedBy of s to TRUE for NodeType SUCCESSOR and PREDECESSOR respectively
     */
-    void setProcessedAllAffects(StmtId s, NodeType type);
+    void setProcessedDirectAffects(StmtId s, NodeType type);
 
     /*
         Clears the affectsTable
