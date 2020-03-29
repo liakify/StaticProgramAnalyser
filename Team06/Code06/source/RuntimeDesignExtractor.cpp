@@ -147,7 +147,7 @@ namespace FrontEnd {
 
     void RuntimeDesignExtractor::affectsDFS(StmtId root, VarId modifiedId, StmtId curr,
             std::unordered_set<StmtId>& visited, std::unordered_set<StmtId>& result, StmtId goal) {
-        if (curr != root || visited.size() != 0) {
+        if (!(curr == root && visited.size() == 0)) {  // Exclude first encounter of root node
             visited.insert(curr);
             std::shared_ptr<Statement> s = pkb->stmtTable.get(curr);
             if (s->getType() != StmtType::IF && s->getType() != StmtType::WHILE) {
@@ -174,7 +174,7 @@ namespace FrontEnd {
 
     void RuntimeDesignExtractor::affectedByDFS(StmtId root, std::unordered_set<VarId> usedId, StmtId curr,
             std::unordered_set<StmtId>& visited, std::unordered_set<StmtId>& result) {
-        if (curr != root || visited.size() != 0) {
+        if (!(curr == root && visited.size() == 0)) {  // Exclude first encounter of root node
             visited.insert(curr);
             std::shared_ptr<Statement> s = pkb->stmtTable.get(curr);
             if (s->getType() != StmtType::IF && s->getType() != StmtType::WHILE) {
