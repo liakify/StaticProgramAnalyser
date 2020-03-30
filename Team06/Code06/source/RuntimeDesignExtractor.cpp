@@ -197,4 +197,64 @@ namespace FrontEnd {
 
         visited.erase(curr);
     }
+
+    bool RuntimeDesignExtractor::processAffectsStar(StmtId s1, StmtId s2, PKB::PKB* pkb) {
+        this->pkb = pkb;
+        
+        if (!pkb->allAffectsFullyComputed()) {
+            populateAllAffects();
+        }
+
+        std::unordered_set<StmtId> visited;
+        return affectsStarDFS(s1, s1, visited, NodeType::SUCCESSOR, s2);
+    }
+
+    void RuntimeDesignExtractor::processAffectsStarGetAllNodes(StmtId s, NodeType type, PKB::PKB* pkb) {
+        this->pkb = pkb;
+
+        if (!pkb->allAffectsFullyComputed()) {
+            populateAllAffects();
+        }
+
+        std::unordered_set<StmtId> visited;
+        affectsStarDFS(s, s, visited, type);
+        pkb->affectsStarSetProcessedAll(s, type);
+    }
+
+    bool RuntimeDesignExtractor::affectsStarDFS(StmtId root, StmtId curr, std::unordered_set<StmtId>& visited, NodeType type, StmtId goal) {
+        visited.insert(curr);
+
+        std::unordered_set<StmtId> neighbours = pkb->affectsGetDirectNodes(curr, type);
+
+        for (StmtId n : neighbours) {
+            // Add bi-directional edge first before cycle check for Affects*(s, s)
+            if (type == NodeType::SUCCESSOR) {
+                pkb->addAffectsStar(root, n);
+            } else {
+                pkb->addAffectsStar(n, root);
+            }
+            if (n == goal) {
+                return true;
+            }
+
+            if (visited.find(n) == visited.end()) {
+                if (affectsStarDFS(root, n, visited, type, goal)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    void RuntimeDesignExtractor::populateAllAffects() {
+        int numStmts = pkb->stmtTable.size();
+
+        for (int i = 1; i <= numStmts; i++) {
+            // Only need to populate forward as each edge added is bi-directional
+            pkb->affectsGetDirectNodes(i, NodeType::SUCCESSOR);  // affectsSetProcessedDirect(i, NodeType::SUCCESSOR) is called here
+            pkb->affectsSetProcessedDirect(i, NodeType::PREDECESSOR);
+        }
+
+        pkb->setAffectsFullyComputed();
+    }
 }
