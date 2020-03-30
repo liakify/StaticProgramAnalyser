@@ -191,8 +191,8 @@ namespace FrontEnd {
                     usedIds.erase(id);
                 }
                 affectedByDFS(root, usedIds, prev, visited);
+                usedIds.insert(erasedIds.begin(), erasedIds.end());
             }
-            usedIds.insert(erasedIds.begin(), erasedIds.end());
         }
 
         visited.erase(curr);
