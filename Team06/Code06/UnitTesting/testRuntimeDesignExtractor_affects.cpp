@@ -13,7 +13,7 @@ namespace UnitTesting {
     FrontEnd::DesignExtractor DE_affects;
     
     // Extra 0 row and column for convenient indexing
-    bool expectedAffects[25][25] = {
+    bool expectedAffects[28][28] = {
         {0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0},
         {0, 0, 0, 0, 0,   1, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0},
         {0, 0, 0, 0, 0,   0, 0, 0, 1, 1,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0},
@@ -40,6 +40,10 @@ namespace UnitTesting {
 
         {0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 1, 0, 0, 0},
         {0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0},
+
         {0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0},
         {0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0},
         {0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0}
@@ -81,6 +85,13 @@ namespace UnitTesting {
             23    z = x + 1; }
                 else {
             24    x = z + x; } }
+
+            procedure r {
+            25  while (x!=2) {
+            26    z = x + 1;
+                }
+            27  i = 2 * y;
+            }
             */
             pkbAffects = PKB::PKB();
 
@@ -120,6 +131,7 @@ namespace UnitTesting {
             CondExpr x_equal_1 = CondExpr(var_x, const_1);
             CondExpr x_less_than_0 = CondExpr(var_x, const_0);
             CondExpr i_more_than_0 = CondExpr(var_i, const_0);
+            CondExpr x_not_equal_2 = CondExpr(var_x, const_2);
 
             pkbAffects.stmtTable.insertStmt(std::shared_ptr<AssignStmt>(new AssignStmt(1, const_2)));  // StmtId = 1
             pkbAffects.stmtTable.insertStmt(std::shared_ptr<AssignStmt>(new AssignStmt(2, const_3)));  // StmtId = 2
@@ -148,9 +160,14 @@ namespace UnitTesting {
             pkbAffects.stmtTable.insertStmt(std::shared_ptr<AssignStmt>(new AssignStmt(2, x_plus_1)));  // StmtId = 23
             pkbAffects.stmtTable.insertStmt(std::shared_ptr<AssignStmt>(new AssignStmt(1, z_plus_x)));  // StmtId = 24
             
+            pkbAffects.stmtTable.insertStmt(std::shared_ptr<WhileStmt>(new WhileStmt(x_not_equal_2, 13)));  // StmtId = 25
+            pkbAffects.stmtTable.insertStmt(std::shared_ptr<AssignStmt>(new AssignStmt(2, x_plus_1)));  // StmtId = 26
+            pkbAffects.stmtTable.insertStmt(std::shared_ptr<AssignStmt>(new AssignStmt(3, two_times_y)));  // StmtId = 27
+
             pkbAffects.procTable.insertProc(Procedure("Example", 1));
             pkbAffects.procTable.insertProc(Procedure("p", 5));
             pkbAffects.procTable.insertProc(Procedure("q", 9));
+            pkbAffects.procTable.insertProc(Procedure("r", 12));
 
             StatementList sl1 = StatementList(std::vector<StmtId>{1, 2, 3, 4, 12});
             pkbAffects.stmtListTable.insertStmtLst(sl1);
@@ -174,6 +191,10 @@ namespace UnitTesting {
             pkbAffects.stmtListTable.insertStmtLst(sl10);
             StatementList sl11 = StatementList(std::vector<StmtId>{24});
             pkbAffects.stmtListTable.insertStmtLst(sl11);
+            StatementList sl12 = StatementList(std::vector<StmtId>{25, 27});
+            pkbAffects.stmtListTable.insertStmtLst(sl12);
+            StatementList sl13 = StatementList(std::vector<StmtId>{26});
+            pkbAffects.stmtListTable.insertStmtLst(sl13);
 
             pkbAffects = DE_affects.run(pkbAffects);
         }
