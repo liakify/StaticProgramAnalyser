@@ -21,7 +21,7 @@ namespace FrontEnd {
 
         bool processAffects(StmtId s1, StmtId s2, PKB::PKB* pkb);
 
-        void processAffectsGetAllNodes(StmtId s, NodeType type, PKB::PKB* pkb);
+        void processAffectsGetDirectNodes(StmtId s, NodeType type, PKB::PKB* pkb);
 
      private:
         PKB::PKB* pkb;

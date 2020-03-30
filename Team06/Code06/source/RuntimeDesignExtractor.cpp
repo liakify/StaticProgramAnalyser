@@ -119,7 +119,7 @@ namespace FrontEnd {
         return affectsDFS(s1, modifiedId, s1, visited, s2);
     }
 
-    void RuntimeDesignExtractor::processAffectsGetAllNodes(StmtId s, NodeType type, PKB::PKB* pkb) {
+    void RuntimeDesignExtractor::processAffectsGetDirectNodes(StmtId s, NodeType type, PKB::PKB* pkb) {
         this->pkb = pkb;
         assert(pkb->stmtTable.get(s)->getType() == StmtType::ASSIGN);
         AssignStmt* a = dynamic_cast<AssignStmt*>(pkb->stmtTable.get(s).get());

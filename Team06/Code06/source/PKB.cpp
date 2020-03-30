@@ -42,7 +42,7 @@ namespace PKB {
         if (affectsKB.processedDirectAffects(s, type)) {  // cached
             return affectsKB.getDirectNodes(s, type);
         }
-        rtDE.processAffectsGetAllNodes(s, type, this);
+        rtDE.processAffectsGetDirectNodes(s, type, this);
         return affectsKB.getDirectNodes(s, type);
     }
 
