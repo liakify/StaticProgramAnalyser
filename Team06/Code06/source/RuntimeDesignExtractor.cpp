@@ -200,7 +200,7 @@ namespace FrontEnd {
 
     bool RuntimeDesignExtractor::processAffectsStar(StmtId s1, StmtId s2, PKB::PKB* pkb) {
         this->pkb = pkb;
-        
+
         if (!pkb->allAffectsFullyComputed()) {
             populateAllAffects();
         }
