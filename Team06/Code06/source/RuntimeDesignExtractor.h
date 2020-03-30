@@ -30,7 +30,7 @@ namespace FrontEnd {
         bool nextStarRecurse(StmtId curr, StmtId last, StmtId s2);
         void nextStarDFS(StmtId root, StmtId curr, std::unordered_set<StmtId>& visited, NodeType type);
 
-        void affectsDFS(StmtId root, VarId modifiedId, StmtId curr, std::unordered_set<StmtId>& visited, std::unordered_set<StmtId>& result, StmtId goal = -1);
-        void affectedByDFS(StmtId root, std::unordered_set<VarId> usedId, StmtId curr, std::unordered_set<StmtId>& visited, std::unordered_set<StmtId>& result);
+        bool affectsDFS(StmtId root, VarId modifiedId, StmtId curr, std::unordered_set<StmtId>& visited, StmtId goal = -1);
+        void affectedByDFS(StmtId root, std::unordered_set<VarId>& usedIds, StmtId curr, std::unordered_set<StmtId>& visited);
     };
 }

@@ -115,91 +115,86 @@ namespace FrontEnd {
         if (usedVars.find(modifiedId) == usedVars.end()) {
             return false;
         }
-        std::unordered_set<StmtId> visited, result;
-        affectsDFS(s1, modifiedId, s1, visited, result, s2);
-        for (StmtId id : result) {
-            pkb->addAffects(s1, id);
-        }
-        return result.find(s2) != result.end();
+        std::unordered_set<StmtId> visited;
+        return affectsDFS(s1, modifiedId, s1, visited, s2);
     }
 
     void RuntimeDesignExtractor::processAffectsGetAllNodes(StmtId s, NodeType type, PKB::PKB* pkb) {
         this->pkb = pkb;
         assert(pkb->stmtTable.get(s)->getType() == StmtType::ASSIGN);
         AssignStmt* a = dynamic_cast<AssignStmt*>(pkb->stmtTable.get(s).get());
-        std::unordered_set<StmtId> visited, result;
+        std::unordered_set<StmtId> visited;
         if (type == NodeType::SUCCESSOR) {
             VarId modifiedId = a->getVar();
-            affectsDFS(s, modifiedId, s, visited, result);
-            for (StmtId id : result) {
-                pkb->addAffects(s, id);
-            }
+            affectsDFS(s, modifiedId, s, visited);
             pkb->affectsSetProcessedDirect(s, NodeType::SUCCESSOR);
         } else {
             std::unordered_set<VarId> usedId = a->getExpr().getVarIds();
-            affectedByDFS(s, usedId, s, visited, result);
-            for (StmtId id : result) {
-                pkb->addAffects(id, s);
-            }
+            affectedByDFS(s, usedId, s, visited);
             pkb->affectsSetProcessedDirect(s, NodeType::PREDECESSOR);
         }
     }
 
-    void RuntimeDesignExtractor::affectsDFS(StmtId root, VarId modifiedId, StmtId curr,
-            std::unordered_set<StmtId>& visited, std::unordered_set<StmtId>& result, StmtId goal) {
-        if (!(curr == root && visited.size() == 0)) {  // Exclude first encounter of root node
-            visited.insert(curr);
-            std::shared_ptr<Statement> s = pkb->stmtTable.get(curr);
-            if (s->getType() != StmtType::IF && s->getType() != StmtType::WHILE) {
-                if (s->getType() == StmtType::ASSIGN && pkb->usesKB.stmtUses(curr, modifiedId)) {
-                    result.insert(curr);
-                }
-                if (pkb->modifiesKB.stmtModifies(curr, modifiedId)) {
-                    return;
-                }
-            }
-        }
+    bool RuntimeDesignExtractor::affectsDFS(StmtId root, VarId modifiedId, StmtId curr,
+        std::unordered_set<StmtId>& visited, StmtId goal) {
+        visited.insert(curr);
 
         std::unordered_set<StmtId> neighbours = pkb->nextStarGetDirectNodes(curr, NodeType::SUCCESSOR);
         for (StmtId next : neighbours) {
-            if (visited.find(next) == visited.end()) {
-                affectsDFS(root, modifiedId, next, visited, result, goal);
-                if (next == goal) {
-                    break;
-                }
-            }
-        }
-    }
-
-
-    void RuntimeDesignExtractor::affectedByDFS(StmtId root, std::unordered_set<VarId> usedId, StmtId curr,
-            std::unordered_set<StmtId>& visited, std::unordered_set<StmtId>& result) {
-        if (!(curr == root && visited.size() == 0)) {  // Exclude first encounter of root node
-            visited.insert(curr);
-            std::shared_ptr<Statement> s = pkb->stmtTable.get(curr);
-            if (s->getType() != StmtType::IF && s->getType() != StmtType::WHILE) {
-                bool isModified = false;
-                for (VarId id : pkb->modifiesKB.getAllVarsModifiedByStmt(curr)) {
-                    if (usedId.find(id) != usedId.end()) {
-                        isModified = true;
-                        usedId.erase(id);
+            std::shared_ptr<Statement> s = pkb->stmtTable.get(next);
+            if (pkb->usesKB.stmtUses(next, modifiedId)) {
+                if (s->getType() == StmtType::ASSIGN) {
+                    pkb->addAffects(root, next);
+                    if (next == goal) {
+                        return true;
                     }
                 }
-                if (s->getType() == StmtType::ASSIGN && isModified) {
-                    result.insert(curr);
-                }
-                if (usedId.size() == 0 || curr == root) {
-                    // Since the reverse DFS traverses all possible reverse paths,
-                    // there will be no need to search beyond a single cycle back to the root
-                    return;
+            }
+            if (pkb->modifiesKB.stmtModifies(next, modifiedId) &&
+                s->getType() != StmtType::IF && 
+                s->getType() != StmtType::WHILE) {
+                    continue;
+            }
+
+            if (visited.find(next) == visited.end()) {
+                if (affectsDFS(root, modifiedId, next, visited, goal)) {
+                    return true;
                 }
             }
         }
+        return false;
+    }
 
+    void RuntimeDesignExtractor::affectedByDFS(StmtId root, std::unordered_set<VarId>& usedIds, StmtId curr, std::unordered_set<StmtId>& visited) {
+        visited.insert(curr);
+        
         std::unordered_set<StmtId> neighbours = pkb->nextStarGetDirectNodes(curr, NodeType::PREDECESSOR);
+        
         for (StmtId prev : neighbours) {
-            // Cannot check visited here because the DFS needs to search all possible paths backwards
-            affectedByDFS(root, usedId, prev, visited, result);
+            std::unordered_set<VarId> erasedIds;
+            std::shared_ptr<Statement> s = pkb->stmtTable.get(prev);
+            if (s->getType() == StmtType::ASSIGN || s->getType() == StmtType::READ || s->getType() == StmtType::CALL) {
+                for (VarId id : pkb->modifiesKB.getAllVarsModifiedByStmt(prev)) {
+                    if (usedIds.find(id) != usedIds.end()) {
+                        erasedIds.insert(id);
+                    }
+                }
+            }
+            if (s->getType() == StmtType::ASSIGN && !erasedIds.empty()) {
+                pkb->addAffects(prev, root);
+            }
+            if (usedIds.size() == erasedIds.size()) {
+                continue;
+            }
+            if (visited.find(prev) == visited.end()) {
+                for (VarId id : erasedIds) {
+                    usedIds.erase(id);
+                }
+                affectedByDFS(root, usedIds, prev, visited);
+            }
+            usedIds.insert(erasedIds.begin(), erasedIds.end());
         }
+
+        visited.erase(curr);
     }
 }
