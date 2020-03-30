@@ -37,9 +37,19 @@ namespace PKB {
         void addAffects(StmtId s1, StmtId s2);
 
         /*
+            Adds Affects*(s1, s2) to the affectsTable where s2 is directly or indirectly affected by s1
+        */
+        void addAffectsStar(StmtId s1, StmtId s2);
+
+        /*
             Returns TRUE if s2 cis affected by s1, FALSE otherwise
         */
         bool affects(StmtId s1, StmtId s2);
+
+        /*
+            Returns TRUE if Affects*(s1, s2) holds, FALSE otherwise
+        */
+        bool affectsStar(StmtId s1, StmtId s2);
 
         /*
             Returns a reference to directAffects/directAffected of s for NodeType SUCCESSOR and PREDECESSOR respectively
@@ -47,14 +57,39 @@ namespace PKB {
         const std::unordered_set<StmtId>& affectsGetDirectNodes(StmtId s, NodeType type);
 
         /*
+            Returns a reference to allAffects/allAffectedBy of s for NodeType SUCCESSOR and PREDECESSOR respectively
+        */
+        const std::unordered_set<StmtId>& affectsStarGetAllNodes(StmtId s, NodeType type);
+
+        /*
             Returns processedDirectAffects/processedDirectAffectedBy of s for NodeType SUCCESSOR and PREDECESSOR respectively
         */
         bool affectsProcessedDirect(StmtId s, NodeType type);
 
         /*
+            Returns processedAllAffects/processedAllAffectedBy of s for NodeType SUCCESSOR and PREDECESSOR respectively
+        */
+        bool affectsStarProcessedAll(StmtId s, NodeType type);
+
+        /*
            Sets processedDirectAffects/processedDirectAffectedBy of s to TRUE for NodeType SUCCESSOR and PREDECESSOR respectively
         */
         void affectsSetProcessedDirect(StmtId s, NodeType type);
+
+        /*
+            Sets processedAllAffects/processedAllAffectedBy of s to TRUE for NodeType SUCCESSOR and PREDECESSOR respectively
+        */
+        void affectsStarSetProcessedAll(StmtId s, NodeType type);
+
+        /*
+            Returns TRUE if all Affects relations have been fully computed, FALSE otherwise
+        */
+        bool allAffectsFullyComputed();
+
+        /*
+            Sets affectsFullyComputed to TRUE
+        */
+        void setAffectsFullyComputed();
 
         /*
             Adds Next(s1, s2) to NextKB where s2 can be executed immediately after s1
