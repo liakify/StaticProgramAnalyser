@@ -20,19 +20,20 @@ namespace PQL {
 
     Query QueryParser::parseQuery(string queryString) {
         Query query;
-        query.status = OK;
+        query.status = STATUS_OK;
         query.queryString = queryString;
         query.returnsBool = false;
         queryCount += 1;
 
         vector<string> statements = splitStatements(queryString);
 
-        bool isValidQuery = validateQuerySyntax(query, statements);
-        if (!isValidQuery) return query;
+        bool hasCorrectStructure = validateQuerySyntax(query, statements);
+        if (!hasCorrectStructure) return query;
 
         // Extract mappings from synonyms to design entities
-        bool hasValidEntities = parseDeclarations(query, statements);
-        if (!hasValidEntities) return query;
+        // Do not prematurely terminate if this stage fails, as we might need to return FALSE
+        // for semantic errors if the return type of the query is BOOLEAN
+        bool hasValidDeclarations = parseDeclarations(query, statements);
 
         // Extract last statement (Select <var> (constraints)...)
         string queryBody = statements.back();
@@ -40,7 +41,7 @@ namespace PQL {
         bool hasValidTarget;
         string queryBodySuffix;
         tie(hasValidTarget, queryBodySuffix) = parseQueryTarget(query, queryBody);
-        if (!hasValidTarget) return query;
+        if (!(hasValidDeclarations && hasValidTarget)) return query;
 
         bool hasValidClauses;
         vector<string> relationClauses, patternClauses, withClauses;
@@ -56,7 +57,7 @@ namespace PQL {
         bool isSemanticallyValid = validateQuerySemantics(query);
         if (!isSemanticallyValid) return query;
 
-        query.status = SUCCESS;
+        query.status = STATUS_SUCCESS;
         return query;
     }
 
@@ -84,7 +85,7 @@ namespace PQL {
         }
 
         // Validate structure of query body (last statement)
-        regex VALID_QUERY_BODY("^Select(?:(?=\\s*<)\\s*<|\\s)[\\w<>=#.\\(\\),\"\\+\\-\\*\\/\\%\\s]+(?!;)$");
+        regex VALID_QUERY_BODY("^Select(?:(?=\\s*<)\\s*<|\\s)[\\w>=#.\\(\\),\"\\+\\-\\*\\/\\%\\s]+(?!;)$");
         smatch qbmatch;
 
         if (!regex_search(statements.at(numDeclarations), qbmatch, VALID_QUERY_BODY, MODE_CONSUME)) {
@@ -496,7 +497,16 @@ namespace PQL {
             tokens = QueryUtils::tokeniseString(tupleString, ',');
         } else {
             // SYNTAX ERROR: unable to parse select target to entities
-            query.status = SYNTAX_ERR_MISSING_OR_INVALID_QUERY_TARGET;
+            if (query.status == STATUS_OK) {
+                // Avoid overwriting previous error message
+                query.status = SYNTAX_ERR_MISSING_OR_INVALID_QUERY_TARGET;
+            }
+            return { false, "" };
+        }
+
+        // Prematurely terminate further parsing here if there were previous syntax or
+        // semantic errors detected during parsing of query declarations
+        if (query.status != STATUS_OK) {
             return { false, "" };
         }
 
@@ -634,7 +644,7 @@ namespace PQL {
                 query.status = FATAL_MISSING_RELATION_HANDLER;
             }
 
-            if (query.status != OK) {
+            if (query.status != STATUS_OK) {
                 return false;
             } else {
                 // Relation parsed successfully - add new relation clause
@@ -723,7 +733,7 @@ namespace PQL {
                 query.status = SYNTAX_ERR_INVALID_PATTERN_TYPE;
             }
 
-            if (query.status != OK) {
+            if (query.status != STATUS_OK) {
                 return false;
             } else {
                 // Pattern parsed successfully - add new pattern clause
