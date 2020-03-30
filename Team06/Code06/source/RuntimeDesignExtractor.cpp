@@ -151,7 +151,7 @@ namespace FrontEnd {
                 }
             }
             if (pkb->modifiesKB.stmtModifies(next, modifiedId) &&
-                s->getType() != StmtType::IF && 
+                s->getType() != StmtType::IF &&
                 s->getType() != StmtType::WHILE) {
                     continue;
             }
@@ -167,9 +167,9 @@ namespace FrontEnd {
 
     void RuntimeDesignExtractor::affectedByDFS(StmtId root, std::unordered_set<VarId>& usedIds, StmtId curr, std::unordered_set<StmtId>& visited) {
         visited.insert(curr);
-        
+
         std::unordered_set<StmtId> neighbours = pkb->nextStarGetDirectNodes(curr, NodeType::PREDECESSOR);
-        
+
         for (StmtId prev : neighbours) {
             std::unordered_set<VarId> erasedIds;
             std::shared_ptr<Statement> s = pkb->stmtTable.get(prev);
