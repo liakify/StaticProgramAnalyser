@@ -49,6 +49,43 @@ namespace UnitTesting {
         {0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0}
     };
 
+    bool expectedAffectsStar[28][28] = {
+        {0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0},
+        {0, 0, 0, 0, 0,   1, 0, 1, 1, 1,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0},
+        {0, 0, 0, 0, 0,   0, 0, 0, 1, 1,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0},
+        {0, 0, 0, 0, 0,   0, 0, 0, 0, 1,   0, 1, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0},
+        {0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0},
+
+        {0, 0, 0, 0, 0,   0, 0, 1, 1, 1,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0},
+        {0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0},
+        {0, 0, 0, 0, 0,   0, 0, 0, 0, 1,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0},
+        {0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0},
+        {0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0},
+
+        {0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0},
+        {0, 0, 0, 0, 0,   0, 0, 0, 0, 1,   0, 1, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0},
+        {0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0},
+        {0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0},
+        {0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0},
+
+        {0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0},
+        {0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0},
+        {0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 1, 0, 0,   0, 1, 0, 0, 0,   0, 0, 0},
+        {0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 1,   0, 1, 0, 0, 0,   0, 0, 0},
+        {0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 1, 0, 0, 0,   0, 0, 0},
+
+        {0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 1, 0, 0, 0,   0, 0, 0},
+        {0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0},
+        {0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0},
+        {0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0},
+        {0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0},
+
+        {0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0},
+        {0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 1, 0},
+        {0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0}
+    };
+
+
     TEST_CLASS(TestRuntimeDesignExtractor_affects) {
     public:
         TEST_CLASS_INITIALIZE(setup) {
@@ -222,6 +259,33 @@ namespace UnitTesting {
                 std::unordered_set<StmtId> affectedBy = pkbAffects.affectsGetDirectNodes(id1, NodeType::PREDECESSOR);
                 for (StmtId id2 = 1; id2 <= pkbAffects.stmtTable.size(); id2++) {
                     Assert::IsTrue((affectedBy.find(id2) != affectedBy.end()) == expectedAffects[id2][id1]);
+                }
+            }
+        }
+
+        TEST_METHOD(affectsStar) {
+            pkbAffects.clear();
+            for (StmtId id1 = 1; id1 <= pkbAffects.stmtTable.size(); id1++) {
+                for (StmtId id2 = 1; id2 <= pkbAffects.stmtTable.size(); id2++) {
+                    Assert::IsTrue(pkbAffects.affectsStar(id1, id2) == expectedAffectsStar[id1][id2]);
+                }
+            }
+        }
+
+        TEST_METHOD(affectsStarGetAllNodes) {
+            for (StmtId id1 = 1; id1 <= pkbAffects.stmtTable.size(); id1++) {
+                pkbAffects.clear();
+                std::unordered_set<StmtId> affectsStar = pkbAffects.affectsStarGetAllNodes(id1, NodeType::SUCCESSOR);
+                for (StmtId id2 = 1; id2 <= pkbAffects.stmtTable.size(); id2++) {
+                    Assert::IsTrue((affectsStar.find(id2) != affectsStar.end()) == expectedAffectsStar[id1][id2]);
+                }
+            }
+
+            for (StmtId id1 = 1; id1 <= pkbAffects.stmtTable.size(); id1++) {
+                pkbAffects.clear();
+                std::unordered_set<StmtId> affectedByStar = pkbAffects.affectsStarGetAllNodes(id1, NodeType::PREDECESSOR);
+                for (StmtId id2 = 1; id2 <= pkbAffects.stmtTable.size(); id2++) {
+                    Assert::IsTrue((affectedByStar.find(id2) != affectedByStar.end()) == expectedAffectsStar[id2][id1]);
                 }
             }
         }
