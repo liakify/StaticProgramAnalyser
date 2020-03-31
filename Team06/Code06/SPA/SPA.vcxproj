@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\source\AffectsKB.cpp" />
     <ClCompile Include="..\source\CallsEvaluator.cpp" />
     <ClCompile Include="..\source\CallsKB.cpp" />
     <ClCompile Include="..\source\CallsStarEvaluator.cpp" />
@@ -52,6 +53,7 @@
     <ClCompile Include="..\source\WithEvaluator.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\source\AffectsKB.h" />
     <ClInclude Include="..\source\CallsEvaluator.h" />
     <ClInclude Include="..\source\CallsKB.h" />
     <ClInclude Include="..\source\CallsStarEvaluator.h" />
@@ -147,6 +149,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

@@ -156,7 +156,7 @@ namespace PQL {
                 return clauseResult;
             } else {
                 // Case 2: Synonym, Wildcard
-                Synonym arg1 = clause.getArgs().second.second;
+                Synonym arg1 = clause.getArgs().first.second;
 
                 ClauseResult clauseResult;
                 for (StmtId i = 1; i <= database.stmtTable.size(); i++) {

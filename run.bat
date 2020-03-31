@@ -6,7 +6,7 @@ wget --no-check-certificate https://infocommsociety.com/~zhijian/cs3203/cppunitt
 set "INCLUDE=C:\Users\travis\build\nus-cs3203\team06-win-spa-19s2\CppUnitTest\include\;%INCLUDE%"
 set "LIB=C:\Users\travis\build\nus-cs3203\team06-win-spa-19s2\CppUnitTest\lib\;%LIB%"
 del Team06/Code06/StartupSPASolution.sln
-wget --no-check-certificate http://infocommsociety.com/~zhijian/cs3203/StartupSPASolution.sln
+wget --no-check-certificate http://infocommsociety.com/~zhijian/cs3203/release/StartupSPASolution.sln
 move StartupSPASolution.sln Team06\Code06\
 wget --no-check-certificate https://github.com/cpplint/cpplint/archive/master.zip
 7z x master.zip
@@ -19,30 +19,30 @@ if errorlevel 1 (
 	exit 1
 )
 
-cmd.exe /c ""C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\MSBuild\15.0\Bin\MSBuild.exe" "Team06/Code06/StartupSPASolution.sln" "/p:PlatformToolset=v141" "/p:UseEnv=true" "/p:Configuration=Debug" "/p:Platform=Win32" "/verbosity:minimal""
+cmd.exe /c ""C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\MSBuild\15.0\Bin\MSBuild.exe" "Team06/Code06/StartupSPASolution.sln" "/p:PlatformToolset=v141" "/p:UseEnv=true" "/p:Configuration=Release" "/p:Platform=Win32" "/verbosity:minimal""
 
-if not exist "Team06/Code06/Debug/UnitTesting.dll" (
+if not exist "Team06/Code06/Release/UnitTesting.dll" (
 	exit 1
 )
 
-if not exist "Team06/Code06/Debug/IntegrationTesting.dll" (
+if not exist "Team06/Code06/Release/IntegrationTesting.dll" (
 	exit 1
 )
 
-if not exist "Team06/Code06/Debug/AutoTester.exe" (
+if not exist "Team06/Code06/Release/AutoTester.exe" (
 	exit 1
 )
 
-if not exist "Team06/Code06/Debug/SPA.lib" (
+if not exist "Team06/Code06/Release/SPA.lib" (
 	exit 1
 )
 
 echo.
 echo ########################### RUNNING UNIT TESTS ############################
 
-call "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe" Team06/Code06/Debug/UnitTesting.dll
+call "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe" Team06/Code06/Release/UnitTesting.dll
 
 echo.
 echo ######################## RUNNING INTEGRATION TESTS ########################
 
-call "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe" Team06/Code06/Debug/IntegrationTesting.dll
+call "C:\Program Files (x86)\Microsoft Visual Studio\2017\BuildTools\Common7\IDE\CommonExtensions\Microsoft\TestWindow\vstest.console.exe" Team06/Code06/Release/IntegrationTesting.dll
