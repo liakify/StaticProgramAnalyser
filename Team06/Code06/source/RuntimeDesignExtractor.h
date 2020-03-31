@@ -21,7 +21,11 @@ namespace FrontEnd {
 
         bool processAffects(StmtId s1, StmtId s2, PKB::PKB* pkb);
 
-        void processAffectsGetAllNodes(StmtId s, NodeType type, PKB::PKB* pkb);
+        void processAffectsGetDirectNodes(StmtId s, NodeType type, PKB::PKB* pkb);
+
+        bool processAffectsStar(StmtId s1, StmtId s2, PKB::PKB* pkb);
+
+        void processAffectsStarGetAllNodes(StmtId s, NodeType type, PKB::PKB* pkb);
 
      private:
         PKB::PKB* pkb;
@@ -32,5 +36,8 @@ namespace FrontEnd {
 
         bool affectsDFS(StmtId root, VarId modifiedId, StmtId curr, std::unordered_set<StmtId>& visited, StmtId goal = -1);
         void affectedByDFS(StmtId root, std::unordered_set<VarId>& usedIds, StmtId curr, std::unordered_set<StmtId>& visited);
+
+        bool affectsStarDFS(StmtId root, StmtId curr, std::unordered_set<StmtId>& visited, NodeType type, StmtId goal = -1);
+        void populateAllAffects();
     };
 }
