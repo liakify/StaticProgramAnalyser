@@ -119,7 +119,7 @@ namespace FrontEnd {
         return affectsDFS(s1, modifiedId, s1, visited, s2);
     }
 
-    void RuntimeDesignExtractor::processAffectsGetAllNodes(StmtId s, NodeType type, PKB::PKB* pkb) {
+    void RuntimeDesignExtractor::processAffectsGetDirectNodes(StmtId s, NodeType type, PKB::PKB* pkb) {
         this->pkb = pkb;
         assert(pkb->stmtTable.get(s)->getType() == StmtType::ASSIGN);
         AssignStmt* a = dynamic_cast<AssignStmt*>(pkb->stmtTable.get(s).get());
@@ -191,10 +191,70 @@ namespace FrontEnd {
                     usedIds.erase(id);
                 }
                 affectedByDFS(root, usedIds, prev, visited);
+                usedIds.insert(erasedIds.begin(), erasedIds.end());
             }
-            usedIds.insert(erasedIds.begin(), erasedIds.end());
         }
 
         visited.erase(curr);
+    }
+
+    bool RuntimeDesignExtractor::processAffectsStar(StmtId s1, StmtId s2, PKB::PKB* pkb) {
+        this->pkb = pkb;
+
+        if (!pkb->allAffectsFullyComputed()) {
+            populateAllAffects();
+        }
+
+        std::unordered_set<StmtId> visited;
+        return affectsStarDFS(s1, s1, visited, NodeType::SUCCESSOR, s2);
+    }
+
+    void RuntimeDesignExtractor::processAffectsStarGetAllNodes(StmtId s, NodeType type, PKB::PKB* pkb) {
+        this->pkb = pkb;
+
+        if (!pkb->allAffectsFullyComputed()) {
+            populateAllAffects();
+        }
+
+        std::unordered_set<StmtId> visited;
+        affectsStarDFS(s, s, visited, type);
+        pkb->affectsStarSetProcessedAll(s, type);
+    }
+
+    bool RuntimeDesignExtractor::affectsStarDFS(StmtId root, StmtId curr, std::unordered_set<StmtId>& visited, NodeType type, StmtId goal) {
+        visited.insert(curr);
+
+        std::unordered_set<StmtId> neighbours = pkb->affectsGetDirectNodes(curr, type);
+
+        for (StmtId n : neighbours) {
+            // Add bi-directional edge first before cycle check for Affects*(s, s)
+            if (type == NodeType::SUCCESSOR) {
+                pkb->addAffectsStar(root, n);
+            } else {
+                pkb->addAffectsStar(n, root);
+            }
+            if (n == goal) {
+                return true;
+            }
+
+            if (visited.find(n) == visited.end()) {
+                if (affectsStarDFS(root, n, visited, type, goal)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    void RuntimeDesignExtractor::populateAllAffects() {
+        std::unordered_set<StmtId> assignStmts = pkb->stmtTable.getStmtsByType(StmtType::ASSIGN);
+
+        for (StmtId id : assignStmts) {
+            // Only need to populate forward as each edge added is bi-directional
+            processAffectsGetDirectNodes(id, NodeType::SUCCESSOR, this->pkb);  // affectsSetProcessedDirect(i, NodeType::SUCCESSOR) is called here
+            pkb->affectsSetProcessedDirect(id, NodeType::PREDECESSOR);
+        }
+
+        pkb->setAffectsFullyComputed();
     }
 }

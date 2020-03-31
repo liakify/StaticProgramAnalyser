@@ -1,5 +1,3 @@
-#include <unordered_map>
-
 #include "Parser.h"
 #include "QueryParser.h"
 

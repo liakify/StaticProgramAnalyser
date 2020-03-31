@@ -48,16 +48,16 @@ Global
 		{74CA3A41-F84C-4C47-B882-5EBF60895525}.Debug|Win32.Build.0 = Release|Win32
 		{74CA3A41-F84C-4C47-B882-5EBF60895525}.Debug|x64.ActiveCfg = Debug|x64
 		{74CA3A41-F84C-4C47-B882-5EBF60895525}.Debug|x64.Build.0 = Debug|x64
-		{74CA3A41-F84C-4C47-B882-5EBF60895525}.Release|Win32.ActiveCfg = Debug|Win32
-		{74CA3A41-F84C-4C47-B882-5EBF60895525}.Release|Win32.Build.0 = Debug|Win32
+		{74CA3A41-F84C-4C47-B882-5EBF60895525}.Release|Win32.ActiveCfg = Release|Win32
+		{74CA3A41-F84C-4C47-B882-5EBF60895525}.Release|Win32.Build.0 = Release|Win32
 		{74CA3A41-F84C-4C47-B882-5EBF60895525}.Release|x64.ActiveCfg = Release|x64
 		{74CA3A41-F84C-4C47-B882-5EBF60895525}.Release|x64.Build.0 = Release|x64
 		{09AD1D74-2D3C-42AE-B4E0-52A792A27E60}.Debug|Win32.ActiveCfg = Release|Win32
 		{09AD1D74-2D3C-42AE-B4E0-52A792A27E60}.Debug|Win32.Build.0 = Release|Win32
 		{09AD1D74-2D3C-42AE-B4E0-52A792A27E60}.Debug|x64.ActiveCfg = Debug|x64
 		{09AD1D74-2D3C-42AE-B4E0-52A792A27E60}.Debug|x64.Build.0 = Debug|x64
-		{09AD1D74-2D3C-42AE-B4E0-52A792A27E60}.Release|Win32.ActiveCfg = Debug|Win32
-		{09AD1D74-2D3C-42AE-B4E0-52A792A27E60}.Release|Win32.Build.0 = Debug|Win32
+		{09AD1D74-2D3C-42AE-B4E0-52A792A27E60}.Release|Win32.ActiveCfg = Release|Win32
+		{09AD1D74-2D3C-42AE-B4E0-52A792A27E60}.Release|Win32.Build.0 = Release|Win32
 		{09AD1D74-2D3C-42AE-B4E0-52A792A27E60}.Release|x64.ActiveCfg = Release|x64
 		{09AD1D74-2D3C-42AE-B4E0-52A792A27E60}.Release|x64.Build.0 = Release|x64
 		{B12702AD-ABFB-343A-A199-8E24837244A3}.Debug|Win32.ActiveCfg = Debug|Win32
@@ -71,7 +71,7 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		Qt5Version = $(DefaultQtVersion)
 		SolutionGuid = {1A056121-21EB-49AF-AD7E-DCCFFE0E1E46}
+		Qt5Version = $(DefaultQtVersion)
 	EndGlobalSection
 EndGlobal

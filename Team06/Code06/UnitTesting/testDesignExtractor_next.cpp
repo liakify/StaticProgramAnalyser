@@ -80,7 +80,7 @@ namespace UnitTesting
                 std::unordered_set<StmtId>({ 5 }),
                 std::unordered_set<StmtId>({ 6 })
             });
-            for (int i = 1; i <= expectedResult.size(); i++) {
+            for (unsigned int i = 1; i <= expectedResult.size(); i++) {
                 std::unordered_set<StmtId>& current = pkbNext.stmtListTable.get(i).getAllEnds();
                 Assert::IsTrue(current.size() == expectedResult[i - 1].size());
                 Assert::IsTrue(current == expectedResult[i - 1]);

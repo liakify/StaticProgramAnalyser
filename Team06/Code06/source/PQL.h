@@ -19,11 +19,19 @@ namespace PQL {
     class PQLManager {
      public:
         /**
-         *  Constructor for PQLManager facade class to handle PQL queries.
+         *  Constructor for PQLManager facade class.
          *
          *  @param      database    populated PKB data store after SIMPLE program parsing.
          */
         PQLManager(PKB::PKB& database);
+
+        /**
+         *  Overloaded constructor for PQLManager facade class, for unit testing purposes.
+         *
+         *  @param      parserStub  reference to a QueryParser instance or a stub.
+         *  @param      evalStub    reference to a QueryEvaluator instance or a stub.
+         */
+        PQLManager(PQL::QueryParser& parserStub, PQL::QueryEvaluator& evalStub);
 
         /**
          *  Accepts an empty list and a PQL query string for parsing and evaluation against the populated

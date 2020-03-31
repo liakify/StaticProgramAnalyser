@@ -7,9 +7,11 @@ using std::list;
 namespace PQL {
 
     PQLManager::PQLManager(PKB::PKB& database)
-        : evaluator(QueryEvaluator(database)) {
-        this->parser = QueryParser();
-        this->formatter = QueryProjector();
+        : parser(), evaluator(QueryEvaluator(database)), formatter() {
+    }
+
+    PQLManager::PQLManager(PQL::QueryParser& parserStub, PQL::QueryEvaluator& evalStub)
+        : parser(parserStub), evaluator(evalStub), formatter() {
     }
 
     void PQLManager::evaluateQuery(string queryString, std::list<string>& resultList) {
