@@ -23,22 +23,22 @@ stmt s;
 Select p
 
 5000
-7 - invalid: syntax (synonym start with digit)
+6 - invalid: syntax (synonym start with digit)
 stmt 9333;
 Select 9333
 
 5000
-8 - invalid: syntax (select constant)
+7 - invalid: syntax (select constant)
 
 Select 1
 
 5000
-9 - invalid: syntax (select quoted expression)
+8 - invalid: syntax (select quoted expression)
 
 Select "expr"
 
 5000
-10 - invalid: syntax (select underscore)
+9 - invalid: syntax (select underscore)
 
 Select _
 

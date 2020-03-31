@@ -1,4 +1,4 @@
-1 -
+1
 stmt s; variable v;
 Select s such that Uses (s, v) and Modifies (s, v)
 3, 5, 6, 7, 8, 9, 12
@@ -8,7 +8,7 @@ stmts; assign a;
 Select s such that Follows* (s, 7) pattern a(_, _"p * w"_)
 None
 5000
-3 -
+3
 variable v;
 Select v such that Uses ("SIMPLE", v) and Uses (6, v) and Uses (9, v)
 c
