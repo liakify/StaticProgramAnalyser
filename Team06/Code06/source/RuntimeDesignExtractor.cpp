@@ -247,12 +247,12 @@ namespace FrontEnd {
     }
 
     void RuntimeDesignExtractor::populateAllAffects() {
-        int numStmts = pkb->stmtTable.size();
+        std::unordered_set<StmtId> assignStmts = pkb->stmtTable.getStmtsByType(StmtType::ASSIGN);
 
-        for (int i = 1; i <= numStmts; i++) {
+        for (StmtId id : assignStmts) {
             // Only need to populate forward as each edge added is bi-directional
-            pkb->affectsGetDirectNodes(i, NodeType::SUCCESSOR);  // affectsSetProcessedDirect(i, NodeType::SUCCESSOR) is called here
-            pkb->affectsSetProcessedDirect(i, NodeType::PREDECESSOR);
+            processAffectsGetDirectNodes(id, NodeType::SUCCESSOR, this->pkb); // affectsSetProcessedDirect(i, NodeType::SUCCESSOR) is called here
+            pkb->affectsSetProcessedDirect(id, NodeType::PREDECESSOR);
         }
 
         pkb->setAffectsFullyComputed();
