@@ -29,6 +29,7 @@ $list_of_test_files = @(
   'parentStar_0',
   'patternAssign_0',
   'patternAssign_1',
+  'patternAssign_exactMatch'
   'suchthatPatternAssign_0',
   'uses_0',
   'modifies_0',
