@@ -23,11 +23,6 @@ stmt s;
 Select p
 
 5000
-6 - invalid: semantic (undeclared synonym)
-stmt s;
-Select BOOLEAN
-FALSE
-5000
 7 - invalid: syntax (synonym start with digit)
 stmt 9333;
 Select 9333

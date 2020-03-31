@@ -15,4 +15,6 @@ procedure SelectPatternWhile {
 			assign = assign + y; }
 		while (f == 0) {
 			print y; } }
-	read z; }
+	read z; 
+	while (1 == 1) {
+		print a;  	}}
