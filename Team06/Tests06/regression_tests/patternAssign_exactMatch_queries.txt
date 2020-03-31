@@ -148,7 +148,7 @@ assign a;
 Select a pattern a (_, "b % c")
 56
 5000
-31 - RHS: combined operators
+31 - RHS: combined operators => empty
 assign a;
 Select a pattern a (_, "y % v")
 
@@ -223,7 +223,7 @@ assign a;
 Select a pattern a (v, "notFound")
 
 5000
-46 - unfound constants: 
+46 - unfound constants
 assign a; 
 Select a pattern a (v, "999999")
 

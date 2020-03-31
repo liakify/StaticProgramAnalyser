@@ -53,7 +53,7 @@ assign a1; stmt s;
 Select s such that Next* (a1, s) with a1.stmt# = 18
 19
 5000
-12 - next*: linkec by s2
+12 - next*: linked by s2
 stmt s; read r;
 Select s such that Next* (s, r) with r.stmt# = 5
 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
