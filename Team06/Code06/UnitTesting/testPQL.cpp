@@ -1,7 +1,6 @@
 #include <algorithm>
 
 #include "stdafx.h"
-#include "CppUnitTest.h"
 #include "PKB.h"
 #include "PQL.h"
 #include "QueryParserStub.h"
@@ -98,6 +97,10 @@ namespace UnitTesting {
             facade = PQL::PQLManager(parserStub, evalStub);
         }
 
+        TEST_METHOD(PQLManager) {
+            PQL::PQLManager defaultPQL = PQL::PQLManager(PKB::PKB());
+        }
+
         TEST_METHOD(evaluateQuery) {
             // List of test queries and corresponding expected results
             // After each query is handled by PQLManager::evaluateQuery
@@ -106,10 +109,12 @@ namespace UnitTesting {
                 { StubQueries::BOOLEAN_VALID_QUERY, { "TRUE" } },
                 { StubQueries::BOOLEAN_INVALID_DECL_SYNTAX_QUERY, { } },
                 { StubQueries::BOOLEAN_UNKNOWN_DECL_KEYWORD_QUERY, { } },
+                { StubQueries::BOOLEAN_REPEATED_DECLARATION_QUERY, { "FALSE" } },
                 { StubQueries::BOOLEAN_CONFLICTING_DECLARATION_QUERY, { "FALSE" } },
                 { StubQueries::TUPLE_VALID_QUERY, { "1 2", "1 3", "2 3" } },
                 { StubQueries::TUPLE_INVALID_DECL_SYNTAX_QUERY, { } },
                 { StubQueries::TUPLE_UNKNOWN_DECL_KEYWORD_QUERY, { } },
+                { StubQueries::TUPLE_REPEATED_DECLARATION_QUERY, { } },
                 { StubQueries::TUPLE_CONFLICTING_DECLARATION_QUERY, { } },
                 { StubQueries::INVALID_RETURN_TYPE_QUERY, { } }
             };

@@ -1,6 +1,7 @@
 #include "stdafx.h"
-#include "QueryParserStub.h"
+
 #include "PQLTypes.h"
+#include "QueryParserStub.h"
 
 using namespace PQL;
 
@@ -64,6 +65,17 @@ namespace UnitTesting {
                 { },
                 { }
             };
+        } else if (queryString == StubQueries::BOOLEAN_REPEATED_DECLARATION_QUERY) {
+            // Fails during insertion of repeated synonym mapping during parsing of declarations
+            // Only terminates after parsing of return type - returnsBool flag populated
+            return {
+                SEMANTIC_ERR_CONFLICTING_SYNONYM_DECLARATIONS, queryString, true,
+                { },
+                { { "ifs", DesignEntity::IF } },
+                { },
+                { },
+                { }
+            };
         } else if (queryString == StubQueries::BOOLEAN_CONFLICTING_DECLARATION_QUERY) {
             // Fails during insertion of second synonym mapping during parsing of declarations
             // Only terminates after parsing of return type - returnsBool flag populated
@@ -110,6 +122,17 @@ namespace UnitTesting {
                 SYNTAX_ERR_UNKNOWN_DESIGN_ENTITY_KEYWORD, queryString, false,
                 { { "v1", AttrType::NONE }, { "v2", AttrType::NONE } },
                 { },
+                { },
+                { },
+                { }
+            };
+        } else if (queryString == StubQueries::TUPLE_REPEATED_DECLARATION_QUERY) {
+            // Fails during insertion of repeated synonym mapping during parsing of declarations
+            // Only terminates after parsing of return type - targetEntities populated
+            return {
+                SEMANTIC_ERR_CONFLICTING_SYNONYM_DECLARATIONS, queryString, false,
+                { { "p", AttrType::PROC_NAME } },
+                { { "P", DesignEntity::PROCEDURE } },
                 { },
                 { },
                 { }

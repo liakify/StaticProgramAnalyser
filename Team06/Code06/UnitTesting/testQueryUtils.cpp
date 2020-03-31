@@ -1,4 +1,5 @@
 #include "stdafx.h"
+
 #include "QueryUtils.h"
 
 using std::pair;
@@ -108,7 +109,7 @@ namespace UnitTesting {
             { "\"x\"", "x" },
             { "_\"DORSCON - orang3\"_", "_DORSCON-orang3_" },
             { "\" pls * 1  -star+rep0\"    ", "pls*1-star+rep0" },
-            { " _\"n0ne+ l3ft *righT % both -  many  \" _","_n0ne+l3ft*righT%both-many_" },
+            { " _\"n0ne+ l3ft *righT % both -  many  \" _", "_n0ne+l3ft*righT%both-many_" },
             { "_  \"      wutDis  -1\" _  " , "_wutDis-1_" },
             { "\" \t\f\v\n\rall % white + spaces \t\f\v\n\r\"", "all%white+spaces" }
         };
@@ -126,7 +127,7 @@ namespace UnitTesting {
             { { "Modifies ( stt, var) ", '(' }, { "Modifies", "stt, var)" } },
             { { "\nSelect\t<\fx, BOOLEAN, var >\r ", '<' }, { "Select", "x, BOOLEAN, var >" } }
         };
-        
+
         vector<pair<pair<string, char>, vector<string>>> TOKENISED_STRING_TESTS = {
             { { EMPTY_STRING, ' ' }, { } },
             { { "no_space", ' ' }, { "no_space" } },
@@ -243,7 +244,7 @@ namespace UnitTesting {
                 Assert::IsTrue(QueryUtils::splitString(testcase.first.first, testcase.first.second) == testcase.second);
             }
         }
-        
+
         TEST_METHOD(matchAll) {
             for (auto testcase : REGEX_MATCHER_TESTS) {
                 Assert::IsTrue(QueryUtils::matchAll(testcase.first.first, testcase.first.second) == testcase.second);
