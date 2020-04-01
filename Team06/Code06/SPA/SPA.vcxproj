@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\source\AffectsEvaluator.cpp" />
     <ClCompile Include="..\source\AffectsKB.cpp" />
     <ClCompile Include="..\source\CallsEvaluator.cpp" />
     <ClCompile Include="..\source\CallsKB.cpp" />
@@ -53,6 +54,7 @@
     <ClCompile Include="..\source\WithEvaluator.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\source\AffectsEvaluator.h" />
     <ClInclude Include="..\source\AffectsKB.h" />
     <ClInclude Include="..\source\CallsEvaluator.h" />
     <ClInclude Include="..\source\CallsKB.h" />
