@@ -3,6 +3,7 @@
 #include <unordered_set>
 #include <vector>
 
+#include "AffectsEvaluator.h"
 #include "AssignPatternEvaluator.h"
 #include "CallsEvaluator.h"
 #include "CallsStarEvaluator.h"
@@ -325,15 +326,12 @@ namespace PQL {
             break;
         case RelationType::NEXT:
             return NextEvaluator::evaluateNextClause(this->database, relationClause, synonymTable);
-            return {};
             break;
         case RelationType::NEXTT:
             return NextStarEvaluator::evaluateNextStarClause(this->database, relationClause, synonymTable);
-            return {};
             break;
         case RelationType::AFFECTS:
-            SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluateRelationClause: Affects relationship not implemented!");
-            return {};
+            return AffectsEvaluator::evaluateAffectsClause(this->database, relationClause, synonymTable);
             break;
         case RelationType::AFFECTST:
             SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluateRelationClause: Affects* relationship not implemented!");
