@@ -91,20 +91,6 @@ namespace PQL {
             return false;
         }
 
-        // Check if syntax violations occur from use of clause keywords and connectives
-        regex INVALID_REPEATED_RELATIONS("and\\s+such\\s+that");
-        regex INVALID_REPEATED_PATTERNS("and\\s+pattern");
-        regex INVALID_REPEATED_EQUALITIES("and\\s+with");
-        smatch rmatch;
-
-        if (regex_search(statements.at(numDeclarations), rmatch, INVALID_REPEATED_RELATIONS) ||
-            regex_search(statements.at(numDeclarations), rmatch, INVALID_REPEATED_PATTERNS) ||
-            regex_search(statements.at(numDeclarations), rmatch, INVALID_REPEATED_EQUALITIES)) {
-            // SYNTAX ERROR: incorrect use of 'and' keyword to connect adjacent clauses
-            query.status = SYNTAX_ERR_INVALID_AND_CHAINED_CLAUSES;
-            return false;
-        }
-
         return true;
     }
 
@@ -408,7 +394,22 @@ namespace PQL {
                 vector<string> equalities = QueryUtils::matchAll(ccmatch.str(), WITH_CLAUSE);
                 withClauses.insert(withClauses.end(), equalities.begin(), equalities.end());
             } else {
-                // SYNTAX ERROR: compound clauses fail to obey query syntax somewhere in query body
+                // Check if failure to match a compound clause occurs due to violations from
+                // use of "and" clause concatenation operator with clause keywords
+                regex INVALID_REPEATED_RELATIONS("^and\\s+such\\s+that");
+                regex INVALID_REPEATED_PATTERNS("^and\\s+pattern");
+                regex INVALID_REPEATED_EQUALITIES("^and\\s+with");
+                smatch rmatch;
+
+                if (regex_search(queryBodySuffix, rmatch, INVALID_REPEATED_RELATIONS) ||
+                    regex_search(queryBodySuffix, rmatch, INVALID_REPEATED_PATTERNS) ||
+                    regex_search(queryBodySuffix, rmatch, INVALID_REPEATED_EQUALITIES)) {
+                    // SYNTAX ERROR: incorrect use of 'and' keyword to connect adjacent clauses
+                    query.status = SYNTAX_ERR_INVALID_AND_CHAINED_CLAUSES;
+                    return false;
+                }
+
+                // SYNTAX ERROR: compound clauses fail to obey query syntax somewhere else in query body
                 query.status = SYNTAX_ERR_INVALID_CLAUSES_IN_QUERY_BODY;
                 return false;
             }
