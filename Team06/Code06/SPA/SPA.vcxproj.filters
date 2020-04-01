@@ -124,6 +124,9 @@
     <ClCompile Include="..\source\AffectsEvaluator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\source\AffectsStarEvaluator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\CallsKB.h">
@@ -259,6 +262,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\source\AffectsEvaluator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\AffectsStarEvaluator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
