@@ -4,6 +4,7 @@
 #include <vector>
 
 #include "AffectsEvaluator.h"
+#include "AffectsStarEvaluator.h"
 #include "AssignPatternEvaluator.h"
 #include "CallsEvaluator.h"
 #include "CallsStarEvaluator.h"
@@ -334,8 +335,7 @@ namespace PQL {
             return AffectsEvaluator::evaluateAffectsClause(this->database, relationClause, synonymTable);
             break;
         case RelationType::AFFECTST:
-            SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluateRelationClause: Affects* relationship not implemented!");
-            return {};
+            return AffectsStarEvaluator::evaluateAffectsStarClause(this->database, relationClause, synonymTable);
             break;
         default:
             SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluateRelationClause: Unknown relation type %d\n", relationClause.type);
