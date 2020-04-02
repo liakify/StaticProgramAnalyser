@@ -101,7 +101,7 @@ namespace UnitTesting {
     };
 
 
-    TEST_CLASS(TestRuntimeDesignExtractor_usesModifies) {
+    TEST_CLASS(TestDesignExtractor_usesModifies) {
     public:
         TEST_CLASS_INITIALIZE(setup) {
             /*
