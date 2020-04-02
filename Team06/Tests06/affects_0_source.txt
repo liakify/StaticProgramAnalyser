@@ -7,7 +7,7 @@ procedure SelectAffects {
   read b;
   while (c1 == c2) {
     if (a == b) then {
-      read x;
+      x = modifiesX;
       print b; } else {
       read a; } }
   b = 1 + 2 * x / y - z % a; }

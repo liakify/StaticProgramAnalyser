@@ -1,17 +1,8 @@
 procedure Affects2 {
-	a = 1;
-	if (a == 1) then {
-		x = a + 1;  } else {
-		b = a + 2;
-		while (c > 0) {
-			c = c + 5;
-			a = x + 3;
-			x = b + 2; } } }
-procedure Affects3 {
 	while (a < b) {
 		c = b + a;
 		d = c;
 		e = c;
 		if (d > 0) then {
 			a = e;  } else {
-			b = d; }}} 
+			b = d; } } }

@@ -75,20 +75,21 @@ $list_of_test_files = @(
   'valid_simple\simple_procNameEqualVarName'
 
   # STAGED TESTS
-
+  '..\affects_0'
+  '..\affects_1'
+  '..\affects_2'
+  '..\affects_3'
+  '..\affects_4'
+  '..\affects_invalidArgs'
+  '..\affectsStar_0'
+  '..\affectsStar_1'
+  '..\affectsStar_2'
+  '..\affectsStar_invalidArgs'
+  '..\suchthatPattern_affects+Star'
+  '..\withSuchthat_7'
+  
   # ONLY MODIFY THE BELOW
-
-  # '..\affects_0'
-  # '..\affects_1'
-  # '..\affects_2'
-  # '..\affects_3'
-  # '..\affects_invalidArgs'
-  # '..\affectsStar_0'
-  # '..\affectsStar_1'
-  # '..\affectsStar_invalidArgs'
-  # '..\suchthatPattern_affects+Star'
-  # '..\withSuchthat_7',
-  # '..\mixed_0'
+  '..\mixed_0'
 )
 
 $list_of_no_xml_tests = @(
