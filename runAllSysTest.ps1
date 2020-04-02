@@ -19,6 +19,7 @@ $list_of_test_files = @(
   # '..\modifies_0',
   
   # DO NOT MODIFY THE FOLLOWING IN ANY COMMITS
+  'valid_simple\simple_procNameEqualVarName'
   'select_syn',
   'select_valid',
   'select_invalid',
@@ -72,21 +73,20 @@ $list_of_test_files = @(
   'withSuchthat_4',
   'withSuchthat_5',
   'withSuchthat_6',
-  'valid_simple\simple_procNameEqualVarName'
+  'affects_0'
+  'affects_1'
+  'affects_2'
+  'affects_3'
+  'affects_4'
+  'affects_invalidArgs'
+  'affectsStar_0'
+  'affectsStar_1'
+  'affectsStar_2'
+  'affectsStar_invalidArgs'
+  'suchthatPattern_affects+Star'
+  'withSuchthat_7'
 
   # STAGED TESTS
-  '..\affects_0'
-  '..\affects_1'
-  '..\affects_2'
-  '..\affects_3'
-  '..\affects_4'
-  '..\affects_invalidArgs'
-  '..\affectsStar_0'
-  '..\affectsStar_1'
-  '..\affectsStar_2'
-  '..\affectsStar_invalidArgs'
-  '..\suchthatPattern_affects+Star'
-  '..\withSuchthat_7'
   
   # ONLY MODIFY THE BELOW
   '..\mixed_0'
