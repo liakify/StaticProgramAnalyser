@@ -64,19 +64,19 @@ $list_of_test_files = @(
   'andSuchthat_0',
   'andSuchthat_invalid',
   'andWith_0',
-  'andWith_invalid'
+  'andWith_invalid',
+  'withSuchthat_0',
+  'withSuchthat_1',
+  'withSuchthat_2',
+  'withSuchthat_3',
+  'withSuchthat_4',
+  'withSuchthat_5',
+  'withSuchthat_6',
   'valid_simple\simple_procNameEqualVarName'
 
   # STAGED TESTS
 
   # ONLY MODIFY THE BELOW
-  # '..\withSuchthat_0',
-  # '..\withSuchthat_1',
-  # '..\withSuchthat_2',
-  # '..\withSuchthat_3'
-  # '..\withSuchthat_4'
-  # '..\withSuchthat_5',
-  # '..\withSuchthat_6'
 
   # '..\affects_0'
   # '..\affects_1'
