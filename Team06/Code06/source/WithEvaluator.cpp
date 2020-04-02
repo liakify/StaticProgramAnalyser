@@ -17,8 +17,8 @@ namespace PQL {
         * @param    stmtType    StmtType to extract data value pairs for.
         * @return   The data value pairs extracted.
         */
-        std::unordered_map<std::string, StmtId> getStmtDataPairs(PKB::PKB database, StmtType stmtType) {
-            std::unordered_map<std::string, StmtId> result;
+        std::unordered_multimap<std::string, StmtId> getStmtDataPairs(PKB::PKB database, StmtType stmtType) {
+            std::unordered_multimap<std::string, StmtId> result;
 
             if (stmtType == StmtType::CALL) {
                 std::unordered_set<StmtId> callStmts = database.stmtTable.getStmtsByType(StmtType::CALL);
@@ -76,7 +76,7 @@ namespace PQL {
                 if (synonymTable[syn1] == DesignEntity::CALL || synonymTable[syn1] == DesignEntity::READ || synonymTable[syn1] == DesignEntity::PRINT) {
                     ClauseResult clauseResult;
 
-                    std::unordered_map<ProcName, StmtId> stmts =
+                    std::unordered_multimap<ProcName, StmtId> stmts =
                         getStmtDataPairs(database, SPA::TypeUtils::getStmtTypeFromDesignEntity(synonymTable[syn1]));
                     for (std::pair<std::string, StmtId> stmt : stmts) {
                         if (stmt.first == arg2.second.first) {
@@ -108,8 +108,8 @@ namespace PQL {
             } else if (argType1 == ArgType::ATTRIBUTE && argType2 == ArgType::ATTRIBUTE) {
                 // Case 2: Both LHS and RHS are attributes
 
-                std::unordered_map<std::string, StmtId> result1;
-                std::unordered_map<std::string, StmtId> result2;
+                std::unordered_multimap<std::string, StmtId> result1;
+                std::unordered_multimap<std::string, StmtId> result2;
 
                 Synonym syn1 = arg1.second.first;
                 Synonym syn2 = arg2.second.first;
