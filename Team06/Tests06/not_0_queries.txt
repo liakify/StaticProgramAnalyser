@@ -120,7 +120,7 @@ Select a2 such that not Affects(a1, a2)
 5000
 25 - AffectsStar: Single Synonym
 assign a;
-Select a such that not Affects*(a, 11)
+Select a such that not Affects*(a, 8)
 
 5000
 26 - AffectsStar: Double Synonym
@@ -235,7 +235,7 @@ Select v pattern not a(v, _)
 5000
 48 - Pattern a: Specific LHS
 assign a;
-Select a pattern not a(_"x"_, _)
+Select a pattern not a("x", _)
 
 5000
 49 - Pattern a: Specific RHS
@@ -250,7 +250,7 @@ Select v pattern not ifs(v, _, _)
 5000
 51 - Pattern ifs: Specific
 if ifs;
-Select ifs pattern not ifs(_"z"_, _, _)
+Select ifs pattern not ifs("z", _, _)
 
 5000
 52 - Pattern ifs: No variable
@@ -265,7 +265,7 @@ Select v pattern not w(v, _)
 5000
 54 - Pattern w: Specific
 while w;
-Select w pattern not w(_"y"_, _)
+Select w pattern not w("y", _)
 
 5000
 55 - Pattern w: No variable
