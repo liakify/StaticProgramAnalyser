@@ -168,142 +168,187 @@ stmt s;
 Select s such that Next(s, _)
 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40
 5000
-35 - arg variant (a, _)
+35 - arg variant (s, 1)
+stmt s;
+Select s such that Next(s, 20)
+18
+5000
+36 - arg variant (1, s)
+stmt s;
+Select s such that Next(18, s)
+19, 20
+5000
+37 - arg variant (a, _)
 assign a;
 Select a such that Next(a, _)
 1, 2, 9, 11, 12, 16, 20, 34, 36, 37
 5000
-36 - arg variant (a, c)
+38 - arg variant (_, a)
+assign a;
+Select a such that Next(_, a)
+2, 9, 11, 12, 16, 20, 22, 34, 36, 37
+5000
+39 - arg variant (a, c)
 assign a; call c;
 Select c such that Next(a, c)
 13
 5000
-37 - arg variant (a, r)
+40 - arg variant (a, r)
 assign a; read r;
 Select r such that Next(a, r)
 
 5000
-38 - arg variant (a, pn)
+41 - arg variant (a, pn)
 assign a; print pn;
 Select pn such that Next(a, pn)
 3, 38
 5000
-39 - arg variant (a, ifs)
+42 - arg variant (a, ifs)
 assign a; if ifs;
 Select ifs such that Next(a, ifs)
 
 5000
-40 - arg variant (a, w)
+43 - arg variant (a, w)
 assign a; while w;
 Select w such that Next(a, w)
 10, 14, 18, 33
 5000
-41 - arg variant (c, _)
+44 - arg variant (c, _)
 call c;
 Select c such that Next(c, _)
 13, 39
 5000
-42 - arg variant (c, r)
+45 - arg variant (c, r)
 call c; read r;
 Select r such that Next(c, r)
 
 5000
-43 - arg variant (c, pn)
+46 - arg variant (c, pn)
 call c; print pn;
 Select pn such that Next(c, pn)
 40
 5000
-44 - arg variant (c, ifs)
+47 - arg variant (c, ifs)
 call c; if ifs;
 Select ifs such that Next(c, ifs)
 
 5000
-45 - arg variant (c, w)
+48 - arg variant (c, w)
 call c; while w;
 Select w such that Next(c, w)
 
 5000
-46 - arg variant (r, _)
+49 - arg variant (r, _)
 read r;
 Select r such that Next(r, _)
 17, 23, 29
 5000
-47 - arg variant (r, pn)
+50 - arg variant (r, pn)
 read r; print pn;
 Select pn such that Next(r, pn)
 31
 5000
-48 - arg variant (r, ifs)
+51 - arg variant (r, ifs)
 read r; if ifs;
 Select ifs such that Next(r, ifs)
 
 5000
-49 - arg variant (r, w)
+52 - arg variant (r, w)
 read r; while w;
 Select w such that Next(r, w)
 18, 24
 5000
-50 - arg variant (pn, _)
+53 - arg variant (pn, _)
 print pn;
 Select pn such that Next(pn, _)
 3, 7, 8, 19, 21, 27, 30, 31, 38, 40
 5000
-51 - arg variant (pn, ifs)
+54 - arg variant (pn, ifs)
 print pn; if ifs;
 Select ifs such that Next(pn, ifs)
 4
 5000
-52 - arg variant (pn, w)
+55 - arg variant (pn, w)
 print pn; while w;
 Select w such that Next(pn, w)
 18, 24, 25, 26
 5000
-53 - arg variant (ifs, _)
+56 - arg variant (ifs, _)
 if ifs;
 Select ifs such that Next(ifs, _)
 4, 5, 6, 15, 28, 32, 35
 5000
-54 - arg variant (w, _)
+57 - arg variant (_, ifs)
+if ifs;
+Select ifs such that Next(_, ifs)
+4, 5, 6, 15, 28, 32, 35
+5000
+58 - arg variant (ifs, 1)
+if ifs;
+Select ifs such that Next(ifs, 10)
+5
+5000
+59 - arg variant (1, ifs)
+if ifs;
+Select ifs such that Next(14, ifs)
+15
+5000
+60 - arg variant (w, _)
 while w;
 Select w such that Next(w, _)
 10, 14, 18, 24, 25, 26, 33
 5000
-55 - arg variant (w, ifs): Nested if in while
+61 - arg variant (_, w)
+while w;
+Select w such that Next(_, w)
+10, 14, 18, 24, 25, 26, 33
+5000
+62 - arg variant (w, 1)
+while w;
+Select w such that Next(w, 15)
+14
+5000
+63 - arg variant (1, w)
+while w;
+Select w such that Next(20, w)
+14
+5000
+64 - arg variant (w, ifs): Nested if in while
 while w; if ifs;
 Select w such that Next(w, ifs)
 14, 25, 26, 33
 5000
-56 - arg variant (ifs, w): Nested while in if
+65 - arg variant (ifs, w): Nested while in if
 while w; if ifs;
 Select ifs such that Next(ifs, w)
 4, 5, 32
 5000
-57 - arg variant (w1, w2): Nested while in while
+66 - arg variant (w1, w2): Nested while in while
 while w1, w2;
 Select w2 such that Next(w1, w2)
 25, 26
 5000
-58 - arg variant (if, ifs): Nested if in if
+67 - arg variant (if, ifs): Nested if in if
 if if, ifs;
 Select ifs such that Next(if, ifs)
 5, 6
 5000
-59 - Across procedures
+68 - Across procedures
 
 Select BOOLEAN such that Next(22, 23)
 FALSE
 5000
-60 - Call within procedure 
+69 - Call within procedure 
 
 Select BOOLEAN such that Next(13, 23)
 FALSE
 5000
-61 - Single line procedure: no predecessor
+70 - Single line procedure: no predecessor
 
 Select BOOLEAN such that Next(_, 42)
 FALSE
 5000
-62 - Single line procedure: no successor
+71 - Single line procedure: no successor
 
 Select BOOLEAN such that Next(42, _)
 FALSE
