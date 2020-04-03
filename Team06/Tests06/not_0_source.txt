@@ -1,0 +1,21 @@
+procedure Not {
+    y = 5;
+    if (6 > 5) then {
+        x = 6;
+        while (y > x) {
+            print x; }
+        read x; } else {
+        print z; }
+    z = x + y;
+    call Not2; }
+procedure Not2 {
+    y = z;
+    while (5 > 1) {
+        z = y + 5; }
+    print y;
+    if (z > 1) then {
+        Call Not3; } else {
+        read y; }
+    read z; }
+procedure Not3 {
+    x = x; }

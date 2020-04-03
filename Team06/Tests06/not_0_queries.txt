@@ -1,6 +1,6 @@
 1 - Follows: Single Synonym
 stmt s;
-Select s such that not Follows(s, 5)
+Select s such that not Follows(s, 2)
 
 5000
 2 - Follows: Double Synonym
@@ -10,7 +10,7 @@ Select s2 such that not Follows(s1, s2)
 5000
 3 - FollowsStar: Single Synonym
 stmt s;
-Select s such that not Follows*(s, 5)
+Select s such that not Follows*(s, 9)
 
 5000
 4 - FollowsStar: Double Synonym
@@ -20,7 +20,7 @@ Select s2 such that not Follows*(s1, s2)
 5000
 5 - Parent: Single Synonym
 stmt s;
-Select s such that not Parent(s, 5)
+Select s such that not Parent(s, 3)
 
 5000
 6 - Parent: Double Synonym
@@ -40,7 +40,7 @@ Select s2 such that not Parent*(s1, s2)
 5000
 9 - Uses: Single Synonym, variable
 variable v;
-Select v such that not Uses(5, v)
+Select v such that not Uses(8, v)
 
 5000
 10 - Uses: Single Synonym, procedure
@@ -55,7 +55,7 @@ Select s such that not Uses(s, v)
 5000
 12 - Modifies: Single Synonym, variable
 variable v;
-Select v such that not Modifies(5, v)
+Select v such that not Modifies(8, v)
 
 5000
 13 - Modifies: Single Synonym, procedure
@@ -110,7 +110,7 @@ Select n2 such that not Next*(n1, n2)
 5000
 23 - Affects: Single Synonym
 assign a;
-Select a such that not Affects(a, 5)
+Select a such that not Affects(a, 8)
 
 5000
 24 - Affects: Double Synonym
@@ -120,7 +120,7 @@ Select a2 such that not Affects(a1, a2)
 5000
 25 - AffectsStar: Single Synonym
 assign a;
-Select a such that not Affects*(a, 5)
+Select a such that not Affects*(a, 11)
 
 5000
 26 - AffectsStar: Double Synonym
@@ -190,32 +190,32 @@ Select s.stmt# with not s.stmt# = 1
 5000
 39 - attrRef: r.stmt#
 read r;
-Select r.stmt# with not r.stmt# = 1
+Select r.stmt# with not r.stmt# = 6
 
 5000
 40 - attrRef: pn.stmt#
 print pn;
-Select pn.stmt# with not pn.stmt# = 1
+Select pn.stmt# with not pn.stmt# = 7
 
 5000
 41 - attrRef: c.stmt#
 call c;
-Select c.stmt# with not c.stmt# = 1
+Select c.stmt# with not c.stmt# = 15
 
 5000
 42 - attrRef: ifs.stmt#
 if ifs;
-Select ifs.stmt# with not ifs.stmt# = 1
+Select ifs.stmt# with not ifs.stmt# = 14
 
 5000
 43 - attrRef: w.stmt#
 while w;
-Select w.stmt# with not w.stmt# = 1
+Select w.stmt# with not w.stmt# = 11
 
 5000
 44 - attrRef: a.stmt#
 assign a;
-Select a.stmt# with not a.stmt# = 1
+Select a.stmt# with not a.stmt# = 10
 
 5000
 45 - With: FALSE
@@ -250,7 +250,7 @@ Select v pattern not ifs(v, _, _)
 5000
 51 - Pattern ifs: Specific
 if ifs;
-Select ifs pattern not ifs(_"x"_, _, _)
+Select ifs pattern not ifs(_"z"_, _, _)
 
 5000
 52 - Pattern ifs: No variable
@@ -265,7 +265,7 @@ Select v pattern not w(v, _)
 5000
 54 - Pattern w: Specific
 while w;
-Select w pattern not w(_"x"_, _)
+Select w pattern not w(_"y"_, _)
 
 5000
 55 - Pattern w: No variable
