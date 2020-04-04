@@ -260,6 +260,15 @@ namespace UnitTesting {
                     Assert::IsTrue(pkbUsesModifies.usesKB.procUses(pid, vid) == expectedProcUses[pid][vid]);
                 }
             }
+            // Out of range
+            Assert::IsFalse(pkbUsesModifies.usesKB.procUses(-1, 1));
+            Assert::IsFalse(pkbUsesModifies.usesKB.procUses(2, -1));
+            Assert::IsFalse(pkbUsesModifies.usesKB.procUses(5, 3));
+            Assert::IsFalse(pkbUsesModifies.usesKB.procUses(3, 5));
+            Assert::IsFalse(pkbUsesModifies.usesKB.stmtUses(-1, 1));
+            Assert::IsFalse(pkbUsesModifies.usesKB.stmtUses(2, -1));
+            Assert::IsFalse(pkbUsesModifies.usesKB.stmtUses(28, 3));
+            Assert::IsFalse(pkbUsesModifies.usesKB.stmtUses(3, 5));
         }
 
         TEST_METHOD(modifies) {
@@ -271,6 +280,15 @@ namespace UnitTesting {
                     Assert::IsTrue(pkbUsesModifies.modifiesKB.procModifies(pid, vid) == expectedProcModifies[pid][vid]);
                 }
             }
+            // Out of range
+            Assert::IsFalse(pkbUsesModifies.modifiesKB.procModifies(-1, 1));
+            Assert::IsFalse(pkbUsesModifies.modifiesKB.procModifies(2, -1));
+            Assert::IsFalse(pkbUsesModifies.modifiesKB.procModifies(5, 3));
+            Assert::IsFalse(pkbUsesModifies.modifiesKB.procModifies(3, 5));
+            Assert::IsFalse(pkbUsesModifies.modifiesKB.stmtModifies(-1, 1));
+            Assert::IsFalse(pkbUsesModifies.modifiesKB.stmtModifies(2, -1));
+            Assert::IsFalse(pkbUsesModifies.modifiesKB.stmtModifies(28, 3));
+            Assert::IsFalse(pkbUsesModifies.modifiesKB.stmtModifies(3, 5));
         }
 
         TEST_METHOD(allUses) {
@@ -298,6 +316,15 @@ namespace UnitTesting {
                     Assert::IsTrue((procUsing.find(pid) != procUsing.end()) == expectedProcUses[pid][vid]);
                 }
             }
+            // Out of range
+            Assert::IsTrue(pkbUsesModifies.usesKB.getAllVarsUsedByProc(-1) == EMPTY_RESULT);
+            Assert::IsTrue(pkbUsesModifies.usesKB.getAllStmtsUsingVar(-1) == EMPTY_RESULT);
+            Assert::IsTrue(pkbUsesModifies.usesKB.getAllVarsUsedByProc(5) == EMPTY_RESULT);
+            Assert::IsTrue(pkbUsesModifies.usesKB.getAllStmtsUsingVar(5) == EMPTY_RESULT);
+            Assert::IsTrue(pkbUsesModifies.usesKB.getAllVarsUsedByStmt(-1) == EMPTY_RESULT);
+            Assert::IsTrue(pkbUsesModifies.usesKB.getAllProcUsingVar(-1) == EMPTY_RESULT);
+            Assert::IsTrue(pkbUsesModifies.usesKB.getAllVarsUsedByStmt(28) == EMPTY_RESULT);
+            Assert::IsTrue(pkbUsesModifies.usesKB.getAllProcUsingVar(5) == EMPTY_RESULT);
         }
 
         TEST_METHOD(allModifies) {
@@ -325,6 +352,15 @@ namespace UnitTesting {
                     Assert::IsTrue((procModify.find(pid) != procModify.end()) == expectedProcModifies[pid][vid]);
                 }
             }
+            // Out of range
+            Assert::IsTrue(pkbUsesModifies.modifiesKB.getAllVarsModifiedByProc(-1) == EMPTY_RESULT);
+            Assert::IsTrue(pkbUsesModifies.modifiesKB.getAllStmtsModifyVar(-1) == EMPTY_RESULT);
+            Assert::IsTrue(pkbUsesModifies.modifiesKB.getAllVarsModifiedByProc(5) == EMPTY_RESULT);
+            Assert::IsTrue(pkbUsesModifies.modifiesKB.getAllStmtsModifyVar(5) == EMPTY_RESULT);
+            Assert::IsTrue(pkbUsesModifies.modifiesKB.getAllVarsModifiedByStmt(-1) == EMPTY_RESULT);
+            Assert::IsTrue(pkbUsesModifies.modifiesKB.getAllProcModifyVar(-1) == EMPTY_RESULT);
+            Assert::IsTrue(pkbUsesModifies.modifiesKB.getAllVarsModifiedByStmt(28) == EMPTY_RESULT);
+            Assert::IsTrue(pkbUsesModifies.modifiesKB.getAllProcModifyVar(5) == EMPTY_RESULT);
         }
     };
 }

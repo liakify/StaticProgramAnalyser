@@ -149,7 +149,9 @@ namespace UnitTesting {
                 {"_i_", std::unordered_set<StmtId>({ 9, 10, 11, 12, 17, 21 })},
                 {"_(3+2)_", std::unordered_set<StmtId>({ 16 })},
                 {"2", std::unordered_set<StmtId>({ 1 })},
-                {"(x+i)", std::unordered_set<StmtId>({ 10 })}
+                {"(x+i)", std::unordered_set<StmtId>({ 10 })},
+                {"x", EMPTY_RESULT},
+                {"(z+(x+i))", EMPTY_RESULT}
             });
             for (std::pair<Pattern, std::unordered_set<StmtId>> p : expectedResult) {
                 Assert::IsTrue(pkbPattern.patternKB.getAssignPatternStmts(p.first) == p.second);
