@@ -104,5 +104,5 @@ class NextKB {
  private:
     std::unordered_map<StmtId, nextRS> nextTable;
     std::unordered_map<StmtId, nextStarRS> nextStarTable;  // Stores TRUE relations
-    std::unordered_map<StmtId, std::unordered_set<StmtId>> falseNextStarTable; // Stores FALSE relations
+    std::unordered_map<StmtId, std::unordered_set<StmtId>> falseNextStarTable;  // Stores FALSE relations
 };
