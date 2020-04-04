@@ -95,86 +95,86 @@ FALSE
 5000
 20 - Full SPA Wiki
 
-Select BOOLEAN such that Uses (7, “x”)
+Select BOOLEAN such that Uses (7, "x")
 TRUE
 5000
 21 - Full SPA Wiki
 
-Select BOOLEAN such that Uses (10, “count”)
+Select BOOLEAN such that Uses (10, "count")
 TRUE
 5000
 22 - Full SPA Wiki
 
-Select BOOLEAN such that Uses (10, “cenX”)
+Select BOOLEAN such that Uses (10, "cenX")
 TRUE
 5000
 23 - Full SPA Wiki
 
-Select BOOLEAN such that Uses (“main”, “cenX”)
+Select BOOLEAN such that Uses ("main", "cenX")
 TRUE
 5000
 24 - Full SPA Wiki
 
-Select BOOLEAN such that Uses (“main”, “flag”)
+Select BOOLEAN such that Uses ("main", "flag")
 TRUE
 5000
 25 - Full SPA Wiki
 
-Select BOOLEAN such that Uses (“computeCentroid”, “x”)
+Select BOOLEAN such that Uses ("computeCentroid", "x")
 TRUE
 5000
 26 - Full SPA Wiki
 
-Select BOOLEAN such that Uses (3, “count”)
+Select BOOLEAN such that Uses (3, "count")
 FALSE
 5000
 27 - Full SPA Wiki
 
-Select BOOLEAN such that Uses (10, “flag”)
+Select BOOLEAN such that Uses (10, "flag")
 FALSE
 5000
 28 - Full SPA Wiki
 
-Select BOOLEAN such that Uses (9, “y”)
+Select BOOLEAN such that Uses (9, "y")
 FALSE
 5000
 29 - Full SPA Wiki
 
-Select BOOLEAN such that Modifies (1, “count”)
+Select BOOLEAN such that Modifies (1, "count")
 TRUE
 5000
 30 - Full SPA Wiki
 
-Select BOOLEAN such that Modifies (7, “cenX”)
+Select BOOLEAN such that Modifies (7, "cenX")
 TRUE
 5000
 31 - Full SPA Wiki
 
-Select BOOLEAN such that Modifies (9, “x”)
+Select BOOLEAN such that Modifies (9, "x")
 TRUE
 5000
 32 - Full SPA Wiki
 
-Select BOOLEAN such that Modifies (10, “flag”)
+Select BOOLEAN such that Modifies (10, "flag")
 TRUE
 5000
 33 - Full SPA Wiki
 
-Select BOOLEAN such that Modifies (5, “x”)
+Select BOOLEAN such that Modifies (5, "x")
 TRUE
 5000
 34 - Full SPA Wiki
 
-Select BOOLEAN such that Modifies (“main”, “y”)
+Select BOOLEAN such that Modifies ("main", "y")
 TRUE
 5000
 35 - Full SPA Wiki
 
-Select BOOLEAN such that Modifies (5, “flag”)
+Select BOOLEAN such that Modifies (5, "flag")
 FALSE
 5000
 36 - Full SPA Wiki
 
-Select BOOLEAN such that Modifies (“printResults”, “normSq”)
+Select BOOLEAN such that Modifies ("printResults", "normSq")
 FALSE
 5000
