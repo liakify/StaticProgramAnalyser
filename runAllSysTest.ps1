@@ -85,9 +85,11 @@ $list_of_test_files = @(
   'affectsStar_invalidArgs'
   'suchthatPattern_affects+Star'
   'withSuchthat_7'
+  'given_0'
+  'given_1'
+  'given_2'
 
   # STAGED TESTS
-  '..\given_0'
   
   # ONLY MODIFY THE BELOW
   '..\mixed_0'
