@@ -124,13 +124,23 @@ namespace PKB {
         if (s1 < 1 || s1 > numStmts || s2 < 1 || s2 > numStmts) {
             return false;
         }
-        if (nextKB.nextStar(s1, s2)) {  // cached
+        if (!nextKB.existsInNext(s1) || !nextKB.existsInNext(s2)) {
+            return false;
+        }
+        if (nextKB.nextStar(s1, s2)) {  // TRUE relation cached
             return true;
+        }
+        if (nextKB.notNextStar(s1, s2)) {  // FALSE relation cached
+            return false;
         }
         if (nextKB.processedAll(s1, NodeType::SUCCESSOR)) {  // allNext is fully processed for s1, i.e. no path from s1 to s2
             return false;
         }
-        return rtDE.processNextStar(s1, s2, this);
+        bool res = rtDE.processNextStar(s1, s2, this);
+        if (!res) {
+            nextKB.addNotNextStar(s1, s2);
+        }
+        return res;
     }
 
     const std::unordered_set<StmtId>& PKB::nextStarGetDirectNodes(StmtId s, NodeType type) {
@@ -140,6 +150,9 @@ namespace PKB {
     const std::unordered_set<StmtId>& PKB::nextStarGetAllNodes(StmtId s, NodeType type) {
         int numStmts = stmtTable.size();
         if (s < 1 || s > numStmts) {
+            return EMPTY_RESULT;
+        }
+        if (!nextKB.existsInNext(s)) {
             return EMPTY_RESULT;
         }
         if (nextKB.processedAll(s, type)) {  // cached
