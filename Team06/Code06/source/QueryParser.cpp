@@ -133,7 +133,8 @@ namespace PQL {
             RelationType relationClass = relation.getRelationType();
             pair<pair<ArgType, string>, pair<ArgType, string>> args = relation.getArgs();
 
-            if (relationClass == RelationType::USESS || relationClass == RelationType::MODIFIESS) {
+            if (relationClass == RelationType::USESS || relationClass == RelationType::MODIFIESS ||
+                relationClass == RelationType::USESP || relationClass == RelationType::MODIFIESP) {
                 // Validate the first argument assuming the statement variant of Uses/Modifies
                 if (args.first.first == ArgType::WILDCARD) {
                     // SEMANTIC ERROR: ill-defined wildcard argument

@@ -77,12 +77,16 @@ namespace UnitTesting {
         string INVALID_PROG_LINE_ATTRIBUTE_QUERY = "prog_line l; Select l.stmt# such that Follows(l, 4231)";
         string INVALID_SYNONYM_ATTRIBUTE_QUERY = "assign a; Select a.varName pattern a(_, \"0\")";
         string INVALID_SYNONYM_ATTRIBUTE_TYPE_IN_TUPLE_QUERY = "call cl; print pn; Select <cl, cl.procName, pn.value> such that Next(cl, pn)";
-        string AMBIGUOUS_WILDCARD_QUERY = "variable v; Select v such that Modifies(_, v)";
-        string USES_MISSING_FIRST_SYNONYM_QUERY = "variable v; Select v such that Uses(ifs, v)";
-        string USES_UNDEFINED_RELATION_QUERY = "read rd; Select BOOLEAN such that Uses(rd, \"var\")";
-        string MODIFIES_UNDEFINED_RELATION_QUERY = "print pn; Select pn such that Modifies(pn, _)";
-        string MODIFIES_MISSING_SECOND_SYNONYM_QUERY = "procedure p; Select p such that Modifies(p, v)";
-        string USES_NON_VARIABLE_ARG_QUERY = "constant c; prog_line l; Select l such that Uses(l, c)";
+        string USESS_AMBIGUOUS_WILDCARD_QUERY = "variable v; Select v such that Uses(_, v)";
+        string MODIFIESS_MISSING_FIRST_SYNONYM_QUERY = "variable v; Select v such that Modifies(ifs, v)";
+        string USESS_UNDEFINED_RELATION_QUERY = "read rd; Select BOOLEAN such that Uses(rd, \"var\")";
+        string MODIFIESS_UNDEFINED_RELATION_QUERY = "print pn; Select pn such that Modifies(pn, _)";
+        string USESS_MISSING_SECOND_SYNONYM_QUERY = "assign a; Select a such that Uses(a, v)";
+        string MODIFIESS_NON_VARIABLE_ARG_QUERY = "constant c; prog_line l; Select l such that Uses(l, c)";
+        string USESP_MISSING_SECOND_SYNONYM_QUERY = "procedure p; Select p such that Uses(p, v)";
+        string MODIFIESP_NON_VARIABLE_ARG_QUERY = "procedure p; while w; Select p such that Modifies(p, w)";
+        string USESP_LITERAL_MISSING_SECOND_SYNONYM_QUERY = "Select BOOLEAN such that Uses(\"f\", v)";
+        string MODIFIESP_LITERAL_NON_VARIABLE_ARG_QUERY = "if ifs; Select BOOLEAN such that Modifies(\"func\", ifs)";
         string CALLS_MISSING_SYNONYM_QUERY = "Select BOOLEAN such that Calls(p, _)";
         string CALLS_NON_PROCEDURE_ARG_QUERY = "call cl; Select cl such that Calls*(\"main\", cl)";
         string INVALID_STMT_NUMBER_QUERY = "stmt s; Select s such that Follows(0, s)";
@@ -211,9 +215,11 @@ namespace UnitTesting {
             MISSING_RETURN_TYPE_SYNONYM_QUERY, MISSING_BOOLEAN_IN_TUPLE_QUERY,
             MISSING_SYNONYM_IN_TUPLE_QUERY, INVALID_PROG_LINE_ATTRIBUTE_QUERY,
             INVALID_SYNONYM_ATTRIBUTE_QUERY, INVALID_SYNONYM_ATTRIBUTE_TYPE_IN_TUPLE_QUERY,
-            AMBIGUOUS_WILDCARD_QUERY, USES_MISSING_FIRST_SYNONYM_QUERY,
-            USES_UNDEFINED_RELATION_QUERY, MODIFIES_UNDEFINED_RELATION_QUERY,
-            MODIFIES_MISSING_SECOND_SYNONYM_QUERY, USES_NON_VARIABLE_ARG_QUERY,
+            USESS_AMBIGUOUS_WILDCARD_QUERY, MODIFIESS_MISSING_FIRST_SYNONYM_QUERY,
+            USESS_UNDEFINED_RELATION_QUERY, MODIFIESS_UNDEFINED_RELATION_QUERY,
+            USESS_MISSING_SECOND_SYNONYM_QUERY, MODIFIESS_NON_VARIABLE_ARG_QUERY,
+            USESP_MISSING_SECOND_SYNONYM_QUERY, MODIFIESP_NON_VARIABLE_ARG_QUERY,
+            USESP_LITERAL_MISSING_SECOND_SYNONYM_QUERY, MODIFIESP_LITERAL_NON_VARIABLE_ARG_QUERY,
             CALLS_MISSING_SYNONYM_QUERY, CALLS_NON_PROCEDURE_ARG_QUERY,
             INVALID_STMT_NUMBER_QUERY, INVALID_PROG_LINE_QUERY,
             FOLLOWS_MISSING_SYNONYM_QUERY, NEXT_MISSING_SYNONYM_QUERY,
