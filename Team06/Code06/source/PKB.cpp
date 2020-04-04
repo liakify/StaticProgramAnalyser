@@ -24,13 +24,20 @@ namespace PKB {
         if (x->getType() != StmtType::ASSIGN || y->getType() != StmtType::ASSIGN) {
             return false;
         }
-        if (affectsKB.affects(s1, s2)) {  // cached
+        if (affectsKB.affects(s1, s2)) {  // TRUE relation cached
             return true;
+        }
+        if (affectsKB.notAffects(s1, s2)) {  // FALSE relation cached
+            return false;
         }
         if (affectsKB.processedDirectAffects(s1, NodeType::SUCCESSOR)) {  // directAffects is fully processed for s1 i.e. s1 does not affect s2
             return false;
         }
-        return rtDE.processAffects(s1, s2, this);
+        bool res = rtDE.processAffects(s1, s2, this);
+        if (!res) {
+            affectsKB.addNotAffects(s1, s2);
+        }
+        return res;
     }
 
     bool PKB::affectsStar(StmtId s1, StmtId s2) {

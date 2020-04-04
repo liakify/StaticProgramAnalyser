@@ -8,6 +8,10 @@ void AffectsKB::addAffects(StmtId s1, StmtId s2) {
     aRS2.directAffectedBy.insert(s1);
 }
 
+void AffectsKB::addNotAffects(StmtId s1, StmtId s2) {
+    falseAffectsTable[s1].insert(s2);
+}
+
 void AffectsKB::addAffectsStar(StmtId s1, StmtId s2) {
     affectsRS& aRS1 = affectsTable[s1];
     affectsRS& aRS2 = affectsTable[s2];
@@ -20,6 +24,15 @@ bool AffectsKB::affects(StmtId s1, StmtId s2) {
     try {
         std::unordered_set<StmtId> dirAffects = affectsTable.at(s1).directAffects;
         return dirAffects.find(s2) != dirAffects.end();
+    } catch (const std::out_of_range&) {
+        return false;
+    }
+}
+
+bool AffectsKB::notAffects(StmtId s1, StmtId s2) {
+    try {
+        std::unordered_set<StmtId> falseRelations = falseAffectsTable.at(s1);
+        return falseRelations.find(s2) != falseRelations.end();
     } catch (const std::out_of_range&) {
         return false;
     }
