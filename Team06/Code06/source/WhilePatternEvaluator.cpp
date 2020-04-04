@@ -17,7 +17,7 @@ namespace PQL {
         ClauseResult evaluateWhilePatternClauseWild(PKB::PKB& database, PatternClause& clause) {
             std::unordered_set<StmtId> stmts = database.patternKB.getAllWhileStmtsWithCtrlVars();
 
-            Synonym arg0 = clause.synonym;
+            Synonym arg0 = clause.getSynonym();
 
             ClauseResult clauseResult;
             for (StmtId stmt : stmts) {
@@ -39,7 +39,7 @@ namespace PQL {
         ClauseResult evaluateWhilePatternClauseId(PKB::PKB& database, PatternClause &clause,
             std::unordered_map<std::string, DesignEntity>& synonymTable) {
 
-            Synonym arg0 = clause.synonym;
+            Synonym arg0 = clause.getSynonym();
             VarId arg1 = database.varTable.getVarId(clause.getArgs().first.second);
 
             std::unordered_set<StmtId> stmts = database.patternKB.getWhilePatternStmts(arg1);
@@ -64,7 +64,7 @@ namespace PQL {
         ClauseResult evaluateWhilePatternClauseSyn(PKB::PKB& database, PatternClause& clause,
             std::unordered_map<std::string, DesignEntity>& synonymTable) {
 
-            Synonym arg0 = clause.synonym;
+            Synonym arg0 = clause.getSynonym();
             Synonym arg1 = clause.getArgs().first.second;
 
             ClauseResult clauseResult;
