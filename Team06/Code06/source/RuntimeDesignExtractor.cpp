@@ -93,14 +93,6 @@ namespace FrontEnd {
         std::unordered_set<StmtId> neighbours = pkb->nextStarGetDirectNodes(curr, type);
 
         for (const auto& n : neighbours) {
-            if (pkb->nextStarProcessedAll(n, type)) {  // Query cache
-                for (StmtId id : pkb->nextStarGetAllNodes(n, type)) {
-                    visited.insert(id);
-                    addBiDirEdge(root, id, type);
-                }
-                continue;
-            }
-
             // Add bi-directional edge first before cycle check for Next*(s, s)
             addBiDirEdge(root, n, type);
             if (visited.find(n) == visited.end()) {
