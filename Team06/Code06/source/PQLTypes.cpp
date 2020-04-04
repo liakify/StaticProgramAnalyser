@@ -18,10 +18,8 @@ namespace PQL {
     }
 
     RelationClause::RelationClause(string clause, RelationType type,
-        pair<ArgType, StmtRef> firstStmt, pair<ArgType, StmtRef> secondStmt,
-        pair<ArgType, EntityRef> firstEnt, pair<ArgType, EntityRef> secondEnt)
-        : Clause(clause, ClauseType::RELATION), type(type), firstStmt(firstStmt),
-            secondStmt(secondStmt), firstEnt(firstEnt), secondEnt(secondEnt) {
+        pair<ArgType, StmtEntRef> firstArg, pair<ArgType, StmtEntRef> secondArg)
+        : Clause(clause, ClauseType::RELATION), type(type), firstArg(firstArg), secondArg(secondArg) {
     }
 
     bool RelationClause::setProcedureVariant() {
@@ -34,9 +32,6 @@ namespace PQL {
         this->type = this->type == RelationType::USESS
             ? RelationType::USESP
             : RelationType::MODIFIESP;
-        this->firstEnt = this->firstStmt;
-        this->firstStmt = INVALID_ARG;
-
         return true;
     }
 
@@ -44,30 +39,8 @@ namespace PQL {
         return this->type;
     }
 
-    pair<pair<ArgType, string>, pair<ArgType, string>> RelationClause::getArgs() {
-        switch (this->type) {
-        case RelationType::FOLLOWS:
-        case RelationType::FOLLOWST:
-        case RelationType::PARENT:
-        case RelationType::PARENTT:
-        case RelationType::NEXT:
-        case RelationType::NEXTT:
-        case RelationType::AFFECTS:
-        case RelationType::AFFECTST:
-            return { this->firstStmt, this->secondStmt };
-            break;
-        case RelationType::USESS:
-        case RelationType::MODIFIESS:
-            return { this->firstStmt, this->secondEnt };
-            break;
-        case RelationType::USESP:
-        case RelationType::MODIFIESP:
-        case RelationType::CALLS:
-        case RelationType::CALLST:
-            return { this->firstEnt, this->secondEnt };
-        default:
-            return { INVALID_ARG, INVALID_ARG };
-        }
+    pair<pair<ArgType, StmtEntRef>, pair<ArgType, StmtEntRef>> RelationClause::getArgs() {
+        return { this->firstArg, this->secondArg };
     }
 
     PatternClause::PatternClause(string clause, PatternType type, string synonym,
@@ -84,7 +57,7 @@ namespace PQL {
         return this->synonym;
     }
 
-    pair<pair<ArgType, string>, pair<ArgType, string>> PatternClause::getArgs() {
+    pair<pair<ArgType, EntityRef>, pair<ArgType, Pattern>> PatternClause::getArgs() {
         return { this->targetArg, this->patternArg };
     }
 

@@ -598,9 +598,7 @@ namespace PQL {
                     // SYNTAX ERROR: at least one argument is not a valid statement reference
                     query.status = SYNTAX_ERR_FOLLOWS_PARENTS_INVALID_STMT_REF;
                 } else {
-                    relations.push_back({
-                        clause, relationClass, parseStmtRef(arg1), parseStmtRef(arg2), INVALID_ARG, INVALID_ARG
-                    });
+                    relations.push_back({ clause, relationClass, parseStmtRef(arg1), parseStmtRef(arg2) });
                 }
                 break;
             case RelationType::USESS:
@@ -616,15 +614,13 @@ namespace PQL {
                     // SYNTAX ERROR: second argument is not a valid entity reference
                     query.status = SYNTAX_ERR_USES_MODIFIES_INVALID_SECOND_ENT_REF;
                 } else if (QueryUtils::isValidStmtRef(arg1)) {
-                    relations.push_back({
-                        clause, relationClass, parseStmtRef(arg1), INVALID_ARG, INVALID_ARG, parseEntityRef(arg2)
-                    });
+                    relations.push_back({ clause, relationClass, parseStmtRef(arg1), parseEntityRef(arg2) });
                 } else if (QueryUtils::isValidEntityRef(arg1)) {
                     // If first argument is an entity reference, we can immediately distinguish this clause
                     // as the procedure variant of the Uses or Modifies relation, depending on the keyword
                     relations.push_back({
                         clause, relationClass == RelationType::USESS ? RelationType::USESP : RelationType::MODIFIESP,
-                        INVALID_ARG, INVALID_ARG, parseEntityRef(arg1), parseEntityRef(arg2)
+                        parseEntityRef(arg1), parseEntityRef(arg2)
                     });
                 } else {
                     // SYNTAX ERROR: cannot be interpreted either as statement or entity ref
@@ -638,9 +634,7 @@ namespace PQL {
                     // SYNTAX ERROR: at least one argument is not a valid entity reference
                     query.status = SYNTAX_ERR_CALLS_INVALID_ENT_REF;
                 } else {
-                    relations.push_back({
-                        clause, relationClass, INVALID_ARG, INVALID_ARG, parseEntityRef(arg1), parseEntityRef(arg2)
-                    });
+                    relations.push_back({ clause, relationClass, parseEntityRef(arg1), parseEntityRef(arg2) });
                 }
                 break;
             case RelationType::NEXT:
@@ -651,9 +645,7 @@ namespace PQL {
                     // SYNTAX ERROR: at least one argument is not a valid line reference
                     query.status = SYNTAX_ERR_NEXT_INVALID_LINE_REF;
                 } else {
-                    relations.push_back({
-                        clause, relationClass, parseStmtRef(arg1), parseStmtRef(arg2), INVALID_ARG, INVALID_ARG
-                    });
+                    relations.push_back({ clause, relationClass, parseStmtRef(arg1), parseStmtRef(arg2) });
                 }
                 break;
             case RelationType::AFFECTS:
@@ -664,9 +656,7 @@ namespace PQL {
                     // SYNTAX ERROR: at least one argument is not a valid statement reference
                     query.status = SYNTAX_ERR_AFFECTS_INVALID_STMT_REF;
                 } else {
-                    relations.push_back({
-                        clause, relationClass, parseStmtRef(arg1), parseStmtRef(arg2), INVALID_ARG, INVALID_ARG
-                    });
+                    relations.push_back({ clause, relationClass, parseStmtRef(arg1), parseStmtRef(arg2) });
                 }
                 break;
             default:
@@ -830,7 +820,7 @@ namespace PQL {
         }
     }
 
-    pair<ArgType, StmtRef> QueryParser::parseStmtRef(string arg) {
+    pair<ArgType, StmtEntRef> QueryParser::parseStmtRef(string arg) {
         if (arg == "_") {
             return { ArgType::WILDCARD, arg };
         } else if (QueryUtils::isValidInteger(arg)) {

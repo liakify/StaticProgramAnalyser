@@ -107,7 +107,7 @@ enum class ArgType {
 };
 
 // Additional global aliases specific to PQL (Query Processor)
-using StmtRef = std::string;
+using StmtEntRef = std::string;
 using EntityRef = std::string;
 using Ref = std::pair<std::string, AttrType>;
 
@@ -323,13 +323,11 @@ namespace PQL {
     class RelationClause : public Clause {
      public:
         /**
-         *  Constructs a new RelationClause instance with its input string, relation type,
-         *  two positional argument pairs for statements and two positional argument pairs
-         *  for entities.
+         *  Constructs a new RelationClause instance with its input string, relation type
+         *  and two positional argument pairs.
          */
         RelationClause(std::string clause, RelationType type,
-            std::pair<ArgType, StmtRef> firstStmt, std::pair<ArgType, StmtRef> secondStmt,
-            std::pair<ArgType, EntityRef> firstEnt, std::pair<ArgType, EntityRef> secondEnt);
+            std::pair<ArgType, StmtEntRef> firstArg, std::pair<ArgType, StmtEntRef> secondArg);
 
         /**
          *  Modifies the relation type of this RelationClause instance to the procedure variant,
@@ -355,15 +353,13 @@ namespace PQL {
          *
          *  @return     pair of valid argument pairs for the relation type of this clause.
          */
-        std::pair<std::pair<ArgType, std::string>, std::pair<ArgType, std::string>> getArgs();
+        std::pair<std::pair<ArgType, StmtEntRef>, std::pair<ArgType, StmtEntRef>> getArgs();
      private:
         RelationType type;
         // StatementRef, EntityRef are just strings
         // Use ArgType to determine how to interpret them
-        std::pair<ArgType, StmtRef> firstStmt;
-        std::pair<ArgType, StmtRef> secondStmt;
-        std::pair<ArgType, EntityRef> firstEnt;
-        std::pair<ArgType, EntityRef> secondEnt;
+        std::pair<ArgType, StmtEntRef> firstArg;
+        std::pair<ArgType, StmtEntRef> secondArg;
     };
 
     /**
@@ -401,7 +397,7 @@ namespace PQL {
          *
          *  @return     pair of valid argument pairs for the pattern type of this clause.
          */
-        std::pair<std::pair<ArgType, std::string>, std::pair<ArgType, std::string>> getArgs();
+        std::pair<std::pair<ArgType, EntityRef>, std::pair<ArgType, Pattern>> getArgs();
      private:
         PatternType type;
         std::string synonym;
