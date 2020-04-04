@@ -38,6 +38,11 @@ class AffectsKB {
     void addAffectsStar(StmtId s1, StmtId s2);
 
     /*
+        Adds s2 to the set of statements that is NOT directly or indirectly affected by s1 in falseAffectsStarTable
+    */
+    void addNotAffectsStar(StmtId s1, StmtId s2);
+
+    /*
         Returns TRUE if s2 is affected by s1, FALSE otherwise
     */
     bool affects(StmtId s1, StmtId s2);
@@ -51,6 +56,11 @@ class AffectsKB {
         Returns TRUE if Affects*(s1, s2) holds, FALSE otherwise
     */
     bool affectsStar(StmtId s1, StmtId s2);
+
+    /*
+        Returns TRUE if Affects*(s1, s2) does NOT hold, FALSE otherwise
+    */
+    bool notAffectsStar(StmtId s1, StmtId s2);
 
     /*
         Returns a reference to directAffects/directAffectedBy of s for NodeType SUCCESSOR and PREDECESSOR respectively

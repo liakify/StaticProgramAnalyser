@@ -54,10 +54,17 @@ namespace PKB {
         if (affectsKB.affectsStar(s1, s2)) {  // cached
             return true;
         }
+        if (affectsKB.notAffectsStar(s1, s2)) {
+            return false;
+        }
         if (affectsKB.processedAllAffects(s1, NodeType::SUCCESSOR)) {  // allAffects is fully processed for s1 i.e. s1 does not affect s2
             return false;
         }
-        return rtDE.processAffectsStar(s1, s2, this);
+        bool res = rtDE.processAffectsStar(s1, s2, this);
+        if (!res) {
+            affectsKB.addNotAffectsStar(s1, s2);
+        }
+        return res;
     }
 
     const std::unordered_set<StmtId>& PKB::affectsGetDirectNodes(StmtId s, NodeType type) {
