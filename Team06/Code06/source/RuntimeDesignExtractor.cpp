@@ -90,6 +90,14 @@ namespace FrontEnd {
     void RuntimeDesignExtractor::nextStarDFS(StmtId root, StmtId curr, std::unordered_set<StmtId>& visited, NodeType type) {
         visited.insert(curr);
 
+        if (pkb->nextStarProcessedAll(curr, type)) {  // Query cache
+            for (StmtId id : pkb->nextStarGetAllNodes(curr, type)) {
+                visited.insert(id);
+                addBiDirEdge(root, id, type);
+            }
+            return;
+        }
+
         std::unordered_set<StmtId> neighbours = pkb->nextStarGetDirectNodes(curr, type);
 
         for (const auto& n : neighbours) {
