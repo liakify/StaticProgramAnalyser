@@ -87,6 +87,7 @@ $list_of_test_files = @(
   'withSuchthat_7'
 
   # STAGED TESTS
+  '..\given_0'
   
   # ONLY MODIFY THE BELOW
   '..\mixed_0'
