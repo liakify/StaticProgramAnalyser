@@ -81,26 +81,18 @@ bool AffectsKB::processedAllAffects(StmtId s, NodeType type) {
 }
 
 void AffectsKB::setProcessedDirectAffects(StmtId s, NodeType type) {
-    try {
-        if (type == NodeType::SUCCESSOR) {
-            affectsTable.at(s).processedDirectAffects = true;
-        } else {
-            affectsTable.at(s).processedDirectAffectedBy = true;
-        }
-    } catch (const std::out_of_range&) {
-        return;
+    if (type == NodeType::SUCCESSOR) {
+        affectsTable[s].processedDirectAffects = true;
+    } else {
+        affectsTable[s].processedDirectAffectedBy = true;
     }
 }
 
 void AffectsKB::setProcessedAllAffects(StmtId s, NodeType type) {
-    try {
-        if (type == NodeType::SUCCESSOR) {
-            affectsTable.at(s).processedAllAffects = true;
-        } else {
-            affectsTable.at(s).processedAllAffectedBy = true;
-        }
-    } catch (const std::out_of_range&) {
-        return;
+    if (type == NodeType::SUCCESSOR) {
+        affectsTable[s].processedAllAffects = true;
+    } else {
+        affectsTable[s].processedAllAffectedBy = true;
     }
 }
 
