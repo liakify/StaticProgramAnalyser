@@ -45,8 +45,8 @@ namespace UnitTesting {
         string CHAINED_MIXED_CLAUSES_QUERY = "assign a; procedure p; variable v1, v2; while w; if ifs; prog_line l; Select <p, w, a> pattern a(v1, \"0\") and w(v1, _) such that Follows*(a, ifs) pattern ifs(v2, _, _) such that Modifies(p, v2) and Parent(ifs, l) and Uses(l, v1)";
         string CHAINED_MIXED_RETURN_QUERY = "constant c; call cl; read rd; variable v; Select <c.value, cl.stmt#, cl.procName, rd.varName, v> such that Next*(cl, rd) and Modifies(rd, v) such that Calls(\"init\", _)";
         string CHAINED_CALLS_QUERY = "procedure p, q; Select <p, q> such that Calls(\"main\", p) and Calls*(p, q) and Calls(q, _)";
-        string CHAINED_NEXT_QUERY = "prog_line l; call cl; Select <l, cl> such that Next*(_, l) and Next(l, cl) and Next*(cl, 25)";
-        string CHAINED_AFFECTS_QUERY = "stmt s; assign a; Select <s, a> such that Affects*(1, s) and Affects*(a, s) and Affects(s, _)";
+        string CHAINED_NEXT_QUERY = "prog_line l; call cl; Select <l, cl> such that Next(20, 30) and Next*(_, l) and Next(l, cl) and Next*(cl, 25)";
+        string CHAINED_AFFECTS_QUERY = "stmt s; assign a; Select <s, a> such that Affects(20, 40) and Affects*(1, s) and Affects*(a, s) and Affects(s, _)";
         string CHAINED_STMT_PROG_LINE_QUERY = "stmt s; prog_line l1, l2; variable v; Select <l1, v> such that Parent*(l1, s) and Next*(s, l2) and Affects(l2, l1) and Uses(l1, v) and Modifies(l1, _)";
         string CHAINED_ADV_RELATIONS_QUERY = "prog_line l; call cl; assign a; variable v; Select <l, a, v> such that Uses(\"error\", v) and Modifies(a, v) such that Affects(l, a) and Next*(a, cl) and Calls*(_, \"error\")";
         string CHAINED_EQUALITIES_QUERY = "constant c; prog_line l; print pn; if ifs; variable v; procedure p; Select <c, v, p> with p.procName = \"lambda\" with ifs.stmt# = 8 and v.varName = pn.varName with l = c.value";
@@ -90,6 +90,7 @@ namespace UnitTesting {
         string CALLS_MISSING_SYNONYM_QUERY = "Select BOOLEAN such that Calls(p, _)";
         string CALLS_NON_PROCEDURE_ARG_QUERY = "call cl; Select cl such that Calls*(\"main\", cl)";
         string INVALID_STMT_NUMBER_QUERY = "stmt s; Select s such that Follows(0, s)";
+        string INVALID_STMT_NUMBER_OVERFLOW_QUERY = "Select BOOLEAN such that Next*(2147483648, _)";
         string INVALID_PROG_LINE_QUERY = "prog_line l; Select l such that Next*(0, l)";
         string FOLLOWS_MISSING_SYNONYM_QUERY = "print pn; Select pn such that Follows(rd, pn)";
         string NEXT_MISSING_SYNONYM_QUERY = "prog_line l1; Select l1 such that Next(l1, l2)";
@@ -221,7 +222,7 @@ namespace UnitTesting {
             USESP_MISSING_SECOND_SYNONYM_QUERY, MODIFIESP_NON_VARIABLE_ARG_QUERY,
             USESP_LITERAL_MISSING_SECOND_SYNONYM_QUERY, MODIFIESP_LITERAL_NON_VARIABLE_ARG_QUERY,
             CALLS_MISSING_SYNONYM_QUERY, CALLS_NON_PROCEDURE_ARG_QUERY,
-            INVALID_STMT_NUMBER_QUERY, INVALID_PROG_LINE_QUERY,
+            INVALID_STMT_NUMBER_QUERY, INVALID_STMT_NUMBER_OVERFLOW_QUERY, INVALID_PROG_LINE_QUERY,
             FOLLOWS_MISSING_SYNONYM_QUERY, NEXT_MISSING_SYNONYM_QUERY,
             PARENT_NON_STMT_ARG_QUERY, NEXT_NON_STMT_ARG_QUERY, AFFECTS_NON_ASSIGN_ARG_QUERY,
             PATTERN_MISSING_SYNONYM_QUERY, PATTERN_NON_VARIABLE_ARG_QUERY,

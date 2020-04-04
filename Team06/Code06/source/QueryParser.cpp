@@ -2,6 +2,7 @@
 #include "QueryParser.h"
 
 using std::invalid_argument;
+using std::out_of_range;
 using std::pair;
 using std::regex;
 using std::smatch;
@@ -205,7 +206,16 @@ namespace PQL {
 
                 for (auto& arg : argArray) {
                     if (arg.first == ArgType::INTEGER) {
-                        int lineNo = stoi(arg.second);
+                        int lineNo;
+
+                        try {
+                            lineNo = stoi(arg.second);
+                        } catch (const out_of_range&) {
+                            // SEMANTIC ERROR: statement or line number exceeds 32-bit limit
+                            query.status = SEMANTIC_ERR_FPNA_STMT_NUMBER_OVERFLOW;
+                            return false;
+                        }
+
                         if (lineNo <= 0) {
                             // SEMANTIC ERROR: statement or line number is not positive
                             // Not possible to determine now if statement or line number exceeds length of program

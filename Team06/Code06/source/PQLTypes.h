@@ -161,6 +161,7 @@ namespace PQL {
     const std::string SEMANTIC_ERR_USES_MODIFIES_NON_VARIABLE_SECOND_SYNONYM = "semantic error: synonym as second arg in Uses/Modifies clause not a VARIABLE";
     const std::string SEMANTIC_ERR_CALLS_UNDECLARED_SYNONYM = "semantic error: undeclared synonym in Calls(*) clause";
     const std::string SEMANTIC_ERR_CALLS_NON_PROCEDURE_SYNONYM = "semantic error: synonym in Calls(*) clause not a PROCEDURE";
+    const std::string SEMANTIC_ERR_FPNA_STMT_NUMBER_OVERFLOW = "semantic error: statement number in F(*)/P(*)/N(*)/A(*) clause exceeds 32-bit signed integer limit";
     const std::string SEMANTIC_ERR_FPNA_NON_POSITIVE_STMT_NUMBER = "semantic error: statement number in F(*)/P(*)/N(*)/A(*) clause must be positive";
     const std::string SEMANTIC_ERR_FPNA_UNDECLARED_SYNONYM = "semantic error: undeclared synonym in F(*)/P(*)/N(*)/A(*) clause";
     const std::string SEMANTIC_ERR_AFFECTS_NON_ASSIGN_SYNONYM = "semantic error: synonym in Affects(*) clause not an ASSIGN or its super-types";
