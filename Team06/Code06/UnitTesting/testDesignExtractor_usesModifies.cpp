@@ -84,7 +84,7 @@ namespace UnitTesting {
         {0, 0, 0, 0, 0}
     };
 
-    bool expectedProcUses[28][5] = {
+    bool expectedProcUses[5][5] = {
         {0, 0, 0, 0, 0},
         {0, 1, 1, 1, 1},
         {0, 1, 1, 1, 1},
@@ -92,7 +92,7 @@ namespace UnitTesting {
         {0, 1, 1, 0, 1}
     };
 
-    bool expectedProcModifies[28][5] = {
+    bool expectedProcModifies[5][5] = {
         {0, 0, 0, 0, 0},
         {0, 1, 1, 1, 1},
         {0, 1, 1, 1, 0},
