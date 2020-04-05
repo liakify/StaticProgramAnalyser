@@ -17,7 +17,7 @@ namespace PQL {
         */
         ClauseResult evaluateAssignPatternClauseWildWild(PKB::PKB& database, PatternClause &clause) {
 
-            Synonym arg0 = clause.synonym;
+            Synonym arg0 = clause.getSynonym();
 
             std::unordered_set<StmtId> stmts = database.stmtTable.getStmtsByType(StmtType::ASSIGN);
 
@@ -39,7 +39,7 @@ namespace PQL {
         * @return   The result of the evaluation.
         */
         ClauseResult evaluateAssignPatternClauseWildPtn(PKB::PKB& database, PatternClause &clause) {
-            Synonym arg0 = clause.synonym;
+            Synonym arg0 = clause.getSynonym();
             Pattern arg2 = clause.getArgs().second.second;
 
             std::unordered_set<StmtId> stmts = database.patternKB.getAssignPatternStmts(arg2);
@@ -63,7 +63,7 @@ namespace PQL {
         * @return   The result of the evaluation.
         */
         ClauseResult evaluateAssignPatternClauseIdWild(PKB::PKB& database, PatternClause& clause) {
-            Synonym arg0 = clause.synonym;
+            Synonym arg0 = clause.getSynonym();
             VarName arg1 = clause.getArgs().first.second;
             VarId arg1Id = database.varTable.getVarId(arg1);
 
@@ -88,7 +88,7 @@ namespace PQL {
         * @return   The result of the evaluation.
         */
         ClauseResult evaluateAssignPatternClauseIdPtn(PKB::PKB& database, PatternClause& clause) {
-            Synonym arg0 = clause.synonym;
+            Synonym arg0 = clause.getSynonym();
             VarName arg1 = clause.getArgs().first.second;
             VarId arg1Id = database.varTable.getVarId(arg1);
             Pattern arg2 = clause.getArgs().second.second;
@@ -126,7 +126,7 @@ namespace PQL {
         */
         ClauseResult evaluateAssignPatternClauseSynWild(PKB::PKB& database, PatternClause& clause,
             std::unordered_map<std::string, DesignEntity>& synonymTable) {
-            Synonym arg0 = clause.synonym;
+            Synonym arg0 = clause.getSynonym();
             Synonym arg1 = clause.getArgs().first.second;
 
             std::unordered_set<StmtId> stmts = database.stmtTable.getStmtsByType(StmtType::ASSIGN);
@@ -158,7 +158,7 @@ namespace PQL {
         */
         ClauseResult evaluateAssignPatternClauseSynPtn(PKB::PKB& database, PatternClause& clause,
             std::unordered_map<std::string, DesignEntity>& synonymTable) {
-            Synonym arg0 = clause.synonym;
+            Synonym arg0 = clause.getSynonym();
             Synonym arg1 = clause.getArgs().first.second;
             Pattern arg2 = clause.getArgs().second.second;
 

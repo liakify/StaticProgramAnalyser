@@ -2,6 +2,7 @@
 #include "QueryParser.h"
 
 using std::invalid_argument;
+using std::out_of_range;
 using std::pair;
 using std::regex;
 using std::smatch;
@@ -129,28 +130,31 @@ namespace PQL {
         }
 
         for (auto& relation : query.relations) {
-            RelationType relationClass = relation.type;
+            // Relation type and pair of first and second arguments by position
+            RelationType relationClass = relation.getRelationType();
+            pair<pair<ArgType, string>, pair<ArgType, string>> args = relation.getArgs();
 
-            if (relationClass == RelationType::USESS || relationClass == RelationType::MODIFIESS) {
-                if (relation.firstStmt.first == ArgType::WILDCARD) {
+            if (relationClass == RelationType::USESS || relationClass == RelationType::MODIFIESS ||
+                relationClass == RelationType::USESP || relationClass == RelationType::MODIFIESP) {
+                // Validate the first argument assuming the statement variant of Uses/Modifies
+                if (args.first.first == ArgType::WILDCARD) {
                     // SEMANTIC ERROR: ill-defined wildcard argument
                     query.status = SEMANTIC_ERR_USES_MODIFIES_AMBIGUOUS_WILDCARD;
                     return false;
-                } else if (relation.firstStmt.first == ArgType::SYNONYM) {
+                } else if (args.first.first == ArgType::SYNONYM) {
                     // Determine if the synonym corresponds to a PROCEDURE - if yes the relation
                     // should be modified to the procedure-variable variant
-                    auto synonymMapping = synonymTable.find(relation.firstStmt.second);
+                    auto synonymMapping = synonymTable.find(args.first.second);
                     if (synonymMapping == synonymTable.end()) {
                         // SEMANTIC ERROR: synonym referenced in Uses/Modifies clause is undeclared
                         query.status = SEMANTIC_ERR_USES_MODIFIES_UNDECLARED_SECOND_SYNONYM;
                         return false;
                     } else if (synonymMapping->second == DesignEntity::PROCEDURE) {
                         // Modify RelationClause to <RELATION>P variant and update arguments
-                        relation.type = relation.type == RelationType::USESS
-                            ? RelationType::USESP
-                            : RelationType::MODIFIESP;
-                        relation.firstEnt = relation.firstStmt;
-                        relation.firstStmt = INVALID_ARG;
+                        assert(relation.setProcedureVariant());
+                        // Retrieve the updated relation type and arguments
+                        relationClass = relation.getRelationType();
+                        args = relation.getArgs();
                     } else if (relationClass == RelationType::USESS &&
                         find(NON_USES.begin(), NON_USES.end(), synonymMapping->second) != NON_USES.end()) {
                         // SEMANTIC ERROR: design entity type error (not a STMT, ASSIGN, IF, WHILE, CALL or PRINT)
@@ -164,8 +168,9 @@ namespace PQL {
                     }
                 }
 
-                if (relation.secondEnt.first == ArgType::SYNONYM) {
-                    auto synonymMapping = synonymTable.find(relation.secondEnt.second);
+                // Validate the second argument
+                if (args.second.first == ArgType::SYNONYM) {
+                    auto synonymMapping = synonymTable.find(args.second.second);
                     if (synonymMapping == synonymTable.end()) {
                         // SEMANTIC ERROR: synonym referenced in Uses/Modifies clause is undeclared
                         query.status = SEMANTIC_ERR_USES_MODIFIES_UNDECLARED_SECOND_SYNONYM;
@@ -178,9 +183,9 @@ namespace PQL {
                 }
             } else if (relationClass == RelationType::CALLS || relationClass == RelationType::CALLST) {
                 // Relation is between procedures only
-                pair<ArgType, string> args[2] = { relation.firstEnt , relation.secondEnt };
+                pair<ArgType, string> argArray[2] = { args.first, args.second };
 
-                for (auto& arg : args) {
+                for (auto& arg : argArray) {
                     if (arg.first == ArgType::SYNONYM) {
                         auto synonymMapping = synonymTable.find(arg.second);
                         if (synonymMapping == synonymTable.end()) {
@@ -197,11 +202,20 @@ namespace PQL {
             } else {
                 // Relation is between statements: FOLLOWS, FOLLOWST, PARENT, PARENTT, AFFECTS, AFFECTST
                 // Or relation is between program lines: NEXT, NEXTT (program line equivalent to stmt number)
-                pair<ArgType, string> args[2] = { relation.firstStmt , relation.secondStmt };
+                pair<ArgType, string> argArray[2] = { args.first, args.second };
 
-                for (auto& arg : args) {
+                for (auto& arg : argArray) {
                     if (arg.first == ArgType::INTEGER) {
-                        int lineNo = stoi(arg.second);
+                        int lineNo;
+
+                        try {
+                            lineNo = stoi(arg.second);
+                        } catch (const out_of_range&) {
+                            // SEMANTIC ERROR: statement or line number exceeds 32-bit limit
+                            query.status = SEMANTIC_ERR_FPNA_STMT_NUMBER_OVERFLOW;
+                            return false;
+                        }
+
                         if (lineNo <= 0) {
                             // SEMANTIC ERROR: statement or line number is not positive
                             // Not possible to determine now if statement or line number exceeds length of program
@@ -232,8 +246,11 @@ namespace PQL {
         // Pattern clauses: only need to validate first argument (entity reference)
         // of ArgType SYNONYM corresponds to a valid declared synonym
         for (auto& pattern : query.patterns) {
-            if (pattern.targetArg.first == ArgType::SYNONYM) {
-                auto synonymMapping = synonymTable.find(pattern.targetArg.second);
+            // Pair of entity (variable) and pattern arguments respectively
+            pair<ArgType, string> entArg = pattern.getArgs().first;
+
+            if (entArg.first == ArgType::SYNONYM) {
+                auto synonymMapping = synonymTable.find(entArg.second);
                 if (synonymMapping == synonymTable.end()) {
                     // SEMANTIC ERROR: synonym referenced in pattern clause is undeclared
                     query.status = SEMANTIC_ERR_PATTERN_UNDECLARED_FIRST_SYNONYM;
@@ -249,10 +266,13 @@ namespace PQL {
         // With clauses: need to evaluate and validate the result type of args (expressions)
         // on both sides of the equality
         for (auto& equality : query.equalities) {
-            if (equality.type == WithType::LITERAL_EQUAL) {
+            // Pair of left and right arguments respectively
+            pair<pair<ArgType, Ref>, pair<ArgType, Ref>> args = equality.getArgs();
+
+            if (equality.getWithType() == WithType::LITERAL_EQUAL) {
                 // Both sides of the equality are literal values (integers or identifiers)
                 // Check that both arguments have the same type
-                if (equality.leftArg.first != equality.rightArg.first) {
+                if (args.first.first != args.second.first) {
                     query.status = SEMANTIC_ERR_WITH_CLAUSE_DIFF_LITERAL_TYPE;
                     return false;
                 }
@@ -261,18 +281,18 @@ namespace PQL {
 
             // Equality type has not been determined since at least one argument is a synonym
             // or attribute - evaluate the type of those arguments and compare for equality
-            ArgType leftType = equality.leftArg.first;
-            ArgType rightType = equality.rightArg.first;
+            ArgType leftType = args.first.first;
+            ArgType rightType = args.second.first;
 
-            pair<ArgType, Ref> args[2] = {
-                { leftType, equality.leftArg.second },
-                { rightType, equality.rightArg.second }
+            pair<ArgType, Ref> argArray[2] = {
+                { leftType, args.first.second },
+                { rightType, args.second.second }
             };
 
             // Evaluate the type of the result the argument on either side evaluates to
             // For example, synonyms of type PROCEDURE evaluate to an IDENTIFIER and
             // attributes of type VALUE evaluate to an INTEGER
-            for (auto& arg : args) {
+            for (auto& arg : argArray) {
                 if (arg.first == ArgType::SYNONYM) {
                     // First validate the synonym has been previously declared
                     auto synonymMapping = synonymTable.find(arg.second.first);
@@ -317,15 +337,16 @@ namespace PQL {
             }
 
             // Compare the types of the return values of expressions on both sides of the equality
-            if (args[0].first != args[1].first) {
+            if (argArray[0].first != argArray[1].first) {
                 // SEMANTIC ERROR: arguments of equality evaluate to return values of different type
                 query.status = SEMANTIC_ERR_WITH_CLAUSE_DIFF_RETURN_TYPE_OF_ARGS;
                 return false;
             } else {
                 // Update the equality type of the with clause
-                equality.type = args[0].first == ArgType::IDENTIFIER
+                WithType identifiedType = argArray[0].first == ArgType::IDENTIFIER
                     ? WithType::IDENTIFIER_EQUAL
                     : WithType::INTEGER_EQUAL;
+                equality.setWithType(identifiedType);
             }
 
         }
@@ -564,8 +585,6 @@ namespace PQL {
             string arg1 = args.at(0);
             string arg2 = args.at(1);
 
-            RelationClause relation;
-
             switch (relationClass) {
             case RelationType::FOLLOWS:
                 // Fallthrough
@@ -579,7 +598,7 @@ namespace PQL {
                     // SYNTAX ERROR: at least one argument is not a valid statement reference
                     query.status = SYNTAX_ERR_FOLLOWS_PARENTS_INVALID_STMT_REF;
                 } else {
-                    relation = { clause, relationClass, parseStmtRef(arg1), parseStmtRef(arg2), INVALID_ARG, INVALID_ARG };
+                    relations.push_back({ clause, relationClass, parseStmtRef(arg1), parseStmtRef(arg2) });
                 }
                 break;
             case RelationType::USESS:
@@ -595,12 +614,14 @@ namespace PQL {
                     // SYNTAX ERROR: second argument is not a valid entity reference
                     query.status = SYNTAX_ERR_USES_MODIFIES_INVALID_SECOND_ENT_REF;
                 } else if (QueryUtils::isValidStmtRef(arg1)) {
-                    relation = { clause, relationClass, parseStmtRef(arg1), INVALID_ARG, INVALID_ARG, parseEntityRef(arg2) };
+                    relations.push_back({ clause, relationClass, parseStmtRef(arg1), parseEntityRef(arg2) });
                 } else if (QueryUtils::isValidEntityRef(arg1)) {
-                    relation = {
+                    // If first argument is an entity reference, we can immediately distinguish this clause
+                    // as the procedure variant of the Uses or Modifies relation, depending on the keyword
+                    relations.push_back({
                         clause, relationClass == RelationType::USESS ? RelationType::USESP : RelationType::MODIFIESP,
-                        INVALID_ARG, INVALID_ARG, parseEntityRef(arg1), parseEntityRef(arg2)
-                    };
+                        parseEntityRef(arg1), parseEntityRef(arg2)
+                    });
                 } else {
                     // SYNTAX ERROR: cannot be interpreted either as statement or entity ref
                     query.status = SYNTAX_ERR_USES_MODIFIES_INVALID_FIRST_ARG;
@@ -613,7 +634,7 @@ namespace PQL {
                     // SYNTAX ERROR: at least one argument is not a valid entity reference
                     query.status = SYNTAX_ERR_CALLS_INVALID_ENT_REF;
                 } else {
-                    relation = { clause, relationClass, INVALID_ARG, INVALID_ARG, parseEntityRef(arg1), parseEntityRef(arg2) };
+                    relations.push_back({ clause, relationClass, parseEntityRef(arg1), parseEntityRef(arg2) });
                 }
                 break;
             case RelationType::NEXT:
@@ -624,7 +645,7 @@ namespace PQL {
                     // SYNTAX ERROR: at least one argument is not a valid line reference
                     query.status = SYNTAX_ERR_NEXT_INVALID_LINE_REF;
                 } else {
-                    relation = { clause, relationClass, parseStmtRef(arg1), parseStmtRef(arg2), INVALID_ARG, INVALID_ARG };
+                    relations.push_back({ clause, relationClass, parseStmtRef(arg1), parseStmtRef(arg2) });
                 }
                 break;
             case RelationType::AFFECTS:
@@ -635,7 +656,7 @@ namespace PQL {
                     // SYNTAX ERROR: at least one argument is not a valid statement reference
                     query.status = SYNTAX_ERR_AFFECTS_INVALID_STMT_REF;
                 } else {
-                    relation = { clause, relationClass, parseStmtRef(arg1), parseStmtRef(arg2), INVALID_ARG, INVALID_ARG };
+                    relations.push_back({ clause, relationClass, parseStmtRef(arg1), parseStmtRef(arg2) });
                 }
                 break;
             default:
@@ -644,10 +665,8 @@ namespace PQL {
             }
 
             if (query.status != STATUS_OK) {
+                // Relation was not parsed successfully - terminate prematurely
                 return false;
-            } else {
-                // Relation parsed successfully - add new relation clause
-                relations.push_back(relation);
             }
         }
 
@@ -685,8 +704,6 @@ namespace PQL {
                 return false;
             }
 
-            PatternClause pattern;
-
             switch (entityType) {
             case DesignEntity::ASSIGN:
                 if (args.size() != 2) {
@@ -697,9 +714,10 @@ namespace PQL {
                 // Attempt to parse the pattern clause with the SPA FE Parser during construction of pattern clause
                 // If it fails, then the pattern string is not a valid infix arithmetic exprresion
                 try {
-                    pattern = { clause, PatternType::ASSIGN_PATTERN, synonym, parseEntityRef(referenceString), parsePattern(args.at(1)) };
-                }
-                catch (const invalid_argument&) {
+                    patterns.push_back({
+                        clause, PatternType::ASSIGN_PATTERN, synonym, parseEntityRef(referenceString), parsePattern(args.at(1))
+                    });
+                } catch (const invalid_argument&) {
                     // SYNTAX ERROR: pattern string is not a valid infix arithmetic expression
                     query.status = SYNTAX_ERR_ASSIGN_PATTERN_INVALID_PATTERN;
                 }
@@ -712,7 +730,9 @@ namespace PQL {
                     // SYNTAX ERROR: unallowed argument for while pattern clause
                     query.status = SYNTAX_ERR_WHILE_PATTERN_INVALID_SECOND_ARG;
                 } else {
-                    pattern = { clause, PatternType::WHILE_PATTERN, synonym, parseEntityRef(referenceString), parsePattern(args.at(1)) };
+                    patterns.push_back({
+                        clause, PatternType::WHILE_PATTERN, synonym, parseEntityRef(referenceString), parsePattern(args.at(1))
+                    });
                 }
                 break;
             case DesignEntity::IF:
@@ -724,7 +744,9 @@ namespace PQL {
                     query.status = SYNTAX_ERR_IF_PATTERN_INVALID_SECOND_THIRD_ARG;
                 } else {
                     // Pattern struct only stores first two args since third arg is fixed as '_' anyway
-                    pattern = { clause, PatternType::IF_PATTERN, synonym, parseEntityRef(referenceString), parsePattern(args.at(1)) };
+                    patterns.push_back({
+                        clause, PatternType::IF_PATTERN, synonym, parseEntityRef(referenceString), parsePattern(args.at(1))
+                    });
                 }
                 break;
             default:
@@ -733,10 +755,8 @@ namespace PQL {
             }
 
             if (query.status != STATUS_OK) {
+                // Pattern was not parsed successfully - terminate prematurely
                 return false;
-            } else {
-                // Pattern parsed successfully - add new pattern clause
-                patterns.push_back(pattern);
             }
         }
 
@@ -770,15 +790,18 @@ namespace PQL {
                 return false;
             }
 
-            WithClause equality;
             if ((arg1.first == ArgType::INTEGER || arg1.first == ArgType::IDENTIFIER) &&
                 (arg2.first == ArgType::INTEGER || arg2.first == ArgType::IDENTIFIER)) {
-                equality = { clause, WithType::LITERAL_EQUAL, arg1, arg2 };
+                equalities.push_back({
+                    clause, WithType::LITERAL_EQUAL, arg1, arg2
+                });
             } else {
-                equality = { clause, WithType::UNKNOWN_EQUAL, arg1, arg2 };
+                // Equality type is currently unknown since the type of the values both
+                // expressions evaluate to have not been computed yet
+                equalities.push_back({
+                    clause, WithType::UNKNOWN_EQUAL, arg1, arg2
+                });
             }
-
-            equalities.push_back(equality);
         }
 
         query.equalities = equalities;
@@ -797,7 +820,7 @@ namespace PQL {
         }
     }
 
-    pair<ArgType, StmtRef> QueryParser::parseStmtRef(string arg) {
+    pair<ArgType, StmtEntRef> QueryParser::parseStmtRef(string arg) {
         if (arg == "_") {
             return { ArgType::WILDCARD, arg };
         } else if (QueryUtils::isValidInteger(arg)) {

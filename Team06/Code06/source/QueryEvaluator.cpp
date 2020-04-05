@@ -131,7 +131,7 @@ namespace PQL {
             std::pair<ArgType, std::string> arg1, arg2;
             arg1 = pattern.getArgs().first;
             arg2 = pattern.getArgs().second;
-            targetSynonyms.erase(pattern.synonym);
+            targetSynonyms.erase(pattern.getSynonym());
             if (arg1.first == ArgType::SYNONYM) {
                 targetSynonyms.erase(arg1.second);
             }
@@ -298,7 +298,7 @@ namespace PQL {
 
     ClauseResult QueryEvaluator::evaluateRelationClause(RelationClause &relationClause,
         std::unordered_map<std::string, DesignEntity> &synonymTable) {
-        switch (relationClause.type) {
+        switch (relationClause.getRelationType()) {
         case RelationType::FOLLOWS:
             return FollowsEvaluator::evaluateFollowsClause(this->database, relationClause, synonymTable);
             break;
@@ -338,7 +338,7 @@ namespace PQL {
             return AffectsStarEvaluator::evaluateAffectsStarClause(this->database, relationClause, synonymTable);
             break;
         default:
-            SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluateRelationClause: Unknown relation type %d\n", relationClause.type);
+            SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluateRelationClause: Unknown relation type %d\n", relationClause.getRelationType());
             return {};
         }
     }
@@ -346,7 +346,7 @@ namespace PQL {
     ClauseResult QueryEvaluator::evaluatePatternClause(PatternClause &patternClause,
         std::unordered_map<std::string, DesignEntity> &synonymTable) {
 
-        switch (patternClause.type) {
+        switch (patternClause.getPatternType()) {
         case PatternType::ASSIGN_PATTERN:
             return AssignPatternEvaluator::evaluateAssignPatternClause(this->database, patternClause, synonymTable);
             break;
@@ -357,7 +357,7 @@ namespace PQL {
             return WhilePatternEvaluator::evaluateWhilePatternClause(this->database, patternClause, synonymTable);
             break;
         default:
-            SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluatePatternClause: Unknown pattern type %d\n", patternClause.type);
+            SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluatePatternClause: Unknown pattern type %d\n", patternClause.getPatternType());
             return {};
         }
 
