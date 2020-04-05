@@ -90,9 +90,10 @@ $list_of_test_files = @(
   'given_2'
 
   # STAGED TESTS
+  '..\mixed_0'
   
   # ONLY MODIFY THE BELOW
-  '..\mixed_0'
+  # '..\nextStar_tle'
 )
 
 $list_of_no_xml_tests = @(
