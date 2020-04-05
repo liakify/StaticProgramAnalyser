@@ -101,5 +101,11 @@
     <ClCompile Include="testAffectsKB.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="testDesignExtractor_usesModifies.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="testDesignExtractor_pattern.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
