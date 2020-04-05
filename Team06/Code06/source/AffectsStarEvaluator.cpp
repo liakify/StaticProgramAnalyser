@@ -1,6 +1,7 @@
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
+#include <utility>
 
 #include "AffectsStarEvaluator.h"
 #include "LoggingUtils.h"
@@ -55,9 +56,10 @@ namespace PQL {
         * @return   The result of the evaluation.
         */
         ClauseResult evaluateAffectsStarClauseIntWild(PKB::PKB& database, RelationClause clause) {
+            std::pair<std::pair<ArgType, std::string>, std::pair<ArgType, std::string>> args = clause.getArgs();
 
-            ArgType argType1 = clause.firstStmt.first;
-            ArgType argType2 = clause.secondStmt.first;
+            ArgType argType1 = args.first.first;
+            ArgType argType2 = args.second.first;
 
             if (argType1 == ArgType::INTEGER && argType2 == ArgType::WILDCARD) {
                 // Case 1: Integer, Wildcard

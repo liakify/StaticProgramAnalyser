@@ -97,9 +97,7 @@ namespace UnitTesting {
                     {
                         "Next*(l1, l2)", RelationType::NEXTT,
                         { ArgType::SYNONYM, "l1" },
-                        { ArgType::SYNONYM, "l2" },
-                        INVALID_ARG,
-                        INVALID_ARG
+                        { ArgType::SYNONYM, "l2" }
                     }
                 },
                 { },

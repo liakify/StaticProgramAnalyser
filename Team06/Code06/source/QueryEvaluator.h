@@ -12,8 +12,8 @@
 
 namespace PQL {
 
-    struct RelationClause;
-    struct PatternClause;
+    class RelationClause;
+    class PatternClause;
     struct Query;
 
     class QueryEvaluator {

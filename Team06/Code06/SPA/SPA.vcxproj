@@ -53,6 +53,7 @@
     <ClCompile Include="..\source\PatternKB.cpp" />
     <ClCompile Include="..\source\WhilePatternEvaluator.cpp" />
     <ClCompile Include="..\source\WithEvaluator.cpp" />
+    <ClCompile Include="..\source\PQLTypes.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\source\AffectsEvaluator.h" />
