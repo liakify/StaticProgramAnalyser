@@ -147,7 +147,7 @@ namespace PQL {
                     auto synonymMapping = synonymTable.find(args.first.second);
                     if (synonymMapping == synonymTable.end()) {
                         // SEMANTIC ERROR: synonym referenced in Uses/Modifies clause is undeclared
-                        query.status = SEMANTIC_ERR_USES_MODIFIES_UNDECLARED_SECOND_SYNONYM;
+                        query.status = SEMANTIC_ERR_USES_MODIFIES_UNDECLARED_FIRST_SYNONYM;
                         return false;
                     } else if (synonymMapping->second == DesignEntity::PROCEDURE) {
                         // Modify RelationClause to <RELATION>P variant and update arguments
