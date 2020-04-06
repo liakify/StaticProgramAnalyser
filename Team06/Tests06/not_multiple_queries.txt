@@ -1,0 +1,110 @@
+1 - from all <a, v> pairs get distinct assignments after taking away <a, v> pairs where a uses v
+assign a; variable v;
+Select a such that not Uses (a, v)
+1, 2, 3, 4, 5, 6, 7
+5000
+2 - from all <a, v> pairs get distinct assignments after taking away <a, v> pairs where a updates v
+assign a; variable v;
+Select a pattern not a (v, _)
+1, 2, 3, 4, 5, 6, 7, 8
+5000
+3 - from all <a, v> pairs get distinct assignments after taking away <a, v> pairs where v.varName = "X"
+assign a; variable v;
+Select v with not v.varName = "X" 
+A, use
+5000
+4 - 
+assign a; variable v;
+Select a such that not Uses (a, v) pattern not a (v, _)
+1, 2, 3, 4, 5, 6, 7
+5000
+5 - 
+assign a; variable v;
+Select a such that not Uses (a, v) pattern a (v, _)
+3, 4, 7
+5000
+6 - 
+assign a; variable v;
+Select a such that Uses (a, v) pattern not a (v, _)
+3, 4, 5, 6, 8
+5000
+7 - 
+assign a; variable v;
+Select a such that not Uses (a, v) with not v.varName = "X"
+1, 2, 3, 4, 5, 6, 7
+5000
+8 - 
+assign a; variable v;
+Select a such that not Uses (a, v) with not v.varName = "X" and not v.VarName = "use"
+1, 3, 7
+5000
+9 - 
+assign a; variable v;
+Select a such that Uses (a, v) with not v.varName = "X"
+2, 4, 5, 6, 8
+5000
+10 - 
+assign a; variable v;
+Select a such that not Uses (a, v) with v.varName = "X"
+2, 4, 7
+5000
+11 - 
+assign a; variable v;
+Select a with not v.varName = "X" pattern not a (v, _)
+1, 2, 3, 4, 5, 6, 7, 8
+5000
+12
+assign a; variable v;
+Select a with not v.varName = "X" and not v.varName = "use" pattern not a (v, _)
+1, 4, 5, 7, 8
+5000
+13
+assign a; variable v;
+Select a with v.varName = "X" pattern not a (v, _)
+2, 3, 6, 7, 8
+5000
+14
+assign a; variable v;
+Select a with not v.varName = "X" pattern a (v, _)
+2, 3, 6, 7, 8
+5000
+15 - 
+assign a; variable v;
+Select a such that Uses (a, v) pattern a (v, _) with v.varName = "X"
+1
+5000
+16
+assign a; variable v;
+Select a such that Uses (a, v) pattern a (v, _) with not v.varName = "X"
+2
+5000
+17 - 
+assign a; variable v;
+Select a such that Uses (a, v) pattern not a (v, _) with not v.varName = "X"
+4, 5, 8
+5000
+18
+assign a; variable v;
+Select a such that Uses (a, v) pattern not a (v, _) with v.varName = "X"
+3, 6, 8
+5000
+19
+assign a; variable v;
+Select a such that not Uses (a, v) pattern a (v, _) with v.varName = "X"
+4
+5000
+20
+assign a; variable v;
+Select a such that not Uses (a, v) pattern a (v, _) with not v.varName = "X"
+3，7
+5000
+21
+assign a; variable v;
+Select a such that not Uses (a, v) pattern not a (v, _) with v.varName = "X"
+7
+5000
+22 - 
+assign a; variable v;
+Select a such that not Uses (a, v) pattern not a (v, _) with not v.varName = "X"
+3, 4
+5000
