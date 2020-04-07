@@ -9,6 +9,10 @@ namespace PQL {
         : clause(clause), clauseType(clauseType) {
     }
 
+    bool Clause::operator==(const Clause& other) {
+        return this->clause == other.clause && this->clauseType == other.clauseType;
+    }
+
     string Clause::asString() {
         return this->clause;
     }
@@ -20,6 +24,11 @@ namespace PQL {
     RelationClause::RelationClause(string clause, RelationType type,
         pair<ArgType, StmtEntRef> firstArg, pair<ArgType, StmtEntRef> secondArg)
         : Clause(clause, ClauseType::RELATION), type(type), firstArg(firstArg), secondArg(secondArg) {
+    }
+
+    bool RelationClause::operator==(const RelationClause& other) {
+        return Clause::operator==(other) && this->type == other.type &&
+            this->firstArg == other.firstArg && this->secondArg == other.secondArg;
     }
 
     bool RelationClause::setProcedureVariant() {
@@ -49,6 +58,12 @@ namespace PQL {
             targetArg(targetArg), patternArg(patternArg) {
     }
 
+    bool PatternClause::operator==(const PatternClause& other) {
+        return Clause::operator==(other) &&
+            this->type == other.type && this->synonym == other.synonym &&
+            this->targetArg == other.targetArg && this->patternArg == other.patternArg;
+    }
+
     PatternType PatternClause::getPatternType() {
         return this->type;
     }
@@ -64,6 +79,11 @@ namespace PQL {
     WithClause::WithClause(string clause, WithType type,
         pair<ArgType, Ref> leftArg, pair<ArgType, Ref> rightArg)
         : Clause(clause, ClauseType::WITH), type(type), leftArg(leftArg), rightArg(rightArg) {
+    }
+
+    bool WithClause::operator==(const WithClause& other) {
+        return Clause::operator==(other) && this->type == other.type &&
+            this->leftArg == other.leftArg && this->rightArg == other.rightArg;
     }
 
     bool WithClause::setWithType(WithType type) {
