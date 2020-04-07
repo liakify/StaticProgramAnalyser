@@ -1,4 +1,5 @@
 #include "stdafx.h"
+
 #include "PQLTypes.h"
 
 using std::pair;
@@ -9,6 +10,91 @@ namespace UnitTesting {
 
     TEST_CLASS(TestPQLTypes) {
     public:
+        TEST_METHOD(relationClauseEquality) {
+            PQL::RelationClause relation = { "Modifies(w, \"i\")", RelationType::MODIFIESS,
+                { ArgType::SYNONYM, "w" }, { ArgType::IDENTIFIER, "i" } };
+            PQL::RelationClause relation2 = { "Modifies(w, \"i\")", RelationType::MODIFIESS,
+                { ArgType::SYNONYM, "w" }, { ArgType::IDENTIFIER, "i" } };
+
+            Assert::IsTrue(relation == relation);
+            Assert::IsTrue(relation == relation2);
+
+            PQL::RelationClause diffClause = { "Modifies(w, i)", RelationType::MODIFIESS,
+                { ArgType::SYNONYM, "w" }, { ArgType::IDENTIFIER, "i" } };
+            PQL::RelationClause diffType = { "Modifies(w, \"i\")", RelationType::USESS,
+                { ArgType::SYNONYM, "w" }, { ArgType::IDENTIFIER, "i" } };
+            PQL::RelationClause diffArg1 = { "Modifies(w, \"i\")", RelationType::MODIFIESS,
+                { ArgType::SYNONYM, "while" }, { ArgType::IDENTIFIER, "i" } };
+            PQL::RelationClause diffArg2 = { "Modifies(w, \"i\")", RelationType::MODIFIESS,
+                { ArgType::SYNONYM, "w" }, { ArgType::SYNONYM, "i" } };
+
+            Assert::IsFalse(relation == diffClause);
+            Assert::IsFalse(relation == diffType);
+            Assert::IsFalse(relation == diffArg1);
+            Assert::IsFalse(relation == diffArg2);
+        }
+
+        TEST_METHOD(patternClauseEquality) {
+            PQL::PatternClause pattern = { "a(v, _\"i + 1\"_)", PatternType::ASSIGN_PATTERN, "a",
+                { ArgType::SYNONYM, "v" }, { ArgType::INCLUSIVE_PATTERN , "_(i+1)_" } };
+            PQL::PatternClause pattern2 = { "a(v, _\"i + 1\"_)", PatternType::ASSIGN_PATTERN, "a",
+                { ArgType::SYNONYM, "v" }, { ArgType::INCLUSIVE_PATTERN , "_(i+1)_" } };
+
+            Assert::IsTrue(pattern == pattern);
+            Assert::IsTrue(pattern == pattern2);
+
+            PQL::PatternClause diffClause = { "a(v, \"i + 1\")", PatternType::ASSIGN_PATTERN, "a",
+                { ArgType::SYNONYM, "v" }, { ArgType::INCLUSIVE_PATTERN , "_(i+1)_" } };
+            PQL::PatternClause diffType = { "a(v, _\"i + 1\"_)", PatternType::IF_PATTERN, "a",
+                { ArgType::SYNONYM, "v" }, { ArgType::INCLUSIVE_PATTERN , "_(i+1)_" } };
+            PQL::PatternClause diffSynonym = { "a(v, _\"i + 1\"_)", PatternType::ASSIGN_PATTERN, "a2",
+                { ArgType::SYNONYM, "v" }, { ArgType::INCLUSIVE_PATTERN , "_(i+1)_" } };
+            PQL::PatternClause diffTargetArg = { "a(v, _\"i + 1\"_)", PatternType::ASSIGN_PATTERN, "a",
+                { ArgType::IDENTIFIER, "v" }, { ArgType::INCLUSIVE_PATTERN , "_(i+1)_" } };
+            PQL::PatternClause diffPatternArg = { "a(v, _\"i + 1\"_)", PatternType::ASSIGN_PATTERN, "a",
+                { ArgType::SYNONYM, "v" }, { ArgType::INCLUSIVE_PATTERN , "(i+1)" } };
+
+            Assert::IsFalse(pattern == diffClause);
+            Assert::IsFalse(pattern == diffType);
+            Assert::IsFalse(pattern == diffSynonym);
+            Assert::IsFalse(pattern == diffTargetArg);
+            Assert::IsFalse(pattern == diffPatternArg);
+        }
+
+        TEST_METHOD(withClauseEquality) {
+            PQL::WithClause equality = { "2020 = a.stmt#", WithType::INTEGER_EQUAL,
+                { ArgType::INTEGER, { "2020", AttrType::NONE } },
+                { ArgType::ATTRIBUTE, { "a", AttrType::STMT_NUM } } };
+            PQL::WithClause equality2 = { "2020 = a.stmt#", WithType::INTEGER_EQUAL,
+                { ArgType::INTEGER, { "2020", AttrType::NONE } },
+                { ArgType::ATTRIBUTE, { "a", AttrType::STMT_NUM } } };
+
+            Assert::IsTrue(equality == equality);
+            Assert::IsTrue(equality == equality2);
+
+            PQL::WithClause diffClause = { "a.stmt# = 2020", WithType::INTEGER_EQUAL,
+                { ArgType::INTEGER, { "2020", AttrType::NONE } },
+                { ArgType::ATTRIBUTE, { "a", AttrType::STMT_NUM } } };
+            PQL::WithClause diffType = { "2020 = a.stmt#", WithType::IDENTIFIER_EQUAL,
+                { ArgType::INTEGER, { "2020", AttrType::NONE } },
+                { ArgType::ATTRIBUTE, { "a", AttrType::STMT_NUM } } };
+            PQL::WithClause diffLHS = { "2020 = a.stmt#", WithType::INTEGER_EQUAL,
+                { ArgType::WILDCARD, { "2020", AttrType::NONE } },
+                { ArgType::ATTRIBUTE, { "a", AttrType::STMT_NUM } } };
+            PQL::WithClause diffRHSArg = { "2020 = a.stmt#", WithType::INTEGER_EQUAL,
+                { ArgType::INTEGER, { "2020", AttrType::NONE } },
+                { ArgType::ATTRIBUTE, { "cl", AttrType::STMT_NUM } } };
+            PQL::WithClause diffRHSAttrType = { "2020 = a.stmt#", WithType::INTEGER_EQUAL,
+                { ArgType::INTEGER, { "2020", AttrType::NONE } },
+                { ArgType::ATTRIBUTE, { "a", AttrType::VALUE } } };
+
+            Assert::IsFalse(equality == diffClause);
+            Assert::IsFalse(equality == diffType);
+            Assert::IsFalse(equality == diffLHS);
+            Assert::IsFalse(equality == diffRHSArg);
+            Assert::IsFalse(equality == diffRHSAttrType);
+        }
+
         TEST_METHOD(clauseGetters) {
             PQL::RelationClause relationSS = { "Affects*(1, a)", RelationType::AFFECTS,
                 { ArgType::INTEGER, "1" }, { ArgType::SYNONYM, "a" } };
@@ -65,7 +151,7 @@ namespace UnitTesting {
                 { ArgType::SYNONYM, "p" }, { ArgType::IDENTIFIER, "x" } };
             PQL::RelationClause relationModifiesP = { "Modifies(p, \"i\")", RelationType::MODIFIESS,
                 { ArgType::SYNONYM, "p" }, { ArgType::IDENTIFIER, "x" } };
-            
+
             Assert::IsFalse(relationSS.setProcedureVariant());
             Assert::IsTrue(relationSS.getRelationType() == RelationType::NEXTT);
 
