@@ -297,7 +297,7 @@ namespace PQL {
          *
          *  @return     true if both Clause instances are equal.
          */
-        bool operator==(const Clause& other);
+        bool operator==(const Clause& other) const;
 
         /**
          *  Returns the input string corresponding to this Clause instance.
@@ -343,7 +343,7 @@ namespace PQL {
          *
          *  @return     true if both RelationClause instances are equal.
          */
-        bool operator==(const RelationClause& other);
+        bool operator==(const RelationClause& other) const;
 
         /**
          *  Modifies the relation type of this RelationClause instance to the procedure variant,
@@ -399,7 +399,7 @@ namespace PQL {
          *
          *  @return     true if both PatternClause instances are equal.
          */
-        bool operator==(const PatternClause& other);
+        bool operator==(const PatternClause& other) const;
 
         /**
          *  Returns the pattern type of this PatternClause instance.
@@ -453,7 +453,7 @@ namespace PQL {
          *
          *  @return     true if both WithClause instances are equal.
          */
-        bool operator==(const WithClause& other);
+        bool operator==(const WithClause& other) const;
 
         /**
          *  Modifies the equality type of this WithClause instance to the given WithType enum
@@ -505,6 +505,7 @@ namespace PQL {
         std::vector<RelationClause> relations;
         std::vector<PatternClause> patterns;
         std::vector<WithClause> equalities;
+        bool operator==(const Query& other) const;
     };
 
 }

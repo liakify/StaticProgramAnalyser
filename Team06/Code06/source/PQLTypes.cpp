@@ -2,6 +2,7 @@
 
 using std::string;
 using std::pair;
+using std::vector;
 
 namespace PQL {
 
@@ -9,7 +10,7 @@ namespace PQL {
         : clause(clause), clauseType(clauseType) {
     }
 
-    bool Clause::operator==(const Clause& other) {
+    bool Clause::operator==(const Clause& other) const {
         return this->clause == other.clause && this->clauseType == other.clauseType;
     }
 
@@ -26,7 +27,7 @@ namespace PQL {
         : Clause(clause, ClauseType::RELATION), type(type), firstArg(firstArg), secondArg(secondArg) {
     }
 
-    bool RelationClause::operator==(const RelationClause& other) {
+    bool RelationClause::operator==(const RelationClause& other) const {
         return Clause::operator==(other) && this->type == other.type &&
             this->firstArg == other.firstArg && this->secondArg == other.secondArg;
     }
@@ -58,7 +59,7 @@ namespace PQL {
             targetArg(targetArg), patternArg(patternArg) {
     }
 
-    bool PatternClause::operator==(const PatternClause& other) {
+    bool PatternClause::operator==(const PatternClause& other) const {
         return Clause::operator==(other) &&
             this->type == other.type && this->synonym == other.synonym &&
             this->targetArg == other.targetArg && this->patternArg == other.patternArg;
@@ -81,7 +82,7 @@ namespace PQL {
         : Clause(clause, ClauseType::WITH), type(type), leftArg(leftArg), rightArg(rightArg) {
     }
 
-    bool WithClause::operator==(const WithClause& other) {
+    bool WithClause::operator==(const WithClause& other) const {
         return Clause::operator==(other) && this->type == other.type &&
             this->leftArg == other.leftArg && this->rightArg == other.rightArg;
     }
@@ -101,6 +102,13 @@ namespace PQL {
 
     pair<pair<ArgType, Ref>, pair<ArgType, Ref>> WithClause::getArgs() {
         return { this->leftArg, this->rightArg };
+    }
+
+    bool Query::operator==(const Query& other) const {
+        return this->status == other.status && this->queryString == other.queryString &&
+            this->returnsBool == other.returnsBool && this->targetEntities == other.targetEntities &&
+            this->synonymTable == other.synonymTable && this->relations == other.relations &&
+            this->patterns == other.patterns && this->equalities == other.equalities;
     }
 
 };
