@@ -167,8 +167,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="QueryParserStub.cpp" />
+    <ClCompile Include="testDesignExtractor_pattern.cpp" />
+    <ClCompile Include="testDesignExtractor_usesModifies.cpp" />
     <ClCompile Include="testPQL.cpp" />
     <ClCompile Include="testAffectsKB.cpp" />
+    <ClCompile Include="testPQLTypes.cpp" />
     <ClCompile Include="testRuntimeDesignExtractor_affects.cpp" />
     <ClCompile Include="testRuntimeDesignExtractor_nextStar.cpp" />
     <ClCompile Include="testDesignExtractor_calls.cpp" />

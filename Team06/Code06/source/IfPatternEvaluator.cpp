@@ -18,7 +18,7 @@ namespace PQL {
         ClauseResult evaluateIfPatternClauseWild(PKB::PKB& database, PatternClause& clause) {
             std::unordered_set<StmtId> stmts = database.patternKB.getAllIfStmtsWithCtrlVars();
 
-            Synonym arg0 = clause.synonym;
+            Synonym arg0 = clause.getSynonym();
 
             ClauseResult clauseResult;
             for (StmtId stmt : stmts) {
@@ -40,7 +40,7 @@ namespace PQL {
         ClauseResult evaluateIfPatternClauseId(PKB::PKB& database, PatternClause& clause,
             std::unordered_map<std::string, DesignEntity>& synonymTable) {
 
-            Synonym arg0 = clause.synonym;
+            Synonym arg0 = clause.getSynonym();
             VarId arg1 = database.varTable.getVarId(clause.getArgs().first.second);
 
             std::unordered_set<StmtId> stmts = database.patternKB.getIfPatternStmts(arg1);
@@ -65,7 +65,7 @@ namespace PQL {
         ClauseResult evaluateIfPatternClauseSyn(PKB::PKB& database, PatternClause& clause,
             std::unordered_map<std::string, DesignEntity>& synonymTable) {
 
-            Synonym arg0 = clause.synonym;
+            Synonym arg0 = clause.getSynonym();
             Synonym arg1 = clause.getArgs().first.second;
 
             ClauseResult clauseResult;

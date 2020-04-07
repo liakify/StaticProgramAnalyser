@@ -12,7 +12,7 @@ namespace UnitTesting
     PKB::PKB pkbFollowsParent;
     FrontEnd::DesignExtractor DE_followsParent;
 
-    TEST_CLASS(TestDesignExtractor)
+    TEST_CLASS(TestDesignExtractor_followsParent)
     {
     public:
         TEST_CLASS_INITIALIZE(setup) {
