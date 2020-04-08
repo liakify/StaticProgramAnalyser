@@ -8,12 +8,20 @@ void AffectsKB::addAffects(StmtId s1, StmtId s2) {
     aRS2.directAffectedBy.insert(s1);
 }
 
+void AffectsKB::addNotAffects(StmtId s1, StmtId s2) {
+    falseAffectsTable[s1].insert(s2);
+}
+
 void AffectsKB::addAffectsStar(StmtId s1, StmtId s2) {
     affectsRS& aRS1 = affectsTable[s1];
     affectsRS& aRS2 = affectsTable[s2];
 
     aRS1.allAffects.insert(s2);
     aRS2.allAffectedBy.insert(s1);
+}
+
+void AffectsKB::addNotAffectsStar(StmtId s1, StmtId s2) {
+    falseAffectsStarTable[s1].insert(s2);
 }
 
 bool AffectsKB::affects(StmtId s1, StmtId s2) {
@@ -25,10 +33,28 @@ bool AffectsKB::affects(StmtId s1, StmtId s2) {
     }
 }
 
+bool AffectsKB::notAffects(StmtId s1, StmtId s2) {
+    try {
+        std::unordered_set<StmtId> falseRelations = falseAffectsTable.at(s1);
+        return falseRelations.find(s2) != falseRelations.end();
+    } catch (const std::out_of_range&) {
+        return false;
+    }
+}
+
 bool AffectsKB::affectsStar(StmtId s1, StmtId s2) {
     try {
         std::unordered_set<StmtId> allAffects = affectsTable.at(s1).allAffects;
         return allAffects.find(s2) != allAffects.end();
+    } catch (const std::out_of_range&) {
+        return false;
+    }
+}
+
+bool AffectsKB::notAffectsStar(StmtId s1, StmtId s2) {
+    try {
+        std::unordered_set<StmtId> falseRelations = falseAffectsStarTable.at(s1);
+        return falseRelations.find(s2) != falseRelations.end();
     } catch (const std::out_of_range&) {
         return false;
     }
@@ -81,26 +107,18 @@ bool AffectsKB::processedAllAffects(StmtId s, NodeType type) {
 }
 
 void AffectsKB::setProcessedDirectAffects(StmtId s, NodeType type) {
-    try {
-        if (type == NodeType::SUCCESSOR) {
-            affectsTable.at(s).processedDirectAffects = true;
-        } else {
-            affectsTable.at(s).processedDirectAffectedBy = true;
-        }
-    } catch (const std::out_of_range&) {
-        return;
+    if (type == NodeType::SUCCESSOR) {
+        affectsTable[s].processedDirectAffects = true;
+    } else {
+        affectsTable[s].processedDirectAffectedBy = true;
     }
 }
 
 void AffectsKB::setProcessedAllAffects(StmtId s, NodeType type) {
-    try {
-        if (type == NodeType::SUCCESSOR) {
-            affectsTable.at(s).processedAllAffects = true;
-        } else {
-            affectsTable.at(s).processedAllAffectedBy = true;
-        }
-    } catch (const std::out_of_range&) {
-        return;
+    if (type == NodeType::SUCCESSOR) {
+        affectsTable[s].processedAllAffects = true;
+    } else {
+        affectsTable[s].processedAllAffectedBy = true;
     }
 }
 
