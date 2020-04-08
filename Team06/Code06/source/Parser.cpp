@@ -305,7 +305,7 @@ namespace FrontEnd {
             try {
                 consume(regex("[\\s]*"));
                 op = consume(regex("[\\+\\%\\*\\-\\/][\\s]*"))[0];
-                if (!operators.empty() && compare_op(operators.top(), op) != -1) {
+                while (!operators.empty() && compare_op(operators.top(), op) != -1) {
                     combine_op(operands, operators);
                 }
                 operators.push(op);
