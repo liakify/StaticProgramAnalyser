@@ -475,6 +475,17 @@ namespace PQL {
         std::vector<WithClause> equalities;
     };
 
-    using ClauseGroup = std::vector<PQL::Clause>;
+    /**
+     * Struct representing an optimised PQL query.
+     *
+     * - clauses:           the clauses in the order in which they should be evaluated.
+     * - group:             the group that each clause belongs to (numbered starting from 0).
+     * - last:              the index of the last clause in each group.
+     */
+    struct OptimisedQuery {
+        std::vector<Clause*> clauses;
+        std::vector<int> group;
+        std::vector<int> last;
+    };
 
 }
