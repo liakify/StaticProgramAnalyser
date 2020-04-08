@@ -382,13 +382,14 @@ namespace PQL {
         vector<string>& relationClauses, vector<string>& patternClauses, vector<string>& withClauses) {
         string RELATION_CLAUSE = "[A-Za-z*]+\\s*\\([\\w,\"\\s]*\\)";
         string PATTERN_CLAUSE = "[A-Za-z][A-Za-z0-9]*\\s*\\([\\w\"\\s]+(?:,\\s*(?:_|(?:(_?)\\s*\"[A-Za-z0-9\\(\\)\\+\\-\\*\\/\\%\\s]+\"\\s*\\1))\\s*)+\\)";
+        string CONNECTED_PATTERN_CLAUSE = "[A-Za-z][A-Za-z0-9]*\\s*\\([\\w\"\\s]+(?:,\\s*(?:_|(?:(_?)\\s*\"[A-Za-z0-9\\(\\)\\+\\-\\*\\/\\%\\s]+\"\\s*\\2))\\s*)+\\)";
         string WITH_ARGUMENT = "[A-Za-z0-9]+(?:\\s*\\.\\s*[A-Za-z0-9#]+)?";
         string WITH_CLAUSE = "(\"?)\\s*" + WITH_ARGUMENT + "\\s*\\1\\s*=\\s*(?:(?=\")\"\\s*" + WITH_ARGUMENT + "\\s*\"|" + WITH_ARGUMENT + ")";
         string CONNECTED_WITH_CLAUSE = "(\"?)\\s*" + WITH_ARGUMENT + "\\s*\\2\\s*=\\s*(?:(?=\")\"\\s*" + WITH_ARGUMENT + "\\s*\"|" + WITH_ARGUMENT + ")";
 
         regex COMPOUND_RELATION_CLAUSE("^such\\s+that\\s+" + RELATION_CLAUSE + "(?:\\s*and\\s+" + RELATION_CLAUSE + ")*");
         regex COMPOUND_PATTERN_PREFIX("^pattern\\s+[A-Za-z][A-Za-z0-9]*\\s*\\(");
-        regex COMPOUND_PATTERN_CLAUSE("^pattern\\s+" + PATTERN_CLAUSE + "(?:\\s*and\\s+" + PATTERN_CLAUSE + ")*");
+        regex COMPOUND_PATTERN_CLAUSE("^pattern\\s+" + PATTERN_CLAUSE + "(?:\\s*and\\s+" + CONNECTED_PATTERN_CLAUSE + ")*");
         regex COMPOUND_WITH_CLAUSE("^with\\s+" + WITH_CLAUSE + "(?:\\s+and\\s+" + CONNECTED_WITH_CLAUSE + ")*");
         smatch ccmatch;
 
