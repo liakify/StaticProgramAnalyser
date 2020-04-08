@@ -191,6 +191,146 @@ namespace UnitTesting {
             Assert::IsFalse(equalityIdent.setWithType(WithType::UNKNOWN_EQUAL));
             Assert::IsTrue(equalityIdent.getWithType() == WithType::IDENTIFIER_EQUAL);
         }
+
+        TEST_METHOD(queryEquality) {
+            std::string queryString = "prog_line l; assign a; while w; call cl; Select <w, a, cl.procName> such that Follows*(1, l) and Next*(a, w) and Parent(w, cl) pattern a(v, \"0\") and w(v, _) with cl.procName = \"solve\" and w.stmt# = l";
+
+            PQL::Query query = {
+                PQL::STATUS_SUCCESS, queryString, true,
+                {   // List of return types in tuple
+                    { "w", AttrType::NONE },
+                    { "a", AttrType::NONE },
+                    { "cl", AttrType::PROC_NAME }
+                },
+                {   // List of declared synonyms
+                    { "l", DesignEntity::PROG_LINE },
+                    { "a", DesignEntity::ASSIGN },
+                    { "w", DesignEntity::WHILE },
+                    { "cl", DesignEntity::CALL }
+                },
+                {   // List of parsed relation clauses
+                    { "Follows*(1, l)", RelationType::FOLLOWST, { ArgType::INTEGER, "1" }, { ArgType::SYNONYM, "l" } },
+                    { "Next*(a, w)", RelationType::NEXTT, { ArgType::SYNONYM, "a" }, { ArgType::SYNONYM, "w" } },
+                    { "Parent(w, cl)", RelationType::PARENT, { ArgType::SYNONYM, "w" }, { ArgType::SYNONYM, "cl" } }
+                },
+                {   // List of parsed pattern clauses
+                    { "a(v, \"0\")", PatternType::ASSIGN_PATTERN, "a", { ArgType::SYNONYM, "v" }, { ArgType::EXACT_PATTERN, "0" } },
+                    { "w(v, _)", PatternType::WHILE_PATTERN, "w", { ArgType::SYNONYM, "v" }, { ArgType::WILDCARD, "_" } }
+                },
+                {   // List of parsed with (equality) clauses
+                    { "cl.procName = \"solve\"", WithType::IDENTIFIER_EQUAL,
+                        { ArgType::ATTRIBUTE, { "cl", AttrType::PROC_NAME } }, { ArgType::IDENTIFIER, { "solve", AttrType::NONE } } },
+                    { "w.stmt# = l", WithType::INTEGER_EQUAL,
+                        { ArgType::ATTRIBUTE, { "w", AttrType::STMT_NUM } }, { ArgType::SYNONYM, { "l", AttrType::NONE } } }
+                }
+            };
+
+            // C++ compiler will automatically generate the copy assignment operator (operator=)
+            // for all if not defined explicitly
+            PQL::Query queryCopy = query;
+
+            Assert::IsTrue(query == query);
+            Assert::IsTrue(query == queryCopy);
+
+            // Modify contents of copy to deviate from the original in exactly one way for the
+            // equality comparison to fail, for all possible ways to do so
+
+            PQL::Query diffStatus = query;
+            diffStatus.status = PQL::STATUS_OK;
+
+            PQL::Query diffQueryString = query;
+            diffQueryString.queryString = "";
+
+            PQL::Query diffBool = query;
+            diffBool.returnsBool = false;
+
+            PQL::Query missingTarget = query;
+            missingTarget.targetEntities.pop_back();
+
+            PQL::Query reorderedTargets = query;
+            std::swap(reorderedTargets.targetEntities.at(0), reorderedTargets.targetEntities.at(2));
+
+            PQL::Query modifiedTarget = query;
+            modifiedTarget.targetEntities.at(1).second = AttrType::STMT_NUM;
+
+            PQL::Query extraTarget = query;
+            extraTarget.targetEntities.push_back({ "l", AttrType::NONE });
+
+            PQL::Query missingMapping = query;
+            missingMapping.synonymTable.erase("w");
+
+            PQL::Query modifiedMappingKey = missingMapping;
+            modifiedMappingKey.synonymTable["w2"] = DesignEntity::WHILE;
+
+            PQL::Query modifiedMappingValue = query;
+            modifiedMappingValue.synonymTable.at("cl") = DesignEntity::CONSTANT;
+
+            PQL::Query extraMapping = query;
+            extraMapping.synonymTable.insert({ "rd", DesignEntity::READ });
+
+            PQL::Query missingRelation = query;
+            missingRelation.relations.erase(missingRelation.relations.begin() + 1);
+
+            PQL::Query reorderedRelations = query;
+            std::swap(reorderedRelations.relations.at(0), reorderedRelations.relations.at(1));
+
+            // Not possible to arbitrarily modify RelationClause instance after created
+            PQL::Query modifiedRelation = missingRelation;
+            modifiedRelation.relations.insert(
+                modifiedRelation.relations.begin() + 1,
+                { "Next*(a, w)", RelationType::NEXT, { ArgType::SYNONYM, "a" }, { ArgType::SYNONYM, "w" } });
+
+            PQL::Query extraRelation = query;
+            extraRelation.relations.push_back(
+                { "Uses(\"main\", v)", RelationType::USESP, { ArgType::IDENTIFIER, "main"}, { ArgType::SYNONYM, "v" } });
+
+            PQL::Query missingPattern = query;
+            missingPattern.patterns.pop_back();
+
+            PQL::Query reorderedPatterns = query;
+            std::swap(reorderedPatterns.patterns.at(0), reorderedPatterns.patterns.at(1));
+
+            // Not possible to arbitrarily modify PatternClause instance after created
+            PQL::Query modifiedPattern = missingPattern;
+            modifiedPattern.patterns.push_back(
+                { "w(v, _)", PatternType::WHILE_PATTERN, "w2", { ArgType::SYNONYM, "v" }, { ArgType::WILDCARD, "_" } });
+
+            PQL::Query extraPattern = query;
+            extraPattern.patterns.insert(
+                extraPattern.patterns.begin(),
+                { "ifs(v, _)", PatternType::IF_PATTERN, "ifs", { ArgType::SYNONYM, "v" }, { ArgType::WILDCARD, "_" } });
+
+            PQL::Query missingEquality = query;
+            missingEquality.equalities.erase(missingEquality.equalities.begin());
+
+            PQL::Query reorderedEqualities = query;
+            std::swap(reorderedEqualities.equalities.at(0), reorderedEqualities.equalities.at(1));
+
+            PQL::Query modifiedEquality = missingEquality;
+            modifiedEquality.equalities.insert(
+                modifiedEquality.equalities.begin(),
+                { "cl.procName = \"solve\"", WithType::IDENTIFIER_EQUAL,
+                    { ArgType::ATTRIBUTE, { "cl", AttrType::STMT_NUM } }, { ArgType::IDENTIFIER, { "solve", AttrType::NONE } } });
+
+            PQL::Query extraEquality = query;
+            extraEquality.equalities.insert(
+                extraEquality.equalities.begin() + 1,
+                { "\"COVID19\" = \"sux\"", WithType::LITERAL_EQUAL,
+                    { ArgType::ATTRIBUTE, { "cl", AttrType::PROC_NAME } }, { ArgType::IDENTIFIER, { "solve", AttrType::NONE } } });
+
+            std::vector<PQL::Query> diffQueries = {
+                diffStatus, diffQueryString, diffBool,
+                missingTarget, reorderedTargets, modifiedTarget, extraTarget,
+                missingMapping, modifiedMappingKey, modifiedMappingValue, extraMapping,
+                missingRelation, reorderedRelations, modifiedRelation, extraRelation,
+                missingPattern, reorderedPatterns, modifiedPattern, extraPattern,
+                missingEquality, reorderedEqualities, modifiedEquality, extraEquality
+            };
+
+            for (auto diff : diffQueries) {
+                Assert::IsFalse(query == diff);
+            }
+        }
     };
 
 }
