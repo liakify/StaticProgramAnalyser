@@ -475,4 +475,6 @@ namespace PQL {
         std::vector<WithClause> equalities;
     };
 
+    using ClauseGroup = std::vector<PQL::Clause>;
+
 }
