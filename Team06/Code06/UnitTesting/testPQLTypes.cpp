@@ -209,13 +209,18 @@ namespace UnitTesting {
                     { "cl", DesignEntity::CALL }
                 },
                 {   // List of parsed relation clauses
-                    { "Follows*(1, l)", RelationType::FOLLOWST, { ArgType::INTEGER, "1" }, { ArgType::SYNONYM, "l" } },
-                    { "Next*(a, w)", RelationType::NEXTT, { ArgType::SYNONYM, "a" }, { ArgType::SYNONYM, "w" } },
-                    { "Parent(w, cl)", RelationType::PARENT, { ArgType::SYNONYM, "w" }, { ArgType::SYNONYM, "cl" } }
+                    { "Follows*(1, l)", RelationType::FOLLOWST,
+                        { ArgType::INTEGER, "1" }, { ArgType::SYNONYM, "l" } },
+                    { "Next*(a, w)", RelationType::NEXTT,
+                        { ArgType::SYNONYM, "a" }, { ArgType::SYNONYM, "w" } },
+                    { "Parent(w, cl)", RelationType::PARENT,
+                        { ArgType::SYNONYM, "w" }, { ArgType::SYNONYM, "cl" } }
                 },
                 {   // List of parsed pattern clauses
-                    { "a(v, \"0\")", PatternType::ASSIGN_PATTERN, "a", { ArgType::SYNONYM, "v" }, { ArgType::EXACT_PATTERN, "0" } },
-                    { "w(v, _)", PatternType::WHILE_PATTERN, "w", { ArgType::SYNONYM, "v" }, { ArgType::WILDCARD, "_" } }
+                    { "a(v, \"0\")", PatternType::ASSIGN_PATTERN, "a",
+                        { ArgType::SYNONYM, "v" }, { ArgType::EXACT_PATTERN, "0" } },
+                    { "w(v, _)", PatternType::WHILE_PATTERN, "w",
+                        { ArgType::SYNONYM, "v" }, { ArgType::WILDCARD, "_" } }
                 },
                 {   // List of parsed with (equality) clauses
                     { "cl.procName = \"solve\"", WithType::IDENTIFIER_EQUAL,
