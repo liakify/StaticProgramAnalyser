@@ -12,6 +12,7 @@ namespace PKB {
         if (nameIdTable.try_emplace(varName, varIdGenerator).second) {
             VarId thisId = varIdGenerator++;
             idNameTable.insert(make_pair(thisId, varName));
+            allVars.insert(varName);
             return thisId;
         } else {
             return getVarId(varName);
@@ -33,12 +34,8 @@ namespace PKB {
     }
 
     // Returns all variables in the VarTable.
-    std::unordered_set<VarName> VarTable::getAllVars() {
-            std::unordered_set<VarName> vars;
-            for (std::pair<VarName, VarId> var : nameIdTable) {
-                    vars.insert(var.first);
-            }
-            return vars;
+    const std::unordered_set<VarName>& VarTable::getAllVars() {
+        return allVars;
     }
 
     // Returns the number of variables in the VarTable.
