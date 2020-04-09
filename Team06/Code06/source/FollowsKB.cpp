@@ -77,19 +77,11 @@ namespace PKB {
     }
 
     void FollowsKB::setAllFollowers(StmtId stmtId, const std::unordered_set<StmtId>& followers) {
-        try {
-            followsTable.at(stmtId).allFollowers.insert(followers.begin(), followers.end());
-        } catch (const std::out_of_range&) {
-            return;
-        }
+        followsTable.at(stmtId).allFollowers.insert(followers.begin(), followers.end());
     }
 
     void FollowsKB::setAllFollowing(StmtId stmtId, const std::unordered_set<StmtId>& following) {
-        try {
-            followsTable.at(stmtId).allFollowing.insert(following.begin(), following.end());
-        } catch (const std::out_of_range&) {
-            return;
-        }
+        followsTable.at(stmtId).allFollowing.insert(following.begin(), following.end());
     }
 
     bool FollowsKB::hasFollowsRelation() {
