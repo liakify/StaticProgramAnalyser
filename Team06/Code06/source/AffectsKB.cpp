@@ -63,9 +63,6 @@ namespace PKB {
     }
 
     const std::unordered_set<StmtId>& AffectsKB::getDirectNodes(StmtId s, NodeType type) {
-        if (affectsTable.find(s) == affectsTable.end()) {
-            return EMPTY_RESULT;
-        }
         if (type == NodeType::SUCCESSOR) {
             return affectsTable.at(s).directAffects;
         } else {
@@ -74,9 +71,6 @@ namespace PKB {
     }
 
     const std::unordered_set<StmtId>& AffectsKB::getAllNodes(StmtId s, NodeType type) {
-        if (affectsTable.find(s) == affectsTable.end()) {
-            return EMPTY_RESULT;
-        }
         if (type == NodeType::SUCCESSOR) {
             return affectsTable.at(s).allAffects;
         } else {
