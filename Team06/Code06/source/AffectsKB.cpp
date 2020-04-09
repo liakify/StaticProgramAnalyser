@@ -136,5 +136,6 @@ namespace PKB {
         affectsTable.clear();
         falseAffectsTable.clear();
         falseAffectsStarTable.clear();
+        affectsFullyComputed = false;
     }
 }
