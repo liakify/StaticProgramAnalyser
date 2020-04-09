@@ -289,5 +289,55 @@ namespace UnitTesting {
                 }
             }
         }
+
+        TEST_METHOD(caching) {
+            /*
+                Currently can only be manually verified that previous clauses are cached by stepping into the functions.
+                Cache saves both TRUE and FALSE relations
+            */
+            pkbAffects.clear();
+
+            Assert::IsTrue(pkbAffects.affects(2, 9) == expectedAffects[2][9]);
+            Assert::IsTrue(pkbAffects.affects(2, 9) == expectedAffects[2][9]);
+
+            pkbAffects.clear();
+
+            Assert::IsTrue(pkbAffects.affects(26, 27) == expectedAffects[26][27]);
+            Assert::IsTrue(pkbAffects.affects(26, 27) == expectedAffects[26][27]);
+
+            pkbAffects.clear();
+
+            std::unordered_set<StmtId> stmt2Affects = pkbAffects.affectsGetDirectNodes(2, NodeType::SUCCESSOR);
+            Assert::IsTrue(pkbAffects.affects(2, 9) == expectedAffects[2][9]);
+            Assert::IsTrue(pkbAffects.affectsGetDirectNodes(2, NodeType::SUCCESSOR) == stmt2Affects);
+
+            pkbAffects.clear();
+
+            std::unordered_set<StmtId> stmt9AffectedBy = pkbAffects.affectsGetDirectNodes(9, NodeType::PREDECESSOR);
+            Assert::IsTrue(pkbAffects.affects(2, 9) == expectedAffects[2][9]);
+            Assert::IsTrue(pkbAffects.affectsGetDirectNodes(9, NodeType::PREDECESSOR) == stmt9AffectedBy);
+
+            pkbAffects.clear();
+
+            Assert::IsTrue(pkbAffects.affectsStar(1, 9) == expectedAffectsStar[1][9]);
+            Assert::IsTrue(pkbAffects.affectsStar(1, 9) == expectedAffectsStar[1][9]);
+
+            pkbAffects.clear();
+
+            Assert::IsTrue(pkbAffects.affectsStar(26, 27) == expectedAffectsStar[26][27]);
+            Assert::IsTrue(pkbAffects.affectsStar(26, 27) == expectedAffectsStar[26][27]);
+
+            pkbAffects.clear();
+
+            std::unordered_set<StmtId> stmt1AffectsStar = pkbAffects.affectsStarGetAllNodes(1, NodeType::SUCCESSOR);
+            Assert::IsTrue(pkbAffects.affectsStar(1, 8) == expectedAffectsStar[1][8]);
+            Assert::IsTrue(pkbAffects.affectsStarGetAllNodes(1, NodeType::SUCCESSOR) == stmt1AffectsStar);
+
+            pkbAffects.clear();
+
+            std::unordered_set<StmtId> stmt8AffectsStarAffectedBy = pkbAffects.affectsStarGetAllNodes(8, NodeType::PREDECESSOR);
+            Assert::IsTrue(pkbAffects.affectsStar(2, 8) == expectedAffectsStar[2][8]);
+            Assert::IsTrue(pkbAffects.affectsStarGetAllNodes(8, NodeType::PREDECESSOR) == stmt8AffectsStarAffectedBy);
+        }
     };
 }
