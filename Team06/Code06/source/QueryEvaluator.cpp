@@ -161,7 +161,7 @@ namespace PQL {
 
             // If the result is empty, we can stop evaluation immediately
             if (result.empty()) {
-                return {};
+                return extractQueryResults(query, ClauseResult());
             }
 
             // Merge this table with the intermediate table of the corresponding group
@@ -169,7 +169,7 @@ namespace PQL {
 
             // If the merged table is empty, stop evaluation immediately
             if (clauseResults[optQuery.groups[i]].empty()) {
-                return {};
+                return extractQueryResults(query, ClauseResult());
             }
         }
 
