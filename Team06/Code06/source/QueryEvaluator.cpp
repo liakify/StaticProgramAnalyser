@@ -98,7 +98,8 @@ namespace PQL {
         OptimisedQuery optQuery = QueryOptimiser::optimiseQuery(query);
 
         // Maintain one ClauseResult structure for each group
-        std::vector<ClauseResult> clauseResults = std::vector<ClauseResult>(optQuery.groups.size());
+        // +1 in case there are no groups at all
+        std::vector<ClauseResult> clauseResults = std::vector<ClauseResult>(optQuery.groups.size() + 1);
 
         // Add table containing "TRUE" to every group
         for (ClauseResult& clauseResult : clauseResults) {
