@@ -2,11 +2,16 @@
 
 using std::string;
 using std::pair;
+using std::vector;
 
 namespace PQL {
 
     Clause::Clause(string clause, ClauseType clauseType)
         : clause(clause), clauseType(clauseType) {
+    }
+
+    bool Clause::operator==(const Clause& other) const {
+        return this->clause == other.clause && this->clauseType == other.clauseType;
     }
 
     string Clause::asString() {
@@ -20,6 +25,11 @@ namespace PQL {
     RelationClause::RelationClause(string clause, RelationType type,
         pair<ArgType, StmtEntRef> firstArg, pair<ArgType, StmtEntRef> secondArg)
         : Clause(clause, ClauseType::RELATION), type(type), firstArg(firstArg), secondArg(secondArg) {
+    }
+
+    bool RelationClause::operator==(const RelationClause& other) const {
+        return Clause::operator==(other) && this->type == other.type &&
+            this->firstArg == other.firstArg && this->secondArg == other.secondArg;
     }
 
     bool RelationClause::setProcedureVariant() {
@@ -49,6 +59,12 @@ namespace PQL {
             targetArg(targetArg), patternArg(patternArg) {
     }
 
+    bool PatternClause::operator==(const PatternClause& other) const {
+        return Clause::operator==(other) &&
+            this->type == other.type && this->synonym == other.synonym &&
+            this->targetArg == other.targetArg && this->patternArg == other.patternArg;
+    }
+
     PatternType PatternClause::getPatternType() {
         return this->type;
     }
@@ -66,6 +82,11 @@ namespace PQL {
         : Clause(clause, ClauseType::WITH), type(type), leftArg(leftArg), rightArg(rightArg) {
     }
 
+    bool WithClause::operator==(const WithClause& other) const {
+        return Clause::operator==(other) && this->type == other.type &&
+            this->leftArg == other.leftArg && this->rightArg == other.rightArg;
+    }
+
     bool WithClause::setWithType(WithType type) {
         if (this->type != WithType::UNKNOWN_EQUAL) {
             return false;
@@ -81,6 +102,13 @@ namespace PQL {
 
     pair<pair<ArgType, Ref>, pair<ArgType, Ref>> WithClause::getArgs() {
         return { this->leftArg, this->rightArg };
+    }
+
+    bool Query::operator==(const Query& other) const {
+        return this->status == other.status && this->queryString == other.queryString &&
+            this->returnsBool == other.returnsBool && this->targetEntities == other.targetEntities &&
+            this->synonymTable == other.synonymTable && this->relations == other.relations &&
+            this->patterns == other.patterns && this->equalities == other.equalities;
     }
 
 };
