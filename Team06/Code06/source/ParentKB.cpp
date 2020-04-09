@@ -82,22 +82,14 @@ namespace PKB {
     }
 
     void ParentKB::setAllChildren(StmtId stmtId, const std::unordered_set<StmtId>& children) {
-        try {
-            parentTable.at(stmtId).allChildren.insert(children.begin(), children.end());
-        } catch (const std::out_of_range&) {
-            return;
-        }
+        parentTable.at(stmtId).allChildren.insert(children.begin(), children.end());
     }
 
     void ParentKB::setAllParents(StmtId stmtId, const std::unordered_set<StmtId>& parents) {
-        try {
-            parentRS& pRS = parentTable.at(stmtId);
-            for (const auto& p : parents) {
-                pRS.allParents.insert(p);
-                pRS.rootParent = std::min(pRS.rootParent, p);
-            }
-        } catch (const std::out_of_range&) {
-            return;
+        parentRS& pRS = parentTable.at(stmtId);
+        for (const auto& p : parents) {
+            pRS.allParents.insert(p);
+            pRS.rootParent = std::min(pRS.rootParent, p);
         }
     }
 
