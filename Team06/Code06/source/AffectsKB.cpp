@@ -132,4 +132,6 @@ void AffectsKB::setAffectsFullyComputed() {
 
 void AffectsKB::clear() {
     affectsTable.clear();
+    falseAffectsTable.clear();
+    falseAffectsStarTable.clear();
 }
