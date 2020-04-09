@@ -1,5 +1,8 @@
 #include <algorithm>
 #include <queue>
+#include <string>
+#include <utility>
+#include <vector>
 
 #include "QueryOptimiser.h"
 
@@ -130,7 +133,7 @@ namespace PQL {
             std::pair<ArgType, Ref> arg1, arg2;
             arg1 = with.getArgs().first;
             arg2 = with.getArgs().second;
-            
+
             if (arg1.first == ArgType::SYNONYM) {
                 node.synonyms.emplace_back(arg1.second.first);
             }
@@ -152,7 +155,7 @@ namespace PQL {
         }
 
         OptimisedQuery optimiseQuery(Query& query) {
-            
+
             // Create list of all clauses
             std::vector<ClauseNode> nodes;
             for (RelationClause& relation : query.relations) {
@@ -169,11 +172,11 @@ namespace PQL {
             for (int i = 0; i < nodes.size(); i++) {
                 nodes[i].id = i;
             }
-            
+
             // Construct adjacency list
             // ClauseNodes in this adjacency list are identified by their index in the 'nodes' vector
             std::vector<std::vector<int> > graph(nodes.size(), std::vector<int>());
-            
+
             for (int i = 0; i < nodes.size(); i++) {
                 for (int j = 0; j < nodes.size(); j++) {
                     // Connect with bidirectional edge if the two clauses share any synonyms
@@ -189,7 +192,7 @@ namespace PQL {
             // Perform a BFS to label every clause with a group id
             int numGroups = 0;
             for (ClauseNode &node : nodes) {
-                if (node.group == -1) { // -1 indicates no group
+                if (node.group == -1) {  // -1 indicates no group
                     std::queue<int> q;
                     q.emplace(node.id);
                     while (!q.empty()) {
@@ -234,7 +237,7 @@ namespace PQL {
             // This is so that in case we get stuck on an advanced relation in all groups containing single-synonym
             // clauses, it might be better to proceed with a non-advanced relation clause containing two synonyms.
             std::priority_queue<ClauseNode*, std::vector<ClauseNode*>, decltype(compare)> pq(compare);
-            
+
             // Find a starting clause for every group
             std::vector<ClauseNode*> startingNode = std::vector<ClauseNode*>(numGroups, nullptr);
             for (ClauseNode& node : nodes) {
@@ -246,7 +249,7 @@ namespace PQL {
                         pq.emplace(startingNode[node.group]);
                     }
                     startingNode[node.group] = &node;
-                    
+
                 }
             }
 
@@ -274,7 +277,7 @@ namespace PQL {
                     }
                 }
             }
-            
+
             return optQuery;
         }
 

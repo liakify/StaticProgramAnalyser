@@ -4,7 +4,7 @@
 namespace PQL {
 
     namespace QueryOptimiser {
-        
+
         /**
          * Optimises a given query for evaluation.
          * 
