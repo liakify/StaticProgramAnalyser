@@ -47,5 +47,13 @@ namespace UnitTesting
             Assert::IsTrue(patternKB.getWhilePatternStmts(0) == std::unordered_set<StmtId>());
             Assert::IsTrue(patternKB.getWhilePatternStmts(3) == std::unordered_set<StmtId>());
         }
+
+        TEST_METHOD(getAllIfStmtsWithCtrlVars) {
+            Assert::IsTrue(patternKB.getAllIfStmtsWithCtrlVars() == std::unordered_set<StmtId>({ 1, 2 }));
+        }
+
+        TEST_METHOD(getAllWhileStmtsWithCtrlVars) {
+            Assert::IsTrue(patternKB.getAllWhileStmtsWithCtrlVars() == std::unordered_set<StmtId>({ 1, 2 }));
+        }
     };
 }
