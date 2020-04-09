@@ -484,7 +484,7 @@ namespace PQL {
      */
     struct OptimisedQuery {
         std::vector<Clause*> clauses;
-        std::vector<int> group;
+        std::vector<int> groups;
         std::vector<int> last;
     };
 

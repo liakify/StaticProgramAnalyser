@@ -24,7 +24,36 @@ namespace PQL {
             }
 
             bool operator<(const ClauseNode& other) const {
-                return true;
+                // Prioritise basic relations
+                if (!advancedRelation && other.advancedRelation) {
+                    return true;
+                }
+                if (!other.advancedRelation && advancedRelation) {
+                    return false;
+                }
+                // Prioritise clauses that return boolean results
+                if (booleanResult && !other.booleanResult) {
+                    return true;
+                }
+                if (other.booleanResult && !booleanResult) {
+                    return false;
+                }
+                // Prioritise clauses with less synonyms
+                if (synonyms.size() < other.synonyms.size()) {
+                    return true;
+                }
+                if (other.synonyms.size() < synonyms.size()) {
+                    return false;
+                }
+                // Prioritise with clauses
+                if (clause->getClauseType() == ClauseType::WITH && other.clause->getClauseType() != ClauseType::WITH) {
+                    return true;
+                }
+                if (other.clause->getClauseType() == ClauseType::WITH && clause->getClauseType() != ClauseType::WITH) {
+                    return false;
+                }
+
+                return id < other.id;
             }
         };
 
@@ -190,7 +219,7 @@ namespace PQL {
             for (ClauseNode& node : nodes) {
                 if (node.booleanResult) {
                     optQuery.clauses.emplace_back(node.clause);
-                    optQuery.group.emplace_back(node.group);
+                    optQuery.groups.emplace_back(node.group);
                     optQuery.last[node.group] = optQuery.clauses.size() - 1;
                     added[node.id] = true;
                 }
@@ -235,13 +264,13 @@ namespace PQL {
                 if (added[firstNode->id]) {
                     continue;
                 }
-                optQuery.clauses.emplace_back(firstNode);
-                optQuery.group.emplace_back(firstNode->group);
+                optQuery.clauses.emplace_back(firstNode->clause);
+                optQuery.groups.emplace_back(firstNode->group);
                 optQuery.last[firstNode->group] = optQuery.clauses.size() - 1;
                 added[firstNode->id] = true;
                 for (int neighbour : graph[firstNode->id]) {
                     if (!added[neighbour]) {
-                        pq.emplace(nodes[neighbour]);
+                        pq.emplace(&nodes[neighbour]);
                     }
                 }
             }

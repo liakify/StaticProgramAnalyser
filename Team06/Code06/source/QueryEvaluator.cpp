@@ -18,6 +18,7 @@
 #include "ParentEvaluator.h"
 #include "ParentStarEvaluator.h"
 #include "QueryEvaluator.h"
+#include "QueryOptimiser.h"
 #include "UsesEvaluator.h"
 #include "TypeUtils.h"
 #include "WhilePatternEvaluator.h"
@@ -93,15 +94,18 @@ namespace PQL {
 
     ClauseResult QueryEvaluator::evaluateQuery(Query &query) {
 
-        // Results of Clauses
-        std::vector<ClauseResult> clauseResults;
+        // Optimise Query
+        OptimisedQuery optQuery = QueryOptimiser::optimiseQuery(query);
 
-        // Add table containing "TRUE"
-        ClauseResult trueResult;
-        ClauseResultEntry trueResultEntry;
-        trueResultEntry["_RESULT"] = "TRUE";
-        trueResult.emplace_back(trueResultEntry);
-        clauseResults.emplace_back(trueResult);
+        // Maintain one ClauseResult structure for each group
+        std::vector<ClauseResult> clauseResults = std::vector<ClauseResult>(optQuery.groups.size());
+
+        // Add table containing "TRUE" to every group
+        for (ClauseResult& clauseResult : clauseResults) {
+            ClauseResultEntry trueResultEntry;
+            trueResultEntry["_RESULT"] = "TRUE";
+            clauseResult.emplace_back(trueResultEntry);
+        }
 
         // Construct set of all target synonyms
         std::unordered_set<Synonym> targetSynonyms;
@@ -109,58 +113,72 @@ namespace PQL {
             targetSynonyms.insert(ref.first);
         }
 
-        // Evaluate Relation Clauses
-        for (RelationClause relation : query.relations) {
-            clauseResults.emplace_back(evaluateRelationClause(relation, query.synonymTable));
-            // Remove all present synonyms from target synonyms
-            std::pair<ArgType, std::string> arg1, arg2;
-            arg1 = relation.getArgs().first;
-            arg2 = relation.getArgs().second;
-            if (arg1.first == ArgType::SYNONYM) {
-                targetSynonyms.erase(arg1.second);
+        // Evaluate clauses
+        for (int i = 0; i < optQuery.clauses.size(); i++) {
+            ClauseResult result;
+            Clause* clause = optQuery.clauses[i];
+            if (clause->getClauseType() == ClauseType::RELATION) {
+                RelationClause* relation = static_cast<RelationClause*>(clause);
+                result = evaluateRelationClause(*relation, query.synonymTable);
+                // Remove all present synonyms from target synonyms
+                std::pair<ArgType, std::string> arg1, arg2;
+                arg1 = relation->getArgs().first;
+                arg2 = relation->getArgs().second;
+                if (arg1.first == ArgType::SYNONYM) {
+                    targetSynonyms.erase(arg1.second);
+                }
+                if (arg2.first == ArgType::SYNONYM) {
+                    targetSynonyms.erase(arg2.second);
+                }
+            } else if (clause->getClauseType() == ClauseType::PATTERN) {
+                PatternClause* pattern = static_cast<PatternClause*>(pattern);
+                result = evaluatePatternClause(*pattern, query.synonymTable);
+                // Remove all present synonyms from target synonyms
+                std::pair<ArgType, std::string> arg1, arg2;
+                arg1 = pattern->getArgs().first;
+                arg2 = pattern->getArgs().second;
+                targetSynonyms.erase(pattern->getSynonym());
+                if (arg1.first == ArgType::SYNONYM) {
+                    targetSynonyms.erase(arg1.second);
+                }
+                if (arg2.first == ArgType::SYNONYM) {
+                    targetSynonyms.erase(arg2.second);
+                }
+            } else if (clause->getClauseType() == ClauseType::WITH) {
+                WithClause* with = static_cast<WithClause*>(with);
+                result = evaluateWithClause(*with, query.synonymTable);
+                // Remove all present synonyms from target synonyms
+                std::pair<ArgType, Ref> arg1, arg2;
+                arg1 = with->getArgs().first;
+                arg2 = with->getArgs().second;
+                if (arg1.first == ArgType::SYNONYM) {
+                    targetSynonyms.erase(arg1.second.first);
+                }
+                if (arg2.first == ArgType::SYNONYM) {
+                    targetSynonyms.erase(arg2.second.first);
+                }
             }
-            if (arg2.first == ArgType::SYNONYM) {
-                targetSynonyms.erase(arg2.second);
+
+            // If the result is empty, we can stop evaluation immediately
+            if (result.empty()) {
+                return {};
+            }
+
+            // Merge this table with the intermediate table of the corresponding group
+            clauseResults[optQuery.groups[i]] = combineTwoClauseResults(result, clauseResults[optQuery.groups[i]]);
+
+            // If the merged table is empty, stop evaluation immediately
+            if (clauseResults[optQuery.groups[i]].empty()) {
+                return {};
             }
         }
 
-        // Evaluate Pattern Clauses
-        for (PatternClause pattern : query.patterns) {
-            clauseResults.emplace_back(evaluatePatternClause(pattern, query.synonymTable));
-            // Remove all present synonyms from target synonyms
-            std::pair<ArgType, std::string> arg1, arg2;
-            arg1 = pattern.getArgs().first;
-            arg2 = pattern.getArgs().second;
-            targetSynonyms.erase(pattern.getSynonym());
-            if (arg1.first == ArgType::SYNONYM) {
-                targetSynonyms.erase(arg1.second);
-            }
-            if (arg2.first == ArgType::SYNONYM) {
-                targetSynonyms.erase(arg2.second);
-            }
-        }
-
-        // Evaluate With Clauses
-        for (WithClause with : query.equalities) {
-            clauseResults.emplace_back(evaluateWithClause(with, query.synonymTable));
-            // Remove all present synonyms from target synonyms
-            std::pair<ArgType, Ref> arg1, arg2;
-            arg1 = with.getArgs().first;
-            arg2 = with.getArgs().second;
-            if (arg1.first == ArgType::SYNONYM) {
-                targetSynonyms.erase(arg1.second.first);
-            }
-            if (arg2.first == ArgType::SYNONYM) {
-                targetSynonyms.erase(arg2.second.first);
-            }
-        }
-
-        // Add a table for each synonym not present in any clause
+        // Merge a table for each synonym not present in any clause
         for (Synonym synonym : targetSynonyms) {
             clauseResults.emplace_back(getClauseResultWithAllValues(synonym, query.synonymTable[synonym]));
         }
 
-        // Combine Results
+        // Combine all results
         ClauseResult combinedResult = combineClauseResults(clauseResults);
 
         // Extract necessary results to answer query
