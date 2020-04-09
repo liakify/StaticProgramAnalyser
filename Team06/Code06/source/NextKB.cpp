@@ -101,14 +101,10 @@ namespace PKB {
     }
 
     void NextKB::setProcessedAll(StmtId s, NodeType type) {
-        try {
-            if (type == NodeType::SUCCESSOR) {
-                nextStarTable.at(s).processedAllNext = true;
-            } else {
-                nextStarTable.at(s).processedAllPrev = true;
-            }
-        } catch (const std::out_of_range&) {
-            return;
+        if (type == NodeType::SUCCESSOR) {
+            nextStarTable.at(s).processedAllNext = true;
+        } else {
+            nextStarTable.at(s).processedAllPrev = true;
         }
     }
 
