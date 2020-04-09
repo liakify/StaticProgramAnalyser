@@ -7,7 +7,7 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace UnitTesting
 {
-    ParentKB parentKB;
+    PKB::ParentKB parentKB;
 
     TEST_CLASS(TestParentKB)
     {

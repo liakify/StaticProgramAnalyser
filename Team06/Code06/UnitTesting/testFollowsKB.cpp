@@ -7,7 +7,7 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace UnitTesting
 {
-    FollowsKB fKB;
+    PKB::FollowsKB fKB;
 
     TEST_CLASS(TestFollowsKB)
     {

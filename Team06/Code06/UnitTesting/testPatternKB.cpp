@@ -6,7 +6,7 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace UnitTesting
 {
-    PatternKB patternKB;
+    PKB::PatternKB patternKB;
 
     TEST_CLASS(TestPatternKB)
     {
