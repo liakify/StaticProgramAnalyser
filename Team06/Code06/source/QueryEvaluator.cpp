@@ -132,7 +132,7 @@ namespace PQL {
                     targetSynonyms.erase(arg2.second);
                 }
             } else if (clause->getClauseType() == ClauseType::PATTERN) {
-                PatternClause* pattern = static_cast<PatternClause*>(pattern);
+                PatternClause* pattern = static_cast<PatternClause*>(clause);
                 result = evaluatePatternClause(*pattern, query.synonymTable);
                 // Remove all present synonyms from target synonyms
                 std::pair<ArgType, std::string> arg1, arg2;
@@ -146,7 +146,7 @@ namespace PQL {
                     targetSynonyms.erase(arg2.second);
                 }
             } else if (clause->getClauseType() == ClauseType::WITH) {
-                WithClause* with = static_cast<WithClause*>(with);
+                WithClause* with = static_cast<WithClause*>(clause);
                 result = evaluateWithClause(*with, query.synonymTable);
                 // Remove all present synonyms from target synonyms
                 std::pair<ArgType, Ref> arg1, arg2;
