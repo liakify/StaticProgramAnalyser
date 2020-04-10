@@ -15,11 +15,9 @@ $output_suffix = '_out.xml'
 $regression_test_path = '.\Team06\Tests06\regression_tests\'
 
 $list_of_test_files = @(
-  '..\given_0'
-  '..\given_1'
-  '..\given_2'
   
-  # ONLY MODIFY THE BELOW
+  # 'affects_singleStmt'
+  # 'affectsStar_singleStmt'
   '..\mixed_0'
 )
 
