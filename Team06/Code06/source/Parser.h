@@ -39,6 +39,13 @@ namespace FrontEnd {
         std::string src;
         PKB::PKB pkb;
         size_t pos;
+        std::unordered_map<char, int> opRank = std::unordered_map<char, int>({
+            std::pair<char, int>('*', 1),
+            std::pair<char, int>('/', 1),
+            std::pair<char, int>('%', 1),
+            std::pair<char, int>('+', 0),
+            std::pair<char, int>('-', 0)
+        });
 
         std::string consume(std::regex rgx);
 
