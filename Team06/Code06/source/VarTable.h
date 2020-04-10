@@ -10,6 +10,7 @@
 
 using std::out_of_range;
 using std::unordered_map;
+using std::unordered_set;
 
 namespace PKB {
 
@@ -21,6 +22,7 @@ namespace PKB {
 
         unordered_map<VarName, VarId> nameIdTable;
         unordered_map<VarId, VarName> idNameTable;
+        unordered_set<VarName> allVars;
         VarId varIdGenerator;
 
      public:
@@ -48,7 +50,7 @@ namespace PKB {
         /**
          *  Returns all variables in the VarTable
          */
-        std::unordered_set<VarName> getAllVars();
+        const std::unordered_set<VarName>& getAllVars();
 
         /**
          *  Returns the number of variables in the VarTable

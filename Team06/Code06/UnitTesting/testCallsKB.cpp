@@ -6,8 +6,8 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace UnitTesting
 {
-    CallsKB cKB;
-    CallsKB ckbEmpty;
+    PKB::CallsKB cKB;
+    PKB::CallsKB ckbEmpty;
 
     TEST_CLASS(TestCallsKB)
     {
