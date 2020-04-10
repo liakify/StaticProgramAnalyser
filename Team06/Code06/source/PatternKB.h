@@ -7,29 +7,32 @@
 #include "Types.h"
 #include "Constants.h"
 
-class PatternKB {
- public:
-    void addAssignPattern(Pattern pattern, StmtId stmtId);
+namespace PKB {
 
-    void addIfPattern(VarId varId, StmtId stmtId);
+    class PatternKB {
+     public:
+        void addAssignPattern(Pattern pattern, StmtId stmtId);
 
-    void addWhilePattern(VarId varId, StmtId stmtId);
+        void addIfPattern(VarId varId, StmtId stmtId);
 
-    const std::unordered_set<StmtId>& getAssignPatternStmts(Pattern pattern);
+        void addWhilePattern(VarId varId, StmtId stmtId);
 
-    const std::unordered_set<StmtId>& getIfPatternStmts(VarId varId);
+        const std::unordered_set<StmtId>& getAssignPatternStmts(Pattern pattern);
 
-    const std::unordered_set<StmtId>& getWhilePatternStmts(VarId varId);
+        const std::unordered_set<StmtId>& getIfPatternStmts(VarId varId);
 
-    const std::unordered_set<StmtId>& getAllIfStmtsWithCtrlVars();
+        const std::unordered_set<StmtId>& getWhilePatternStmts(VarId varId);
 
-    const std::unordered_set<StmtId>& getAllWhileStmtsWithCtrlVars();
+        const std::unordered_set<StmtId>& getAllIfStmtsWithCtrlVars();
 
- private:
-    std::unordered_map<Pattern, std::unordered_set<StmtId>> assignTable;
-    std::unordered_map<VarId, std::unordered_set<StmtId>> ifTable;
-    std::unordered_map<VarId, std::unordered_set<StmtId>> whileTable;
+        const std::unordered_set<StmtId>& getAllWhileStmtsWithCtrlVars();
 
-    std::unordered_set<StmtId> allIfStmtsWithCtrlVars;
-    std::unordered_set<StmtId> allWhileStmtsWithCtrlVars;
-};
+     private:
+        std::unordered_map<Pattern, std::unordered_set<StmtId>> assignTable;
+        std::unordered_map<VarId, std::unordered_set<StmtId>> ifTable;
+        std::unordered_map<VarId, std::unordered_set<StmtId>> whileTable;
+
+        std::unordered_set<StmtId> allIfStmtsWithCtrlVars;
+        std::unordered_set<StmtId> allWhileStmtsWithCtrlVars;
+    };
+}

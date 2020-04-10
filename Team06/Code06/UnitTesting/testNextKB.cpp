@@ -9,6 +9,7 @@ using namespace SIMPLE;
 
 namespace UnitTesting {
     PKB::PKB nKB;
+    PKB::PKB nkbEmpty;
 
     TEST_CLASS(TestNextKB) {
     public:
@@ -127,6 +128,7 @@ namespace UnitTesting {
 
         TEST_METHOD(hasNextRelation) {
             Assert::IsTrue(nKB.hasNextRelation());
+            Assert::IsFalse(nkbEmpty.hasNextRelation());
         }
 
         TEST_METHOD(nextStarSetProcessedAll) {
