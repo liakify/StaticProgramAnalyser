@@ -5,6 +5,8 @@
 #include <stack>
 #include <stdexcept>
 #include <string>
+#include <unordered_map>
+#include <utility>
 
 #include "PKB.h"
 #include "Simple.h"
