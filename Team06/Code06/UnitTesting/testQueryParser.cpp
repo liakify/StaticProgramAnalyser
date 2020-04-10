@@ -2,6 +2,7 @@
 
 #include "QueryParser.h"
 
+using std::pair;
 using std::string;
 using std::vector;
 
@@ -22,16 +23,16 @@ namespace UnitTesting {
         string TRIVIAL_ONE_TUPLE_QUERY = "prog_line l; Select <l>";
         string TRIVIAL_TUPLE_QUERY = "procedure p; variable BOOLEAN; Select <p, BOOLEAN>";
         string TRIVIAL_TUPLE_ATTRIBUTES_QUERY = "constant procName; variable value; procedure stmtNum; read varName; Select <varName.stmt#, value.varName, stmtNum.procName, procName.value>";
-        string TRIVIAL_REDUNDANT_ATTRIBUTE_QUERY = "if ifs; Select <ifs, ifs.stmt#>";
-        string TRIVIAL_TUPLE_MIXED_QUERY = "call cl; print pn; Select <cl, cl.procName, pn, pn.varName>";
+        string TRIVIAL_REDUNDANT_ATTRIBUTE_QUERY = "print pn; Select <pn, pn.stmt#, pn.varName>";
+        string TRIVIAL_TUPLE_MIXED_QUERY = "call cl; read rd; Select <cl, cl.procName, rd, rd.varName>";
         string SIMPLE_CONSTANTS_QUERY = "assign a; Select a such that Follows*(4, 9) pattern a(\"x\", _\"(0)\"_)";
         string SIMPLE_VALID_QUERY = "variable v; if ifs; assign a; Select v such that Parent(ifs, a) pattern a(v, _)";
         string SIMPLE_VALID_BOOLEAN_QUERY = "stmt progline; prog_line stmt; Select BOOLEAN such that Follows*(stmt, progline)";
-        string SIMPLE_VALID_TUPLE_QUERY = "procedure p, q; constant BOOLEAN; Select <p, q, BOOLEAN> such that Modifies (p, _)";
+        string SIMPLE_VALID_TUPLE_QUERY = "procedure p, q; constant BOOLEAN; Select <p, q, BOOLEAN> such that Modifies(p, _)";
         string SIMPLE_VALID_ATTRIBUTES_QUERY = "while w; read rd; Select <w.stmt#, rd, rd.varName> such that Parent*(w, rd)";
         string SIMPLE_PATTERN_STRING_QUERY = "assign a; Select a pattern a(_, \"x + 1 - 2 * y / z % 3\")";
         string SIMPLE_LITERAL_INTEGER_EQUALITY_QUERY = "Select BOOLEAN with 1231 = 4231";
-        string SIMPLE_LITERAL_IDENTIFIER_EQUALITY_QUERY = "constant c; variable v; Select <c, v> with \"bLeong\" = \"satan\"";
+        string SIMPLE_LITERAL_IDENTIFIER_EQUALITY_QUERY = "constant c; variable v; Select <c, v> with \"bL\" = \"satan\"";
         string SIMPLE_MIXED_EQUALITY_QUERY = "call cl; Select cl with cl.procName = \"procedure\"";
         string SIMPLE_INTEGER_EQUALITY_QUERY = "print pn; prog_line l; Select <pn, l> with pn.stmt# = l";
         string SIMPLE_IDENTIFIER_EQUALITY_QUERY = "procedure p; variable v; Select <p, v> with p.procName = v.varName";
@@ -45,23 +46,23 @@ namespace UnitTesting {
         string CHAINED_MIXED_CLAUSES_QUERY = "assign a; procedure p; variable v1, v2; while w; if ifs; prog_line l; Select <p, w, a> pattern a(v1, \"0\") and w(v1, _) such that Follows*(a, ifs) pattern ifs(v2, _, _) such that Modifies(p, v2) and Parent(ifs, l) and Uses(l, v1)";
         string CHAINED_MIXED_RETURN_QUERY = "constant c; call cl; read rd; variable v; Select <c.value, cl.stmt#, cl.procName, rd.varName, v> such that Next*(cl, rd) and Modifies(rd, v) such that Calls(\"init\", _)";
         string CHAINED_CALLS_QUERY = "procedure p, q; Select <p, q> such that Calls(\"main\", p) and Calls*(p, q) and Calls(q, _)";
-        string CHAINED_NEXT_QUERY = "prog_line l; call cl; Select <l, cl> such that Next*(_, l) and Next(l, cl) and Next*(cl, 25)";
-        string CHAINED_AFFECTS_QUERY = "stmt s; assign a; Select <s, a> such that Affects*(1, s) and Affects*(a, s) and Affects(s, _)";
+        string CHAINED_NEXT_QUERY = "prog_line l; call cl; Select <l, cl> such that Next(20, 30) and Next*(_, l) and Next(l, cl) and Next*(cl, 25)";
+        string CHAINED_AFFECTS_QUERY = "stmt s; assign a; Select <s, a> such that Affects(20, 40) and Affects*(1, s) and Affects*(a, s) and Affects(s, _)";
         string CHAINED_STMT_PROG_LINE_QUERY = "stmt s; prog_line l1, l2; variable v; Select <l1, v> such that Parent*(l1, s) and Next*(s, l2) and Affects(l2, l1) and Uses(l1, v) and Modifies(l1, _)";
         string CHAINED_ADV_RELATIONS_QUERY = "prog_line l; call cl; assign a; variable v; Select <l, a, v> such that Uses(\"error\", v) and Modifies(a, v) such that Affects(l, a) and Next*(a, cl) and Calls*(_, \"error\")";
         string CHAINED_EQUALITIES_QUERY = "constant c; prog_line l; print pn; if ifs; variable v; procedure p; Select <c, v, p> with p.procName = \"lambda\" with ifs.stmt# = 8 and v.varName = pn.varName with l = c.value";
-        string CHAINED_CONFUSING_AND_QUERY = "prog_line and, operand; assign a; Select BOOLEAN with 19 = and with 20 = operand such that Next(and, operand) with 19 = and pattern a(_, _\"0\"_)";
-        string CHAINED_ALL_RELATIONS_QUERY = "procedure p; stmt s; prog_line l; call cl; assign a; variable v; Select <p, v> such that Calls(_, p) and Uses(p, v) and Parent(s, cl) and Modifies(cl, v) and Follows*(cl, l) and Next(l, a) and Affects*(a, a)";
-        string CHAINED_ALL_PATTERNS_QUERY = "while w; assign a; if ifs; variable v; Select <a, v> pattern ifs(v, _, _) and a(\"x\", _) pattern w(v, _)";
+        string CHAINED_CONFUSING_AND_QUERY = "prog_line and, operand; assign a; Select BOOLEAN with 19 = and with 20 = operand such that Next(operand, and) with operand = and pattern a(_, \"and\") such that Affects*(and, and)";
+        string CHAINED_ALL_RELATIONS_QUERY = "procedure p; stmt s; prog_line l; call cl; assign a; variable v; Select <p, v> such that Modifies(\"procedure\", v) such that Calls(_, p) and Uses(p, v) such that Parent(s, cl) such that Modifies(cl, v) and Follows*(cl, l) and Next(l, a) such that Affects*(a, a)";
+        string CHAINED_ALL_PATTERNS_QUERY = "while w1, w2; assign a1, a2; if ifs; variable v; Select <a1, a2, v> pattern w1(v, _) pattern ifs(v, _, _) and a1(\"x\", _\"b * b - (4 * a * c) / 2\"_) and a2(v, \"x0 + y0 + x * x - y * y\") pattern w2(\"x0\", _)";
         string CHAINED_ALL_NON_LITERAL_EQUALITIES_QUERY = "constant c1, c2; call cl; read rd; print pn; prog_line l1, l2, l3; Select BOOLEAN with l3 = 420 and rd.varName = pn.varName with l1 = l2 with cl.procName = \"lambda\" and l1 = rd.stmt# and pn.stmt# = c1.value with c2.value = 666";
-        string CHAINED_NO_WHITESPACE_QUERY = "assign a;while w;variable v;call cl;print pn;Select<a,w,v,pn>pattern a(v,_)and w(v,_)with pn.varName=cl.procName and 6=9 and \"xyz\"=\"xyz\" such that Modifies(a,v)and Modifies(w,v)";
+        string CHAINED_NO_WHITESPACE_QUERY = "assign a1,a2;while w;variable v;call cl;print pn;Select<a1,w,v,pn>pattern a1(v,_)and w(v,_)with pn.varName=cl.procName and pn.stmt#=69 pattern a2(_,_\"f*x+f*(x-dx)+dx*dy\"_)such that Next*(a1,a2)with \"xyz\"=\"xyz\" such that Uses(a1,v)and Modifies(w,v)";
         string CHAINED_EXTRA_WHITESPACE_QUERY = "\nprocedure  p\v;\rwhile\tw ;assign\va\r;  variable\fv1,  v2\n;\tcall\ncl\t;\vprog_line\rl\f;\nSelect\f<\vp. procName\r,\tw\n,  cl\f,\ncl\t.\rprocName\v,\fa >\n pattern\ta(  v1,\r_\"\t69-\v 420\"_ )\nwith\t\"i\"  =\r\"i\"\vand  17\r=w\t.  stmt#  and\fl\n=\tcl\r.\vstmt#\nsuch  that\fModifies\r(p\t,v1)\fand\rUses(\tw\v,  v1\n)  pattern\tw  (v2, _\v\f) such\t\tthat  Next*\f (\ta, w\v)\rand\tFollows(\na\r,\fcl  )\vwith p\n.\fprocName\r=\n\" function\t\"  and\rcl\v.\fprocName\n=  v2  .\tvarName\n";
+        string PROJECT_REPORT_SAMPLE_QUERY = "assign a1, a2; constant c; prog_line l; while w; if ifs; read rd; print pn; procedure p; variable v1, v2; Select <a1, w.stmt#, rd.varName, pn, p> such that Modifies(a1, v1) and Uses(pn, v1) and Parent*(w, a1) with v2.varName = \"input\" pattern w(\"i\", _) and a1(_, _\"i + 1 + x / 2 + y - (3 * z)\"_) such that Calls(\"driver\", _) and Uses(p, \"j\") and Affects*(1, 64) with c.value = l and rd.varName = v2.varName and 3203 = 3230 pattern ifs(v2, _, _)";
 
         // Invalid queries that fail in validateQuerySyntax
         string EMPTY_QUERY = "";
         string FOREIGN_CHARACTER_IN_DECLARATION_QUERY = "assign a; read r1 & r2; Select r1";
         string INCORRECT_DECLARATION_SYNTAX_QUERY = "if ifs; while w1 w2; Select ifs";
-        string DUPLICATE_BODY_QUERY = "prog_line l1, l2; Select l1; Select l2";
         string MISSING_BODY_QUERY = "print pn;";
         string MISSING_BODY_SUFFIX_QUERY = "read rd; Select ";
         string MISSING_SELECT_QUERY = "stmt s; select s";
@@ -77,21 +78,26 @@ namespace UnitTesting {
         string INVALID_PROG_LINE_ATTRIBUTE_QUERY = "prog_line l; Select l.stmt# such that Follows(l, 4231)";
         string INVALID_SYNONYM_ATTRIBUTE_QUERY = "assign a; Select a.varName pattern a(_, \"0\")";
         string INVALID_SYNONYM_ATTRIBUTE_TYPE_IN_TUPLE_QUERY = "call cl; print pn; Select <cl, cl.procName, pn.value> such that Next(cl, pn)";
-        string AMBIGUOUS_WILDCARD_QUERY = "variable v; Select v such that Modifies(_, v)";
-        string USES_MISSING_FIRST_SYNONYM_QUERY = "variable v; Select v such that Uses(ifs, v)";
-        string USES_UNDEFINED_RELATION_QUERY = "read rd; Select BOOLEAN such that Uses(rd, \"var\")";
-        string MODIFIES_UNDEFINED_RELATION_QUERY = "print pn; Select pn such that Modifies(pn, _)";
-        string MODIFIES_MISSING_SECOND_SYNONYM_QUERY = "procedure p; Select p such that Modifies(p, v)";
-        string USES_NON_VARIABLE_ARG_QUERY = "constant c; prog_line l; Select l such that Uses(l, c)";
+        string USESS_AMBIGUOUS_WILDCARD_QUERY = "variable v; Select v such that Uses(_, v)";
+        string MODIFIESS_MISSING_FIRST_SYNONYM_QUERY = "variable v; Select v such that Modifies(w, v)";
+        string USESS_UNDEFINED_RELATION_QUERY = "read rd; Select rd such that Uses(rd, _)";
+        string MODIFIESS_UNDEFINED_RELATION_QUERY = "print pn; Select pn such that Modifies(pn, \"n\")";
+        string USESS_MISSING_SECOND_SYNONYM_QUERY = "assign a; Select a such that Uses(a, v)";
+        string MODIFIESP_MISSING_SECOND_SYNONYM_QUERY = "procedure p; Select p such that Modifies(p, v)";
+        string USESP_LITERAL_MISSING_SECOND_SYNONYM_QUERY = "Select BOOLEAN such that Uses(\"f\", v)";
+        string USESP_NON_VARIABLE_ARG_QUERY = "procedure p; while w; Select p such that Uses(p, w)";
+        string MODIFIESS_NON_VARIABLE_ARG_QUERY = "constant c; prog_line l; Select l such that Modifies(l, c)";
+        string MODIFIESP_LITERAL_NON_VARIABLE_ARG_QUERY = "if ifs; Select BOOLEAN such that Modifies(\"func\", ifs)";
         string CALLS_MISSING_SYNONYM_QUERY = "Select BOOLEAN such that Calls(p, _)";
         string CALLS_NON_PROCEDURE_ARG_QUERY = "call cl; Select cl such that Calls*(\"main\", cl)";
+        string INVALID_STMT_NUMBER_OVERFLOW_QUERY = "Select BOOLEAN such that Next*(2147483648, _)";
         string INVALID_STMT_NUMBER_QUERY = "stmt s; Select s such that Follows(0, s)";
         string INVALID_PROG_LINE_QUERY = "prog_line l; Select l such that Next*(0, l)";
         string FOLLOWS_MISSING_SYNONYM_QUERY = "print pn; Select pn such that Follows(rd, pn)";
         string NEXT_MISSING_SYNONYM_QUERY = "prog_line l1; Select l1 such that Next(l1, l2)";
+        string AFFECTS_NON_ASSIGN_ARG_QUERY = "read rd; Select rd such that Affects*(rd, 69)";
         string PARENT_NON_STMT_ARG_QUERY = "variable v; Select BOOLEAN such that Parent*(_, v)";
         string NEXT_NON_STMT_ARG_QUERY = "constant c; Select c such that Next(c, 42)";
-        string AFFECTS_NON_ASSIGN_ARG_QUERY = "read rd; Select rd such that Affects*(rd, 69)";
         string PATTERN_MISSING_SYNONYM_QUERY = "assign a; Select a pattern a(v, \"x\")";
         string PATTERN_NON_VARIABLE_ARG_QUERY = "call cl; assign a; Select cl pattern a(cl, _)";
         string WITH_DIFFERING_LITERAL_ARG_TYPE_QUERY = "Select BOOLEAN with 1 = \"one\"";
@@ -109,6 +115,7 @@ namespace UnitTesting {
         string INVALID_AND_RELATION_QUERY = "while w1, w2; Select w1 such that Parent(w1, w2) and such that Follows(w2, _)";
         string INVALID_AND_PATTERN_QUERY = "assign a1, a2; variable v; Select v pattern a1(v, _) and pattern a2(v, _)";
         string INVALID_AND_WITH_QUERY = "prog_line and; Select BOOLEAN with 1 = and and with \"bob\" = \"theBuilder\"";
+        string MISSING_RETURN_TYPE_QUERY = "print pn; stmt s1; Select such that Follows(pn, s1)";
         string INCORRECT_RELATION_KEYWORD_QUERY = "stmt s; print pn; Select pn such tat Follows*(s, p)";
         string INCORRECT_PATTERN_KEYWORD_QUERY = "assign a; Select a patern a(_, \"0\")";
         string INCORRECT_EQUALITY_KEYWORD_QUERY = "Select BOOLEAN wit 1 = 1";
@@ -116,9 +123,9 @@ namespace UnitTesting {
         string RELATION_INVALID_ATTRIBUTE_ARG_QUERY = "procedure p; call cl; Select cl.stmt# such that Calls(p, cl.procName)";
         string PATTERN_INVALID_SYNTAX_QUERY = "read rd; print pn; assign a; Select a pattern(_, _) and Follows(rd, pn)";
         string PATTERN_TOO_FEW_ARGS_QUERY = "if ifs; Select ifs pattern ifs(_)";
-        string PATTERN_INVALID_FIRST_ARG_CHARACTER_QUERY = "while w; Select w.stmt# pattern w(\"i != 0\", _)";
-        string PATTERN_INVALID_SECOND_ARG_CHARACTER_QUERY = "assign a; Select a pattern a(\"x\", \"2 ^ 32 - 1\")";
-        string PATTERN_INVALID_ATTRIBUTE_ARG_QUERY = "if ifs; Select ifs(v.value, _, _)";
+        string PATTERN_INVALID_FIRST_ARG_CHARACTER_QUERY = "while w; Select w.stmt# pattern w(\"i > 0\", _)";
+        string PATTERN_INVALID_SECOND_ARG_CHARACTER_QUERY = "assign a; Select a pattern a(\"x\", \"i = 1\")";
+        string PATTERN_INVALID_ATTRIBUTE_ARG_QUERY = "if ifs; Select ifs pattern ifs(v.value, _, _)";
         string PATTERN_MALFORMED_PATTERN_STRING_QUERY = "assign a; Select a pattern a(_, \"_6_\")";
         string PATTERN_UNBALANCED_UNDERSCORES_QUERY = "assign a; Select a pattern a(_, _\"x\")";
         string INVALID_SYNONYM_PATTERN_STRING_QUERY = "assign a; variable v; Select v pattern a(\"notFound\", v)";
@@ -126,8 +133,10 @@ namespace UnitTesting {
         string WITH_INVALID_OPERATOR_QUERY = "constant c; Select c with c > 7";
         string WITH_INVALID_WILDCARD_ARG_QUERY = "constant c; Select c with c.value = _";
         string WITH_UNQUOTED_IDENTIFIER_ARG_QUERY = "Select BOOLEAN with \"ok\" = \"missingQuote";
+        string WITH_INVALID_ATTRIBUTE_SYNTAX_QUERY = "stmt s; Select s with s.stmt#.value = 1";
 
         // Invalid queries that fail in parseDeclarations
+        string DUPLICATE_BODY_QUERY = "prog_line l1, l2; Select l1; Select l2";
         string UNRECOGNISED_DESIGN_ENTITY_QUERY = "program pr; Select pr such that Follows(1, 2)";
         string CONFLICTING_SYNONYM_QUERY = "constant c; procedure p; call c; Select p";
 
@@ -135,15 +144,14 @@ namespace UnitTesting {
         string INVALID_RETURN_TYPE_QUERY = "Select _";
         string INVALID_LITERAL_RETURN_TYPE_QUERY = "Select \"v\"";
         string INVALID_RETURN_SYNONYM_QUERY = "Select 0xF";
-        string MISSING_RETURN_TYPE_QUERY = "print pn; stmt s1; Select such that Follows(pn, s1)";
         string MULTIPLE_RETURN_TYPE_QUERY = "if ifs; assign a; Select ifs, a such that Parent*(ifs, a)";
         string MISSING_ATTRIBUTE_KEYWORD_QUERY = "constant c; Select c.";
         string INVALID_ATTRIBUTE_SPECIFIER_QUERY = "variable v; Select v->varName";
         string INVALID_ATTRIBUTE_CHARACTER_QUERY = "while w; Select w.stmt1";
         string INVALID_ATTRIBUTE_SYNTAX_QUERY = "read rd; Select rd.varName.value";
         string EMPTY_TUPLE_QUERY = "Select <>";
-        string INVALID_TUPLE_SPECIFIER_QUERY = "procedure p, q, r; Select [p, q, r]";
-        string INVALID_TUPLE_DELIMITER_QUERY = "stmt s1, s2, s3; Select <s1 & s2 & s3>";
+        string INVALID_TUPLE_SPECIFIER_QUERY = "procedure p, q, r; Select (p, q, r)";
+        string INVALID_TUPLE_DELIMITER_QUERY = "stmt s1, s2, s3; Select <s1 + s2 + s3>";
         string INVALID_SYNONYM_IN_TUPLE_QUERY = "assign a; Select <a, 0xFFFFF>";
         string MISSING_ATTRIBUTE_KEYWORD_IN_TUPLE_QUERY = "while w; variable v; Select <w, v.>";
         string INVALID_SINGLE_WITH_TUPLE_QUERY = "procedure p; call cl; Select <p>, cl";
@@ -151,8 +159,8 @@ namespace UnitTesting {
         string INVALID_ATTRIBUTE_KEYWORD_IN_TUPLE_QUERY = "read rd; Select <rd, rd.var>";
 
         // Invalid queries that fail in parseRelationClauses
-        string INVALID_RELATION_KEYWORD_QUERY = "read rd; print pn; Select s1 such that Folows(rd, pn)";
         string INVALID_RELATION_TYPE_QUERY = "procedure p, q; Select p such that Recurses(p, q)";
+        string INVALID_RELATION_KEYWORD_QUERY = "read rd; print pn; Select s1 such that Folows(rd, pn)";
         string INCORRECT_RELATION_NUM_ARGS_QUERY = "stmt s1, s2, s3; Select s1 such that Parent(s1, s2, s3)";
         string FOLLOWS_NON_STMT_REF_ARG_QUERY = "Select BOOLEAN such that Follows*(\"32\", 30)";
         string PARENT_NON_STMT_REF_ARG_QUERY = "Select BOOLEAN such that Parent*(3203, __private)";
@@ -179,85 +187,1101 @@ namespace UnitTesting {
         string WITH_INVALID_INTEGER_ARG_QUERY = "Select BOOLEAN with 9.11 = 2001";
         string WITH_INVALID_IDENTIFIER_ARG_QUERY = "procedure p; Select p with p.procName = \"2020\"";
         string WITH_INVALID_SYNONYM_ARG_QUERY = "print pn; Select pn with \"i\" = 1ol";
-        string WITH_INVALID_ATTRIBUTE_SYNTAX_QUERY = "stmt s; Select s with s.stmt#.value = 1";
         string WITH_INVALID_ATTRIBUTE_KEYWORD_QUERY = "assign a; Select a with 666 = a.stmtNo";
 
-        vector<string> VALID_QUERIES = {
-            TRIVIAL_SYNONYM_QUERY, TRIVIAL_BOOLEAN_QUERY, TRIVIAL_ATTRIBUTE_QUERY,
-            TRIVIAL_MANY_DECLARATIONS_QUERY, TRIVIAL_ONE_TUPLE_QUERY, TRIVIAL_TUPLE_QUERY,
-            TRIVIAL_TUPLE_ATTRIBUTES_QUERY, TRIVIAL_REDUNDANT_ATTRIBUTE_QUERY, TRIVIAL_TUPLE_MIXED_QUERY,
-            SIMPLE_CONSTANTS_QUERY, SIMPLE_VALID_QUERY, SIMPLE_VALID_BOOLEAN_QUERY,
-            SIMPLE_VALID_TUPLE_QUERY, SIMPLE_VALID_ATTRIBUTES_QUERY, SIMPLE_PATTERN_STRING_QUERY,
-            SIMPLE_LITERAL_INTEGER_EQUALITY_QUERY, SIMPLE_LITERAL_IDENTIFIER_EQUALITY_QUERY,
-            SIMPLE_MIXED_EQUALITY_QUERY, SIMPLE_INTEGER_EQUALITY_QUERY, SIMPLE_IDENTIFIER_EQUALITY_QUERY,
-            COMPLEX_VALID_BASIC_QUERY, COMPLEX_VALID_ATTRIBUTES_QUERY, COMPLEX_PATTERN_STRING_QUERY,
-            COMPLEX_VALID_ADVANCED_QUERY, CHAINED_BOOLEAN_QUERY, CHAINED_BASIC_RELATIONS_QUERY,
-            CHAINED_PROCEDURE_RELATIONS_QUERY, CHAINED_MIXED_CLAUSES_QUERY, CHAINED_MIXED_RETURN_QUERY,
-            CHAINED_CALLS_QUERY, CHAINED_NEXT_QUERY, CHAINED_AFFECTS_QUERY,
-            CHAINED_STMT_PROG_LINE_QUERY, CHAINED_ADV_RELATIONS_QUERY, CHAINED_EQUALITIES_QUERY,
-            CHAINED_ALL_RELATIONS_QUERY, CHAINED_ALL_PATTERNS_QUERY, CHAINED_ALL_NON_LITERAL_EQUALITIES_QUERY,
-            CHAINED_NO_WHITESPACE_QUERY, CHAINED_EXTRA_WHITESPACE_QUERY
+        // All expected query results for valid query testcases
+        Query TRIVIAL_SYNONYM_QUERY_RESULT = {
+            STATUS_SUCCESS, TRIVIAL_SYNONYM_QUERY, false,
+            {
+                { "Select", AttrType::NONE }
+            },
+            {
+                { "Select", DesignEntity::CONSTANT }
+            },
+            { }, { }, { }
         };
 
-        // Array containing all invalid queries with a single deviation from the syntax grammar or
-        // proper query semantics
-        vector<string> INVALID_QUERIES = {
+        Query TRIVIAL_BOOLEAN_QUERY_RESULT = {
+            STATUS_SUCCESS, TRIVIAL_BOOLEAN_QUERY, true,
+            { }, { },
+            { }, { }, { }
+        };
+
+        Query TRIVIAL_ATTRIBUTE_QUERY_RESULT = {
+            STATUS_SUCCESS, TRIVIAL_ATTRIBUTE_QUERY, false,
+            {
+                { "pn", AttrType::VAR_NAME }
+            },
+            {
+                { "pn", DesignEntity::PRINT }
+            },
+            { }, { }, { }
+        };
+
+        Query TRIVIAL_MANY_DECLARATIONS_QUERY_RESULT = {
+            STATUS_SUCCESS, TRIVIAL_MANY_DECLARATIONS_QUERY, false,
+            {
+                { "variable", AttrType::NONE }
+            },
+            {
+                { "procedure", DesignEntity::WHILE },
+                { "constant", DesignEntity::WHILE },
+                { "call", DesignEntity::ASSIGN },
+                { "print", DesignEntity::IF },
+                { "variable", DesignEntity::READ },
+                { "such", DesignEntity::CALL }
+            },
+            { }, { }, { }
+        };
+
+        Query TRIVIAL_ONE_TUPLE_QUERY_RESULT = {
+            STATUS_SUCCESS, TRIVIAL_ONE_TUPLE_QUERY, false,
+            {
+                { "l", AttrType::NONE }
+            },
+            {
+                { "l", DesignEntity::PROG_LINE }
+            },
+            { }, { }, { }
+        };
+
+        Query TRIVIAL_TUPLE_QUERY_RESULT = {
+            STATUS_SUCCESS, TRIVIAL_TUPLE_QUERY, false,
+            {
+                { "p", AttrType::NONE },
+                { "BOOLEAN", AttrType::NONE }
+            },
+            {
+                { "p", DesignEntity::PROCEDURE },
+                { "BOOLEAN", DesignEntity::VARIABLE }
+            },
+            { }, { }, { }
+        };
+
+        Query TRIVIAL_TUPLE_ATTRIBUTES_QUERY_RESULT = {
+            STATUS_SUCCESS, TRIVIAL_TUPLE_ATTRIBUTES_QUERY, false,
+            {
+                { "varName", AttrType::STMT_NUM },
+                { "value", AttrType::VAR_NAME },
+                { "stmtNum", AttrType::PROC_NAME },
+                { "procName", AttrType::VALUE }
+            },
+            {
+                { "procName", DesignEntity::CONSTANT },
+                { "value", DesignEntity::VARIABLE },
+                { "stmtNum", DesignEntity::PROCEDURE },
+                { "varName", DesignEntity::READ }
+            },
+            { }, { }, { }
+        };
+
+        Query TRIVIAL_REDUNDANT_ATTRIBUTE_QUERY_RESULT = {
+            STATUS_SUCCESS, TRIVIAL_REDUNDANT_ATTRIBUTE_QUERY, false,
+            {
+                { "pn", AttrType::NONE },
+                { "pn", AttrType::STMT_NUM },
+                { "pn", AttrType::VAR_NAME }
+            },
+            {
+                { "pn", DesignEntity::PRINT }
+            },
+            { }, { }, { }
+        };
+
+        Query TRIVIAL_TUPLE_MIXED_QUERY_RESULT = {
+            STATUS_SUCCESS, TRIVIAL_TUPLE_MIXED_QUERY, false,
+            {
+                { "cl", AttrType::NONE },
+                { "cl", AttrType::PROC_NAME },
+                { "rd", AttrType::NONE },
+                { "rd", AttrType::VAR_NAME }
+            },
+            {
+                { "cl", DesignEntity::CALL },
+                { "rd", DesignEntity::READ }
+            },
+            { }, { }, { }
+        };
+
+        Query SIMPLE_CONSTANTS_QUERY_RESULT = {
+            STATUS_SUCCESS, SIMPLE_CONSTANTS_QUERY, false,
+            {
+                { "a", AttrType::NONE }
+            },
+            {
+                { "a", DesignEntity::ASSIGN }
+            },
+            {
+                { "Follows*(4, 9)", RelationType::FOLLOWST,
+                    { ArgType::INTEGER, "4" }, { ArgType::INTEGER, "9" } }
+            },
+            {
+                { "a(\"x\", _\"(0)\"_)", PatternType::ASSIGN_PATTERN, "a",
+                    { ArgType::IDENTIFIER, "x" }, { ArgType::INCLUSIVE_PATTERN, "_0_" } }
+            },
+            { }
+        };
+
+        Query SIMPLE_VALID_QUERY_RESULT = {
+            STATUS_SUCCESS, SIMPLE_VALID_QUERY, false,
+            {
+                { "v", AttrType::NONE }
+            },
+            {
+                { "v", DesignEntity::VARIABLE },
+                { "ifs", DesignEntity::IF },
+                { "a", DesignEntity::ASSIGN },
+            },
+            {
+                { "Parent(ifs, a)", RelationType::PARENT,
+                    { ArgType::SYNONYM, "ifs" }, { ArgType::SYNONYM, "a" } }
+            },
+            {
+                { "a(v, _)", PatternType::ASSIGN_PATTERN, "a",
+                    { ArgType::SYNONYM, "v" }, { ArgType::WILDCARD, "_" } }
+            },
+            { }
+        };
+
+        Query SIMPLE_VALID_BOOLEAN_QUERY_RESULT = {
+            STATUS_SUCCESS, SIMPLE_VALID_BOOLEAN_QUERY, true,
+            { },
+            {
+                { "progline", DesignEntity::STATEMENT },
+                { "stmt", DesignEntity::PROG_LINE }
+            },
+            {
+                { "Follows*(stmt, progline)", RelationType::FOLLOWST,
+                    { ArgType::SYNONYM, "stmt" }, { ArgType::SYNONYM, "progline" } }
+            },
+            { }, { }
+        };
+
+        Query SIMPLE_VALID_TUPLE_QUERY_RESULT = {
+            STATUS_SUCCESS, SIMPLE_VALID_TUPLE_QUERY, false,
+            {
+                { "p", AttrType::NONE },
+                { "q", AttrType::NONE },
+                { "BOOLEAN", AttrType::NONE }
+            },
+            {
+                { "p", DesignEntity::PROCEDURE },
+                { "q", DesignEntity::PROCEDURE },
+                { "BOOLEAN", DesignEntity::CONSTANT },
+            },
+            {
+                { "Modifies(p, _)", RelationType::MODIFIESP,
+                    { ArgType::SYNONYM, "p" }, { ArgType::WILDCARD, "_" } }
+            },
+            { }, { }
+        };
+
+        Query SIMPLE_VALID_ATTRIBUTES_QUERY_RESULT = {
+            STATUS_SUCCESS, SIMPLE_VALID_ATTRIBUTES_QUERY, false,
+            {
+                { "w", AttrType::STMT_NUM },
+                { "rd", AttrType::NONE },
+                { "rd", AttrType::VAR_NAME }
+            },
+            {
+                { "w", DesignEntity::WHILE },
+                { "rd", DesignEntity::READ }
+            },
+            {
+                { "Parent*(w, rd)", RelationType::PARENTT,
+                    { ArgType::SYNONYM, "w" }, { ArgType::SYNONYM, "rd" } }
+            },
+            { }, { }
+        };
+
+        Query SIMPLE_PATTERN_STRING_QUERY_RESULT = {
+            STATUS_SUCCESS, SIMPLE_PATTERN_STRING_QUERY, false,
+            {
+                { "a", AttrType::NONE }
+            },
+            {
+                { "a", DesignEntity::ASSIGN }
+            },
+            { },
+            {
+                { "a(_, \"x + 1 - 2 * y / z % 3\")", PatternType::ASSIGN_PATTERN, "a",
+                    { ArgType::WILDCARD, "_" }, { ArgType::EXACT_PATTERN, "((x+1)-(((2*y)/z)%3))" } }
+            }, { }
+        };
+
+        Query SIMPLE_LITERAL_INTEGER_EQUALITY_QUERY_RESULT = {
+            STATUS_SUCCESS, SIMPLE_LITERAL_INTEGER_EQUALITY_QUERY, true,
+            { }, { },
+            { }, { },
+            {
+                { "1231 = 4231", WithType::LITERAL_EQUAL,
+                    { ArgType::INTEGER, { "1231", AttrType::NONE } }, { ArgType::INTEGER, { "4231", AttrType::NONE } } }
+            }
+        };
+
+        Query SIMPLE_LITERAL_IDENTIFIER_EQUALITY_QUERY_RESULT = {
+            STATUS_SUCCESS, SIMPLE_LITERAL_IDENTIFIER_EQUALITY_QUERY, false,
+            {
+                { "c", AttrType::NONE },
+                { "v", AttrType::NONE }
+            },
+            {
+                { "c", DesignEntity::CONSTANT },
+                { "v", DesignEntity::VARIABLE }
+            },
+            { }, { },
+            {
+                { "\"bL\" = \"satan\"", WithType::LITERAL_EQUAL,
+                    { ArgType::IDENTIFIER, { "bL", AttrType::NONE } }, { ArgType::IDENTIFIER, { "satan", AttrType::NONE } } }
+            }
+        };
+
+        Query SIMPLE_MIXED_EQUALITY_QUERY_RESULT = {
+            STATUS_SUCCESS, SIMPLE_MIXED_EQUALITY_QUERY, false,
+            {
+                { "cl", AttrType::NONE }
+            },
+            {
+                { "cl", DesignEntity::CALL }
+            },
+            { }, { },
+            {
+                { "cl.procName = \"procedure\"", WithType::IDENTIFIER_EQUAL,
+                    { ArgType::ATTRIBUTE, { "cl", AttrType::PROC_NAME } }, { ArgType::IDENTIFIER, { "procedure", AttrType::NONE } } }
+            }
+        };
+
+        Query SIMPLE_INTEGER_EQUALITY_QUERY_RESULT = {
+            STATUS_SUCCESS, SIMPLE_INTEGER_EQUALITY_QUERY, false,
+            {
+                { "pn", AttrType::NONE },
+                { "l", AttrType::NONE }
+            },
+            {
+                { "pn", DesignEntity::PRINT },
+                { "l", DesignEntity::PROG_LINE }
+            },
+            { }, { },
+            {
+                { "pn.stmt# = l", WithType::INTEGER_EQUAL,
+                    { ArgType::ATTRIBUTE, { "pn", AttrType::STMT_NUM } }, { ArgType::SYNONYM, { "l", AttrType::NONE } } }
+            }
+        };
+
+        Query SIMPLE_IDENTIFIER_EQUALITY_QUERY_RESULT = {
+            STATUS_SUCCESS, SIMPLE_IDENTIFIER_EQUALITY_QUERY, false,
+            {
+                { "p", AttrType::NONE },
+                { "v", AttrType::NONE }
+            },
+            {
+                { "p", DesignEntity::PROCEDURE },
+                { "v", DesignEntity::VARIABLE }
+            },
+            { }, { },
+            {
+                { "p.procName = v.varName", WithType::IDENTIFIER_EQUAL,
+                    { ArgType::ATTRIBUTE, { "p", AttrType::PROC_NAME } } , { ArgType::ATTRIBUTE, { "v", AttrType::VAR_NAME } } }
+            }
+        };
+
+        Query COMPLEX_VALID_BASIC_QUERY_RESULT = {
+            STATUS_SUCCESS, COMPLEX_VALID_BASIC_QUERY, false,
+            {
+                { "pattern", AttrType::NONE }
+            },
+            {
+                { "pattern", DesignEntity::ASSIGN },
+                { "Modifies", DesignEntity::WHILE },
+                { "while", DesignEntity::VARIABLE },
+                { "constant", DesignEntity::VARIABLE }
+            },
+            {
+                { "Uses(Modifies, while)", RelationType::USESS,
+                    { ArgType::SYNONYM, "Modifies" }, { ArgType::SYNONYM, "while" } }
+            },
+            {
+                { "pattern(constant, _\"1\"_)", PatternType::ASSIGN_PATTERN, "pattern",
+                    { ArgType::SYNONYM, "constant" }, { ArgType::INCLUSIVE_PATTERN, "_1_" } }
+            },
+            { }
+        };
+
+        Query COMPLEX_VALID_ATTRIBUTES_QUERY_RESULT = {
+            STATUS_SUCCESS, COMPLEX_VALID_ATTRIBUTES_QUERY, false,
+            {
+                { "a", AttrType::NONE },
+                { "cl", AttrType::NONE },
+                { "cl", AttrType::PROC_NAME },
+                { "v", AttrType::VAR_NAME }
+            },
+            {
+                { "a", DesignEntity::ASSIGN },
+                { "cl", DesignEntity::CALL },
+                { "v", DesignEntity::VARIABLE }
+            },
+            {
+                { "Follows(a, cl)", RelationType::FOLLOWS,
+                    { ArgType::SYNONYM, "a" }, { ArgType::SYNONYM, "cl" } }
+            },
+            {
+                { "a(v, _)", PatternType::ASSIGN_PATTERN, "a",
+                    { ArgType::SYNONYM, "v" }, { ArgType::WILDCARD, "_" } }
+            }, { }
+        };
+
+        Query COMPLEX_PATTERN_STRING_QUERY_RESULT = {
+            STATUS_SUCCESS, COMPLEX_PATTERN_STRING_QUERY, false,
+            {
+                { "a", AttrType::NONE }
+            },
+            {
+                { "a", DesignEntity::ASSIGN }
+            },
+            { },
+            {
+                { "a(\"var\", _\"((p) - (q / 2) % r) * 3 - ((s + t % 5) - u) + v / 7\"_)", PatternType::ASSIGN_PATTERN, "a",
+                    { ArgType::IDENTIFIER, "var" },
+                    { ArgType::INCLUSIVE_PATTERN, "_((((p-((q/2)%r))*3)-((s+(t%5))-u))+(v/7))_" } }
+            }, { }
+        };
+
+        Query COMPLEX_VALID_ADVANCED_QUERY_RESULT = {
+            STATUS_SUCCESS, COMPLEX_VALID_ADVANCED_QUERY, false,
+            {
+                { "w", AttrType::NONE },
+                { "rd", AttrType::VAR_NAME }
+            },
+            {
+                { "rd", DesignEntity::READ },
+                { "w", DesignEntity::WHILE },
+                { "v", DesignEntity::VARIABLE },
+                { "pn", DesignEntity::PRINT }
+            },
+            {
+                { "Uses(pn, v)", RelationType::USESS,
+                    { ArgType::SYNONYM, "pn" }, { ArgType::SYNONYM, "v" } }
+            },
+            {
+                { "w(v, _)", PatternType::WHILE_PATTERN, "w",
+                    { ArgType::SYNONYM, "v" }, { ArgType::WILDCARD, "_" } }
+            },
+            {
+                { "rd.varName = v.varName", WithType::IDENTIFIER_EQUAL,
+                    { ArgType::ATTRIBUTE, { "rd", AttrType::VAR_NAME } }, { ArgType::ATTRIBUTE, { "v", AttrType::VAR_NAME } } }
+            }
+        };
+
+        Query CHAINED_BOOLEAN_QUERY_RESULT = {
+            STATUS_SUCCESS, CHAINED_BOOLEAN_QUERY, true,
+            { },
+            { },
+            {
+                { "Parent*(16, 25)", RelationType::PARENTT,
+                    { ArgType::INTEGER, "16" }, { ArgType::INTEGER, "25" } },
+                { "Uses(16, \"i\")", RelationType::USESS,
+                    { ArgType::INTEGER, "16" }, { ArgType::IDENTIFIER, "i" } },
+                { "Modifies(25, \"i\")", RelationType::MODIFIESS,
+                    { ArgType::INTEGER, "25" }, { ArgType::IDENTIFIER, "i" } }
+            },
+            { }, { }
+        };
+
+        Query CHAINED_BASIC_RELATIONS_QUERY_RESULT = {
+            STATUS_SUCCESS, CHAINED_BASIC_RELATIONS_QUERY, false,
+            {
+                { "l", AttrType::NONE },
+                { "rd", AttrType::NONE },
+                { "v", AttrType::NONE }
+            },
+            {
+                { "l", DesignEntity::PROG_LINE },
+                { "v", DesignEntity::VARIABLE },
+                { "ifs", DesignEntity::IF },
+                { "rd", DesignEntity::READ }
+            },
+            {
+                { "Follows(l, ifs)", RelationType::FOLLOWS,
+                    { ArgType::SYNONYM, "l" }, { ArgType::SYNONYM, "ifs" } },
+                { "Parent*(ifs, rd)", RelationType::PARENTT,
+                    { ArgType::SYNONYM, "ifs" }, { ArgType::SYNONYM, "rd" } },
+                { "Uses(ifs, v)", RelationType::USESS,
+                    { ArgType::SYNONYM, "ifs" }, { ArgType::SYNONYM, "v" } },
+                { "Modifies(rd, v)", RelationType::MODIFIESS,
+                    { ArgType::SYNONYM, "rd" }, { ArgType::SYNONYM, "v" } }
+            },
+            { }, { }
+        };
+
+        Query CHAINED_PROCEDURE_RELATIONS_QUERY_RESULT = {
+            STATUS_SUCCESS, CHAINED_PROCEDURE_RELATIONS_QUERY, true,
+            { }, { },
+            {
+                { "Modifies(\"main\", \"argv\")", RelationType::MODIFIESP,
+                    { ArgType::IDENTIFIER, "main" }, { ArgType::IDENTIFIER, "argv" } },
+                { "Uses(\"main\", \"argv\")", RelationType::USESP,
+                    { ArgType::IDENTIFIER, "main" }, { ArgType::IDENTIFIER, "argv" } }
+            },
+            { }, { }
+        };
+
+        Query CHAINED_MIXED_CLAUSES_QUERY_RESULT = {
+            STATUS_SUCCESS, CHAINED_MIXED_CLAUSES_QUERY, false,
+            {
+                { "p", AttrType::NONE },
+                { "w", AttrType::NONE },
+                { "a", AttrType::NONE }
+            },
+            {
+                { "a", DesignEntity::ASSIGN },
+                { "p", DesignEntity::PROCEDURE },
+                { "v1", DesignEntity::VARIABLE },
+                { "v2", DesignEntity::VARIABLE },
+                { "w", DesignEntity::WHILE },
+                { "ifs", DesignEntity::IF },
+                { "l", DesignEntity::PROG_LINE }
+            },
+            {
+                { "Follows*(a, ifs)", RelationType::FOLLOWST,
+                    { ArgType::SYNONYM, "a" }, { ArgType::SYNONYM, "ifs" } },
+                { "Modifies(p, v2)", RelationType::MODIFIESP,
+                    { ArgType::SYNONYM, "p" }, { ArgType::SYNONYM, "v2" } },
+                { "Parent(ifs, l)", RelationType::PARENT,
+                    { ArgType::SYNONYM, "ifs" }, { ArgType::SYNONYM, "l" } },
+                { "Uses(l, v1)", RelationType::USESS,
+                    { ArgType::SYNONYM, "l" }, { ArgType::SYNONYM, "v1" } }
+            },
+            {
+                { "a(v1, \"0\")", PatternType::ASSIGN_PATTERN, "a",
+                    { ArgType::SYNONYM, "v1" }, { ArgType::EXACT_PATTERN, "0" } },
+                { "w(v1, _)" , PatternType::WHILE_PATTERN, "w",
+                    { ArgType::SYNONYM, "v1" }, { ArgType::WILDCARD, "_" } },
+                { "ifs(v2, _, _)", PatternType::IF_PATTERN, "ifs",
+                    { ArgType::SYNONYM, "v2" }, { ArgType::WILDCARD, "_" } }
+            },
+            { }
+        };
+
+        Query CHAINED_MIXED_RETURN_QUERY_RESULT = {
+            STATUS_SUCCESS, CHAINED_MIXED_RETURN_QUERY, false,
+            {
+                { "c", AttrType::VALUE },
+                { "cl", AttrType::STMT_NUM },
+                { "cl", AttrType::PROC_NAME },
+                { "rd", AttrType::VAR_NAME },
+                { "v", AttrType::NONE }
+            },
+            {
+                { "c", DesignEntity::CONSTANT },
+                { "cl", DesignEntity::CALL },
+                { "rd", DesignEntity::READ },
+                { "v", DesignEntity::VARIABLE }
+            },
+            {
+                { "Next*(cl, rd)", RelationType::NEXTT,
+                    { ArgType::SYNONYM, "cl" }, { ArgType::SYNONYM, "rd" } },
+                { "Modifies(rd, v)", RelationType::MODIFIESS,
+                    { ArgType::SYNONYM, "rd" }, { ArgType::SYNONYM, "v" } },
+                { "Calls(\"init\", _)", RelationType::CALLS,
+                    { ArgType::IDENTIFIER, "init" }, { ArgType::WILDCARD, "_" } }
+            },
+            { }, { }
+        };
+
+        Query CHAINED_CALLS_QUERY_RESULT = {
+            STATUS_SUCCESS, CHAINED_CALLS_QUERY, false,
+            {
+                { "p", AttrType::NONE },
+                { "q", AttrType::NONE }
+            },
+            {
+                { "p", DesignEntity::PROCEDURE },
+                { "q", DesignEntity::PROCEDURE }
+            },
+            {
+                { "Calls(\"main\", p)", RelationType::CALLS,
+                    { ArgType::IDENTIFIER, "main" }, { ArgType::SYNONYM, "p" } },
+                { "Calls*(p, q)", RelationType::CALLST,
+                    { ArgType::SYNONYM, "p" }, { ArgType::SYNONYM, "q" } },
+                { "Calls(q, _)", RelationType::CALLS,
+                    { ArgType::SYNONYM, "q" }, { ArgType::WILDCARD, "_" } }
+            },
+            { }, { }
+        };
+
+        Query CHAINED_NEXT_QUERY_RESULT = {
+            STATUS_SUCCESS, CHAINED_NEXT_QUERY, false,
+            {
+                { "l", AttrType::NONE },
+                { "cl", AttrType::NONE }
+            },
+            {
+                { "l", DesignEntity::PROG_LINE },
+                { "cl", DesignEntity::CALL }
+            },
+            {
+                { "Next(20, 30)", RelationType::NEXT,
+                    { ArgType::INTEGER, "20" }, { ArgType::INTEGER, "30" } },
+                { "Next*(_, l)", RelationType::NEXTT,
+                    { ArgType::WILDCARD, "_" }, { ArgType::SYNONYM, "l" } },
+                { "Next(l, cl)", RelationType::NEXT,
+                    { ArgType::SYNONYM, "l" }, { ArgType::SYNONYM, "cl" } },
+                { "Next*(cl, 25)", RelationType::NEXTT,
+                    { ArgType::SYNONYM, "cl" }, { ArgType::INTEGER, "25" } }
+            },
+            { }, { }
+        };
+
+        Query CHAINED_AFFECTS_QUERY_RESULT = {
+            STATUS_SUCCESS, CHAINED_AFFECTS_QUERY, false,
+            {
+                { "s", AttrType::NONE },
+                { "a", AttrType::NONE }
+            },
+            {
+                { "s", DesignEntity::STATEMENT },
+                { "a", DesignEntity::ASSIGN }
+            },
+            {
+                { "Affects(20, 40)", RelationType::AFFECTS,
+                    { ArgType::INTEGER, "20" }, { ArgType::INTEGER, "40" } },
+                { "Affects*(1, s)", RelationType::AFFECTST,
+                    { ArgType::INTEGER, "1" }, { ArgType::SYNONYM, "s" } },
+                { "Affects*(a, s)", RelationType::AFFECTST,
+                    { ArgType::SYNONYM, "a" }, { ArgType::SYNONYM, "s" } },
+                { "Affects(s, _)", RelationType::AFFECTS,
+                    { ArgType::SYNONYM, "s" }, { ArgType::WILDCARD, "_" } }
+            },
+            { }, { }
+        };
+
+        Query CHAINED_STMT_PROG_LINE_QUERY_RESULT = {
+            STATUS_SUCCESS, CHAINED_STMT_PROG_LINE_QUERY, false,
+            {
+                { "l1", AttrType::NONE },
+                { "v", AttrType::NONE }
+            },
+            {
+                { "s", DesignEntity::STATEMENT },
+                { "l1", DesignEntity::PROG_LINE },
+                { "l2", DesignEntity::PROG_LINE },
+                { "v", DesignEntity::VARIABLE }
+            },
+            {
+                { "Parent*(l1, s)", RelationType::PARENTT,
+                    { ArgType::SYNONYM, "l1" }, { ArgType::SYNONYM, "s" } },
+                { "Next*(s, l2)", RelationType::NEXTT,
+                    { ArgType::SYNONYM, "s" }, { ArgType::SYNONYM, "l2" } },
+                { "Affects(l2, l1)", RelationType::AFFECTS,
+                    { ArgType::SYNONYM, "l2" }, { ArgType::SYNONYM, "l1" } },
+                { "Uses(l1, v)", RelationType::USESS,
+                    { ArgType::SYNONYM, "l1" }, { ArgType::SYNONYM, "v" } },
+                { "Modifies(l1, _)", RelationType::MODIFIESS,
+                    { ArgType::SYNONYM, "l1" }, { ArgType::WILDCARD, "_" } }
+            },
+            { }, { }
+        };
+
+        Query CHAINED_ADV_RELATIONS_QUERY_RESULT = {
+            STATUS_SUCCESS, CHAINED_ADV_RELATIONS_QUERY, false,
+            {
+                { "l", AttrType::NONE },
+                { "a", AttrType::NONE },
+                { "v", AttrType::NONE }
+            },
+            {
+                { "l", DesignEntity::PROG_LINE },
+                { "cl", DesignEntity::CALL },
+                { "a", DesignEntity::ASSIGN },
+                { "v", DesignEntity::VARIABLE }
+            },
+            {
+                { "Uses(\"error\", v)", RelationType::USESP,
+                    { ArgType::IDENTIFIER, "error" }, { ArgType::SYNONYM, "v" } },
+                { "Modifies(a, v)", RelationType::MODIFIESS,
+                    { ArgType::SYNONYM, "a" }, { ArgType::SYNONYM, "v" } },
+                { "Affects(l, a)", RelationType::AFFECTS,
+                    { ArgType::SYNONYM, "l" }, { ArgType::SYNONYM, "a" } },
+                { "Next*(a, cl)", RelationType::NEXTT,
+                    { ArgType::SYNONYM, "a" }, { ArgType::SYNONYM, "cl" } },
+                { "Calls*(_, \"error\")", RelationType::CALLST,
+                    { ArgType::WILDCARD, "_" }, { ArgType::IDENTIFIER, "error"} }
+            },
+            { }, { }
+        };
+
+        Query CHAINED_EQUALITIES_QUERY_RESULT = {
+            STATUS_SUCCESS, CHAINED_EQUALITIES_QUERY, false,
+            {
+                { "c", AttrType::NONE },
+                { "v", AttrType::NONE },
+                { "p", AttrType::NONE }
+            },
+            {
+                { "c", DesignEntity::CONSTANT },
+                { "l", DesignEntity::PROG_LINE },
+                { "pn", DesignEntity::PRINT },
+                { "ifs", DesignEntity::IF },
+                { "v", DesignEntity::VARIABLE },
+                { "p", DesignEntity::PROCEDURE }
+            },
+            { }, { },
+            {
+                { "p.procName = \"lambda\"", WithType::IDENTIFIER_EQUAL,
+                    { ArgType::ATTRIBUTE, { "p", AttrType::PROC_NAME } }, { ArgType::IDENTIFIER, { "lambda", AttrType::NONE } } },
+                { "ifs.stmt# = 8", WithType::INTEGER_EQUAL,
+                    { ArgType::ATTRIBUTE, { "ifs", AttrType::STMT_NUM } }, { ArgType::INTEGER, { "8", AttrType::NONE } } },
+                { "v.varName = pn.varName", WithType::IDENTIFIER_EQUAL,
+                    { ArgType::ATTRIBUTE, { "v", AttrType::VAR_NAME } }, { ArgType::ATTRIBUTE, { "pn", AttrType::VAR_NAME } } },
+                { "l = c.value", WithType::INTEGER_EQUAL,
+                    { ArgType::SYNONYM, { "l", AttrType::NONE } }, { ArgType::ATTRIBUTE, { "c", AttrType::VALUE } } }
+            }
+        };
+
+        Query CHAINED_CONFUSING_AND_QUERY_RESULT = {
+            STATUS_SUCCESS, CHAINED_CONFUSING_AND_QUERY, true,
+            { },
+            {
+                { "and", DesignEntity::PROG_LINE },
+                { "operand", DesignEntity::PROG_LINE },
+                { "a", DesignEntity::ASSIGN }
+            },
+            {
+                { "Next(operand, and)", RelationType::NEXT,
+                    { ArgType::SYNONYM, "operand" }, { ArgType::SYNONYM, "and" } },
+                { "Affects*(and, and)", RelationType::AFFECTST,
+                    { ArgType::SYNONYM, "and" }, { ArgType::SYNONYM, "and" } }
+            },
+            {
+                { "a(_, \"and\")", PatternType::ASSIGN_PATTERN, "a",
+                    { ArgType::WILDCARD, "_" }, { ArgType::EXACT_PATTERN, "and" } }
+            },
+            {
+                { "19 = and", WithType::INTEGER_EQUAL,
+                    { ArgType::INTEGER, { "19", AttrType::NONE } }, { ArgType::SYNONYM, { "and", AttrType::NONE } } },
+                { "20 = operand", WithType::INTEGER_EQUAL,
+                    { ArgType::INTEGER, { "20", AttrType::NONE } }, { ArgType::SYNONYM, { "operand", AttrType::NONE } } },
+                { "operand = and", WithType::INTEGER_EQUAL,
+                    { ArgType::SYNONYM, { "operand", AttrType::NONE } }, { ArgType::SYNONYM, { "and", AttrType::NONE } } }
+            }
+        };
+
+        Query CHAINED_ALL_RELATIONS_QUERY_RESULT = {
+            STATUS_SUCCESS, CHAINED_ALL_RELATIONS_QUERY, false,
+            {
+                { "p", AttrType::NONE },
+                { "v", AttrType::NONE }
+            },
+            {
+                { "p", DesignEntity::PROCEDURE },
+                { "s", DesignEntity::STATEMENT },
+                { "l", DesignEntity::PROG_LINE },
+                { "cl", DesignEntity::CALL },
+                { "a", DesignEntity::ASSIGN },
+                { "v", DesignEntity::VARIABLE }
+            },
+            {
+                { "Modifies(\"procedure\", v)", RelationType::MODIFIESP,
+                    { ArgType::IDENTIFIER, "procedure" }, { ArgType::SYNONYM, "v" } },
+                { "Calls(_, p)", RelationType::CALLS,
+                    { ArgType::WILDCARD, "_" }, { ArgType::SYNONYM, "p" } },
+                { "Uses(p, v)", RelationType::USESP,
+                    { ArgType::SYNONYM, "p" }, { ArgType::SYNONYM, "v" } },
+                { "Parent(s, cl)", RelationType::PARENT,
+                    { ArgType::SYNONYM, "s" }, { ArgType::SYNONYM, "cl" } },
+                { "Modifies(cl, v)", RelationType::MODIFIESS,
+                    { ArgType::SYNONYM, "cl" }, { ArgType::SYNONYM, "v" } },
+                { "Follows*(cl, l)", RelationType::FOLLOWST,
+                    { ArgType::SYNONYM, "cl" }, { ArgType::SYNONYM, "l" } },
+                { "Next(l, a)", RelationType::NEXT,
+                    { ArgType::SYNONYM, "l" }, { ArgType::SYNONYM, "a" } },
+                { "Affects*(a, a)", RelationType::AFFECTST,
+                    { ArgType::SYNONYM, "a" }, { ArgType::SYNONYM, "a" } }
+            },
+            { }, { }
+        };
+
+        Query CHAINED_ALL_PATTERNS_QUERY_RESULT = {
+            STATUS_SUCCESS, CHAINED_ALL_PATTERNS_QUERY, false,
+            {
+                { "a1", AttrType::NONE },
+                { "a2", AttrType::NONE },
+                { "v", AttrType::NONE }
+            },
+            {
+                { "w1", DesignEntity::WHILE },
+                { "w2", DesignEntity::WHILE },
+                { "a1", DesignEntity::ASSIGN },
+                { "a2", DesignEntity::ASSIGN },
+                { "ifs", DesignEntity::IF },
+                { "v", DesignEntity::VARIABLE }
+            },
+            { },
+            {
+                { "w1(v, _)", PatternType::WHILE_PATTERN, "w1",
+                    { ArgType::SYNONYM, "v" }, { ArgType::WILDCARD, "_" } },
+                { "ifs(v, _, _)", PatternType::IF_PATTERN, "ifs",
+                    { ArgType::SYNONYM, "v"}, { ArgType::WILDCARD, "_" } },
+                { "a1(\"x\", _\"b * b - (4 * a * c) / 2\"_)", PatternType::ASSIGN_PATTERN, "a1",
+                    { ArgType::IDENTIFIER, "x" }, { ArgType::INCLUSIVE_PATTERN, "_((b*b)-(((4*a)*c)/2))_" } },
+                { "a2(v, \"x0 + y0 + x * x - y * y\")", PatternType::ASSIGN_PATTERN, "a2",
+                    { ArgType::SYNONYM, "v" }, { ArgType::EXACT_PATTERN, "(((x0+y0)+(x*x))-(y*y))" } },
+                { "w2(\"x0\", _)", PatternType::WHILE_PATTERN, "w2",
+                    { ArgType::IDENTIFIER, "x0" }, { ArgType::WILDCARD, "_" } }
+            },
+            { }
+        };
+
+        Query CHAINED_ALL_NON_LITERAL_EQUALITIES_QUERY_RESULT = {
+            STATUS_SUCCESS, CHAINED_ALL_NON_LITERAL_EQUALITIES_QUERY, true,
+            { },
+            {
+                { "c1", DesignEntity::CONSTANT },
+                { "c2", DesignEntity::CONSTANT },
+                { "cl", DesignEntity::CALL },
+                { "rd", DesignEntity::READ },
+                { "pn", DesignEntity::PRINT },
+                { "l1", DesignEntity::PROG_LINE },
+                { "l2", DesignEntity::PROG_LINE },
+                { "l3", DesignEntity::PROG_LINE }
+            },
+            { }, { },
+            {
+                { "l3 = 420", WithType::INTEGER_EQUAL,
+                    { ArgType::SYNONYM, { "l3", AttrType::NONE } }, { ArgType::INTEGER, { "420", AttrType::NONE } } },
+                { "rd.varName = pn.varName", WithType::IDENTIFIER_EQUAL,
+                    { ArgType::ATTRIBUTE, { "rd", AttrType::VAR_NAME } }, { ArgType::ATTRIBUTE, { "pn", AttrType::VAR_NAME } } },
+                { "l1 = l2", WithType::INTEGER_EQUAL,
+                    { ArgType::SYNONYM, { "l1", AttrType::NONE } }, { ArgType::SYNONYM, { "l2", AttrType::NONE } } },
+                { "cl.procName = \"lambda\"", WithType::IDENTIFIER_EQUAL,
+                    { ArgType::ATTRIBUTE, { "cl", AttrType::PROC_NAME } }, { ArgType::IDENTIFIER, { "lambda", AttrType::NONE } } },
+                { "l1 = rd.stmt#", WithType::INTEGER_EQUAL,
+                    { ArgType::SYNONYM, { "l1", AttrType::NONE } }, { ArgType::ATTRIBUTE, { "rd", AttrType::STMT_NUM } } },
+                { "pn.stmt# = c1.value", WithType::INTEGER_EQUAL,
+                    { ArgType::ATTRIBUTE, { "pn", AttrType::STMT_NUM } }, { ArgType::ATTRIBUTE, { "c1", AttrType::VALUE } } },
+                { "c2.value = 666", WithType::INTEGER_EQUAL,
+                    { ArgType::ATTRIBUTE, { "c2", AttrType::VALUE } }, { ArgType::INTEGER, { "666", AttrType::NONE } } }
+            }
+        };
+
+        Query CHAINED_NO_WHITESPACE_QUERY_RESULT = {
+            STATUS_SUCCESS, CHAINED_NO_WHITESPACE_QUERY, false,
+            {
+                { "a1", AttrType::NONE },
+                { "w", AttrType::NONE },
+                { "v", AttrType::NONE },
+                { "pn", AttrType::NONE }
+            },
+            {
+                { "a1", DesignEntity::ASSIGN },
+                { "a2", DesignEntity::ASSIGN },
+                { "w", DesignEntity::WHILE },
+                { "v", DesignEntity::VARIABLE },
+                { "cl", DesignEntity::CALL },
+                { "pn", DesignEntity::PRINT }
+            },
+            {
+                { "Next*(a1,a2)", RelationType::NEXTT,
+                    { ArgType::SYNONYM, "a1" }, { ArgType::SYNONYM, "a2" } },
+                { "Uses(a1,v)", RelationType::USESS,
+                    { ArgType::SYNONYM, "a1" }, { ArgType::SYNONYM, "v" } },
+                { "Modifies(w,v)", RelationType::MODIFIESS,
+                    { ArgType::SYNONYM, "w" }, { ArgType::SYNONYM, "v" } }
+            },
+            {
+                { "a1(v,_)", PatternType::ASSIGN_PATTERN, "a1",
+                    { ArgType::SYNONYM, "v" }, { ArgType::WILDCARD, "_" } },
+                { "w(v,_)", PatternType::WHILE_PATTERN, "w",
+                    { ArgType::SYNONYM, "v" }, { ArgType::WILDCARD, "_" } },
+                { "a2(_,_\"f*x+f*(x-dx)+dx*dy\"_)", PatternType::ASSIGN_PATTERN, "a2",
+                    { ArgType::WILDCARD, "_" }, { ArgType::INCLUSIVE_PATTERN, "_(((f*x)+(f*(x-dx)))+(dx*dy))_" } }
+            },
+            {
+                { "pn.varName=cl.procName", WithType::IDENTIFIER_EQUAL,
+                    { ArgType::ATTRIBUTE, { "pn", AttrType::VAR_NAME } }, { ArgType::ATTRIBUTE, { "cl", AttrType::PROC_NAME } } },
+                { "pn.stmt#=69", WithType::INTEGER_EQUAL,
+                    { ArgType::ATTRIBUTE, { "pn", AttrType::STMT_NUM } }, { ArgType::INTEGER, { "69", AttrType::NONE } } },
+                { "\"xyz\"=\"xyz\"", WithType::LITERAL_EQUAL,
+                    { ArgType::IDENTIFIER, { "xyz", AttrType::NONE } }, { ArgType::IDENTIFIER, { "xyz", AttrType::NONE } } }
+            }
+        };
+
+        Query CHAINED_EXTRA_WHITESPACE_QUERY_RESULT = {
+            STATUS_SUCCESS, CHAINED_EXTRA_WHITESPACE_QUERY, false,
+            {
+                { "p", AttrType::PROC_NAME },
+                { "w", AttrType::NONE },
+                { "cl", AttrType::NONE },
+                { "cl", AttrType::PROC_NAME },
+                { "a", AttrType::NONE }
+            },
+            {
+                { "p", DesignEntity::PROCEDURE },
+                { "w", DesignEntity::WHILE },
+                { "a", DesignEntity::ASSIGN },
+                { "v1", DesignEntity::VARIABLE },
+                { "v2", DesignEntity::VARIABLE },
+                { "cl", DesignEntity::CALL },
+                { "l", DesignEntity::PROG_LINE }
+            },
+            {
+                { "Modifies\r(p\t,v1)", RelationType::MODIFIESP,
+                    { ArgType::SYNONYM, "p" }, { ArgType::SYNONYM, "v1" } },
+                { "Uses(\tw\v,  v1\n)", RelationType::USESS,
+                    { ArgType::SYNONYM, "w" }, { ArgType::SYNONYM, "v1" } },
+                { "Next*\f (\ta, w\v)", RelationType::NEXTT,
+                    { ArgType::SYNONYM, "a" }, { ArgType::SYNONYM, "w" } },
+                { "Follows(\na\r,\fcl  )", RelationType::FOLLOWS,
+                    { ArgType::SYNONYM, "a" }, { ArgType::SYNONYM, "cl" } }
+            },
+            {
+                { "a(  v1,\r_\"\t69-\v 420\"_ )", PatternType::ASSIGN_PATTERN, "a",
+                    { ArgType::SYNONYM, "v1" }, { ArgType::INCLUSIVE_PATTERN, "_(69-420)_" } },
+                { "w  (v2, _\v\f)", PatternType::WHILE_PATTERN, "w",
+                    { ArgType::SYNONYM, "v2" }, { ArgType::WILDCARD, "_" } }
+            },
+            {
+                { "\"i\"  =\r\"i\"", WithType::LITERAL_EQUAL,
+                    { ArgType::IDENTIFIER, { "i", AttrType::NONE } }, { ArgType::IDENTIFIER, { "i", AttrType::NONE } } },
+                { "17\r=w\t.  stmt#", WithType::INTEGER_EQUAL,
+                    { ArgType::INTEGER, { "17", AttrType::NONE } }, { ArgType::ATTRIBUTE, { "w", AttrType::STMT_NUM } } },
+                { "l\n=\tcl\r.\vstmt#", WithType::INTEGER_EQUAL,
+                    { ArgType::SYNONYM, { "l", AttrType::NONE } }, { ArgType::ATTRIBUTE, { "cl", AttrType::STMT_NUM } } },
+                { "p\n.\fprocName\r=\n\" function\t\"", WithType::IDENTIFIER_EQUAL,
+                    { ArgType::ATTRIBUTE, { "p", AttrType::PROC_NAME } }, { ArgType::IDENTIFIER, { "function", AttrType::NONE } } },
+                { "cl\v.\fprocName\n=  v2  .\tvarName", WithType::IDENTIFIER_EQUAL,
+                    { ArgType::ATTRIBUTE, { "cl", AttrType::PROC_NAME } }, { ArgType::ATTRIBUTE, { "v2", AttrType::VAR_NAME } } }
+            }
+        };
+
+        Query PROJECT_REPORT_SAMPLE_QUERY_RESULT = {
+            STATUS_SUCCESS, PROJECT_REPORT_SAMPLE_QUERY, false,
+            {
+                { "a1", AttrType::NONE },
+                { "w", AttrType::STMT_NUM },
+                { "rd", AttrType::VAR_NAME },
+                { "pn", AttrType::NONE },
+                { "p", AttrType::NONE }
+            },
+            {
+                { "a1", DesignEntity::ASSIGN },
+                { "a2", DesignEntity::ASSIGN },
+                { "c", DesignEntity::CONSTANT },
+                { "l", DesignEntity::PROG_LINE },
+                { "w", DesignEntity::WHILE },
+                { "ifs", DesignEntity::IF },
+                { "rd", DesignEntity::READ },
+                { "pn", DesignEntity::PRINT },
+                { "p", DesignEntity::PROCEDURE },
+                { "v1", DesignEntity::VARIABLE },
+                { "v2", DesignEntity::VARIABLE }
+            },
+            {
+                { "Modifies(a1, v1)", RelationType::MODIFIESS,
+                    { ArgType::SYNONYM, "a1" }, { ArgType::SYNONYM, "v1" } },
+                { "Uses(pn, v1)", RelationType::USESS,
+                    { ArgType::SYNONYM, "pn" }, { ArgType::SYNONYM, "v1" } },
+                { "Parent*(w, a1)", RelationType::PARENTT,
+                    { ArgType::SYNONYM, "w" }, { ArgType::SYNONYM, "a1" } },
+                { "Calls(\"driver\", _)", RelationType::CALLS,
+                    { ArgType::IDENTIFIER, "driver" }, { ArgType::WILDCARD, "_" } },
+                { "Uses(p, \"j\")", RelationType::USESP,
+                    { ArgType::SYNONYM, "p" }, { ArgType::IDENTIFIER, "j" } },
+                { "Affects*(1, 64)", RelationType::AFFECTST,
+                    { ArgType::INTEGER, "1" }, { ArgType::INTEGER, "64" } }
+            },
+            {
+                { "w(\"i\", _)", PatternType::WHILE_PATTERN, "w",
+                    { ArgType::IDENTIFIER, "i" }, { ArgType::WILDCARD, "_" } },
+                { "a1(_, _\"i + 1 + x / 2 + y - (3 * z)\"_)", PatternType::ASSIGN_PATTERN, "a1",
+                    { ArgType::WILDCARD, "_" }, { ArgType::INCLUSIVE_PATTERN, "_((((i+1)+(x/2))+y)-(3*z))_" } },
+                { "ifs(v2, _, _)", PatternType::IF_PATTERN, "ifs",
+                    { ArgType::SYNONYM, "v2" }, { ArgType::WILDCARD, "_" } }
+            },
+            {
+                { "v2.varName = \"input\"", WithType::IDENTIFIER_EQUAL,
+                    { ArgType::ATTRIBUTE, { "v2", AttrType::VAR_NAME } }, { ArgType::IDENTIFIER, { "input", AttrType::NONE } } },
+                { "c.value = l", WithType::INTEGER_EQUAL,
+                    { ArgType::ATTRIBUTE, { "c", AttrType::VALUE } }, { ArgType::SYNONYM, { "l", AttrType::NONE } } },
+                { "rd.varName = v2.varName", WithType::IDENTIFIER_EQUAL,
+                    { ArgType::ATTRIBUTE, { "rd", AttrType::VAR_NAME } }, { ArgType::ATTRIBUTE, { "v2", AttrType::VAR_NAME } } },
+                { "3203 = 3230", WithType::LITERAL_EQUAL,
+                    { ArgType::INTEGER, { "3203", AttrType::NONE } }, { ArgType::INTEGER, { "3230", AttrType::NONE } } }
+            }
+        };
+
+        // Array containing all positive testcases, each a pair comprising a valid query and the
+        // expected Query object produced by the Query Parser after parsing and validation
+        vector<pair<string, Query>> VALID_QUERY_TESTCASES = {
+            { TRIVIAL_SYNONYM_QUERY, TRIVIAL_SYNONYM_QUERY_RESULT },
+            { TRIVIAL_BOOLEAN_QUERY, TRIVIAL_BOOLEAN_QUERY_RESULT },
+            { TRIVIAL_ATTRIBUTE_QUERY, TRIVIAL_ATTRIBUTE_QUERY_RESULT },
+            { TRIVIAL_MANY_DECLARATIONS_QUERY, TRIVIAL_MANY_DECLARATIONS_QUERY_RESULT },
+            { TRIVIAL_ONE_TUPLE_QUERY, TRIVIAL_ONE_TUPLE_QUERY_RESULT },
+            { TRIVIAL_TUPLE_QUERY, TRIVIAL_TUPLE_QUERY_RESULT },
+            { TRIVIAL_TUPLE_ATTRIBUTES_QUERY, TRIVIAL_TUPLE_ATTRIBUTES_QUERY_RESULT },
+            { TRIVIAL_REDUNDANT_ATTRIBUTE_QUERY, TRIVIAL_REDUNDANT_ATTRIBUTE_QUERY_RESULT },
+            { TRIVIAL_TUPLE_MIXED_QUERY, TRIVIAL_TUPLE_MIXED_QUERY_RESULT },
+            { SIMPLE_CONSTANTS_QUERY, SIMPLE_CONSTANTS_QUERY_RESULT },
+            { SIMPLE_VALID_QUERY, SIMPLE_VALID_QUERY_RESULT },
+            { SIMPLE_VALID_BOOLEAN_QUERY, SIMPLE_VALID_BOOLEAN_QUERY_RESULT },
+            { SIMPLE_VALID_TUPLE_QUERY, SIMPLE_VALID_TUPLE_QUERY_RESULT },
+            { SIMPLE_VALID_ATTRIBUTES_QUERY, SIMPLE_VALID_ATTRIBUTES_QUERY_RESULT },
+            { SIMPLE_PATTERN_STRING_QUERY, SIMPLE_PATTERN_STRING_QUERY_RESULT },
+            { SIMPLE_LITERAL_INTEGER_EQUALITY_QUERY, SIMPLE_LITERAL_INTEGER_EQUALITY_QUERY_RESULT },
+            { SIMPLE_LITERAL_IDENTIFIER_EQUALITY_QUERY, SIMPLE_LITERAL_IDENTIFIER_EQUALITY_QUERY_RESULT },
+            { SIMPLE_MIXED_EQUALITY_QUERY, SIMPLE_MIXED_EQUALITY_QUERY_RESULT },
+            { SIMPLE_INTEGER_EQUALITY_QUERY, SIMPLE_INTEGER_EQUALITY_QUERY_RESULT },
+            { SIMPLE_IDENTIFIER_EQUALITY_QUERY, SIMPLE_IDENTIFIER_EQUALITY_QUERY_RESULT },
+            { COMPLEX_VALID_BASIC_QUERY, COMPLEX_VALID_BASIC_QUERY_RESULT },
+            { COMPLEX_VALID_ATTRIBUTES_QUERY, COMPLEX_VALID_ATTRIBUTES_QUERY_RESULT },
+            { COMPLEX_PATTERN_STRING_QUERY, COMPLEX_PATTERN_STRING_QUERY_RESULT },
+            { COMPLEX_VALID_ADVANCED_QUERY, COMPLEX_VALID_ADVANCED_QUERY_RESULT },
+            { CHAINED_BOOLEAN_QUERY, CHAINED_BOOLEAN_QUERY_RESULT },
+            { CHAINED_BASIC_RELATIONS_QUERY, CHAINED_BASIC_RELATIONS_QUERY_RESULT },
+            { CHAINED_PROCEDURE_RELATIONS_QUERY, CHAINED_PROCEDURE_RELATIONS_QUERY_RESULT },
+            { CHAINED_MIXED_CLAUSES_QUERY, CHAINED_MIXED_CLAUSES_QUERY_RESULT },
+            { CHAINED_MIXED_RETURN_QUERY, CHAINED_MIXED_RETURN_QUERY_RESULT },
+            { CHAINED_CALLS_QUERY, CHAINED_CALLS_QUERY_RESULT },
+            { CHAINED_NEXT_QUERY, CHAINED_NEXT_QUERY_RESULT },
+            { CHAINED_AFFECTS_QUERY, CHAINED_AFFECTS_QUERY_RESULT },
+            { CHAINED_STMT_PROG_LINE_QUERY, CHAINED_STMT_PROG_LINE_QUERY_RESULT },
+            { CHAINED_ADV_RELATIONS_QUERY, CHAINED_ADV_RELATIONS_QUERY_RESULT },
+            { CHAINED_EQUALITIES_QUERY, CHAINED_EQUALITIES_QUERY_RESULT },
+            { CHAINED_CONFUSING_AND_QUERY, CHAINED_CONFUSING_AND_QUERY_RESULT },
+            { CHAINED_ALL_RELATIONS_QUERY, CHAINED_ALL_RELATIONS_QUERY_RESULT },
+            { CHAINED_ALL_PATTERNS_QUERY, CHAINED_ALL_PATTERNS_QUERY_RESULT },
+            { CHAINED_ALL_NON_LITERAL_EQUALITIES_QUERY, CHAINED_ALL_NON_LITERAL_EQUALITIES_QUERY_RESULT },
+            { CHAINED_NO_WHITESPACE_QUERY, CHAINED_NO_WHITESPACE_QUERY_RESULT },
+            { CHAINED_EXTRA_WHITESPACE_QUERY, CHAINED_EXTRA_WHITESPACE_QUERY_RESULT },
+            { PROJECT_REPORT_SAMPLE_QUERY, PROJECT_REPORT_SAMPLE_QUERY_RESULT }
+        };
+
+        // Array containing all negative testcases, each comprising an invalid query with a single
+        // syntax or semantic error and the expected error message returned by the Query Parser
+        vector<pair<string, string>> INVALID_QUERY_TESTCASES = {
             // validateQuerySyntax
-            EMPTY_QUERY, FOREIGN_CHARACTER_IN_DECLARATION_QUERY, INCORRECT_DECLARATION_SYNTAX_QUERY,
-            DUPLICATE_BODY_QUERY, MISSING_BODY_QUERY, MISSING_BODY_SUFFIX_QUERY,
-            MISSING_SELECT_QUERY, ENDING_SEMICOLON_QUERY, FOREIGN_CHARACTER_IN_BODY_QUERY,
+            { EMPTY_QUERY, SYNTAX_ERR_EMPTY_QUERY },
+            { FOREIGN_CHARACTER_IN_DECLARATION_QUERY, SYNTAX_ERR_INVALID_DECLARATION },
+            { INCORRECT_DECLARATION_SYNTAX_QUERY, SYNTAX_ERR_INVALID_DECLARATION },
+            { MISSING_BODY_QUERY, SYNTAX_ERR_MISSING_SELECT_OR_UNKNOWN_CHAR },
+            { MISSING_BODY_SUFFIX_QUERY, SYNTAX_ERR_MISSING_SELECT_OR_UNKNOWN_CHAR },
+            { MISSING_SELECT_QUERY, SYNTAX_ERR_MISSING_SELECT_OR_UNKNOWN_CHAR },
+            { ENDING_SEMICOLON_QUERY, SYNTAX_ERR_MISSING_SELECT_OR_UNKNOWN_CHAR },
+            { FOREIGN_CHARACTER_IN_BODY_QUERY, SYNTAX_ERR_MISSING_SELECT_OR_UNKNOWN_CHAR },
             // validateQuerySemantics
-            AMBIGUOUS_BOOLEAN_QUERY, INCORRECT_BOOLEAN_KEYWORD_QUERY,
-            MISSING_RETURN_TYPE_SYNONYM_QUERY, MISSING_BOOLEAN_IN_TUPLE_QUERY,
-            MISSING_SYNONYM_IN_TUPLE_QUERY, INVALID_PROG_LINE_ATTRIBUTE_QUERY,
-            INVALID_SYNONYM_ATTRIBUTE_QUERY, INVALID_SYNONYM_ATTRIBUTE_TYPE_IN_TUPLE_QUERY,
-            AMBIGUOUS_WILDCARD_QUERY, USES_MISSING_FIRST_SYNONYM_QUERY,
-            USES_UNDEFINED_RELATION_QUERY, MODIFIES_UNDEFINED_RELATION_QUERY,
-            MODIFIES_MISSING_SECOND_SYNONYM_QUERY, USES_NON_VARIABLE_ARG_QUERY,
-            CALLS_MISSING_SYNONYM_QUERY, CALLS_NON_PROCEDURE_ARG_QUERY,
-            INVALID_STMT_NUMBER_QUERY, INVALID_PROG_LINE_QUERY,
-            FOLLOWS_MISSING_SYNONYM_QUERY, NEXT_MISSING_SYNONYM_QUERY,
-            PARENT_NON_STMT_ARG_QUERY, NEXT_NON_STMT_ARG_QUERY, AFFECTS_NON_ASSIGN_ARG_QUERY,
-            PATTERN_MISSING_SYNONYM_QUERY, PATTERN_NON_VARIABLE_ARG_QUERY,
-            WITH_DIFFERING_LITERAL_ARG_TYPE_QUERY, WITH_MISSING_SYNONYM_ARG_QUERY,
-            WITH_NON_PROG_LINE_SYNONYM_ARG_QUERY, WITH_MISSING_SYNONYM_IN_ATTRIBUTE_ARG_QUERY,
-            WITH_INVALID_SYNONYM_ATTRIBUTE_TYPE_QUERY, WITH_INVALID_LITERAL_SYNONYM_ARGS_QUERY,
-            WITH_INVALID_LITERAL_INTEGER_ATTRIBUTE_ARGS_QUERY, WITH_INVALID_LITERAL_IDENTIFIER_ATTRIBUTE_ARGS_QUERY,
-            WITH_INVALID_SYNONYM_ATTRIBUTE_ARGS_QUERY, WITH_INVALID_ATTRIBUTE_ATTRIBUTE_ARGS_QUERY,
+            { AMBIGUOUS_BOOLEAN_QUERY, SEMANTIC_ERR_AMBIGUOUS_USE_OF_BOOLEAN },
+            { INCORRECT_BOOLEAN_KEYWORD_QUERY, SEMANTIC_ERR_UNDECLARED_SYNONYM_IN_RETURN_TYPE },
+            { MISSING_RETURN_TYPE_SYNONYM_QUERY, SEMANTIC_ERR_UNDECLARED_SYNONYM_IN_RETURN_TYPE },
+            { MISSING_BOOLEAN_IN_TUPLE_QUERY, SEMANTIC_ERR_UNDECLARED_SYNONYM_IN_RETURN_TYPE },
+            { MISSING_SYNONYM_IN_TUPLE_QUERY, SEMANTIC_ERR_UNDECLARED_SYNONYM_IN_RETURN_TYPE },
+            { INVALID_PROG_LINE_ATTRIBUTE_QUERY, SEMANTIC_ERR_INVALID_SYNONYM_ATTRIBUTE_IN_RETURN_TYPE },
+            { INVALID_SYNONYM_ATTRIBUTE_QUERY, SEMANTIC_ERR_INVALID_SYNONYM_ATTRIBUTE_IN_RETURN_TYPE },
+            { INVALID_SYNONYM_ATTRIBUTE_TYPE_IN_TUPLE_QUERY, SEMANTIC_ERR_INVALID_SYNONYM_ATTRIBUTE_IN_RETURN_TYPE },
+            { USESS_AMBIGUOUS_WILDCARD_QUERY, SEMANTIC_ERR_USES_MODIFIES_AMBIGUOUS_WILDCARD },
+            { MODIFIESS_MISSING_FIRST_SYNONYM_QUERY, SEMANTIC_ERR_USES_MODIFIES_UNDECLARED_FIRST_SYNONYM },
+            { USESS_UNDEFINED_RELATION_QUERY, SEMANTIC_ERR_USES_INVALID_FIRST_SYNONYM },
+            { MODIFIESS_UNDEFINED_RELATION_QUERY, SEMANTIC_ERR_MODIFIES_INVALID_FIRST_SYNONYM },
+            { USESS_MISSING_SECOND_SYNONYM_QUERY, SEMANTIC_ERR_USES_MODIFIES_UNDECLARED_SECOND_SYNONYM },
+            { MODIFIESP_MISSING_SECOND_SYNONYM_QUERY, SEMANTIC_ERR_USES_MODIFIES_UNDECLARED_SECOND_SYNONYM },
+            { USESP_LITERAL_MISSING_SECOND_SYNONYM_QUERY, SEMANTIC_ERR_USES_MODIFIES_UNDECLARED_SECOND_SYNONYM },
+            { USESP_NON_VARIABLE_ARG_QUERY, SEMANTIC_ERR_USES_MODIFIES_NON_VARIABLE_SECOND_SYNONYM },
+            { MODIFIESS_NON_VARIABLE_ARG_QUERY, SEMANTIC_ERR_USES_MODIFIES_NON_VARIABLE_SECOND_SYNONYM },
+            { MODIFIESP_LITERAL_NON_VARIABLE_ARG_QUERY, SEMANTIC_ERR_USES_MODIFIES_NON_VARIABLE_SECOND_SYNONYM },
+            { CALLS_MISSING_SYNONYM_QUERY, SEMANTIC_ERR_CALLS_UNDECLARED_SYNONYM },
+            { CALLS_NON_PROCEDURE_ARG_QUERY, SEMANTIC_ERR_CALLS_NON_PROCEDURE_SYNONYM },
+            { INVALID_STMT_NUMBER_OVERFLOW_QUERY, SEMANTIC_ERR_FPNA_STMT_NUMBER_OVERFLOW },
+            { INVALID_STMT_NUMBER_QUERY, SEMANTIC_ERR_FPNA_NON_POSITIVE_STMT_NUMBER },
+            { INVALID_PROG_LINE_QUERY, SEMANTIC_ERR_FPNA_NON_POSITIVE_STMT_NUMBER },
+            { FOLLOWS_MISSING_SYNONYM_QUERY, SEMANTIC_ERR_FPNA_UNDECLARED_SYNONYM },
+            { NEXT_MISSING_SYNONYM_QUERY, SEMANTIC_ERR_FPNA_UNDECLARED_SYNONYM },
+            { AFFECTS_NON_ASSIGN_ARG_QUERY, SEMANTIC_ERR_AFFECTS_NON_ASSIGN_SYNONYM },
+            { PARENT_NON_STMT_ARG_QUERY, SEMANTIC_ERR_FPN_NON_STMT_SYNONYM },
+            { NEXT_NON_STMT_ARG_QUERY, SEMANTIC_ERR_FPN_NON_STMT_SYNONYM },
+            { PATTERN_MISSING_SYNONYM_QUERY, SEMANTIC_ERR_PATTERN_UNDECLARED_FIRST_SYNONYM },
+            { PATTERN_NON_VARIABLE_ARG_QUERY, SEMANTIC_ERR_PATTERN_NON_VARIABLE_FIRST_SYNONYM },
+            { WITH_DIFFERING_LITERAL_ARG_TYPE_QUERY, SEMANTIC_ERR_WITH_CLAUSE_DIFF_LITERAL_TYPE },
+            { WITH_MISSING_SYNONYM_ARG_QUERY, SEMANTIC_ERR_WITH_CLAUSE_UNDECLARED_SYNONYM_ARG },
+            { WITH_NON_PROG_LINE_SYNONYM_ARG_QUERY, SEMANTIC_ERR_WITH_CLAUSE_NON_PROG_LINE_SYNONYM_ARG },
+            { WITH_MISSING_SYNONYM_IN_ATTRIBUTE_ARG_QUERY, SEMANTIC_ERR_WITH_CLAUSE_UNDECLARED_SYNONYM_IN_ATTRIBUTE_ARG },
+            { WITH_INVALID_SYNONYM_ATTRIBUTE_TYPE_QUERY, SEMANTIC_ERR_WITH_CLAUSE_INVALID_SYNONYM_ATTRIBUTE_PAIR_ARG },
+            { WITH_INVALID_LITERAL_SYNONYM_ARGS_QUERY, SEMANTIC_ERR_WITH_CLAUSE_DIFF_RETURN_TYPE_OF_ARGS },
+            { WITH_INVALID_LITERAL_INTEGER_ATTRIBUTE_ARGS_QUERY, SEMANTIC_ERR_WITH_CLAUSE_DIFF_RETURN_TYPE_OF_ARGS },
+            { WITH_INVALID_LITERAL_IDENTIFIER_ATTRIBUTE_ARGS_QUERY, SEMANTIC_ERR_WITH_CLAUSE_DIFF_RETURN_TYPE_OF_ARGS },
+            { WITH_INVALID_SYNONYM_ATTRIBUTE_ARGS_QUERY, SEMANTIC_ERR_WITH_CLAUSE_DIFF_RETURN_TYPE_OF_ARGS },
+            { WITH_INVALID_ATTRIBUTE_ATTRIBUTE_ARGS_QUERY, SEMANTIC_ERR_WITH_CLAUSE_DIFF_RETURN_TYPE_OF_ARGS },
             // splitClauses
-            INVALID_AND_RELATION_QUERY, INVALID_AND_PATTERN_QUERY, INVALID_AND_WITH_QUERY,
-            INCORRECT_RELATION_KEYWORD_QUERY, INCORRECT_PATTERN_KEYWORD_QUERY, INCORRECT_EQUALITY_KEYWORD_QUERY,
-            RELATION_INVALID_ARG_CHARACTER_QUERY, RELATION_INVALID_ATTRIBUTE_ARG_QUERY,
-            PATTERN_INVALID_SYNTAX_QUERY, PATTERN_TOO_FEW_ARGS_QUERY,
-            PATTERN_INVALID_FIRST_ARG_CHARACTER_QUERY, PATTERN_INVALID_SECOND_ARG_CHARACTER_QUERY,
-            PATTERN_INVALID_ATTRIBUTE_ARG_QUERY, PATTERN_MALFORMED_PATTERN_STRING_QUERY,
-            PATTERN_UNBALANCED_UNDERSCORES_QUERY, INVALID_SYNONYM_PATTERN_STRING_QUERY,
-            WITH_INCORRECT_EQUALITY_OPERATOR_QUERY, WITH_INVALID_OPERATOR_QUERY,
-            WITH_INVALID_WILDCARD_ARG_QUERY, WITH_UNQUOTED_IDENTIFIER_ARG_QUERY,
+            { INVALID_AND_RELATION_QUERY, SYNTAX_ERR_INVALID_AND_CHAINED_CLAUSES },
+            { INVALID_AND_PATTERN_QUERY, SYNTAX_ERR_INVALID_AND_CHAINED_CLAUSES },
+            { INVALID_AND_WITH_QUERY, SYNTAX_ERR_INVALID_AND_CHAINED_CLAUSES },
+            { MISSING_RETURN_TYPE_QUERY, SYNTAX_ERR_INVALID_CLAUSES_IN_QUERY_BODY },
+            { INCORRECT_RELATION_KEYWORD_QUERY, SYNTAX_ERR_INVALID_CLAUSES_IN_QUERY_BODY },
+            { INCORRECT_PATTERN_KEYWORD_QUERY,  SYNTAX_ERR_INVALID_CLAUSES_IN_QUERY_BODY },
+            { INCORRECT_EQUALITY_KEYWORD_QUERY, SYNTAX_ERR_INVALID_CLAUSES_IN_QUERY_BODY },
+            { RELATION_INVALID_ARG_CHARACTER_QUERY, SYNTAX_ERR_INVALID_CLAUSES_IN_QUERY_BODY },
+            { RELATION_INVALID_ATTRIBUTE_ARG_QUERY, SYNTAX_ERR_INVALID_CLAUSES_IN_QUERY_BODY },
+            { PATTERN_INVALID_SYNTAX_QUERY, SYNTAX_ERR_INVALID_CLAUSES_IN_QUERY_BODY },
+            { PATTERN_TOO_FEW_ARGS_QUERY, SYNTAX_ERR_MISSING_OR_MALFORMED_PATTERN_ARG },
+            { PATTERN_INVALID_FIRST_ARG_CHARACTER_QUERY, SYNTAX_ERR_MISSING_OR_MALFORMED_PATTERN_ARG },
+            { PATTERN_INVALID_SECOND_ARG_CHARACTER_QUERY, SYNTAX_ERR_MISSING_OR_MALFORMED_PATTERN_ARG },
+            { PATTERN_INVALID_ATTRIBUTE_ARG_QUERY, SYNTAX_ERR_MISSING_OR_MALFORMED_PATTERN_ARG },
+            { PATTERN_MALFORMED_PATTERN_STRING_QUERY, SYNTAX_ERR_MISSING_OR_MALFORMED_PATTERN_ARG },
+            { PATTERN_UNBALANCED_UNDERSCORES_QUERY, SYNTAX_ERR_MISSING_OR_MALFORMED_PATTERN_ARG },
+            { INVALID_SYNONYM_PATTERN_STRING_QUERY, SYNTAX_ERR_MISSING_OR_MALFORMED_PATTERN_ARG },
+            { WITH_INCORRECT_EQUALITY_OPERATOR_QUERY, SYNTAX_ERR_INVALID_CLAUSES_IN_QUERY_BODY },
+            { WITH_INVALID_OPERATOR_QUERY, SYNTAX_ERR_INVALID_CLAUSES_IN_QUERY_BODY },
+            { WITH_INVALID_WILDCARD_ARG_QUERY, SYNTAX_ERR_INVALID_CLAUSES_IN_QUERY_BODY },
+            { WITH_UNQUOTED_IDENTIFIER_ARG_QUERY, SYNTAX_ERR_INVALID_CLAUSES_IN_QUERY_BODY },
+            { WITH_INVALID_ATTRIBUTE_SYNTAX_QUERY, SYNTAX_ERR_INVALID_CLAUSES_IN_QUERY_BODY },
             // parseDeclarations
-            UNRECOGNISED_DESIGN_ENTITY_QUERY, CONFLICTING_SYNONYM_QUERY,
+            { DUPLICATE_BODY_QUERY, SYNTAX_ERR_UNKNOWN_DESIGN_ENTITY_KEYWORD },
+            { UNRECOGNISED_DESIGN_ENTITY_QUERY, SYNTAX_ERR_UNKNOWN_DESIGN_ENTITY_KEYWORD },
+            { CONFLICTING_SYNONYM_QUERY, SEMANTIC_ERR_CONFLICTING_SYNONYM_DECLARATIONS },
             // parseQueryTarget
-            INVALID_RETURN_TYPE_QUERY, INVALID_LITERAL_RETURN_TYPE_QUERY, INVALID_RETURN_SYNONYM_QUERY,
-            MISSING_RETURN_TYPE_QUERY, MULTIPLE_RETURN_TYPE_QUERY, MISSING_ATTRIBUTE_KEYWORD_QUERY,
-            INVALID_ATTRIBUTE_SPECIFIER_QUERY, INVALID_ATTRIBUTE_CHARACTER_QUERY, INVALID_ATTRIBUTE_SYNTAX_QUERY,
-            EMPTY_TUPLE_QUERY, INVALID_TUPLE_SPECIFIER_QUERY, INVALID_TUPLE_DELIMITER_QUERY,
-            INVALID_SYNONYM_IN_TUPLE_QUERY, MISSING_ATTRIBUTE_KEYWORD_IN_TUPLE_QUERY,
-            INVALID_SINGLE_WITH_TUPLE_QUERY, INVALID_ATTRIBUTE_KEYWORD_QUERY, INVALID_ATTRIBUTE_KEYWORD_IN_TUPLE_QUERY,
+            { INVALID_RETURN_TYPE_QUERY, SYNTAX_ERR_MISSING_OR_INVALID_QUERY_TARGET },
+            { INVALID_LITERAL_RETURN_TYPE_QUERY, SYNTAX_ERR_MISSING_OR_INVALID_QUERY_TARGET },
+            { INVALID_RETURN_SYNONYM_QUERY, SYNTAX_ERR_MISSING_OR_INVALID_QUERY_TARGET },
+            { MULTIPLE_RETURN_TYPE_QUERY, SYNTAX_ERR_MISSING_OR_INVALID_QUERY_TARGET },
+            { MISSING_ATTRIBUTE_KEYWORD_QUERY, SYNTAX_ERR_MISSING_OR_INVALID_QUERY_TARGET },
+            { INVALID_ATTRIBUTE_SPECIFIER_QUERY, SYNTAX_ERR_MISSING_OR_INVALID_QUERY_TARGET },
+            { INVALID_ATTRIBUTE_CHARACTER_QUERY, SYNTAX_ERR_MISSING_OR_INVALID_QUERY_TARGET },
+            { INVALID_ATTRIBUTE_SYNTAX_QUERY, SYNTAX_ERR_MISSING_OR_INVALID_QUERY_TARGET },
+            { EMPTY_TUPLE_QUERY, SYNTAX_ERR_MISSING_OR_INVALID_QUERY_TARGET },
+            { INVALID_TUPLE_SPECIFIER_QUERY, SYNTAX_ERR_MISSING_OR_INVALID_QUERY_TARGET },
+            { INVALID_TUPLE_DELIMITER_QUERY, SYNTAX_ERR_MISSING_OR_INVALID_QUERY_TARGET },
+            { INVALID_SYNONYM_IN_TUPLE_QUERY, SYNTAX_ERR_MISSING_OR_INVALID_QUERY_TARGET },
+            { MISSING_ATTRIBUTE_KEYWORD_IN_TUPLE_QUERY, SYNTAX_ERR_MISSING_OR_INVALID_QUERY_TARGET },
+            { INVALID_SINGLE_WITH_TUPLE_QUERY, SYNTAX_ERR_MISSING_OR_INVALID_QUERY_TARGET },
+            { INVALID_ATTRIBUTE_KEYWORD_QUERY, SYNTAX_ERR_INVALID_ATTRIBUTE_KEYWORD_IN_RETURN_TYPE },
+            { INVALID_ATTRIBUTE_KEYWORD_IN_TUPLE_QUERY, SYNTAX_ERR_INVALID_ATTRIBUTE_KEYWORD_IN_RETURN_TYPE },
             // parseRelationClauses
-            INVALID_RELATION_TYPE_QUERY, INVALID_RELATION_KEYWORD_QUERY, INCORRECT_RELATION_NUM_ARGS_QUERY,
-            FOLLOWS_NON_STMT_REF_ARG_QUERY, PARENT_NON_STMT_REF_ARG_QUERY,
-            USES_INVALID_SECOND_ARG_QUERY, MODIFIES_INVALID_FIRST_ARG_QUERY,
-            CALLS_NON_ENTITY_REF_ARG_QUERY, NEXT_NON_LINE_REF_ARG_QUERY, AFFECTS_NON_STMT_REF_QUERY,
+            { INVALID_RELATION_TYPE_QUERY, SYNTAX_ERR_INVALID_RELATION_KEYWORD },
+            { INVALID_RELATION_KEYWORD_QUERY, SYNTAX_ERR_INVALID_RELATION_KEYWORD },
+            { INCORRECT_RELATION_NUM_ARGS_QUERY, SYNTAX_ERR_RELATION_INVALID_NUM_ARGS },
+            { FOLLOWS_NON_STMT_REF_ARG_QUERY, SYNTAX_ERR_FOLLOWS_PARENTS_INVALID_STMT_REF },
+            { PARENT_NON_STMT_REF_ARG_QUERY, SYNTAX_ERR_FOLLOWS_PARENTS_INVALID_STMT_REF },
+            { USES_INVALID_SECOND_ARG_QUERY, SYNTAX_ERR_USES_MODIFIES_INVALID_SECOND_ENT_REF },
+            { MODIFIES_INVALID_FIRST_ARG_QUERY, SYNTAX_ERR_USES_MODIFIES_INVALID_FIRST_ARG },
+            { CALLS_NON_ENTITY_REF_ARG_QUERY, SYNTAX_ERR_CALLS_INVALID_ENT_REF },
+            { NEXT_NON_LINE_REF_ARG_QUERY, SYNTAX_ERR_NEXT_INVALID_LINE_REF },
+            { AFFECTS_NON_STMT_REF_QUERY, SYNTAX_ERR_AFFECTS_INVALID_STMT_REF },
             // parsePatternClauses
-            PATTERN_UNDECLARED_SYNONYM_QUERY, PATTERN_NON_ENTITY_REF_ARG_QUERY,
-            PATTERN_ASSIGN_TOO_MANY_ARGS_QUERY, PATTERN_STRING_INVALID_NAME_QUERY,
-            PATTERN_STRING_INVALID_STRUCTURE_QUERY, PATTERN_STRING_INVALID_PARENTHESES_QUERY,
-            PATTERN_WHILE_TOO_MANY_ARGS_QUERY, PATTERN_WHILE_INVALID_SECOND_ARG_QUERY,
-            PATTERN_IF_TOO_FEW_ARGS_QUERY, PATTERN_IF_INVALID_ARGS_QUERY, INVALID_PATTERN_TYPE_QUERY,
+            { PATTERN_UNDECLARED_SYNONYM_QUERY, SEMANTIC_ERR_UNDECLARED_PATTERN_TYPE_SYNONYM },
+            { PATTERN_NON_ENTITY_REF_ARG_QUERY, SYNTAX_ERR_PATTERN_INVALID_ENT_REF },
+            { PATTERN_ASSIGN_TOO_MANY_ARGS_QUERY, SYNTAX_ERR_ASSIGN_PATTERN_INVALID_NUM_ARGS },
+            { PATTERN_STRING_INVALID_NAME_QUERY, SYNTAX_ERR_ASSIGN_PATTERN_INVALID_PATTERN },
+            { PATTERN_STRING_INVALID_STRUCTURE_QUERY, SYNTAX_ERR_ASSIGN_PATTERN_INVALID_PATTERN },
+            { PATTERN_STRING_INVALID_PARENTHESES_QUERY, SYNTAX_ERR_ASSIGN_PATTERN_INVALID_PATTERN },
+            { PATTERN_WHILE_TOO_MANY_ARGS_QUERY, SYNTAX_ERR_WHILE_PATTERN_INVALID_NUM_ARGS },
+            { PATTERN_WHILE_INVALID_SECOND_ARG_QUERY, SYNTAX_ERR_WHILE_PATTERN_INVALID_SECOND_ARG },
+            { PATTERN_IF_TOO_FEW_ARGS_QUERY, SYNTAX_ERR_IF_PATTERN_INVALID_NUM_ARGS },
+            { PATTERN_IF_INVALID_ARGS_QUERY, SYNTAX_ERR_IF_PATTERN_INVALID_SECOND_THIRD_ARG },
+            { INVALID_PATTERN_TYPE_QUERY, SYNTAX_ERR_INVALID_PATTERN_TYPE },
             // parseWithClauses
-            WITH_INVALID_INTEGER_ARG_QUERY, WITH_INVALID_IDENTIFIER_ARG_QUERY,
-            WITH_INVALID_SYNONYM_ARG_QUERY, WITH_INVALID_ATTRIBUTE_SYNTAX_QUERY,
-            WITH_INVALID_ATTRIBUTE_KEYWORD_QUERY
+            { WITH_INVALID_INTEGER_ARG_QUERY, SYNTAX_ERR_WITH_CLAUSE_INVALID_REF_ARG },
+            { WITH_INVALID_IDENTIFIER_ARG_QUERY, SYNTAX_ERR_WITH_CLAUSE_INVALID_REF_ARG },
+            { WITH_INVALID_SYNONYM_ARG_QUERY, SYNTAX_ERR_WITH_CLAUSE_INVALID_REF_ARG },
+            { WITH_INVALID_ATTRIBUTE_KEYWORD_QUERY, SYNTAX_ERR_WITH_CLAUSE_INVALID_ATTRIBUTE_KEYWORD }
         };
 
         TEST_CLASS_INITIALIZE(initParser) {
@@ -265,16 +1289,16 @@ namespace UnitTesting {
         }
 
         TEST_METHOD(parseQueryValidCases) {
-            for (auto query : VALID_QUERIES) {
-                Query result = parser.parseQuery(query);
-                Assert::IsTrue(result.status == PQL::STATUS_SUCCESS);
+            for (auto testcase : VALID_QUERY_TESTCASES) {
+                Query result = parser.parseQuery(testcase.first);
+                Assert::IsTrue(result == testcase.second);
             }
         }
 
         TEST_METHOD(parseQueryInvalidCases) {
-            for (auto testcase : INVALID_QUERIES) {
-                Query result = parser.parseQuery(testcase);
-                Assert::IsTrue(result.status.find("error") != string::npos);
+            for (pair<string, string> testcase : INVALID_QUERY_TESTCASES) {
+                Query result = parser.parseQuery(testcase.first);
+                Assert::IsTrue(result.status == testcase.second);
             }
         }
 

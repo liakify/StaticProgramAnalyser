@@ -293,7 +293,7 @@ namespace PQL {
         ClauseResult evaluateWithClause(PKB::PKB& database, WithClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable) {
 
-            switch (clause.type) {
+            switch (clause.getWithType()) {
             case WithType::IDENTIFIER_EQUAL:
                 return evaluateIdentifierEqual(database, clause, synonymTable);
                 break;

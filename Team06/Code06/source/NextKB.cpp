@@ -8,6 +8,10 @@ void NextKB::addNext(StmtId s1, StmtId s2) {
     nRS2.directPrev.insert(s1);
 }
 
+void NextKB::addNotNextStar(StmtId s1, StmtId s2) {
+    falseNextStarTable[s1].insert(s2);
+}
+
 bool NextKB::next(StmtId s1, StmtId s2) {
     try {
         std::unordered_set<StmtId> dirNext = nextTable.at(s1).directNext;
@@ -18,18 +22,24 @@ bool NextKB::next(StmtId s1, StmtId s2) {
 }
 
 bool NextKB::nextStar(StmtId s1, StmtId s2) {
-    if (nextTable.find(s1) == nextTable.end() || nextTable.find(s2) == nextTable.end()) {
-        return false;
-    }
     if (nextStarTable.find(s1) == nextStarTable.end()) {
-        initCache(s1);
+        initEntry(s1);
     }
     if (nextStarTable.find(s2) == nextStarTable.end()) {
-        initCache(s2);
+        initEntry(s2);
     }
 
     std::unordered_set<StmtId> allNext = nextStarTable.at(s1).allNext;
     return allNext.find(s2) != allNext.end();
+}
+
+bool NextKB::notNextStar(StmtId s1, StmtId s2) {
+    try {
+        std::unordered_set<StmtId> falseRelations = falseNextStarTable.at(s1);
+        return falseRelations.find(s2) != falseRelations.end();
+    } catch (const std::out_of_range&) {
+        return false;
+    }
 }
 
 const std::unordered_set<StmtId>& NextKB::getDirectNodes(StmtId s, NodeType type) {
@@ -46,12 +56,6 @@ const std::unordered_set<StmtId>& NextKB::getDirectNodes(StmtId s, NodeType type
 }
 
 const std::unordered_set<StmtId>& NextKB::getAllNodes(StmtId s, NodeType type) {
-    if (nextTable.find(s) == nextTable.end()) {
-        return EMPTY_RESULT;
-    }
-    if (nextStarTable.find(s) == nextStarTable.end()) {
-        initCache(s);
-    }
     if (type == NodeType::SUCCESSOR) {
         return nextStarTable.at(s).allNext;
     } else {
@@ -113,11 +117,16 @@ bool NextKB::hasNextRelation() {
     return nextTable.size() != 0;
 }
 
-void NextKB::clear() {
-    nextStarTable.clear();
+bool NextKB::existsInNext(StmtId s) {
+    return nextTable.find(s) != nextTable.end();
 }
 
-void NextKB::initCache(StmtId s) {
+void NextKB::clear() {
+    nextStarTable.clear();
+    falseNextStarTable.clear();
+}
+
+void NextKB::initEntry(StmtId s) {
     nextRS& nxtRS = nextTable.at(s);
     nextStarTable[s].allNext.insert(nxtRS.directNext.begin(), nxtRS.directNext.end());
     nextStarTable[s].allPrev.insert(nxtRS.directPrev.begin(), nxtRS.directPrev.end());

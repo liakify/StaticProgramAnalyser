@@ -27,6 +27,11 @@ class NextKB {
     void addNext(StmtId s1, StmtId s2);
 
     /*
+        Adds s2 to the set of statements that CANNOT be executed in some execution sequence after s1 in falseNextStarTable
+    */
+    void addNotNextStar(StmtId s1, StmtId s2);
+
+    /*
         Returns TRUE if s2 can be executed immediately after s1, FALSE otherwise
     */
     bool next(StmtId s1, StmtId s2);
@@ -35,6 +40,11 @@ class NextKB {
         Returns TRUE if s2 can be executed in some execution sequence after s1, FALSE otherwise
     */
     bool nextStar(StmtId s1, StmtId s2);
+
+    /*
+        Returns TRUE if s2 CANNOT be executed in some execution sequence after s1, FALSE otherwise
+    */
+    bool notNextStar(StmtId s1, StmtId s2);
 
     /*
         Returns a reference to directNext/directPrev of s for NodeType SUCCESSOR and PREDECESSOR respectively
@@ -77,13 +87,22 @@ class NextKB {
     bool hasNextRelation();
 
     /*
+        Returns TRUE if s exists as a key in the nextTable, FALSE otherwise
+    */
+    bool existsInNext(StmtId s);
+
+    /*
+        Initialise nextStarTable entry for s with nextTable values
+    */
+    void initEntry(StmtId s);
+
+    /*
         Clears the nextStarTable
     */
     void clear();
 
  private:
     std::unordered_map<StmtId, nextRS> nextTable;
-    std::unordered_map<StmtId, nextStarRS> nextStarTable;
-
-    void initCache(StmtId s);
+    std::unordered_map<StmtId, nextStarRS> nextStarTable;  // Stores TRUE relations
+    std::unordered_map<StmtId, std::unordered_set<StmtId>> falseNextStarTable;  // Stores FALSE relations
 };

@@ -31,6 +31,18 @@ enum class AttrType {
 };
 
 /**
+ *  Enumeration for recognised clause types in PQL queries.
+ *
+ *  This enumeration is required for the Query Optimiser and Query Evaluator to
+ *  distinguish and correctly cast Clause references to their child class types,
+ *  since the RelationClause, PatternClause and WithClause are derived from the
+ *  base Clause class.
+ */
+enum class ClauseType {
+    RELATION, PATTERN, WITH
+};
+
+/**
  *  Enumeration for recognised relation types in PQL queries.
  *
  *  Note that FOLLOWS, FOLLOWST, PARENT, PARENTT are statement-statement relations,
@@ -95,7 +107,7 @@ enum class ArgType {
 };
 
 // Additional global aliases specific to PQL (Query Processor)
-using StmtRef = std::string;
+using StmtEntRef = std::string;
 using EntityRef = std::string;
 using Ref = std::pair<std::string, AttrType>;
 
@@ -149,6 +161,7 @@ namespace PQL {
     const std::string SEMANTIC_ERR_USES_MODIFIES_NON_VARIABLE_SECOND_SYNONYM = "semantic error: synonym as second arg in Uses/Modifies clause not a VARIABLE";
     const std::string SEMANTIC_ERR_CALLS_UNDECLARED_SYNONYM = "semantic error: undeclared synonym in Calls(*) clause";
     const std::string SEMANTIC_ERR_CALLS_NON_PROCEDURE_SYNONYM = "semantic error: synonym in Calls(*) clause not a PROCEDURE";
+    const std::string SEMANTIC_ERR_FPNA_STMT_NUMBER_OVERFLOW = "semantic error: statement number in F(*)/P(*)/N(*)/A(*) clause exceeds 32-bit signed integer limit";
     const std::string SEMANTIC_ERR_FPNA_NON_POSITIVE_STMT_NUMBER = "semantic error: statement number in F(*)/P(*)/N(*)/A(*) clause must be positive";
     const std::string SEMANTIC_ERR_FPNA_UNDECLARED_SYNONYM = "semantic error: undeclared synonym in F(*)/P(*)/N(*)/A(*) clause";
     const std::string SEMANTIC_ERR_AFFECTS_NON_ASSIGN_SYNONYM = "semantic error: synonym in Affects(*) clause not an ASSIGN or its super-types";
@@ -273,64 +286,151 @@ namespace PQL {
     };
 
     /**
-     *  Struct representing a parsed relation clause in a PQL query. Contains the
-     *  clause string, relation type and method to retrieve its arguments. Arguments
-     *  are returned as pairs of ArgType and the argument string.
+     *  Class representing a parsed clause of any type in a PQL query. Contains the
+     *  clause string and the clause type.
      */
-    struct RelationClause {
+    class Clause {
+     public:
+        /**
+         *  Compares this Clause instance to another Clause instance and returns true if
+         *  the values of every attribute is equal in both instances.
+         *
+         *  @return     true if both Clause instances are equal.
+         */
+        bool operator==(const Clause& other) const;
+
+        /**
+         *  Returns the input string corresponding to this Clause instance.
+         *
+         *  @return     string representation of this clause.
+         */
+        std::string asString();
+
+        /**
+         *  Returns the clause type of this Clause instance.
+         *
+         *  @return     ClauseType enum value describing the type of this clause.
+         */
+        ClauseType getClauseType();
+
+     protected:
         std::string clause;
-        RelationType type;
-        // StatementRef, EntityRef are just strings
-        // Use ArgType to determine how to interpret them
-        std::pair<ArgType, StmtRef> firstStmt;
-        std::pair<ArgType, StmtRef> secondStmt;
-        std::pair<ArgType, EntityRef> firstEnt;
-        std::pair<ArgType, EntityRef> secondEnt;
-        std::pair<std::pair<ArgType, std::string>, std::pair<ArgType, std::string>> getArgs() {
-            switch (type) {
-            case RelationType::FOLLOWS:
-            case RelationType::FOLLOWST:
-            case RelationType::PARENT:
-            case RelationType::PARENTT:
-            case RelationType::NEXT:
-            case RelationType::NEXTT:
-            case RelationType::AFFECTS:
-            case RelationType::AFFECTST:
-                return { firstStmt, secondStmt };
-                break;
-            case RelationType::USESS:
-            case RelationType::MODIFIESS:
-                return { firstStmt, secondEnt };
-                break;
-            case RelationType::USESP:
-            case RelationType::MODIFIESP:
-            case RelationType::CALLS:
-            case RelationType::CALLST:
-                return { firstEnt, secondEnt };
-            default:
-                return { INVALID_ARG, INVALID_ARG };
-            }
-        }
+        ClauseType clauseType;
+
+        /**
+         *  Constructs a new Clause instance with its input string and clause type.
+         */
+        Clause(std::string clause, ClauseType clauseType);
     };
 
     /**
-     *  Struct representing a parsed pattern clause in a PQL query. Contains the
+     *  Class representing a parsed relation clause in a PQL query. Contains the
+     *  clause string, relation type and method to retrieve its arguments. Arguments
+     *  are returned as pairs of ArgType and the argument string.
+     */
+    class RelationClause : public Clause {
+     public:
+        /**
+         *  Constructs a new RelationClause instance with its input string, relation type
+         *  and two positional argument pairs.
+         */
+        RelationClause(std::string clause, RelationType type,
+            std::pair<ArgType, StmtEntRef> firstArg, std::pair<ArgType, StmtEntRef> secondArg);
+
+        /**
+         *  Compares this RelationClause instance to another RelationClause instance and
+         *  returns true if the values of every attribute is equal in both instances.
+         *
+         *  @return     true if both RelationClause instances are equal.
+         */
+        bool operator==(const RelationClause& other) const;
+
+        /**
+         *  Modifies the relation type of this RelationClause instance to the procedure variant,
+         *  if its relation type possesses multiple variants, i.e. Uses and Modifies relations.
+         *  Additionally updates the positional argument pairs to satisfy this new relation type.
+         *  Returns true if the modification was successful, otherwise returns false without
+         *  modifying the relation type.
+         *
+         *  @return     true if the relation type was modified to its procedure variant.
+         */
+        bool setProcedureVariant();
+
+        /**
+         *  Returns the relation type of this RelationClause instance.
+         *
+         *  @return     RelationType enum value describing the relation type of this clause.
+         */
+        RelationType getRelationType();
+
+        /**
+         *  Returns a pair containing the two valid arguments for the relation type of this
+         *  RelationClause instance.
+         *
+         *  @return     pair of valid argument pairs for the relation type of this clause.
+         */
+        std::pair<std::pair<ArgType, StmtEntRef>, std::pair<ArgType, StmtEntRef>> getArgs();
+     private:
+        RelationType type;
+        // StatementRef, EntityRef are just strings
+        // Use ArgType to determine how to interpret them
+        std::pair<ArgType, StmtEntRef> firstArg;
+        std::pair<ArgType, StmtEntRef> secondArg;
+    };
+
+    /**
+     *  Class representing a parsed pattern clause in a PQL query. Contains the
      *  clause string, pattern type, synonym and method to retrieve its arguments.
      *  Arguments are returned as pairs of ArgType and the argument string.
      */
-    struct PatternClause {
-        std::string clause;
+    class PatternClause : public Clause {
+     public:
+        /**
+         *  Constructs a new PatternClause instance with its input string, pattern type,
+         *  pattern synonym, an argument pair for entities, and another argument pair for
+         *  the pattern string.
+         */
+        PatternClause(std::string clause, PatternType type, std::string synonym,
+            std::pair<ArgType, EntityRef> targetArg, std::pair<ArgType, Pattern> patternArg);
+
+        /**
+         *  Compares this PatternClause instance to another PatternClause instance and
+         *  returns true if the values of every attribute is equal in both instances.
+         *
+         *  @return     true if both PatternClause instances are equal.
+         */
+        bool operator==(const PatternClause& other) const;
+
+        /**
+         *  Returns the pattern type of this PatternClause instance.
+         *
+         *  @return     PatternType enum value describing the relation type of this clause.
+         */
+        PatternType getPatternType();
+
+        /**
+         *  Returns the synonym argument of this RelationClause instance.
+         *
+         *  @return     string containing the synonym argument of this clause.
+         */
+        std::string getSynonym();
+
+        /**
+         *  Returns a pair containing the entity argument pair and the pattern argument pair
+         *  of this PatternClause instance.
+         *
+         *  @return     pair of valid argument pairs for the pattern type of this clause.
+         */
+        std::pair<std::pair<ArgType, EntityRef>, std::pair<ArgType, Pattern>> getArgs();
+     private:
         PatternType type;
         std::string synonym;
         std::pair<ArgType, EntityRef> targetArg;
         std::pair<ArgType, Pattern> patternArg;
-        std::pair<std::pair<ArgType, EntityRef>, std::pair<ArgType, Pattern>> getArgs() {
-            return { targetArg, patternArg };
-        }
     };
 
     /**
-     *  Struct representing a parsed with clause in a PQL query. Contains the
+     *  Class representing a parsed with clause in a PQL query. Contains the
      *  clause string, equality type and method to retrieve its arguments. Arguments
      *  are returned as pairs with the first element the ArgType and the second
      *  element a pair comprising the argument string and an optional attribute type.
@@ -338,14 +438,50 @@ namespace PQL {
      *  Note that for non-ATTRIBUTE arguments, the optional attribute type is set to
      *  the default value NONE.
      */
-    struct WithClause {
-        std::string clause;
+    class WithClause : public Clause {
+     public:
+        /**
+         *  Constructs a new WithClause instance with its input string, equality type and
+         *  two positional argument pairs, one for each of the left and right arguments.
+         */
+        WithClause(std::string clause, WithType type,
+            std::pair<ArgType, Ref> leftArg, std::pair<ArgType, Ref> rightArg);
+
+        /**
+         *  Compares this WithClause instance to another WithClause instance and returns
+         *  true if the values of every attribute is equal in both instances.
+         *
+         *  @return     true if both WithClause instances are equal.
+         */
+        bool operator==(const WithClause& other) const;
+
+        /**
+         *  Modifies the equality type of this WithClause instance to the given WithType enum
+         *  value, if the equality type is currently unknown. Returns true if the modification
+         *  was successful, otherwise returns false without modifying the equality type.
+         *
+         *  @return     true if the equality type was successfully updated.
+         */
+        bool setWithType(WithType type);
+
+        /**
+         *  Returns the equality type of this WithClause instance.
+         *
+         *  @return     WithType enum value describing the equality type of this clause.
+         */
+        WithType getWithType();
+
+        /**
+         *  Returns a pair containing the left and right argument pairs of this WithClause
+         *  instance.
+         *
+         *  @return     pair of valid argument pairs for the pattern type of this clause.
+         */
+        std::pair<std::pair<ArgType, Ref>, std::pair<ArgType, Ref>> getArgs();
+     private:
         WithType type;
         std::pair<ArgType, Ref> leftArg;
         std::pair<ArgType, Ref> rightArg;
-        std::pair<std::pair<ArgType, Ref>, std::pair<ArgType, Ref>> getArgs() {
-            return { leftArg, rightArg };
-        }
     };
 
     /**
@@ -369,6 +505,7 @@ namespace PQL {
         std::vector<RelationClause> relations;
         std::vector<PatternClause> patterns;
         std::vector<WithClause> equalities;
+        bool operator==(const Query& other) const;
     };
 
 }
