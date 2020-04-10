@@ -296,14 +296,19 @@ namespace UnitTesting {
                 Note that out-of-range queries are terminated early and thus they are never cached i.e. not tested here.
             */
             pkbAffects.clear();
+            Assert::IsFalse(pkbAffects.affectsIsCached(2, 9));
             Assert::IsTrue(pkbAffects.affects(2, 9) == expectedAffects[2][9]);
             Assert::IsTrue(pkbAffects.affectsIsCached(2, 9));
+            Assert::IsTrue(pkbAffects.affects(2, 9) == expectedAffects[2][9]);
 
             pkbAffects.clear();
+            Assert::IsFalse(pkbAffects.affectsIsCached(26, 27));
             Assert::IsTrue(pkbAffects.affects(26, 27) == expectedAffects[26][27]);
             Assert::IsTrue(pkbAffects.affectsIsCached(26, 27));
+            Assert::IsTrue(pkbAffects.affects(26, 27) == expectedAffects[26][27]);
 
             pkbAffects.clear();
+            Assert::IsFalse(pkbAffects.affectsProcessedDirect(2, NodeType::SUCCESSOR));
             std::unordered_set<StmtId> stmt2Affects = pkbAffects.affectsGetDirectNodes(2, NodeType::SUCCESSOR);
             for (StmtId id : stmt2Affects) {
                 Assert::IsTrue(pkbAffects.affectsIsCached(2, id));
@@ -311,6 +316,7 @@ namespace UnitTesting {
             Assert::IsTrue(pkbAffects.affectsProcessedDirect(2, NodeType::SUCCESSOR));
 
             pkbAffects.clear();
+            Assert::IsFalse(pkbAffects.affectsProcessedDirect(9, NodeType::PREDECESSOR));
             std::unordered_set<StmtId> stmt9AffectedBy = pkbAffects.affectsGetDirectNodes(9, NodeType::PREDECESSOR);
             for (StmtId id : stmt9AffectedBy) {
                 Assert::IsTrue(pkbAffects.affectsIsCached(id, 9));
@@ -336,14 +342,19 @@ namespace UnitTesting {
                 Note that out-of-range queries are terminated early and thus they are never cached i.e. not tested here.
             */
             pkbAffects.clear();
+            Assert::IsFalse(pkbAffects.affectsStarIsCached(1, 9));
             Assert::IsTrue(pkbAffects.affectsStar(1, 9) == expectedAffectsStar[1][9]);
             Assert::IsTrue(pkbAffects.affectsStarIsCached(1, 9));
+            Assert::IsTrue(pkbAffects.affectsStar(1, 9) == expectedAffectsStar[1][9]);
 
             pkbAffects.clear();
+            Assert::IsFalse(pkbAffects.affectsStarIsCached(26, 27));
             Assert::IsTrue(pkbAffects.affectsStar(26, 27) == expectedAffectsStar[26][27]);
             Assert::IsTrue(pkbAffects.affectsStarIsCached(26, 27));
+            Assert::IsTrue(pkbAffects.affectsStar(26, 27) == expectedAffectsStar[26][27]);
 
             pkbAffects.clear();
+            Assert::IsFalse(pkbAffects.affectsStarProcessedAll(1, NodeType::SUCCESSOR));
             std::unordered_set<StmtId> stmt1AffectsStar = pkbAffects.affectsStarGetAllNodes(1, NodeType::SUCCESSOR);
             for (StmtId id : stmt1AffectsStar) {
                 Assert::IsTrue(pkbAffects.affectsStarIsCached(1, id));
@@ -351,6 +362,7 @@ namespace UnitTesting {
             Assert::IsTrue(pkbAffects.affectsStarProcessedAll(1, NodeType::SUCCESSOR));
 
             pkbAffects.clear();
+            Assert::IsFalse(pkbAffects.affectsStarProcessedAll(8, NodeType::SUCCESSOR));
             std::unordered_set<StmtId> stmt8AffectsStarAffectedBy = pkbAffects.affectsStarGetAllNodes(8, NodeType::PREDECESSOR);
             for (StmtId id : stmt8AffectsStarAffectedBy) {
                 Assert::IsTrue(pkbAffects.affectsStarIsCached(id, 8));
