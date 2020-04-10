@@ -6,7 +6,7 @@ Select a1 such that Affects(a1, a2) pattern a1 (v, _"2"_)
 2
 assign a1, a2; variable v;
 Select a2 such that Affects(a1, a2) pattern a1 (v, _"2"_)
-4, 5
+5
 5000
 3
 assign a1, a2; variable v;
@@ -51,7 +51,7 @@ Select a1 such that Affects*(a1, a2) pattern a1 (v, _"2"_)
 11
 assign a1, a2; variable v;
 Select a2 such that Affects*(a1, a2) pattern a1 (v, _"2"_)
-4, 5
+5
 5000
 12
 assign a1, a2; variable v;

@@ -3,7 +3,7 @@ import os
 for (root, dirs, files) in os.walk('.'):
   for name in files:
     pathname = os.path.join(root, name)
-    if (pathname.endswith('_queries.txt') and not pathname.startswith('.\given')):
+    if (pathname.endswith('_queries.txt')):
       print(pathname)
       file = open(pathname, 'r')
       queries = file.readlines()
