@@ -25,10 +25,10 @@ namespace PKB {
 
     bool NextKB::nextStar(StmtId s1, StmtId s2) {
         if (nextStarTable.find(s1) == nextStarTable.end()) {
-            initEntry(s1);
+            initCacheEntry(s1);
         }
         if (nextStarTable.find(s2) == nextStarTable.end()) {
-            initEntry(s2);
+            initCacheEntry(s2);
         }
 
         std::unordered_set<StmtId> allNext = nextStarTable.at(s1).allNext;
@@ -121,7 +121,7 @@ namespace PKB {
         falseNextStarTable.clear();
     }
 
-    void NextKB::initEntry(StmtId s) {
+    void NextKB::initCacheEntry(StmtId s) {
         nextRS& nxtRS = nextTable.at(s);
         nextStarTable[s].allNext.insert(nxtRS.directNext.begin(), nxtRS.directNext.end());
         nextStarTable[s].allPrev.insert(nxtRS.directPrev.begin(), nxtRS.directPrev.end());
