@@ -13,6 +13,7 @@ namespace UnitTesting
     PKB::PKB pkbCallStar;
     PKB::PKB pkbX;
     PKB::PKB pkbDiamond;
+    PKB::PKB pkbNested;
     PKB::PKB pkbRecursive;
     PKB::PKB pkbCyclic;
     PKB::PKB pkbNormalAndRecursive;
@@ -52,6 +53,7 @@ namespace UnitTesting
             shared_ptr<Statement> CALL_F = shared_ptr<Statement>(new CallStmt("f"));
             shared_ptr<Statement> READ_1 = shared_ptr<Statement>(new ReadStmt(1));
             shared_ptr<Statement> READ_2 = shared_ptr<Statement>(new ReadStmt(2));
+
 
             // Valid SIMPLE: 1 -> 2 -> 3
             pkbCallStar = PKB::PKB();
@@ -122,6 +124,47 @@ namespace UnitTesting
             pkbDiamond.stmtListTable.insertStmtLst(sl5);
 
             pkbDiamond = DE_calls.run(pkbDiamond);
+
+            // Call statements nested in container statements
+            pkbNested.procTable.insertProc(PROC_A);
+            pkbNested.procTable.insertProc(PROC_B);
+            pkbNested.procTable.insertProc(PROC_C);
+            pkbNested.procTable.insertProc(PROC_D);
+            pkbNested.procTable.insertProc(PROC_E);
+            pkbNested.procTable.insertProc(PROC_F);
+
+            StatementList sl9 = StatementList(std::vector<StmtId>{6, 10});
+            StatementList sl10 = StatementList(std::vector<StmtId>{7});
+            StatementList sl11 = StatementList(std::vector<StmtId>{8, 9});
+            StatementList sl12 = StatementList(std::vector<StmtId>{11});
+
+            Expression expr = Expression("x", 1, ExprType::VAR);
+            CondExpr cond = CondExpr(expr, expr);
+            shared_ptr<Statement> IF = shared_ptr<Statement>(new IfStmt(cond, 7, 8));
+            shared_ptr<Statement> WHILE = shared_ptr<Statement>(new WhileStmt(cond, 9));
+            
+            pkbNested.stmtTable.insertStmt(READ_1);
+            pkbNested.stmtListTable.insertStmtLst(sl1);
+            pkbNested.stmtTable.insertStmt(READ_1);
+            pkbNested.stmtListTable.insertStmtLst(sl2);
+            pkbNested.stmtTable.insertStmt(READ_1);
+            pkbNested.stmtListTable.insertStmtLst(sl3);
+            pkbNested.stmtTable.insertStmt(READ_1);
+            pkbNested.stmtListTable.insertStmtLst(sl4);
+            pkbNested.stmtTable.insertStmt(READ_1);
+            pkbNested.stmtListTable.insertStmtLst(sl5);
+            pkbNested.stmtTable.insertStmt(IF);
+            pkbNested.stmtTable.insertStmt(WHILE);
+            pkbNested.stmtListTable.insertStmtLst(sl9);
+            pkbNested.stmtTable.insertStmt(CALL_A);
+            pkbNested.stmtListTable.insertStmtLst(sl10);
+            pkbNested.stmtTable.insertStmt(CALL_B);
+            pkbNested.stmtTable.insertStmt(CALL_C);
+            pkbNested.stmtListTable.insertStmtLst(sl11);
+            pkbNested.stmtTable.insertStmt(CALL_E);
+            pkbNested.stmtListTable.insertStmtLst(sl12);
+
+            pkbNested = DE_calls.run(pkbNested);
 
             // Recursive call in SIMPLE
             pkbRecursive = PKB::PKB();
@@ -263,6 +306,14 @@ namespace UnitTesting
             Assert::IsFalse(pkbDiamond.callsKB.callStar(0, 1));
             Assert::IsFalse(pkbDiamond.callsKB.callStar(1, -1));
             Assert::IsFalse(pkbDiamond.callsKB.callStar(6, -1));
+        }
+
+        TEST_METHOD(populateCallStar_pkbNested) {
+            Assert::IsTrue(pkbNested.callsKB.calls(6, 1));
+            Assert::IsTrue(pkbNested.callsKB.calls(6, 2));
+            Assert::IsTrue(pkbNested.callsKB.calls(6, 3));
+            Assert::IsFalse(pkbNested.callsKB.calls(6, 4));
+            Assert::IsTrue(pkbNested.callsKB.calls(6, 5));
         }
 
         TEST_METHOD(populateCallStar_pkbRecursive) {
