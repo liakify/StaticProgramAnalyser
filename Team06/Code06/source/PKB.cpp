@@ -125,6 +125,14 @@ namespace PKB {
         affectsKB.setAffectsFullyComputed();
     }
 
+    bool PKB::affectsIsCached(StmtId s1, StmtId s2) {
+        return affectsKB.affectsIsCached(s1, s2);
+    }
+
+    bool PKB::affectsStarIsCached(StmtId s1, StmtId s2) {
+        return affectsKB.affectsStarIsCached(s1, s2);
+    }
+
     void PKB::addNext(StmtId s1, StmtId s2) {
         nextKB.addNext(s1, s2);
     }

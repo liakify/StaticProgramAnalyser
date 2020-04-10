@@ -104,6 +104,16 @@ namespace PKB {
         void setAffectsFullyComputed();
 
         /*
+            Returns TRUE if the affects relation is cached, FALSE otherwise
+        */
+        bool affectsIsCached(StmtId s1, StmtId s2);
+
+        /*
+            Returns TRUE if the affectsStar relation is cached, FALSE otherwise
+        */
+        bool affectsStarIsCached(StmtId s1, StmtId s2);
+
+        /*
             Clears the affectsTable
         */
         void clear();

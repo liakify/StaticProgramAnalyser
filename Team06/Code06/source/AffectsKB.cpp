@@ -126,6 +126,14 @@ namespace PKB {
         affectsFullyComputed = true;
     }
 
+    bool AffectsKB::affectsIsCached(StmtId s1, StmtId s2) {
+        return affects(s1, s2) || notAffects(s1, s2);
+    }
+
+    bool AffectsKB::affectsStarIsCached(StmtId s1, StmtId s2) {
+        return affectsStar(s1, s2) || notAffectsStar(s1, s2);
+    }
+
     void AffectsKB::clear() {
         affectsTable.clear();
         falseAffectsTable.clear();

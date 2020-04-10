@@ -92,6 +92,16 @@ namespace PKB {
         void setAffectsFullyComputed();
 
         /*
+            Returns TRUE if the affects relation is cached, FALSE otherwise
+        */
+        bool affectsIsCached(StmtId s1, StmtId s2);
+
+        /*
+            Returns TRUE if the affectsStar relation is cached, FALSE otherwise
+        */
+        bool affectsStarIsCached(StmtId s1, StmtId s2);
+
+        /*
             Adds Next(s1, s2) to NextKB where s2 can be executed immediately after s1
         */
         void addNext(StmtId s1, StmtId s2);
