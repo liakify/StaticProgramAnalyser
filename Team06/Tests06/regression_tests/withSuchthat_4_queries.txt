@@ -1,12 +1,12 @@
 1 - parent: linked by s1
 stmt s1, s2;
 Select s2 such that Parent (s1, s2) with s1.stmt# = 1
-2, 8
+2, 11, 12
 5000
 2 - parent: linked by s2
 if ifs; print pn;
-Select ifs such that Parent (ifs, pn) with 3 == pn.stmt#
-
+Select ifs such that Parent (ifs, pn) with 6 = pn.stmt#
+4
 5000
 3 - parent*: linked by s1
 while w; print pn;
@@ -21,40 +21,40 @@ Select w such that Parent* (w, pn) with "a" = pn.varName
 5 - follows: linked by s1
 stmt s2; call c;
 Select s2 such that Follows (c, s2) with c.procName = "ModifiesB"
-9
+10
 5000
 6 - follows: linked by s2
 stmt s; assign a;
-Select s such that Follows (s, a) with 15 == a.stmt#
-16
+Select s such that Follows (s, a) with 15 = a.stmt#
+14
 5000
 7 - follows*: linked by s1
 stmt s; read r;
-Select s such that Follows* (r, s) with r.stmt# = 17
-19. 20
+Select s such that Follows* (r, s) with r.stmt# = 21
+22, 23
 5000
 8 - follows*: linked by s2
-while w; stmt s;
+while w; stmt s; constant cn;
 Select w such that Follows* (w, s) with s.stmt# = cn.value
 1, 2
 5000
 9 - next: linked by s1
 stmt s; call c;
-Select c such that Next(s, c) with s.stmt# = 10
-11
+Select c such that Next(s, c) with s.stmt# = 9
+10
 5000
 10 - next: linkec by s2
 read r1, r2;
 Select r1 such that Next(r1, r2) with "B" = r2.varName
-
+20, 21, 22
 5000
 11 - next*: linked by s1
 assign a1; stmt s;
 Select s such that Next* (a1, s) with a1.stmt# = 18
 19
 5000
-12 - next*: linkec by s2
+12 - next*: linked by s2
 stmt s; read r;
 Select s such that Next* (s, r) with r.stmt# = 5
-1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
 5000

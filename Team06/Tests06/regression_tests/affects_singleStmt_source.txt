@@ -1,0 +1,2 @@
+procedure SingleStmt {
+	One = affects2 - 1; }
