@@ -510,14 +510,19 @@ namespace UnitTesting {
                 and thus they are never cached i.e. not tested here.
             */
             pkbNextStar.clear();
+            Assert::IsFalse(pkbNextStar.nextStarIsCached(2, 4));
             Assert::IsTrue(pkbNextStar.nextStar(2, 4));
             Assert::IsTrue(pkbNextStar.nextStarIsCached(2, 4));
+            Assert::IsTrue(pkbNextStar.nextStar(2, 4));
 
             pkbNextStar.clear();
+            Assert::IsFalse(pkbNextStar.nextStarIsCached(40, 30));
             Assert::IsFalse(pkbNextStar.nextStar(40, 30));
             Assert::IsTrue(pkbNextStar.nextStarIsCached(40, 30));
+            Assert::IsFalse(pkbNextStar.nextStar(40, 30));
 
             pkbNextStar.clear();
+            Assert::IsFalse(pkbNextStar.nextStarProcessedAll(2, NodeType::SUCCESSOR));
             std::unordered_set<StmtId> successorNodes = pkbNextStar.nextStarGetAllNodes(2, NodeType::SUCCESSOR);
             for (StmtId id : successorNodes) {
                 Assert::IsTrue(pkbNextStar.nextStarIsCached(2, id));
@@ -525,6 +530,7 @@ namespace UnitTesting {
             Assert::IsTrue(pkbNextStar.nextStarProcessedAll(2, NodeType::SUCCESSOR));
 
             pkbNextStar.clear();
+            Assert::IsFalse(pkbNextStar.nextStarProcessedAll(26, NodeType::PREDECESSOR));
             std::unordered_set<StmtId> predecessorNodes = pkbNextStar.nextStarGetAllNodes(26, NodeType::PREDECESSOR);
             for (StmtId id : predecessorNodes) {
                 Assert::IsTrue(pkbNextStar.nextStarIsCached(id, 26));
