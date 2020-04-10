@@ -126,4 +126,8 @@ namespace PKB {
         nextStarTable[s].allNext.insert(nxtRS.directNext.begin(), nxtRS.directNext.end());
         nextStarTable[s].allPrev.insert(nxtRS.directPrev.begin(), nxtRS.directPrev.end());
     }
+
+    bool NextKB::nextStarIsCached(StmtId s1, StmtId s2) {
+        return nextStar(s1, s2) || notNextStar(s1, s2);
+    }
 }

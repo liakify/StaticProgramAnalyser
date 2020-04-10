@@ -200,6 +200,10 @@ namespace PKB {
         return nextKB.hasNextRelation();
     }
 
+    bool PKB::nextStarIsCached(StmtId s1, StmtId s2) {
+        return nextKB.nextStarIsCached(s1, s2);
+    }
+
     void PKB::clear() {
         nextKB.clear();
         affectsKB.clear();

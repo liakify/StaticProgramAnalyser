@@ -94,9 +94,9 @@ namespace PKB {
         bool existsInNext(StmtId s);
 
         /*
-            Initialise nextStarTable entry for s with nextTable values
+            Returns TRUE if the nextStar relation is cached, FALSE otherwise
         */
-        void initEntry(StmtId s);
+        bool nextStarIsCached(StmtId s1, StmtId s2);
 
         /*
             Clears the nextStarTable

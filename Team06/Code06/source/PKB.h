@@ -147,6 +147,11 @@ namespace PKB {
         bool hasNextRelation();
 
         /*
+            Returns TRUE if the nextStar relation is cached, FALSE otherwise
+        */
+        bool nextStarIsCached(StmtId s1, StmtId s2);
+
+        /*
             Clears the cached results
         */
         void clear();
