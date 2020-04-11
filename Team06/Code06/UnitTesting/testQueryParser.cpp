@@ -58,6 +58,10 @@ namespace UnitTesting {
         string CHAINED_NO_WHITESPACE_QUERY = "assign a1,a2;while w;variable v;call cl;print pn;Select<a1,w,v,pn>pattern a1(v,_)and w(v,_)with pn.varName=cl.procName and pn.stmt#=69 pattern a2(_,_\"f*x+f*(x-dx)+dx*dy\"_)such that Next*(a1,a2)with \"xyz\"=\"xyz\" such that Uses(a1,v)and Modifies(w,v)";
         string CHAINED_EXTRA_WHITESPACE_QUERY = "\nprocedure  p\v;\rwhile\tw ;assign\va\r;  variable\fv1,  v2\n;\tcall\ncl\t;\vprog_line\rl\f;\nSelect\f<\vp. procName\r,\tw\n,  cl\f,\ncl\t.\rprocName\v,\fa >\n pattern\ta(  v1,\r_\"\t69-\v 420\"_ )\nwith\t\"i\"  =\r\"i\"\vand  17\r=w\t.  stmt#  and\fl\n=\tcl\r.\vstmt#\nsuch  that\fModifies\r(p\t,v1)\fand\rUses(\tw\v,  v1\n)  pattern\tw  (v2, _\v\f) such\t\tthat  Next*\f (\ta, w\v)\rand\tFollows(\na\r,\fcl  )\vwith p\n.\fprocName\r=\n\" function\t\"  and\rcl\v.\fprocName\n=  v2  .\tvarName\n";
         string PROJECT_REPORT_SAMPLE_QUERY = "assign a1, a2; constant c; prog_line l; while w; if ifs; read rd; print pn; procedure p; variable v1, v2; Select <a1, w.stmt#, rd.varName, pn, p> such that Modifies(a1, v1) and Uses(pn, v1) and Parent*(w, a1) with v2.varName = \"input\" pattern w(\"i\", _) and a1(_, _\"i + 1 + x / 2 + y - (3 * z)\"_) such that Calls(\"driver\", _) and Uses(p, \"j\") and Affects*(1, 64) with c.value = l and rd.varName = v2.varName and 3203 = 3230 pattern ifs(v2, _, _)";
+        string EXT_SIMPLE_NOT_QUERY = "assign a; constant c; while w; variable v; Select <a, w, v> such that not Parent*(w, a) pattern a(v, _) with not a.stmt# = c.value pattern not w(v, _) with not \"taiwan\" = \"china\" such that Uses(w, v) with c.value = w.stmt#";
+        string EXT_CHAINED_NOT_QUERY = "constant c; if ifs; while w; call cl; read rd; print pn; variable v1, v2; Select <v1, v2> such that Uses(pn, v1) and not Next*(rd, pn) with not cl.procName = v1.varName and v2.varName = cl.procName and not 2019 = 2020 pattern w(v1, _) and not ifs(v1, _, _) such that not Next*(pn, rd) and Modifies(rd, v2) pattern not w(v2, _) and ifs(v2, _, _) with w.stmt# = c.value and not c.value = ifs.stmt#";
+        string EXT_CONFUSING_NOT_QUERY = "assign not; constant c; variable v; Select not pattern not(\"x\", _) and not not(_, \"0\") with not not.stmt# = 1 and not.stmt# = c.value such that not Affects(not, _) and Modifies(not, v) pattern not(_, _\"0\"_)";
+        string EXT_CONFUSING_NOT_AND_QUERY = "assign and; procedure pattern; prog_line not; variable with; Select and with not not = 1337 and not and.stmt# = 62353535 pattern and(with, _) with not = and.stmt# and not with.varName = pattern.procName and and.stmt# = not and not \"not\" = pattern.procName";
 
         // Invalid queries that fail in validateQuerySyntax
         string EMPTY_QUERY = "";
@@ -1110,6 +1114,156 @@ namespace UnitTesting {
             }
         };
 
+        Query EXT_SIMPLE_NOT_QUERY_RESULT = {
+            STATUS_SUCCESS, EXT_SIMPLE_NOT_QUERY, false,
+            {
+                { "a", AttrType::NONE },
+                { "w", AttrType::NONE },
+                { "v", AttrType::NONE }
+            },
+            {
+                { "a", DesignEntity::ASSIGN },
+                { "c", DesignEntity::CONSTANT },
+                { "w", DesignEntity::WHILE },
+                { "v", DesignEntity::VARIABLE }
+            },
+            {
+                { "not Parent*(w, a)", true, RelationType::PARENTT,
+                    { ArgType::SYNONYM, "w" }, { ArgType::SYNONYM, "a" } },
+                { "Uses(w, v)", false, RelationType::USESS,
+                    { ArgType::SYNONYM, "w" }, { ArgType::SYNONYM, "v" } }
+            },
+            {
+                { "a(v, _)", false, PatternType::ASSIGN_PATTERN, "a",
+                    { ArgType::SYNONYM, "v" }, { ArgType::WILDCARD, "_" } },
+                { "not w(v, _)", true, PatternType::WHILE_PATTERN, "w",
+                    { ArgType::SYNONYM, "v" }, { ArgType::WILDCARD, "_" } }
+            },
+            {
+                { "not a.stmt# = c.value", true, WithType::INTEGER_EQUAL,
+                    { ArgType::ATTRIBUTE, { "a", AttrType::STMT_NUM } }, { ArgType::ATTRIBUTE, { "c", AttrType::VALUE } } },
+                { "not \"taiwan\" = \"china\"", true, WithType::LITERAL_EQUAL,
+                    { ArgType::IDENTIFIER, { "taiwan", AttrType::NONE } }, { ArgType::IDENTIFIER, { "china", AttrType::NONE } } },
+                { "c.value = w.stmt#", false, WithType::INTEGER_EQUAL,
+                    { ArgType::ATTRIBUTE, { "c", AttrType::VALUE } }, { ArgType::ATTRIBUTE, { "w", AttrType::STMT_NUM } } }
+            }
+        };
+
+        Query EXT_CHAINED_NOT_QUERY_RESULT = {
+            STATUS_SUCCESS, EXT_CHAINED_NOT_QUERY, false,
+            {
+                { "v1", AttrType::NONE },
+                { "v2", AttrType::NONE }
+            },
+            {
+                { "c", DesignEntity::CONSTANT },
+                { "ifs", DesignEntity::IF },
+                { "w", DesignEntity::WHILE },
+                { "cl", DesignEntity::CALL },
+                { "rd", DesignEntity::READ },
+                { "pn", DesignEntity::PRINT },
+                { "v1", DesignEntity::VARIABLE },
+                { "v2", DesignEntity::VARIABLE }
+            },
+            {
+                { "Uses(pn, v1)", false, RelationType::USESS,
+                    { ArgType::SYNONYM, "pn" }, { ArgType::SYNONYM, "v1" } },
+                { "not Next*(rd, pn)", true, RelationType::NEXTT,
+                    { ArgType::SYNONYM, "rd", }, { ArgType::SYNONYM, "pn" } },
+                { "not Next*(pn, rd)", true, RelationType::NEXTT,
+                    { ArgType::SYNONYM, "pn" }, { ArgType::SYNONYM, "rd" } },
+                { "Modifies(rd, v2)", false, RelationType::MODIFIESS,
+                    { ArgType::SYNONYM, "rd" }, { ArgType::SYNONYM, "v2" } }
+            },
+            {
+                { "w(v1, _)", false, PatternType::WHILE_PATTERN, "w",
+                    { ArgType::SYNONYM, "v1" }, { ArgType::WILDCARD, "_" } },
+                { "not ifs(v1, _, _)", true, PatternType::IF_PATTERN, "ifs",
+                    { ArgType::SYNONYM, "v1" }, { ArgType::WILDCARD, "_" } },
+                { "not w(v2, _)", true, PatternType::WHILE_PATTERN, "w",
+                    { ArgType::SYNONYM, "v2" }, { ArgType::WILDCARD, "_" } },
+                { "ifs(v2, _, _)", false, PatternType::IF_PATTERN, "ifs",
+                    { ArgType::SYNONYM, "v2" }, { ArgType::WILDCARD, "_" } }
+            },
+            {
+                { "not cl.procName = v1.varName", true, WithType::IDENTIFIER_EQUAL,
+                    { ArgType::ATTRIBUTE, { "cl", AttrType::PROC_NAME } }, { ArgType::ATTRIBUTE, { "v1", AttrType::VAR_NAME } } },
+                { "v2.varName = cl.procName", false, WithType::IDENTIFIER_EQUAL,
+                    { ArgType::ATTRIBUTE, { "v2", AttrType::VAR_NAME } }, { ArgType::ATTRIBUTE, { "cl", AttrType::PROC_NAME } } },
+                { "not 2019 = 2020", true, WithType::LITERAL_EQUAL,
+                    { ArgType::INTEGER, { "2019", AttrType::NONE } }, { ArgType::INTEGER, { "2020", AttrType::NONE } } },
+                { "w.stmt# = c.value", false, WithType::INTEGER_EQUAL,
+                    { ArgType::ATTRIBUTE, { "w", AttrType::STMT_NUM } }, { ArgType::ATTRIBUTE, { "c", AttrType::VALUE } } },
+                { "not c.value = ifs.stmt#", true, WithType::INTEGER_EQUAL,
+                    { ArgType::ATTRIBUTE, { "c", AttrType::VALUE } }, { ArgType::ATTRIBUTE, { "ifs", AttrType::STMT_NUM } } }
+            }
+        };
+
+        Query EXT_CONFUSING_NOT_QUERY_RESULT = {
+            STATUS_SUCCESS, EXT_CONFUSING_NOT_QUERY, false,
+            {
+                { "not", AttrType::NONE }
+            },
+            {
+                { "not", DesignEntity::ASSIGN },
+                { "c", DesignEntity::CONSTANT },
+                { "v", DesignEntity::VARIABLE }
+            },
+            {
+                { "not Affects(not, _)", true, RelationType::AFFECTS,
+                    { ArgType::SYNONYM, "not" }, { ArgType::WILDCARD, "_" } },
+                { "Modifies(not, v)", false, RelationType::MODIFIESS,
+                    { ArgType::SYNONYM, "not" }, { ArgType::SYNONYM, "v" } }
+            },
+            {
+                { "not(\"x\", _)", false, PatternType::ASSIGN_PATTERN, "not",
+                    { ArgType::IDENTIFIER, "x" }, { ArgType::WILDCARD, "_" } },
+                { "not not(_, \"0\")", true, PatternType::ASSIGN_PATTERN, "not",
+                    { ArgType::WILDCARD, "_" }, { ArgType::EXACT_PATTERN, "0" } },
+                { "not(_, _\"0\"_)", false, PatternType::ASSIGN_PATTERN, "not",
+                    { ArgType::WILDCARD, "_" }, { ArgType::INCLUSIVE_PATTERN, "_0_" } }
+            },
+            {
+                { "not not.stmt# = 1", true, WithType::INTEGER_EQUAL,
+                    { ArgType::ATTRIBUTE, { "not", AttrType::STMT_NUM } }, { ArgType::INTEGER, { "1", AttrType::NONE } } },
+                { "not.stmt# = c.value", false, WithType::INTEGER_EQUAL,
+                    { ArgType::ATTRIBUTE, { "not", AttrType::STMT_NUM } }, { ArgType::ATTRIBUTE, { "c", AttrType::VALUE } } }
+
+            }
+        };
+
+        Query EXT_CONFUSING_NOT_AND_QUERY_RESULT = {
+            STATUS_SUCCESS, EXT_CONFUSING_NOT_AND_QUERY, false,
+            {
+                { "and", AttrType::NONE }
+            },
+            {
+                { "and", DesignEntity::ASSIGN },
+                { "pattern", DesignEntity::PROCEDURE },
+                { "not", DesignEntity::PROG_LINE },
+                { "with", DesignEntity::VARIABLE }
+            },
+            { },
+            {
+                { "and(with, _)", false, PatternType::ASSIGN_PATTERN, "and",
+                    { ArgType::SYNONYM, "with" }, { ArgType::WILDCARD, "_" } }
+            },
+            {
+                { "not not = 1337", true, WithType::INTEGER_EQUAL,
+                    { ArgType::SYNONYM, { "not", AttrType::NONE } }, { ArgType::INTEGER, { "1337", AttrType::NONE } } },
+                { "not and.stmt# = 62353535", true, WithType::INTEGER_EQUAL,
+                    { ArgType::ATTRIBUTE, { "and", AttrType::STMT_NUM } }, { ArgType::INTEGER, { "62353535", AttrType::NONE } } },
+                { "not = and.stmt#", false, WithType::INTEGER_EQUAL,
+                    { ArgType::SYNONYM, { "not", AttrType::NONE } }, { ArgType::ATTRIBUTE, { "and", AttrType::STMT_NUM } } },
+                { "not with.varName = pattern.procName", true, WithType::IDENTIFIER_EQUAL,
+                    { ArgType::ATTRIBUTE, { "with", AttrType::VAR_NAME } }, { ArgType::ATTRIBUTE, { "pattern", AttrType::PROC_NAME } } },
+                { "and.stmt# = not", false, WithType::INTEGER_EQUAL,
+                    { ArgType::ATTRIBUTE, { "and", AttrType::STMT_NUM } }, { ArgType::SYNONYM, { "not", AttrType::NONE } } },
+                { "not \"not\" = pattern.procName", true, WithType::IDENTIFIER_EQUAL,
+                    { ArgType::IDENTIFIER, { "not", AttrType::NONE } }, { ArgType::ATTRIBUTE, { "pattern", AttrType::PROC_NAME } } }
+            }
+        };
+
         // Array containing all positive testcases, each a pair comprising a valid query and the
         // expected Query object produced by the Query Parser after parsing and validation
         vector<pair<string, Query>> VALID_QUERY_TESTCASES = {
@@ -1154,7 +1308,11 @@ namespace UnitTesting {
             { CHAINED_ALL_NON_LITERAL_EQUALITIES_QUERY, CHAINED_ALL_NON_LITERAL_EQUALITIES_QUERY_RESULT },
             { CHAINED_NO_WHITESPACE_QUERY, CHAINED_NO_WHITESPACE_QUERY_RESULT },
             { CHAINED_EXTRA_WHITESPACE_QUERY, CHAINED_EXTRA_WHITESPACE_QUERY_RESULT },
-            { PROJECT_REPORT_SAMPLE_QUERY, PROJECT_REPORT_SAMPLE_QUERY_RESULT }
+            { PROJECT_REPORT_SAMPLE_QUERY, PROJECT_REPORT_SAMPLE_QUERY_RESULT },
+            { EXT_SIMPLE_NOT_QUERY, EXT_SIMPLE_NOT_QUERY_RESULT },
+            { EXT_CHAINED_NOT_QUERY, EXT_CHAINED_NOT_QUERY_RESULT },
+            { EXT_CONFUSING_NOT_QUERY, EXT_CONFUSING_NOT_QUERY_RESULT },
+            { EXT_CONFUSING_NOT_AND_QUERY, EXT_CONFUSING_NOT_AND_QUERY_RESULT }
         };
 
         // Array containing all negative testcases, each comprising an invalid query with a single
