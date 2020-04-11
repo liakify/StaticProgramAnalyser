@@ -138,6 +138,10 @@ namespace UnitTesting {
         string WITH_INVALID_WILDCARD_ARG_QUERY = "constant c; Select c with c.value = _";
         string WITH_UNQUOTED_IDENTIFIER_ARG_QUERY = "Select BOOLEAN with \"ok\" = \"missingQuote";
         string WITH_INVALID_ATTRIBUTE_SYNTAX_QUERY = "stmt s; Select s with s.stmt#.value = 1";
+        string INCORRECT_CLAUSE_CONCATENATION_OPERATOR_QUERY = "procedure p, q; Select p such that Calls(p, q) AND Calls(q, _)";
+        string INCORRECT_CLAUSE_NEGATION_OPERATOR_QUERY = "prog_line l; Select l with NOT l = 420";
+        string INCORRECT_COMPOUND_CLAUSE_NEGATION_QUERY = "procedure p; Select p not such that Uses(p, \"x\") and Uses(p, \"y\")";
+        string INCORRECT_DUAL_CLAUSE_OPERATOR_QUERY = "assign a; while w; if ifs; variable v; Select v pattern a(v, _) and not ifs(v, _, _) not w(v, _)";
 
         // Invalid queries that fail in parseDeclarations
         string DUPLICATE_BODY_QUERY = "prog_line l1, l2; Select l1; Select l2";
@@ -1391,6 +1395,10 @@ namespace UnitTesting {
             { WITH_INVALID_WILDCARD_ARG_QUERY, SYNTAX_ERR_INVALID_CLAUSES_IN_QUERY_BODY },
             { WITH_UNQUOTED_IDENTIFIER_ARG_QUERY, SYNTAX_ERR_INVALID_CLAUSES_IN_QUERY_BODY },
             { WITH_INVALID_ATTRIBUTE_SYNTAX_QUERY, SYNTAX_ERR_INVALID_CLAUSES_IN_QUERY_BODY },
+            { INCORRECT_CLAUSE_CONCATENATION_OPERATOR_QUERY, SYNTAX_ERR_INVALID_CLAUSES_IN_QUERY_BODY },
+            { INCORRECT_CLAUSE_NEGATION_OPERATOR_QUERY, SYNTAX_ERR_INVALID_CLAUSES_IN_QUERY_BODY },
+            { INCORRECT_COMPOUND_CLAUSE_NEGATION_QUERY, SYNTAX_ERR_INVALID_CLAUSES_IN_QUERY_BODY },
+            { INCORRECT_DUAL_CLAUSE_OPERATOR_QUERY, SYNTAX_ERR_INVALID_CLAUSES_IN_QUERY_BODY },
             // parseDeclarations
             { DUPLICATE_BODY_QUERY, SYNTAX_ERR_UNKNOWN_DESIGN_ENTITY_KEYWORD },
             { UNRECOGNISED_DESIGN_ENTITY_QUERY, SYNTAX_ERR_UNKNOWN_DESIGN_ENTITY_KEYWORD },
