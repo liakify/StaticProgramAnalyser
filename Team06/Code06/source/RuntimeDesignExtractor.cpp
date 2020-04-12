@@ -90,7 +90,7 @@ namespace FrontEnd {
     void RuntimeDesignExtractor::nextStarDFS(StmtId root, StmtId curr, std::unordered_set<StmtId>& visited, NodeType type) {
         visited.insert(curr);
 
-        std::unordered_set<StmtId> neighbours = pkb->nextStarGetDirectNodes(curr, type);
+        std::unordered_set<StmtId> neighbours = pkb->nextGetDirectNodes(curr, type);
 
         for (const auto& n : neighbours) {
             // Add bi-directional edge first before cycle check for Next*(s, s)
@@ -139,7 +139,7 @@ namespace FrontEnd {
         std::unordered_set<StmtId>& visited, StmtId goal) {
         visited.insert(curr);
 
-        std::unordered_set<StmtId> neighbours = pkb->nextStarGetDirectNodes(curr, NodeType::SUCCESSOR);
+        std::unordered_set<StmtId> neighbours = pkb->nextGetDirectNodes(curr, NodeType::SUCCESSOR);
         for (StmtId next : neighbours) {
             std::shared_ptr<Statement> s = pkb->stmtTable.get(next);
             if (pkb->usesKB.stmtUses(next, modifiedId)) {
@@ -168,7 +168,7 @@ namespace FrontEnd {
     void RuntimeDesignExtractor::affectedByDFS(StmtId root, std::unordered_set<VarId>& usedIds, StmtId curr, std::unordered_set<StmtId>& visited) {
         visited.insert(curr);
 
-        std::unordered_set<StmtId> neighbours = pkb->nextStarGetDirectNodes(curr, NodeType::PREDECESSOR);
+        std::unordered_set<StmtId> neighbours = pkb->nextGetDirectNodes(curr, NodeType::PREDECESSOR);
 
         for (StmtId prev : neighbours) {
             std::unordered_set<VarId> erasedIds;

@@ -38,13 +38,13 @@ namespace UnitTesting {
         }
 
         TEST_METHOD(addNext) {
-            Assert::IsTrue(nKB.nextStarGetDirectNodes(1, NodeType::SUCCESSOR) == std::unordered_set<StmtId>{2});
-            Assert::IsTrue(nKB.nextStarGetDirectNodes(2, NodeType::SUCCESSOR) == std::unordered_set<StmtId>{3});
-            Assert::IsTrue(nKB.nextStarGetDirectNodes(3, NodeType::SUCCESSOR) == emptyResult);
+            Assert::IsTrue(nKB.nextGetDirectNodes(1, NodeType::SUCCESSOR) == std::unordered_set<StmtId>{2});
+            Assert::IsTrue(nKB.nextGetDirectNodes(2, NodeType::SUCCESSOR) == std::unordered_set<StmtId>{3});
+            Assert::IsTrue(nKB.nextGetDirectNodes(3, NodeType::SUCCESSOR) == emptyResult);
 
-            Assert::IsTrue(nKB.nextStarGetDirectNodes(1, NodeType::PREDECESSOR) == emptyResult);
-            Assert::IsTrue(nKB.nextStarGetDirectNodes(2, NodeType::PREDECESSOR) == std::unordered_set<StmtId>{1});
-            Assert::IsTrue(nKB.nextStarGetDirectNodes(3, NodeType::PREDECESSOR) == std::unordered_set<StmtId>{2});
+            Assert::IsTrue(nKB.nextGetDirectNodes(1, NodeType::PREDECESSOR) == emptyResult);
+            Assert::IsTrue(nKB.nextGetDirectNodes(2, NodeType::PREDECESSOR) == std::unordered_set<StmtId>{1});
+            Assert::IsTrue(nKB.nextGetDirectNodes(3, NodeType::PREDECESSOR) == std::unordered_set<StmtId>{2});
         }
 
         TEST_METHOD(next) {
@@ -75,14 +75,14 @@ namespace UnitTesting {
             Assert::IsFalse(nKB.nextStar(5, -1));
         }
 
-        TEST_METHOD(nextStarGetDirectNodes) {
-            Assert::IsTrue(nKB.nextStarGetDirectNodes(0, NodeType::SUCCESSOR) == emptyResult);
-            Assert::IsTrue(nKB.nextStarGetDirectNodes(5, NodeType::SUCCESSOR) == emptyResult);
-            Assert::IsTrue(nKB.nextStarGetDirectNodes(-1, NodeType::SUCCESSOR) == emptyResult);
+        TEST_METHOD(nextGetDirectNodes) {
+            Assert::IsTrue(nKB.nextGetDirectNodes(0, NodeType::SUCCESSOR) == emptyResult);
+            Assert::IsTrue(nKB.nextGetDirectNodes(5, NodeType::SUCCESSOR) == emptyResult);
+            Assert::IsTrue(nKB.nextGetDirectNodes(-1, NodeType::SUCCESSOR) == emptyResult);
 
-            Assert::IsTrue(nKB.nextStarGetDirectNodes(0, NodeType::PREDECESSOR) == emptyResult);
-            Assert::IsTrue(nKB.nextStarGetDirectNodes(5, NodeType::PREDECESSOR) == emptyResult);
-            Assert::IsTrue(nKB.nextStarGetDirectNodes(-1, NodeType::PREDECESSOR) == emptyResult);
+            Assert::IsTrue(nKB.nextGetDirectNodes(0, NodeType::PREDECESSOR) == emptyResult);
+            Assert::IsTrue(nKB.nextGetDirectNodes(5, NodeType::PREDECESSOR) == emptyResult);
+            Assert::IsTrue(nKB.nextGetDirectNodes(-1, NodeType::PREDECESSOR) == emptyResult);
         }
 
         TEST_METHOD(nextStarGetAllNodes) {

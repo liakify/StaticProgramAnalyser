@@ -119,7 +119,7 @@ namespace PKB {
         /*
             Returns a reference to directNext/directPrev of s for NodeType SUCCESSOR and PREDECESSOR respectively
         */
-        const std::unordered_set<StmtId>& nextStarGetDirectNodes(StmtId s, NodeType type);
+        const std::unordered_set<StmtId>& nextGetDirectNodes(StmtId s, NodeType type);
 
         /*
             Returns a reference to allNext/allPrev of s for NodeType SUCCESSOR and PREDECESSOR respectively
