@@ -152,7 +152,6 @@ namespace PQL {
                     }
                     database.affectsStarSetProcessedAll(i, NodeType::SUCCESSOR);
                 }
-                database.setAffectsFullyComputed();
                 return clauseResult;
             } else {
                 // Case 2: Synonym, Wildcard
@@ -167,7 +166,6 @@ namespace PQL {
                     }
                     database.affectsStarSetProcessedAll(i, NodeType::PREDECESSOR);
                 }
-                database.setAffectsFullyComputed();
                 return clauseResult;
             }
         }
@@ -206,7 +204,6 @@ namespace PQL {
                 }
                 database.affectsStarSetProcessedAll(i, NodeType::PREDECESSOR);
             }
-            database.setAffectsFullyComputed();
             return clauseResult;
         }
 
