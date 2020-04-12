@@ -28,9 +28,19 @@ class AffectsKB {
     void addAffects(StmtId s1, StmtId s2);
 
     /*
+        Adds s2 to the set of statements that is NOT affected by s1 in falseAffectsTable
+    */
+    void addNotAffects(StmtId s1, StmtId s2);
+
+    /*
         Adds Affects*(s1, s2) to the affectsTable where s2 is directly or indirectly affected by s1
     */
     void addAffectsStar(StmtId s1, StmtId s2);
+
+    /*
+        Adds s2 to the set of statements that is NOT directly or indirectly affected by s1 in falseAffectsStarTable
+    */
+    void addNotAffectsStar(StmtId s1, StmtId s2);
 
     /*
         Returns TRUE if s2 is affected by s1, FALSE otherwise
@@ -38,9 +48,19 @@ class AffectsKB {
     bool affects(StmtId s1, StmtId s2);
 
     /*
+        Returns TRUE if s2 is NOT affected by s1, FALSE otherwise
+    */
+    bool notAffects(StmtId s1, StmtId s2);
+
+    /*
         Returns TRUE if Affects*(s1, s2) holds, FALSE otherwise
     */
     bool affectsStar(StmtId s1, StmtId s2);
+
+    /*
+        Returns TRUE if Affects*(s1, s2) does NOT hold, FALSE otherwise
+    */
+    bool notAffectsStar(StmtId s1, StmtId s2);
 
     /*
         Returns a reference to directAffects/directAffectedBy of s for NodeType SUCCESSOR and PREDECESSOR respectively
@@ -90,4 +110,7 @@ class AffectsKB {
  private:
     bool affectsFullyComputed = false;
     std::unordered_map<StmtId, affectsRS> affectsTable;
+
+    std::unordered_map<StmtId, std::unordered_set<StmtId>> falseAffectsTable;
+    std::unordered_map<StmtId, std::unordered_set<StmtId>> falseAffectsStarTable;
 };

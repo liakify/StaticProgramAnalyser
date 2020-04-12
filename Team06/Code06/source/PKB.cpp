@@ -24,13 +24,20 @@ namespace PKB {
         if (x->getType() != StmtType::ASSIGN || y->getType() != StmtType::ASSIGN) {
             return false;
         }
-        if (affectsKB.affects(s1, s2)) {  // cached
+        if (affectsKB.affects(s1, s2)) {  // TRUE relation cached
             return true;
+        }
+        if (affectsKB.notAffects(s1, s2)) {  // FALSE relation cached
+            return false;
         }
         if (affectsKB.processedDirectAffects(s1, NodeType::SUCCESSOR)) {  // directAffects is fully processed for s1 i.e. s1 does not affect s2
             return false;
         }
-        return rtDE.processAffects(s1, s2, this);
+        bool res = rtDE.processAffects(s1, s2, this);
+        if (!res) {
+            affectsKB.addNotAffects(s1, s2);
+        }
+        return res;
     }
 
     bool PKB::affectsStar(StmtId s1, StmtId s2) {
@@ -47,10 +54,17 @@ namespace PKB {
         if (affectsKB.affectsStar(s1, s2)) {  // cached
             return true;
         }
+        if (affectsKB.notAffectsStar(s1, s2)) {
+            return false;
+        }
         if (affectsKB.processedAllAffects(s1, NodeType::SUCCESSOR)) {  // allAffects is fully processed for s1 i.e. s1 does not affect s2
             return false;
         }
-        return rtDE.processAffectsStar(s1, s2, this);
+        bool res = rtDE.processAffectsStar(s1, s2, this);
+        if (!res) {
+            affectsKB.addNotAffectsStar(s1, s2);
+        }
+        return res;
     }
 
     const std::unordered_set<StmtId>& PKB::affectsGetDirectNodes(StmtId s, NodeType type) {
@@ -124,13 +138,23 @@ namespace PKB {
         if (s1 < 1 || s1 > numStmts || s2 < 1 || s2 > numStmts) {
             return false;
         }
-        if (nextKB.nextStar(s1, s2)) {  // cached
+        if (!nextKB.existsInNext(s1) || !nextKB.existsInNext(s2)) {
+            return false;
+        }
+        if (nextKB.nextStar(s1, s2)) {  // TRUE relation cached
             return true;
+        }
+        if (nextKB.notNextStar(s1, s2)) {  // FALSE relation cached
+            return false;
         }
         if (nextKB.processedAll(s1, NodeType::SUCCESSOR)) {  // allNext is fully processed for s1, i.e. no path from s1 to s2
             return false;
         }
-        return rtDE.processNextStar(s1, s2, this);
+        bool res = rtDE.processNextStar(s1, s2, this);
+        if (!res) {
+            nextKB.addNotNextStar(s1, s2);
+        }
+        return res;
     }
 
     const std::unordered_set<StmtId>& PKB::nextStarGetDirectNodes(StmtId s, NodeType type) {
@@ -140,6 +164,9 @@ namespace PKB {
     const std::unordered_set<StmtId>& PKB::nextStarGetAllNodes(StmtId s, NodeType type) {
         int numStmts = stmtTable.size();
         if (s < 1 || s > numStmts) {
+            return EMPTY_RESULT;
+        }
+        if (!nextKB.existsInNext(s)) {
             return EMPTY_RESULT;
         }
         if (nextKB.processedAll(s, type)) {  // cached

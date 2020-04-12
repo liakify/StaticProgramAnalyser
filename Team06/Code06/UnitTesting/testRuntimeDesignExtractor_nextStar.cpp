@@ -506,8 +506,9 @@ namespace UnitTesting {
         TEST_METHOD(caching) {
             /*
                 Currently can only be manually verified that previous clauses are cached by stepping into the functions.
-                Cache currently only saves relations that are TRUE i.e. can be represented by a bi-directional edge.
+                Cache saves both TRUE and FALSE relations
             */
+            pkbNextStar.clear();
             Assert::IsTrue(pkbNextStar.nextStar(2, 4));
             Assert::IsTrue(pkbNextStar.nextStar(2, 4));
 
@@ -520,6 +521,9 @@ namespace UnitTesting {
             Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(26, NodeType::PREDECESSOR) == procDWhile);
             Assert::IsTrue(pkbNextStar.nextStar(25, 26));
             Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(26, NodeType::PREDECESSOR) == procDWhile);
+
+            Assert::IsFalse(pkbNextStar.nextStar(40, 30));
+            Assert::IsFalse(pkbNextStar.nextStar(40, 30));
         }
     };
 }

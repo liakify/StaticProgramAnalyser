@@ -11,7 +11,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\source\AffectsEvaluator.cpp" />
     <ClCompile Include="..\source\AffectsKB.cpp" />
+    <ClCompile Include="..\source\AffectsStarEvaluator.cpp" />
     <ClCompile Include="..\source\CallsEvaluator.cpp" />
     <ClCompile Include="..\source\CallsKB.cpp" />
     <ClCompile Include="..\source\CallsStarEvaluator.cpp" />
@@ -51,9 +53,12 @@
     <ClCompile Include="..\source\PatternKB.cpp" />
     <ClCompile Include="..\source\WhilePatternEvaluator.cpp" />
     <ClCompile Include="..\source\WithEvaluator.cpp" />
+    <ClCompile Include="..\source\PQLTypes.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\source\AffectsEvaluator.h" />
     <ClInclude Include="..\source\AffectsKB.h" />
+    <ClInclude Include="..\source\AffectsStarEvaluator.h" />
     <ClInclude Include="..\source\CallsEvaluator.h" />
     <ClInclude Include="..\source\CallsKB.h" />
     <ClInclude Include="..\source\CallsStarEvaluator.h" />
