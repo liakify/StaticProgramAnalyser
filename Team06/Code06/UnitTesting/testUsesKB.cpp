@@ -6,7 +6,7 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace UnitTesting
 {
-    UsesKB usesKB;
+    PKB::UsesKB usesKB;
 
     TEST_CLASS(TestUsesKB)
     {

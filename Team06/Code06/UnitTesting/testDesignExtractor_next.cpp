@@ -12,25 +12,56 @@ namespace UnitTesting
     PKB::PKB pkbNext;
     FrontEnd::DesignExtractor DE_next;
 
+    bool expectedNext[17][17] = {
+        {0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0},
+        {0, 0, 0, 1, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 1,   0, 0, 1, 0, 0,   0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0,   1, 1, 0, 0, 0,   0, 0, 0, 0, 0},
+
+        {0, 0, 0, 1, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0},
+        {0, 0, 0, 1, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0,   0, 0, 0, 1, 0,   0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0,   0, 0, 0, 0, 1,   0, 0, 1, 0, 0},
+        {0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   1, 0, 0, 1, 0},
+
+        {0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 1, 0, 0, 0},
+        {0, 0, 0, 0, 0,   0, 0, 0, 0, 1,   0, 0, 0, 0, 0},
+        {0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 1, 0},
+        {0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 0, 1},
+        {0, 0, 0, 0, 0,   0, 0, 0, 0, 0,   0, 0, 0, 1, 0}
+    };
+
     TEST_CLASS(TestDesignExtractor_next)
     {
     public:
         TEST_CLASS_INITIALIZE(setup) {
             /*
             procedure a {
-                call b;
+            1   call b;
             }
 
             procedure b {
-                read;
-                while (cond) {
-                    if (cond) then {
-                        read;
+            2   read;
+            3   while (cond) {
+            4       if (cond) then {
+            5           read;
                     } else {
-                        read;
+            6           read;
                     }
                 }
-                read;
+            7   read;
+            8   if (cond) then {
+            9       while (cond) {
+            10          read;
+            11          read;
+                    }
+                } else {
+            12      read;
+                }
+            13  while (cond) {
+            14      read;
+                }
             }
             */
             pkbNext = PKB::PKB();
@@ -39,7 +70,7 @@ namespace UnitTesting
 
             StatementList sl1 = StatementList(std::vector<StmtId>{1});
             pkbNext.stmtListTable.insertStmtLst(sl1);
-            StatementList sl2 = StatementList(std::vector<StmtId>{2, 3, 7});
+            StatementList sl2 = StatementList(std::vector<StmtId>{2, 3, 7, 8, 13});
             pkbNext.stmtListTable.insertStmtLst(sl2);
             StatementList sl3 = StatementList(std::vector<StmtId>{4});
             pkbNext.stmtListTable.insertStmtLst(sl3);
@@ -47,6 +78,14 @@ namespace UnitTesting
             pkbNext.stmtListTable.insertStmtLst(sl4);
             StatementList sl5 = StatementList(std::vector<StmtId>{6});
             pkbNext.stmtListTable.insertStmtLst(sl5);
+            StatementList sl6 = StatementList(std::vector<StmtId>{9});
+            pkbNext.stmtListTable.insertStmtLst(sl6);
+            StatementList sl7 = StatementList(std::vector<StmtId>{10, 11});
+            pkbNext.stmtListTable.insertStmtLst(sl7);
+            StatementList sl8 = StatementList(std::vector<StmtId>{12});
+            pkbNext.stmtListTable.insertStmtLst(sl8);
+            StatementList sl9 = StatementList(std::vector<StmtId>{14});
+            pkbNext.stmtListTable.insertStmtLst(sl9);
 
             CondExpr cond = CondExpr(Expression("1", 1, ExprType::CONST), Expression("2", 2, ExprType::CONST));
 
@@ -57,103 +96,57 @@ namespace UnitTesting
             pkbNext.stmtTable.insertStmt(std::shared_ptr<ReadStmt>(new ReadStmt(5)));
             pkbNext.stmtTable.insertStmt(std::shared_ptr<ReadStmt>(new ReadStmt(6)));
             pkbNext.stmtTable.insertStmt(std::shared_ptr<ReadStmt>(new ReadStmt(7)));
+            pkbNext.stmtTable.insertStmt(std::shared_ptr<IfStmt>(new IfStmt(cond, 6, 8)));
+            pkbNext.stmtTable.insertStmt(std::shared_ptr<WhileStmt>(new WhileStmt(cond, 7)));
+            pkbNext.stmtTable.insertStmt(std::shared_ptr<ReadStmt>(new ReadStmt(10)));
+            pkbNext.stmtTable.insertStmt(std::shared_ptr<ReadStmt>(new ReadStmt(11)));
+            pkbNext.stmtTable.insertStmt(std::shared_ptr<ReadStmt>(new ReadStmt(12)));
+            pkbNext.stmtTable.insertStmt(std::shared_ptr<WhileStmt>(new WhileStmt(cond, 9)));
+            pkbNext.stmtTable.insertStmt(std::shared_ptr<ReadStmt>(new ReadStmt(14)));
 
             pkbNext = DE_next.run(pkbNext);
         }
 
         TEST_METHOD(updateLastStmtId) {
+            std::vector<StmtId> expectedFirst = std::vector<StmtId>({ 1, 2, 4, 5, 6, 9, 10, 12, 14 });
+            std::vector<StmtId> expectedMaxLast = std::vector<StmtId>({ 1, 14, 6, 5, 6, 11, 11, 12, 14 });
             Assert::IsTrue(pkbNext.stmtListTable.get(1).getFirst() == 1);
             Assert::IsTrue(pkbNext.stmtListTable.get(1).getMaxLast() == 1);
-            Assert::IsTrue(pkbNext.stmtListTable.get(2).getFirst() == 2);
-            Assert::IsTrue(pkbNext.stmtListTable.get(2).getMaxLast() == 7);
-            Assert::IsTrue(pkbNext.stmtListTable.get(3).getFirst() == 4);
-            Assert::IsTrue(pkbNext.stmtListTable.get(3).getMaxLast() == 6);
-            Assert::IsTrue(pkbNext.stmtListTable.get(4).getFirst() == 5);
-            Assert::IsTrue(pkbNext.stmtListTable.get(4).getMaxLast() == 5);
-            Assert::IsTrue(pkbNext.stmtListTable.get(5).getFirst() == 6);
-            Assert::IsTrue(pkbNext.stmtListTable.get(5).getMaxLast() == 6);
 
             std::vector<std::unordered_set<StmtId>> expectedResult = std::vector<std::unordered_set<StmtId>>({
                 std::unordered_set<StmtId>({ 1 }),
-                std::unordered_set<StmtId>({ 7 }),
+                std::unordered_set<StmtId>({ 13 }),
                 std::unordered_set<StmtId>({ 5, 6 }),
                 std::unordered_set<StmtId>({ 5 }),
-                std::unordered_set<StmtId>({ 6 })
+                std::unordered_set<StmtId>({ 6 }),
+                std::unordered_set<StmtId>({ 9 }),
+                std::unordered_set<StmtId>({ 11 }),
+                std::unordered_set<StmtId>({ 12 }),
+                std::unordered_set<StmtId>({ 14 }),
             });
-            for (unsigned int i = 1; i <= expectedResult.size(); i++) {
-                std::unordered_set<StmtId>& current = pkbNext.stmtListTable.get(i).getAllEnds();
+            for (unsigned int i = 1; i <= pkbNext.stmtListTable.size(); i++) {
+                StatementList sl = pkbNext.stmtListTable.get(i);
+                Assert::IsTrue(sl.getFirst() == expectedFirst[i - 1]);
+                Assert::IsTrue(sl.getMaxLast() == expectedMaxLast[i - 1]);
+                std::unordered_set<StmtId>& current = sl.getAllEnds();
                 Assert::IsTrue(current.size() == expectedResult[i - 1].size());
                 Assert::IsTrue(current == expectedResult[i - 1]);
             }
         }
 
         TEST_METHOD(updateStmtContainerId) {
-            Assert::IsTrue(pkbNext.stmtTable.get(1)->getContainerId() == 1);
-            Assert::IsTrue(pkbNext.stmtTable.get(2)->getContainerId() == 2);
-            Assert::IsTrue(pkbNext.stmtTable.get(3)->getContainerId() == 2);
-            Assert::IsTrue(pkbNext.stmtTable.get(4)->getContainerId() == 3);
-            Assert::IsTrue(pkbNext.stmtTable.get(5)->getContainerId() == 4);
-            Assert::IsTrue(pkbNext.stmtTable.get(6)->getContainerId() == 5);
-            Assert::IsTrue(pkbNext.stmtTable.get(7)->getContainerId() == 2);
+            std::vector<StmtId> expectedResult = std::vector<StmtListId>({ 1, 2, 2, 3, 4, 5, 2, 2, 6, 7, 7, 8, 2, 9 });
+            for (StmtId i = 1; i <= pkbNext.stmtTable.size(); i++) {
+                Assert::IsTrue(pkbNext.stmtTable.get(i)->getContainerId() == expectedResult[i - 1]);
+            }
         }
 
         TEST_METHOD(populateNext) {
-            Assert::IsTrue(pkbNext.next(2, 3));
-            Assert::IsTrue(pkbNext.next(3, 4));
-            Assert::IsTrue(pkbNext.next(3, 7));
-            Assert::IsTrue(pkbNext.next(4, 5));
-            Assert::IsTrue(pkbNext.next(4, 6));
-            Assert::IsTrue(pkbNext.next(5, 3));
-            Assert::IsTrue(pkbNext.next(6, 3));
-
-            Assert::IsFalse(pkbNext.next(1, 1));
-            Assert::IsFalse(pkbNext.next(2, 2));
-            Assert::IsFalse(pkbNext.next(3, 3));
-            Assert::IsFalse(pkbNext.next(4, 4));
-            Assert::IsFalse(pkbNext.next(5, 5));
-            Assert::IsFalse(pkbNext.next(6, 6));
-            Assert::IsFalse(pkbNext.next(7, 7));
-
-            Assert::IsFalse(pkbNext.next(1, 2));
-            Assert::IsFalse(pkbNext.next(1, 3));
-            Assert::IsFalse(pkbNext.next(1, 4));
-            Assert::IsFalse(pkbNext.next(1, 5));
-            Assert::IsFalse(pkbNext.next(1, 6));
-            Assert::IsFalse(pkbNext.next(1, 7));
-            Assert::IsFalse(pkbNext.next(2, 1));
-            Assert::IsFalse(pkbNext.next(3, 1));
-            Assert::IsFalse(pkbNext.next(4, 1));
-            Assert::IsFalse(pkbNext.next(5, 1));
-            Assert::IsFalse(pkbNext.next(6, 1));
-            Assert::IsFalse(pkbNext.next(7, 1));
-
-            Assert::IsFalse(pkbNext.next(2, 4));
-            Assert::IsFalse(pkbNext.next(2, 5));
-            Assert::IsFalse(pkbNext.next(2, 6));
-            Assert::IsFalse(pkbNext.next(2, 7));
-            Assert::IsFalse(pkbNext.next(3, 2));
-            Assert::IsFalse(pkbNext.next(4, 2));
-            Assert::IsFalse(pkbNext.next(5, 2));
-            Assert::IsFalse(pkbNext.next(6, 2));
-            Assert::IsFalse(pkbNext.next(7, 2));
-
-            Assert::IsFalse(pkbNext.next(3, 5));
-            Assert::IsFalse(pkbNext.next(3, 6));
-            Assert::IsFalse(pkbNext.next(4, 3));
-            Assert::IsFalse(pkbNext.next(7, 3));
-
-            Assert::IsFalse(pkbNext.next(4, 7));
-            Assert::IsFalse(pkbNext.next(5, 4));
-            Assert::IsFalse(pkbNext.next(6, 4));
-            Assert::IsFalse(pkbNext.next(7, 4));
-
-            Assert::IsFalse(pkbNext.next(5, 6));
-            Assert::IsFalse(pkbNext.next(5, 7));
-            Assert::IsFalse(pkbNext.next(6, 5));
-            Assert::IsFalse(pkbNext.next(7, 5));
-
-            Assert::IsFalse(pkbNext.next(6, 7));
-            Assert::IsFalse(pkbNext.next(7, 6));
+            for (StmtId id1 = 1; id1 <= pkbNext.stmtTable.size(); id1++) {
+                for (StmtId id2 = 1; id2 <= pkbNext.stmtTable.size(); id2++) {
+                    Assert::IsTrue(pkbNext.next(id1, id2) == expectedNext[id1][id2]);
+                }
+            }
         }
     };
 }

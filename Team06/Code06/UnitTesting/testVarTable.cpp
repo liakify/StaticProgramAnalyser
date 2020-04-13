@@ -24,7 +24,7 @@ namespace UnitTesting
             }
             catch (out_of_range &) {
                 isExceptionThrown = true;
-                }
+            }
             Assert::IsTrue(isExceptionThrown);
             isExceptionThrown = false;
             Assert::AreEqual(varTable.getVarId(VAR_NAME_A), -1);
@@ -43,6 +43,8 @@ namespace UnitTesting
 
             // Checks for get()
             Assert::AreEqual(varTable.get(a), VAR_NAME_A);
+
+            Assert::IsTrue(varTable.getAllVars() == std::unordered_set<VarName>({VAR_NAME_A}));
         }
     };
 }

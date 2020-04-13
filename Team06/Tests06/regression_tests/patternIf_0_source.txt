@@ -15,4 +15,7 @@ procedure SelectPatternIf {
 			assign = assign + y; }
 		while (f == 0) {
 			print y; } }
-	read z; }
+	read z; 
+	if (11 == 0) then {
+		print a; } else {
+		print b; 	}}

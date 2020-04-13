@@ -1,0 +1,90 @@
+1
+stmt s; variable v;
+Select s such that Uses (s, v) and Modifies (s, v)
+3, 5, 6, 7, 8, 9, 12
+5000
+2 - Quiz 2 Q7
+stmts; assign a;
+Select s such that Follows* (s, 7) pattern a(_, _"p * w"_)
+
+5000
+3
+variable v;
+Select v such that Uses ("SIMPLE", v) and Uses (6, v) and Uses (9, v)
+c
+5000
+4 - Quiz 2 Q10
+assign a; variable v;
+Select a such that Modifies (a, v) pattern a (_, _"w"_)
+4, 7
+5000
+5 - Quiz 2 Q8
+stmt s; variable v;
+Select s such that Uses (s, v)
+2, 3, 4, 5, 6, 7, 8, 9, 11, 12
+5000
+6 - Quiz 2 Q9
+variable v;
+Select v such that Uses ("SIMPLE", v)
+p, a, c, k, ifs, w
+5000
+7 - Quiz 2 Q5
+stmt s;
+Select s such that Parent* (s, 10)
+
+5000
+8 - Quiz 2 Q6
+assign a; variable v;
+Select v pattern a (v, "p * ifs")
+
+5000
+9 - Quiz 2 Q4
+
+Select BOOLEAN such that Parent* (2, 2)
+FALSE
+5000
+10 - Quiz 2 Q4
+
+Select BOOLEAN such that Follows* (9, 11)
+FALSE 
+5000
+11 - Quiz 2 Q4
+
+Select BOOLEAN such that Follows* (4, 8)
+TRUE
+5000
+12 - Quiz 2 Q4
+
+Select BOOLEAN such that Parent* (3, 7)
+TRUE
+5000
+13 - Quiz 2 Q4
+
+Select BOOLEAN such that Parent* (5, 13)
+FALSE
+5000
+14 - Quiz 2 Q4
+
+Select BOOLEAN such that Modifies (8, "if")
+FALSE
+5000
+15 - Quiz 2 Q4
+
+Select BOOLEAN such that Uses (6, "c")
+TRUE
+5000
+16 - Quiz 2 Q4
+
+Select BOOLEAN such that Uses ("PQL", "read")
+FALSE
+5000
+17 - Quiz 2 Q4
+
+Select BOOLEAN such that Modifies ("SIMPLE", "c")
+TRUE
+5000
+18 - Quiz 2 Q4
+
+Select BOOLEAN such that Uses (3, "c")
+TRUE
+5000

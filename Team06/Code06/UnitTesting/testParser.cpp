@@ -32,12 +32,94 @@ namespace UnitTesting {
             "procedure asdf{z=3+c *6;    if(!(x==y)) then {read z;} }",
             "procedure asdf{z=3+c *6;    if((!(x==y))) then {print x;} else{read y;} }"
         };
-        std::string VALID_EXP_CONST = "1";
-        std::string VALID_EXP_VAR = "bb";
-        std::string VALID_EXP = "(x+1)*2%3/(zz+9)+10-5*y";
-        std::string VALID_EXP2 = "(  ( x+1)*2%3/( zz+ 9)  +10 -(5*y))";
-        std::string INVALID_EXP = "(x+1)*2%3/(zz+9)+10-5*";
-        std::string INVALID_EXP2 = "1x";
+        std::vector<std::string> VALID_EXP = {
+            "1",
+            "bb",
+            "(x+1)*2%3/(zz+9)+10-5*y",
+            "(  ( x+1)*2%3/( zz+ 9)  +10 -(5*y))",
+            "x0 + y0 + x * x - y * y",
+            "x-x-x-x-x-x",
+            "x-x-x-x-x/x",
+            "x-x-x-x/x-x",
+            "x-x-x-x/x/x",
+            "x-x-x/x-x-x",
+            "x-x-x/x-x/x",
+            "x-x-x/x/x-x",
+            "x-x-x/x/x/x",
+            "x-x/x-x-x-x",
+            "x-x/x-x-x/x",
+            "x-x/x-x/x-x",
+            "x-x/x-x/x/x",
+            "x-x/x/x-x-x",
+            "x-x/x/x-x/x",
+            "x-x/x/x/x-x",
+            "x-x/x/x/x/x",
+            "x/x-x-x-x-x",
+            "x/x-x-x-x/x",
+            "x/x-x-x/x-x",
+            "x/x-x-x/x/x",
+            "x/x-x/x-x-x",
+            "x/x-x/x-x/x",
+            "x/x-x/x/x-x",
+            "x/x-x/x/x/x",
+            "x/x/x-x-x-x",
+            "x/x/x-x-x/x",
+            "x/x/x-x/x-x",
+            "x/x/x-x/x/x",
+            "x/x/x/x-x-x",
+            "x/x/x/x-x/x",
+            "x/x/x/x/x-x",
+            "x/x/x/x/x/x"
+        };
+        std::vector<std::string> EXPECTED_EXP_STR = {
+            "1",
+            "bb",
+            "((((((x+1)*2)%3)/(zz+9))+10)-(5*y))",
+            "((((((x+1)*2)%3)/(zz+9))+10)-(5*y))",
+            "(((x0+y0)+(x*x))-(y*y))",
+            "(((((x-x)-x)-x)-x)-x)",
+            "((((x-x)-x)-x)-(x/x))",
+            "((((x-x)-x)-(x/x))-x)",
+            "(((x-x)-x)-((x/x)/x))",
+            "((((x-x)-(x/x))-x)-x)",
+            "(((x-x)-(x/x))-(x/x))",
+            "(((x-x)-((x/x)/x))-x)",
+            "((x-x)-(((x/x)/x)/x))",
+            "((((x-(x/x))-x)-x)-x)",
+            "(((x-(x/x))-x)-(x/x))",
+            "(((x-(x/x))-(x/x))-x)",
+            "((x-(x/x))-((x/x)/x))",
+            "(((x-((x/x)/x))-x)-x)",
+            "((x-((x/x)/x))-(x/x))",
+            "((x-(((x/x)/x)/x))-x)",
+            "(x-((((x/x)/x)/x)/x))",
+            "(((((x/x)-x)-x)-x)-x)",
+            "((((x/x)-x)-x)-(x/x))",
+            "((((x/x)-x)-(x/x))-x)",
+            "(((x/x)-x)-((x/x)/x))",
+            "((((x/x)-(x/x))-x)-x)",
+            "(((x/x)-(x/x))-(x/x))",
+            "(((x/x)-((x/x)/x))-x)",
+            "((x/x)-(((x/x)/x)/x))",
+            "(((((x/x)/x)-x)-x)-x)",
+            "((((x/x)/x)-x)-(x/x))",
+            "((((x/x)/x)-(x/x))-x)",
+            "(((x/x)/x)-((x/x)/x))",
+            "(((((x/x)/x)/x)-x)-x)",
+            "((((x/x)/x)/x)-(x/x))",
+            "(((((x/x)/x)/x)/x)-x)",
+            "(((((x/x)/x)/x)/x)/x)"
+        };
+        std::vector<std::string> INVALID_EXP = {
+            "(x+1)*2%3/(zz+9)+10-5*",
+            "1x",
+            "(x+1",
+            "y-2*z)",
+            "a$b",
+            "01",
+            "(23 + 4) * ((3 - 5)*4))",
+            "(23 + 4) * ((3 - 5)*(4)"
+        };
         FrontEnd::Parser parser = FrontEnd::Parser();
 
         TEST_METHOD(ParseSimpleTest) {
@@ -55,15 +137,12 @@ namespace UnitTesting {
         }
 
         TEST_METHOD(ParseExpressionTest) {
-            Assert::AreEqual(VALID_EXP_CONST, parser.parseExpression(VALID_EXP_CONST));
-            Assert::AreEqual(VALID_EXP_VAR, parser.parseExpression(VALID_EXP_VAR));
-
-            std::string expected = "((((((x+1)*2)%3)/(zz+9))+10)-(5*y))";
-            Assert::AreEqual(expected, parser.parseExpression(VALID_EXP));
-            Assert::AreEqual(expected, parser.parseExpression(VALID_EXP2));
-
-            Assert::ExpectException<std::invalid_argument>([this] {parser.parseExpression(INVALID_EXP); });
-            Assert::ExpectException<std::invalid_argument>([this] {parser.parseExpression(INVALID_EXP2); });
+            for (size_t i = 0; i < VALID_EXP.size(); i++) {
+                Assert::AreEqual(EXPECTED_EXP_STR[i], parser.parseExpression(VALID_EXP[i]));
+            }
+            for (std::string expr : INVALID_EXP) {
+                Assert::ExpectException<std::invalid_argument>([this, expr] {parser.parseExpression(expr); });
+            }
         }
     };
 }
