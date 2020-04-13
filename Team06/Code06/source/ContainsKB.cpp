@@ -5,17 +5,13 @@ namespace PKB {
 
     void ContainsKB::addContains(ProcId procId, StmtId stmtId) {
         if (stmtContainsTable.find(stmtId) != stmtContainsTable.end()) {
-            if (stmtContainsTable[stmtId] != procId) {
+            if (stmtContainsTable.at(stmtId) != procId) {
                 throw std::invalid_argument("Statement already has container procedure");
             }
         } else {
             stmtContainsTable.emplace(stmtId, procId);
         }
-        if (procContainsTable.find(procId) != procContainsTable.end()) {
-            procContainsTable[procId].insert(stmtId);
-        } else {
-            procContainsTable.emplace(procId, std::unordered_set<StmtId>({stmtId}));
-        }
+        procContainsTable[procId].insert(stmtId);
     }
 
     bool ContainsKB::contains(ProcId procId, StmtId stmtId) {
