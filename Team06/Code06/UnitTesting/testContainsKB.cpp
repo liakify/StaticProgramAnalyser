@@ -54,7 +54,7 @@ namespace UnitTesting
             Assert::IsTrue(containsKB.getContainer(1) == 1);
             Assert::IsTrue(containsKB.getContainer(2) == 1);
             Assert::IsTrue(containsKB.getContainer(3) == 2);
-            Assert::IsTrue(containsKB.getContainer(4) == INVALID_STMT_ID);
+            Assert::IsTrue(containsKB.getContainer(4) == INVALID_PROC_ID);
         }
 
         TEST_METHOD(getAllContains) {

@@ -27,7 +27,7 @@ namespace PKB {
 
         /*
             Returns the proc ID p for which Contains(p, stmtId) is true.
-            If stmtId is not found, INVALID_STMT_ID 0 is returned.
+            If stmtId is not found, INVALID_PROC_ID 0 is returned.
         */
         ProcId getContainer(StmtId stmtId);
 

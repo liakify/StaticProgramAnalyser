@@ -30,7 +30,7 @@ namespace PKB {
         try {
             return stmtContainsTable.at(stmtId);
         } catch (const std::out_of_range&) {
-            return INVALID_STMT_ID;
+            return INVALID_PROC_ID;
         }
     }
 

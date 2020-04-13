@@ -168,6 +168,7 @@
   <ItemGroup>
     <ClCompile Include="QueryParserStub.cpp" />
     <ClCompile Include="testContainsKB.cpp" />
+    <ClCompile Include="testDesignExtractor_contains.cpp" />
     <ClCompile Include="testDesignExtractor_pattern.cpp" />
     <ClCompile Include="testDesignExtractor_usesModifies.cpp" />
     <ClCompile Include="testPQL.cpp" />

@@ -113,5 +113,8 @@
     <ClCompile Include="testContainsKB.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="testDesignExtractor_contains.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
