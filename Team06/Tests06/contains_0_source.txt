@@ -1,0 +1,21 @@
+procedure AssignOnly {
+    if (a == 2) then { 
+        a = b; } else {
+        b = a; }}
+procedure ReadOnly {
+    while (i == i) {
+        read a;  } }
+procedure PrintOnly {
+    print a;}       
+procedure ReadAndAssign {
+    while (a == b) {
+        call ReadOnly;
+        call AssignOnly; }}
+procedure Everything {
+    if (a == 2) then { 
+        a = b; 
+        call PrintOnly; } else {
+        while (i == i) {
+            read a;  
+            print a;}
+        b = a; }    }
