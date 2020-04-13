@@ -39,6 +39,7 @@ namespace UnitTesting
 
         TEST_METHOD(contains_False) {
             Assert::IsFalse(containsKB.contains(2, 1));
+            Assert::IsFalse(containsKB.contains(1, 3));
             Assert::IsFalse(containsKB.contains(1, 4));
             Assert::IsFalse(containsKB.contains(3, 4));
             Assert::IsFalse(containsKB.contains(-1, 1));
