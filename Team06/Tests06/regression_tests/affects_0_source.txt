@@ -1,4 +1,4 @@
-procedure SelectAffectsStar {
+procedure SelectAffects {
   a = b;
   d = a;
   b = notRelated;
@@ -7,27 +7,27 @@ procedure SelectAffectsStar {
   read b;
   while (c1 == c2) {
     if (a == b) then {
-      read x;
+      x = modifiesX;
       print b; } else {
       read a; } }
   b = 1 + 2 * x / y - z % a; }
-procedure AffectsStar1{
+procedure NotAffects1{
   a = b;
   a = b;
   b = a; }
-procedure AffectsStar2{
+procedure NotAffects2{
   a = b;
   a = c;
   b = a; }
-procedure AffectsStar3{
+procedure NotAffects3{
   a = b;
   a = a;
   b = a; }
-procedure AffectsStar4{
+procedure NotAffects4{
   a = b;
   read a;
   b = a; }
-procedure AffectsStar5 {
+procedure NotAffects5 {
   a = b;
   call ModifiesA;
   b = a; }

@@ -1,0 +1,131 @@
+procedure SelectNext {
+    x = 5;
+    y = 6;
+    if (x < y) then {
+        read x;
+        if (y > 0) then {
+            read y;
+            if (x == x) then {
+                print x;
+                if (y == y) then {
+                    print y; 
+                    if (x == y) then {
+                        y = 0; } else {
+                        read y; }
+                    print x; } else {
+                    print y;
+                    while (x == y) {
+                        x = y; }
+                    x = 0; }
+                y = 0; } else {
+                x = 2;
+                while (x == y) {
+                    x = 0;
+                    if (x == y) then {
+                        y = 0; } else {
+                        read x; }
+                    x = y;
+                    while (x == 0) {
+                        x = x + 1; }
+                    x = 5; }
+                print y; }
+            x = x; } else {
+            y = y;
+            while (x == y) {
+                y = 6;
+                if (x == 5) then {
+                    x = 6;
+                    if (y == 5) then {
+                        y = 6; } else {
+                        y = 5; }
+                    read x; } else {
+                    print x;
+                    while (x == 2) {
+                        call Next3; }
+                    x = 5; }
+                x = y;
+                while (y > x) {
+                    x = y;
+                    if (5 == 5) then {
+                        y = y + 1; } else {
+                        read y; }
+                    y = x;
+                    while (2 == 2) {
+                        x = 2; }
+                    print y; }
+                y = y; }
+            x = x; }
+        call Next2; } else {
+        y = y;
+        while (x > 0) {
+            call Next3;
+            if (y == y) then {
+                y = y; 
+                if (x == x) then {
+                    x = x; 
+                    if (y == 0) then {
+                        y = 0; } else {
+                        x = 0; }
+                    y = y; } else {
+                    y = x;
+                    while (x == y) {
+                        y = y + 1; }
+                    x = y; }
+                print y; } else {
+                read y;
+                while (x == x) {
+                    x = x;
+                    if (y > x) then {
+                        read y; } else {
+                        print x; }
+                    y = y;
+                    while (x > 0) {
+                        x = x + y; }
+                    x = x; }
+                read y; }
+            read x;
+            while (x == 0) {
+                print y;
+                if (y == y) then {
+                    y = y; 
+                    if (x == x) then {
+                        x = x; } else {
+                        x = 2; }
+                    y = x; } else {
+                    y = 1;
+                    while (y == 1) {
+                        y = 2; }
+                    y = 1; }
+                call Next2;
+                while (x == y) {
+                    read x;
+                    if (x < y) then {
+                        print x; } else {
+                        print y; }
+                    read y;
+                    while (x == x) {
+                        print y; }
+                    print x; }
+                print x; }
+            x = x; }
+        print y; }  
+    x = x;  }
+procedure Next2 {
+    read y;
+    while (x < y) {
+        y = y;
+        while (x > y) {
+            x = x;
+            while (x == x) {
+                print y;
+                while (y == y) {
+                    x = y;
+                    while (x == y) {
+                        x = 0; }
+                    read x; }
+                call Next3; }
+            y = y + 3; }
+        x = x; }
+    read y; }
+procedure Next3 {
+    print y;  }

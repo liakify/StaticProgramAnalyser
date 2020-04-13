@@ -5,7 +5,7 @@ Select <a1, a2> such that Affects (a1, a2)  with a1.stmt# = 3
 5000
 2 - affects: linked by a2
 assign a1, a2; 
-Select <a1, a2> such that Affects (a1, a2) with 15 == a2.stmt#
+Select <a1, a2> such that Affects (a1, a2) with 15 = a2.stmt#
 3 15, 14 15
 5000
 3 - affects*: linked by a1

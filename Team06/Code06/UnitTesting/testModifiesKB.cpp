@@ -6,7 +6,7 @@ using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
 namespace UnitTesting
 {
-    ModifiesKB mKB;
+    PKB::ModifiesKB mKB;
 
     TEST_CLASS(TestModifiesKB)
     {
