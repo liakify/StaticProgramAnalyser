@@ -49,7 +49,6 @@ namespace UnitTesting
             Assert::IsFalse(containsKB.contains(5, 5));
         }
 
-
         TEST_METHOD(getContainer) {
             Assert::IsTrue(containsKB.getContainer(1) == 1);
             Assert::IsTrue(containsKB.getContainer(2) == 1);
