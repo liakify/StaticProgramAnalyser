@@ -30,7 +30,7 @@ namespace PKB {
         if (affectsKB.notAffects(s1, s2)) {  // FALSE relation cached
             return false;
         }
-        if (affectsKB.processedDirectAffects(s1, NodeType::SUCCESSOR)) {  // directAffects is fully processed for s1 i.e. s1 does not affect s2
+        if (affectsKB.processedDirectAffects(s1, NodeType::SUCCESSOR) || affectsKB.allAffectsFullyComputed()) {  // directAffects is fully processed for s1 i.e. s1 does not affect s2
             return false;
         }
         bool res = rtDE.processAffects(s1, s2, this);
@@ -57,7 +57,7 @@ namespace PKB {
         if (affectsKB.notAffectsStar(s1, s2)) {
             return false;
         }
-        if (affectsKB.processedAllAffects(s1, NodeType::SUCCESSOR)) {  // allAffects is fully processed for s1 i.e. s1 does not affect s2
+        if (affectsKB.processedAllAffects(s1, NodeType::SUCCESSOR) || affectsKB.allAffectsStarFullyComputed()) {  // allAffects is fully processed for s1 i.e. s1 does not affect s2
             return false;
         }
         bool res = rtDE.processAffectsStar(s1, s2, this);
@@ -77,7 +77,7 @@ namespace PKB {
         if (x->getType() != StmtType::ASSIGN) {
             return EMPTY_RESULT;
         }
-        if (affectsKB.processedDirectAffects(s, type)) {  // cached
+        if (affectsKB.processedDirectAffects(s, type) || affectsKB.allAffectsFullyComputed()) {  // cached
             return affectsKB.getDirectNodes(s, type);
         }
         rtDE.processAffectsGetDirectNodes(s, type, this);
@@ -94,7 +94,7 @@ namespace PKB {
         if (x->getType() != StmtType::ASSIGN) {
             return EMPTY_RESULT;
         }
-        if (affectsKB.processedAllAffects(s, type)) {  // cached
+        if (affectsKB.processedAllAffects(s, type) || affectsKB.allAffectsStarFullyComputed()) {  // cached
             return affectsKB.getAllNodes(s, type);
         }
         rtDE.processAffectsStarGetAllNodes(s, type, this);
@@ -133,6 +133,10 @@ namespace PKB {
         return affectsKB.affectsStarIsCached(s1, s2);
     }
 
+    void PKB::initAffectsKB(int num) {
+        affectsKB.init(num);
+    }
+
     void PKB::addNext(StmtId s1, StmtId s2) {
         nextKB.addNext(s1, s2);
     }
@@ -155,7 +159,7 @@ namespace PKB {
         if (nextKB.notNextStar(s1, s2)) {  // FALSE relation cached
             return false;
         }
-        if (nextKB.processedAll(s1, NodeType::SUCCESSOR)) {  // allNext is fully processed for s1, i.e. no path from s1 to s2
+        if (nextKB.processedAll(s1, NodeType::SUCCESSOR) || nextKB.allNextStarFullyComputed()) {  // allNext is fully processed for s1, i.e. no path from s1 to s2
             return false;
         }
         bool res = rtDE.processNextStar(s1, s2, this);
@@ -177,7 +181,7 @@ namespace PKB {
         if (!nextKB.existsInNext(s)) {
             return EMPTY_RESULT;
         }
-        if (nextKB.processedAll(s, type)) {  // cached
+        if (nextKB.processedAll(s, type) || nextKB.allNextStarFullyComputed()) {  // cached
             return nextKB.getAllNodes(s, type);
         }
         rtDE.processNextStarGetAllNodes(s, type, this);

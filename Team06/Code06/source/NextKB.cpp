@@ -8,6 +8,9 @@ namespace PKB {
 
         nRS1.directNext.insert(s2);
         nRS2.directPrev.insert(s1);
+
+        allStmtsWNext.insert(s1);
+        allStmtsWPrev.insert(s2);
     }
 
     void NextKB::addNotNextStar(StmtId s1, StmtId s2) {
@@ -103,8 +106,20 @@ namespace PKB {
     void NextKB::setProcessedAll(StmtId s, NodeType type) {
         if (type == NodeType::SUCCESSOR) {
             nextStarTable.at(s).processedAllNext = true;
+            if (allStmtsWNext.find(s) != allStmtsWNext.end()) {
+                stmtsProcessedAllNextStar.insert(s);
+            }
+            if (stmtsProcessedAllNextStar.size() == allStmtsWNext.size()) {
+                nextStarFullyComputed = true;
+            }
         } else {
             nextStarTable.at(s).processedAllPrev = true;
+            if (allStmtsWPrev.find(s) != allStmtsWPrev.end()) {
+                stmtsProcessedAllPrevStar.insert(s);
+            }
+            if (stmtsProcessedAllPrevStar.size() == allStmtsWPrev.size()) {
+                nextStarFullyComputed = true;
+            }
         }
     }
 
@@ -119,6 +134,9 @@ namespace PKB {
     void NextKB::clear() {
         nextStarTable.clear();
         falseNextStarTable.clear();
+        stmtsProcessedAllNextStar.clear();
+        stmtsProcessedAllPrevStar.clear();
+        nextStarFullyComputed = false;
     }
 
     void NextKB::initCacheEntry(StmtId s) {
@@ -129,5 +147,8 @@ namespace PKB {
 
     bool NextKB::nextStarIsCached(StmtId s1, StmtId s2) {
         return nextStar(s1, s2) || notNextStar(s1, s2);
+    }
+    bool NextKB::allNextStarFullyComputed() {
+        return nextStarFullyComputed;
     }
 }

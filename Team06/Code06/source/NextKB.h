@@ -99,6 +99,11 @@ namespace PKB {
         bool nextStarIsCached(StmtId s1, StmtId s2);
 
         /*
+            Returns TRUE is nextStarFullyComputed is TRUE, FALSE otherwise
+        */
+        bool allNextStarFullyComputed();
+
+        /*
             Clears the nextStarTable
         */
         void clear();
@@ -107,6 +112,14 @@ namespace PKB {
         std::unordered_map<StmtId, nextRS> nextTable;
         std::unordered_map<StmtId, nextStarRS> nextStarTable;  // Stores TRUE relations
         std::unordered_map<StmtId, std::unordered_set<StmtId>> falseNextStarTable;  // Stores FALSE relations
+
+        std::unordered_set<StmtId> allStmtsWNext;
+        std::unordered_set<StmtId> allStmtsWPrev;
+
+        std::unordered_set<StmtId> stmtsProcessedAllNextStar;
+        std::unordered_set<StmtId> stmtsProcessedAllPrevStar;
+
+        bool nextStarFullyComputed = false;
 
         /*
             Initialise nextStarTable entry for s with nextTable values

@@ -44,6 +44,7 @@ namespace FrontEnd {
         void populatePattern();
         void populateNext();
         void updateStmtContainerId();
+        void initAffectsKB();
 
         // Helper functions
         void populateParentKB(StmtId stmtId, StmtListId stmtLstId);

@@ -209,9 +209,6 @@ namespace PQL {
                         }
                     }
                 }
-                if (!nextStarStmts.empty()) {
-                    database.nextStarSetProcessedAll(i, NodeType::PREDECESSOR);
-                }
             }
 
             return clauseResult;

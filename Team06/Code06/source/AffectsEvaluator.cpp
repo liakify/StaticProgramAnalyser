@@ -150,9 +150,7 @@ namespace PQL {
                         resultEntry[arg2] = std::to_string(i);
                         clauseResult.emplace_back(resultEntry);
                     }
-                    database.affectsSetProcessedDirect(i, NodeType::SUCCESSOR);
                 }
-                database.setAffectsFullyComputed();
                 return clauseResult;
             } else {
                 // Case 2: Synonym, Wildcard
@@ -165,9 +163,7 @@ namespace PQL {
                         resultEntry[arg1] = std::to_string(i);
                         clauseResult.emplace_back(resultEntry);
                     }
-                    database.affectsSetProcessedDirect(i, NodeType::PREDECESSOR);
                 }
-                database.setAffectsFullyComputed();
                 return clauseResult;
             }
         }
@@ -204,9 +200,7 @@ namespace PQL {
                         }
                     }
                 }
-                database.affectsSetProcessedDirect(i, NodeType::PREDECESSOR);
             }
-            database.setAffectsFullyComputed();
             return clauseResult;
         }
 

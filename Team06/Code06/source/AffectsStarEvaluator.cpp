@@ -150,7 +150,6 @@ namespace PQL {
                         resultEntry[arg2] = std::to_string(i);
                         clauseResult.emplace_back(resultEntry);
                     }
-                    database.affectsStarSetProcessedAll(i, NodeType::SUCCESSOR);
                 }
                 return clauseResult;
             } else {
@@ -164,7 +163,6 @@ namespace PQL {
                         resultEntry[arg1] = std::to_string(i);
                         clauseResult.emplace_back(resultEntry);
                     }
-                    database.affectsStarSetProcessedAll(i, NodeType::PREDECESSOR);
                 }
                 return clauseResult;
             }
@@ -202,7 +200,6 @@ namespace PQL {
                         }
                     }
                 }
-                database.affectsStarSetProcessedAll(i, NodeType::PREDECESSOR);
             }
             return clauseResult;
         }

@@ -20,6 +20,7 @@ namespace FrontEnd {
         populatePattern();
         populateNext();
         updateStmtContainerId();
+        initAffectsKB();
         return this->pkb;
     }
 
@@ -451,5 +452,9 @@ namespace FrontEnd {
                 pkb.stmtTable.get(id)->setContainerId(sid);
             }
         }
+    }
+
+    void DesignExtractor::initAffectsKB() {
+        pkb.initAffectsKB(pkb.stmtTable.getStmtsByType(StmtType::ASSIGN).size());
     }
 }

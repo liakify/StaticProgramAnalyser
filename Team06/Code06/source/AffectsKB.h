@@ -99,6 +99,11 @@ namespace PKB {
         bool allAffectsFullyComputed();
 
         /*
+            Returns TRUE if all Affects* relations have been fully computed, FALSE otherwise
+        */
+        bool allAffectsStarFullyComputed();
+
+        /*
             Sets affectsFullyComputed to TRUE
         */
         void setAffectsFullyComputed();
@@ -114,15 +119,29 @@ namespace PKB {
         bool affectsStarIsCached(StmtId s1, StmtId s2);
 
         /*
+            Initializes numAssignStmts in AffectsKB to num
+        */
+        void init(int num);
+
+        /*
             Clears the affectsTable
         */
         void clear();
 
      private:
         bool affectsFullyComputed = false;
+        bool affectsStarFullyComputed = false;
         std::unordered_map<StmtId, affectsRS> affectsTable;
 
         std::unordered_map<StmtId, std::unordered_set<StmtId>> falseAffectsTable;
         std::unordered_map<StmtId, std::unordered_set<StmtId>> falseAffectsStarTable;
+
+        int numAssignStmts;
+
+        std::unordered_set<StmtId> stmtsProcessedDirectAffects;
+        std::unordered_set<StmtId> stmtsProcessedDirectAffectedBy;
+
+        std::unordered_set<StmtId> stmtsProcessedAllAffectsStar;
+        std::unordered_set<StmtId> stmtsProcessedAllAffectedByStar;
     };
 }

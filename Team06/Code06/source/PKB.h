@@ -102,6 +102,11 @@ namespace PKB {
         bool affectsStarIsCached(StmtId s1, StmtId s2);
 
         /*
+            Initializes numAssignStmts in AffectsKB to num
+        */
+        void initAffectsKB(int num);
+
+        /*
             Adds Next(s1, s2) to NextKB where s2 can be executed immediately after s1
         */
         void addNext(StmtId s1, StmtId s2);

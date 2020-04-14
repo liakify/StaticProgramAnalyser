@@ -105,21 +105,41 @@ namespace PKB {
     void AffectsKB::setProcessedDirectAffects(StmtId s, NodeType type) {
         if (type == NodeType::SUCCESSOR) {
             affectsTable[s].processedDirectAffects = true;
+            stmtsProcessedDirectAffects.insert(s);
+            if (stmtsProcessedDirectAffects.size() == numAssignStmts) {
+                affectsFullyComputed = true;
+            }
         } else {
             affectsTable[s].processedDirectAffectedBy = true;
+            stmtsProcessedDirectAffectedBy.insert(s);
+            if (stmtsProcessedDirectAffectedBy.size() == numAssignStmts) {
+                affectsFullyComputed = true;
+            }
         }
     }
 
     void AffectsKB::setProcessedAllAffects(StmtId s, NodeType type) {
         if (type == NodeType::SUCCESSOR) {
             affectsTable[s].processedAllAffects = true;
+            stmtsProcessedAllAffectsStar.insert(s);
+            if (stmtsProcessedAllAffectsStar.size() == numAssignStmts) {
+                affectsStarFullyComputed = true;
+            }
         } else {
             affectsTable[s].processedAllAffectedBy = true;
+            stmtsProcessedAllAffectedByStar.insert(s);
+            if (stmtsProcessedAllAffectedByStar.size() == numAssignStmts) {
+                affectsStarFullyComputed = true;
+            }
         }
     }
 
     bool AffectsKB::allAffectsFullyComputed() {
         return affectsFullyComputed;
+    }
+
+    bool AffectsKB::allAffectsStarFullyComputed() {
+        return affectsStarFullyComputed;
     }
 
     void AffectsKB::setAffectsFullyComputed() {
@@ -134,10 +154,24 @@ namespace PKB {
         return affectsStar(s1, s2) || notAffectsStar(s1, s2);
     }
 
+    void AffectsKB::init(int num) {
+        numAssignStmts = num;
+        if (num == 0) {
+            affectsFullyComputed = true;
+            affectsStarFullyComputed = true;
+        }
+    }
+
     void AffectsKB::clear() {
         affectsTable.clear();
         falseAffectsTable.clear();
         falseAffectsStarTable.clear();
         affectsFullyComputed = false;
+        affectsStarFullyComputed = false;
+
+        stmtsProcessedDirectAffects.clear();
+        stmtsProcessedDirectAffectedBy.clear();
+        stmtsProcessedAllAffectsStar.clear();
+        stmtsProcessedAllAffectedByStar.clear();
     }
 }
