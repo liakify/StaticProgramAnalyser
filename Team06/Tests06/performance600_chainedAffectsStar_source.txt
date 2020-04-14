@@ -1,0 +1,615 @@
+procedure Long {
+	band = band - family % audience;
+	village = flock;
+	family = team;
+	if (c1 == c2) then {
+		bunch = team - family * village;
+		bunch = village - bunch;
+		group = family % family * bunch / bunch;
+		family = bunch / group / band * band;
+		team = team;
+		while(c1 == c2) {
+			flock = flock * flock;
+			team = audience + band * bunch - audience;}
+		team = flock;
+		if (c1 == c2) then {
+			family = team * team / flock;
+			audience = band % family % audience;     } else {
+			while(c1 == c2) {
+				group = flock / bunch;
+				while(c1 == c2) {
+					group = band % bunch + audience;
+					family = audience - team;
+					while(c1 == c2) {
+						village = village - village * team;
+						band = group - band * band + flock;
+						group = team;
+						flock = group % family % band;
+						village = team;}
+					team = group;
+					while(c1 == c2) {
+						village = band;
+						family = audience % flock;
+						village = village;
+						family = village % group % audience;
+						audience = village % team;}
+					group = band * team;
+					group = flock - family - flock * family;
+					group = group + band;}
+				while(c1 == c2) {
+					while(c1 == c2) {
+						family = village / team * group;
+						village = audience / village / family + family;
+						flock = group;
+						bunch = band / audience + village;
+						bunch = family;}
+					group = team / group;
+					team = flock / family * audience * audience;}
+				village = village;
+				team = group;
+				bunch = bunch;
+				audience = audience + village / team * group;
+				if (c1 == c2) then {
+					while(c1 == c2) {
+						group = village;
+						bunch = village + audience - bunch;
+						family = flock * group;
+						family = band + band * audience;
+						team = group;
+						audience = bunch + family;}
+					if (c1 == c2) then {
+						group = flock + team + group * family;
+						audience = audience / flock;
+						group = audience;
+						team = flock % bunch;     } else {
+						band = bunch;
+						group = band % family * audience + audience;
+						band = audience / team;
+						flock = flock + team / bunch;}
+					family = team + audience % village;
+					while(c1 == c2) {
+						group = audience;
+						band = group;
+						family = flock % band + bunch;
+						family = family % family * bunch;
+						village = audience - family;
+						band = audience + group / band + group;
+						group = group;
+						audience = team;}
+					bunch = team / audience / flock;
+					village = bunch * village;     } else {
+					flock = band * village + band / group;
+					village = audience / village;
+					while(c1 == c2) {
+						village = group;}
+					bunch = team / audience % team;}}
+			family = flock;
+			village = band % bunch * family / band;
+			group = family / band - family * village;
+			group = audience * bunch + group;
+			family = flock;
+			family = village;
+			village = village;
+			bunch = family;}
+		village = bunch / team;
+		village = flock;     } else {
+		village = flock;
+		audience = flock % audience;
+		band = group * bunch + group % flock;
+		while(c1 == c2) {
+			team = audience + family % bunch;
+			while(c1 == c2) {
+				while(c1 == c2) {
+					family = audience;
+					bunch = family + flock % village;
+					while(c1 == c2) {
+						group = village * flock / bunch;
+						band = village;
+						group = group;
+						band = audience * bunch;
+						band = family + audience % team + family;
+						group = band - audience / flock;}
+					audience = band * village + band;
+					group = band / group % flock;
+					family = audience - band + bunch * audience;
+					team = group * flock;}
+				while(c1 == c2) {
+					if (c1 == c2) then {
+						village = audience;
+						group = flock;
+						team = group;     } else {
+						audience = village / bunch;
+						group = family % bunch / team;
+						bunch = team * bunch * team + team;
+						flock = village;
+						family = bunch;
+						team = bunch / family - village % group;
+						band = family;
+						team = audience / village - band - village;
+						village = team + bunch;}
+					band = village * group / bunch;
+					group = bunch;}}
+			family = flock - audience;
+			bunch = village * band - flock;
+			village = group;}
+		village = team;
+		family = team / band;}
+	while(c1 == c2) {
+		family = band;
+		bunch = bunch * audience % group;
+		while(c1 == c2) {
+			audience = audience;
+			team = flock;
+			audience = family;
+			bunch = audience;
+			village = team;
+			band = village + team;
+			audience = flock * bunch;
+			village = village / family % audience;
+			band = family + audience;
+			while(c1 == c2) {
+				family = family;}}}
+	while(c1 == c2) {
+		band = team + audience - flock;
+		village = band;
+		village = band - band;
+		band = audience % village;
+		bunch = band;
+		family = audience / audience * team * group;}
+	family = band + group + group + flock;
+	bunch = family / bunch;
+	village = flock + flock / family;
+	audience = group * team;
+	if (c1 == c2) then {
+		while(c1 == c2) {
+			bunch = audience;
+			while(c1 == c2) {
+				if (c1 == c2) then {
+					band = bunch;
+					flock = audience;     } else {
+					flock = family;
+					if (c1 == c2) then {
+						flock = team;
+						team = family - team;
+						flock = team * band;
+						audience = band;
+						bunch = band - team * bunch + audience;
+						group = bunch * team + village + bunch;
+						family = band;
+						family = village;
+						village = bunch * bunch + family;     } else {
+						village = village * village;
+						family = group;
+						village = group;
+						flock = band / group + group;
+						bunch = flock;
+						village = group;
+						group = bunch % group;}
+					flock = bunch / family + group;
+					if (c1 == c2) then {
+						band = village;
+						village = team / bunch;
+						bunch = audience / flock - bunch;     } else {
+						flock = band % flock;
+						group = band;
+						flock = family;
+						bunch = family - village - band % village;}
+					audience = bunch - group;
+					band = team;}
+				flock = team;
+				bunch = audience;
+				while(c1 == c2) {
+					flock = audience + bunch + flock;
+					while(c1 == c2) {
+						team = family % audience / team % family;
+						village = team - team + bunch % audience;
+						village = family;
+						group = village;
+						flock = family - bunch / audience;
+						bunch = flock;
+						flock = flock / team / flock;
+						group = family / band * flock;
+						bunch = band % team + group % audience;
+						band = bunch % team / village * family;}}
+				if (c1 == c2) then {
+					group = group + band;
+					group = team;     } else {
+					while(c1 == c2) {
+						team = village;
+						group = audience;
+						group = band % group;
+						audience = family;
+						team = flock % team;
+						bunch = flock / flock * audience % band;
+						group = band;
+						team = flock + group;
+						team = bunch / bunch * band;}
+					flock = bunch;
+					group = flock;
+					group = village;
+					family = team + bunch % bunch;
+					group = bunch;
+					village = group / village;
+					while(c1 == c2) {
+						band = bunch - group / flock;
+						group = team + bunch;
+						team = village * team % audience;
+						team = family + group * team;
+						bunch = band - audience * bunch;
+						flock = group % flock * group - flock;}
+					if (c1 == c2) then {
+						village = group + bunch - band;
+						team = audience;
+						group = band;
+						bunch = family;     } else {
+						audience = group;
+						band = village / flock / audience + audience;
+						band = group + group + flock;
+						bunch = band + flock % bunch % group;
+						band = band / family;
+						flock = band - flock;
+						audience = team;}}
+				band = audience - bunch - family / group;}
+			flock = team;
+			family = group;
+			band = bunch % family * family;}
+		if (c1 == c2) then {
+			flock = flock % team;
+			band = team;
+			village = group;
+			group = family + village + band;
+			if (c1 == c2) then {
+				bunch = audience;
+				family = team + group % bunch;
+				band = group + team - family;
+				if (c1 == c2) then {
+					while(c1 == c2) {
+						village = group / flock / bunch % team;
+						family = flock / team;
+						village = village - flock;
+						family = audience;}
+					if (c1 == c2) then {
+						team = band;
+						group = village;
+						village = bunch / family - village - group;
+						audience = group;
+						flock = village + village % bunch * group;
+						band = group % group / team % band;
+						family = family;     } else {
+						band = bunch + audience / family + flock;
+						group = band - band;
+						team = team - team;
+						band = flock / bunch - band;
+						flock = village;
+						band = village;
+						family = family * bunch / village / village;
+						family = team * team / band * bunch;
+						band = bunch;}
+					family = flock;
+					if (c1 == c2) then {
+						bunch = group;
+						village = audience;
+						family = flock;     } else {
+						bunch = village * band;
+						bunch = family;
+						team = band;
+						audience = bunch;
+						village = group * bunch + group;
+						bunch = audience / team;
+						group = group % team % village;
+						group = family;
+						bunch = flock - audience % flock;}
+					flock = family;
+					audience = village % village;
+					if (c1 == c2) then {
+						band = audience - family + family;
+						flock = audience;
+						band = flock % family;
+						team = flock;
+						group = village - team % audience;
+						band = family + family + team;     } else {
+						flock = group;
+						family = village;
+						band = village;
+						group = flock;
+						family = audience - family;
+						audience = group;}
+					while(c1 == c2) {
+						bunch = family;
+						family = audience + team * audience % village;
+						group = audience;
+						family = team * band;
+						team = bunch * bunch;
+						team = audience + bunch % team;
+						bunch = family;}     } else {
+					while(c1 == c2) {
+						audience = team;
+						flock = village;
+						bunch = bunch - band + family % group;
+						family = family - village + village * group;}
+					family = flock;
+					audience = group;
+					if (c1 == c2) then {
+						bunch = village / flock - group - band;
+						band = group * bunch % flock;
+						village = group / group;
+						bunch = village * group;
+						audience = village;
+						team = bunch - audience * village - bunch;
+						band = team * flock % audience + audience;     } else {
+						audience = band * bunch * audience % band;
+						audience = audience / band;}}
+				bunch = group * group;
+				bunch = team - audience % group;
+				bunch = audience % bunch % audience / team;
+				family = bunch;
+				while(c1 == c2) {
+					if (c1 == c2) then {
+						group = group;
+						band = team % village / team + bunch;
+						family = team * village * bunch;
+						group = family;
+						group = group + bunch % team % flock;
+						audience = family % band - group - family;
+						flock = team / band * group + team;
+						group = village - bunch;
+						band = team % team;     } else {
+						family = village + bunch / team + bunch;
+						flock = village;
+						bunch = band / team + village;
+						audience = audience / band / audience / bunch;
+						family = bunch / team / village + group;
+						audience = band + bunch / bunch;}
+					village = flock % bunch - band;
+					band = village * group + family % group;
+					while(c1 == c2) {
+						audience = team / village / audience + flock;
+						bunch = village;
+						group = flock + team;
+						team = team;
+						flock = team;
+						flock = village % family + team;
+						team = audience % bunch + team + bunch;
+						village = team;
+						band = flock * group * team;}}     } else {
+				while(c1 == c2) {
+					if (c1 == c2) then {
+						flock = bunch;
+						audience = village * audience + team;
+						team = bunch + team;
+						group = band * team;
+						band = group - band;     } else {
+						family = group - band / flock * group;
+						family = team + village % audience;
+						audience = village;
+						village = family + family;
+						audience = audience;
+						flock = audience + village;
+						village = family;
+						family = flock;
+						group = band;}}
+				band = flock - flock + team;}
+			while(c1 == c2) {
+				flock = group;
+				if (c1 == c2) then {
+					village = band * team * flock / team;
+					while(c1 == c2) {
+						bunch = flock - bunch;
+						flock = band - group * band;
+						group = bunch;
+						group = family - bunch / band % team;
+						band = team;
+						band = bunch + band / bunch;
+						band = flock;
+						group = audience / bunch;
+						audience = group + team % village;
+						bunch = family;}
+					while(c1 == c2) {
+						flock = family / team - band;
+						audience = family - band / group - audience;
+						group = team + flock;
+						audience = family * band;
+						audience = family * audience % band + audience;
+						family = team - flock;
+						family = team / group;
+						village = family / flock / bunch;
+						audience = group % flock * team * audience;
+						flock = village;}
+					while(c1 == c2) {
+						band = flock + bunch % village + village;
+						audience = group - bunch + audience - village;
+						bunch = group * audience;
+						team = flock - flock;
+						group = bunch;
+						village = audience - audience / band - flock;
+						family = flock;}
+					band = flock;
+					bunch = bunch;     } else {
+					group = flock;
+					band = village % flock * bunch;
+					band = audience * village % band;
+					band = flock;
+					band = village * family;
+					while(c1 == c2) {
+						group = audience - team % audience;
+						family = band + group - group / flock;
+						audience = group;
+						audience = family - team;}
+					village = flock;
+					band = family;
+					band = village - team;
+					audience = flock % team + team;}
+				if (c1 == c2) then {
+					family = team;
+					team = audience;
+					audience = flock - family - family - bunch;
+					if (c1 == c2) then {
+						team = bunch - family * flock;
+						group = audience + flock - band;
+						group = group - band;
+						bunch = band;     } else {
+						bunch = flock % audience / group;
+						bunch = family / family % flock / village;
+						village = village;
+						bunch = group;}
+					bunch = village % band / family - family;
+					while(c1 == c2) {
+						family = audience % group;
+						band = village;}
+					if (c1 == c2) then {
+						audience = band + audience;
+						family = group;
+						group = bunch + flock / group + audience;
+						family = audience;     } else {
+						family = village;
+						group = flock;}     } else {
+					while(c1 == c2) {
+						flock = audience / audience / flock % bunch;
+						flock = village - family - group * bunch;}
+					bunch = village + audience;
+					if (c1 == c2) then {
+						band = flock;
+						family = audience;     } else {
+						audience = audience;}
+					band = group / team - family * band;
+					bunch = family;}
+				village = family - flock / team;}
+			if (c1 == c2) then {
+				band = bunch / flock - team * band;
+				village = band;
+				team = bunch - flock % audience * village;
+				while(c1 == c2) {
+					flock = village / village / team + village;
+					band = village + team + group / team;}
+				group = bunch - village + group;
+				village = bunch;
+				team = group - family;     } else {
+				village = bunch % village;
+				if (c1 == c2) then {
+					bunch = band - family % bunch / bunch;
+					audience = bunch - flock - village * audience;
+					audience = bunch + family * band;
+					family = group % flock * band - band;
+					village = audience / group % band;     } else {
+					if (c1 == c2) then {
+						village = village;     } else {
+						bunch = audience % audience;
+						group = group;
+						bunch = team * group;
+						audience = village % audience;
+						family = flock + audience / band * group;
+						group = flock / flock % group;
+						flock = village;
+						village = bunch;
+						village = flock;}
+					if (c1 == c2) then {
+						village = audience;
+						team = band;
+						team = band + team * band - flock;
+						band = village - band - group * group;
+						flock = village * flock;
+						band = village / village;     } else {
+						group = bunch % village;
+						flock = flock / flock % band / flock;
+						team = flock;
+						bunch = group;
+						audience = flock;}
+					village = group;}}
+			while(c1 == c2) {
+				band = group * band * group - group;
+				family = team / team;
+				group = band;
+				if (c1 == c2) then {
+					village = flock % family + team;
+					bunch = bunch;
+					flock = band;
+					while(c1 == c2) {
+						village = group - flock % audience;
+						village = band + band;
+						family = village - team;}     } else {
+					family = family;
+					if (c1 == c2) then {
+						bunch = bunch + family * team;     } else {
+						village = village;
+						band = family / flock;
+						bunch = group;}
+					family = audience;}
+				flock = audience;
+				group = village;
+				bunch = audience % flock + flock % team;
+				team = flock;}     } else {
+			village = family - band * flock;
+			while(c1 == c2) {
+				while(c1 == c2) {
+					group = audience;
+					village = band + group + flock * audience;
+					village = bunch * audience + team;
+					band = audience % audience % family - band;
+					flock = village % bunch;
+					team = audience % bunch * family;
+					team = bunch + bunch;}
+				family = team;
+				while(c1 == c2) {
+					bunch = family;
+					team = family - group + flock;
+					family = village * bunch;}
+				if (c1 == c2) then {
+					if (c1 == c2) then {
+						bunch = family;
+						audience = village;
+						group = family;
+						team = audience * audience;
+						family = audience * group % bunch * family;
+						audience = team;
+						team = village;
+						group = flock % audience;     } else {
+						band = bunch;
+						team = flock + family;
+						flock = village;
+						village = group;
+						bunch = audience * bunch / band * audience;}
+					if (c1 == c2) then {
+						bunch = family;
+						bunch = flock;
+						band = group - bunch;
+						flock = audience;
+						audience = village;
+						audience = family - audience * audience - bunch;
+						team = team;
+						bunch = team;
+						village = team * band + team;
+						group = village;     } else {
+						band = family;
+						bunch = group * flock - band / village;
+						team = family * family * village + band;
+						audience = flock;
+						flock = village;
+						band = bunch * band;
+						village = family;
+						band = family - flock * team * group;
+						band = flock + village * family * family;}
+					group = group;
+					while(c1 == c2) {
+						village = audience - team % band;
+						family = bunch;
+						bunch = group * audience;
+						flock = team;
+						village = flock / team % team;
+						group = audience / family - team;}
+					audience = team / bunch * band % band;
+					family = family;
+					flock = bunch - band - audience - team;     } else {
+					bunch = village - bunch - team;
+					family = audience;
+					family = family % family % audience % family;}}}
+		if (c1 == c2) then {
+			village = flock;     } else {
+			band = team;}
+		family = band;     } else {
+		family = flock % family;}
+	if (c1 == c2) then {
+		band = audience;     } else {
+		bunch = group;}
+	audience = village;
+	while(c1 == c2) {
+		flock = flock;}}
