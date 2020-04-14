@@ -1,0 +1,30 @@
+1 - patternAssign
+procedure p; assign a; variable v;
+Select p such that Contains (p, a) pattern a (v, _)
+AssignOnly, Everything
+5000
+2 - patternAssign
+procedure p; assign a;
+Select p such that Contains (p, a) pattern a ("theOnlyA", _)
+Everything
+5000
+3 - patternIf
+procedure p; if ifs; variable v;
+Select p such that Contains (p, ifs) pattern ifs (v, _, _)
+AssignOnly, Everything
+5000
+4 - patternIf
+procedure p; if ifs;
+Select p such that Contains (p, ifs) pattern ifs (_, _, _)
+AssignOnly
+5000
+5 - patternWhile
+procedure p; while w; variable v;
+Select p such that Contains (p, w) pattern w (v, _)
+ReadOnly, ReadAndAssign, Everything
+5000
+6 - patternWhile
+procedure p; while w; variable v;
+Select p such that Contains (p, w) pattern w ("i", _)
+ReadOnly, Everything
+5000
