@@ -12,10 +12,10 @@ procedure Not2 {
     y = z;
     while (5 > 1) {
         z = y + 5; }
-    print y;
+    print z;
     if (z > 1) then {
-        Call Not3; } else {
+        call Not3; } else {
         read y; }
-    read z; }
+    read x; }
 procedure Not3 {
     x = x; }
