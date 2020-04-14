@@ -641,6 +641,7 @@ namespace PQL {
             case RelationType::CALLS:
                 // Fallthrough
             case RelationType::CALLST:
+                // Interpret and validate both arguments as entity references
                 if (!(QueryUtils::isValidEntityRef(arg1) && QueryUtils::isValidEntityRef(arg2))) {
                     // SYNTAX ERROR: at least one argument is not a valid entity reference
                     query.status = SYNTAX_ERR_CALLS_INVALID_ENT_REF;
@@ -673,6 +674,21 @@ namespace PQL {
                 } else {
                     relations.push_back({
                         clause, isNegated, relationClass, parseStmtRef(arg1), parseStmtRef(arg2)
+                    });
+                }
+                break;
+            case RelationType::CONTAINS:
+                // Interpret and validate first argument as an entity reference, and the
+                // second argument as a statement reference
+                if (!QueryUtils::isValidEntityRef(arg1)) {
+                    // SYNTAX ERROR: first argument is not a valid entity reference
+                    query.status = SYNTAX_ERR_CONTAINS_INVALID_ENT_REF;
+                } else if (!QueryUtils::isValidStmtRef(arg2)) {
+                    // SYNTAX ERROR: second argument is not a valid statement reference
+                    query.status = SYNTAX_ERR_CONTAINS_INVALID_STMT_REF;
+                } else {
+                    relations.push_back({
+                        clause, isNegated, relationClass, parseEntityRef(arg1), parseStmtRef(arg2)
                     });
                 }
                 break;
