@@ -380,15 +380,15 @@ namespace PQL {
     // Returns an array of clauses
     bool QueryParser::splitClauses(Query& query, string queryBodySuffix,
         vector<string>& relationClauses, vector<string>& patternClauses, vector<string>& withClauses) {
-        string RELATION_CLAUSE = "[A-Za-z*]+\\s*\\([\\w,\"\\s]*\\)";
-        string PATTERN_CLAUSE = "[A-Za-z][A-Za-z0-9]*\\s*\\([\\w\"\\s]+(?:,\\s*(?:_|(?:(_?)\\s*\"[A-Za-z0-9\\(\\)\\+\\-\\*\\/\\%\\s]+\"\\s*\\1))\\s*)+\\)";
-        string CONNECTED_PATTERN_CLAUSE = "[A-Za-z][A-Za-z0-9]*\\s*\\([\\w\"\\s]+(?:,\\s*(?:_|(?:(_?)\\s*\"[A-Za-z0-9\\(\\)\\+\\-\\*\\/\\%\\s]+\"\\s*\\2))\\s*)+\\)";
+        string RELATION_CLAUSE = "(?:not\\s+)?[A-Za-z*]+\\s*\\([\\w,\"\\s]*\\)";
+        string PATTERN_CLAUSE = "(?:not\\s+)?[A-Za-z][A-Za-z0-9]*\\s*\\([\\w\"\\s]+(?:,\\s*(?:_|(?:(_?)\\s*\"[A-Za-z0-9\\(\\)\\+\\-\\*\\/\\%\\s]+\"\\s*\\1))\\s*)+\\)";
+        string CONNECTED_PATTERN_CLAUSE = "(?:not\\s+)?[A-Za-z][A-Za-z0-9]*\\s*\\([\\w\"\\s]+(?:,\\s*(?:_|(?:(_?)\\s*\"[A-Za-z0-9\\(\\)\\+\\-\\*\\/\\%\\s]+\"\\s*\\2))\\s*)+\\)";
         string WITH_ARGUMENT = "[A-Za-z0-9]+(?:\\s*\\.\\s*[A-Za-z0-9#]+)?";
-        string WITH_CLAUSE = "(\"?)\\s*" + WITH_ARGUMENT + "\\s*\\1\\s*=\\s*(?:(?=\")\"\\s*" + WITH_ARGUMENT + "\\s*\"|" + WITH_ARGUMENT + ")";
-        string CONNECTED_WITH_CLAUSE = "(\"?)\\s*" + WITH_ARGUMENT + "\\s*\\2\\s*=\\s*(?:(?=\")\"\\s*" + WITH_ARGUMENT + "\\s*\"|" + WITH_ARGUMENT + ")";
+        string WITH_CLAUSE = "(?:not\\s+)?(\"?)\\s*" + WITH_ARGUMENT + "\\s*\\1\\s*=\\s*(?:(?=\")\"\\s*" + WITH_ARGUMENT + "\\s*\"|" + WITH_ARGUMENT + ")";
+        string CONNECTED_WITH_CLAUSE = "(?:not\\s+)?(\"?)\\s*" + WITH_ARGUMENT + "\\s*\\2\\s*=\\s*(?:(?=\")\"\\s*" + WITH_ARGUMENT + "\\s*\"|" + WITH_ARGUMENT + ")";
 
         regex COMPOUND_RELATION_CLAUSE("^such\\s+that\\s+" + RELATION_CLAUSE + "(?:\\s*and\\s+" + RELATION_CLAUSE + ")*");
-        regex COMPOUND_PATTERN_PREFIX("^pattern\\s+[A-Za-z][A-Za-z0-9]*\\s*\\(");
+        regex COMPOUND_PATTERN_PREFIX("^pattern\\s+(?:not\\s+)?[A-Za-z][A-Za-z0-9]*\\s*\\(");
         regex COMPOUND_PATTERN_CLAUSE("^pattern\\s+" + PATTERN_CLAUSE + "(?:\\s*and\\s+" + CONNECTED_PATTERN_CLAUSE + ")*");
         regex COMPOUND_WITH_CLAUSE("^with\\s+" + WITH_CLAUSE + "(?:\\s+and\\s+" + CONNECTED_WITH_CLAUSE + ")*");
         smatch ccmatch;
@@ -556,13 +556,18 @@ namespace PQL {
         return { true, queryBodySuffix };
     }
 
+    // Receives a vector of relation clause strings and constructs relation clause objects
     bool QueryParser::parseRelationClauses(Query& query, vector<string>& relationClauses) {
         vector<RelationClause> relations;
 
         for (auto& clause : relationClauses) {
-            // Each candidate relation clause is of form <relation> (arg1, arg2)
+            // Each candidate relation clause is of form (not)? <relation> (arg1, arg2)
 
-            pair<string, string> splitPair = QueryUtils::splitString(clause, '(');
+            bool isNegated;
+            string clauseSuffix;
+            tie(isNegated, clauseSuffix) = parseClauseNegationStatus(clause);
+
+            pair<string, string> splitPair = QueryUtils::splitString(clauseSuffix, '(');
             string relationKeyword = splitPair.first;
             string argString = splitPair.second;
             argString.pop_back();
@@ -599,7 +604,9 @@ namespace PQL {
                     // SYNTAX ERROR: at least one argument is not a valid statement reference
                     query.status = SYNTAX_ERR_FOLLOWS_PARENTS_INVALID_STMT_REF;
                 } else {
-                    relations.push_back({ clause, relationClass, parseStmtRef(arg1), parseStmtRef(arg2) });
+                    relations.push_back({
+                        clause, isNegated, relationClass, parseStmtRef(arg1), parseStmtRef(arg2)
+                    });
                 }
                 break;
             case RelationType::USESS:
@@ -615,12 +622,15 @@ namespace PQL {
                     // SYNTAX ERROR: second argument is not a valid entity reference
                     query.status = SYNTAX_ERR_USES_MODIFIES_INVALID_SECOND_ENT_REF;
                 } else if (QueryUtils::isValidStmtRef(arg1)) {
-                    relations.push_back({ clause, relationClass, parseStmtRef(arg1), parseEntityRef(arg2) });
+                    relations.push_back({
+                        clause, isNegated, relationClass, parseStmtRef(arg1), parseEntityRef(arg2)
+                    });
                 } else if (QueryUtils::isValidEntityRef(arg1)) {
                     // If first argument is an entity reference, we can immediately distinguish this clause
                     // as the procedure variant of the Uses or Modifies relation, depending on the keyword
                     relations.push_back({
-                        clause, relationClass == RelationType::USESS ? RelationType::USESP : RelationType::MODIFIESP,
+                        clause, isNegated,
+                        relationClass == RelationType::USESS ? RelationType::USESP : RelationType::MODIFIESP,
                         parseEntityRef(arg1), parseEntityRef(arg2)
                     });
                 } else {
@@ -635,7 +645,9 @@ namespace PQL {
                     // SYNTAX ERROR: at least one argument is not a valid entity reference
                     query.status = SYNTAX_ERR_CALLS_INVALID_ENT_REF;
                 } else {
-                    relations.push_back({ clause, relationClass, parseEntityRef(arg1), parseEntityRef(arg2) });
+                    relations.push_back({
+                        clause, isNegated, relationClass, parseEntityRef(arg1), parseEntityRef(arg2)
+                    });
                 }
                 break;
             case RelationType::NEXT:
@@ -646,7 +658,9 @@ namespace PQL {
                     // SYNTAX ERROR: at least one argument is not a valid line reference
                     query.status = SYNTAX_ERR_NEXT_INVALID_LINE_REF;
                 } else {
-                    relations.push_back({ clause, relationClass, parseStmtRef(arg1), parseStmtRef(arg2) });
+                    relations.push_back({
+                        clause, isNegated, relationClass, parseStmtRef(arg1), parseStmtRef(arg2)
+                    });
                 }
                 break;
             case RelationType::AFFECTS:
@@ -657,7 +671,9 @@ namespace PQL {
                     // SYNTAX ERROR: at least one argument is not a valid statement reference
                     query.status = SYNTAX_ERR_AFFECTS_INVALID_STMT_REF;
                 } else {
-                    relations.push_back({ clause, relationClass, parseStmtRef(arg1), parseStmtRef(arg2) });
+                    relations.push_back({
+                        clause, isNegated, relationClass, parseStmtRef(arg1), parseStmtRef(arg2)
+                    });
                 }
                 break;
             default:
@@ -680,9 +696,13 @@ namespace PQL {
         vector<PatternClause> patterns;
 
         for (auto& clause : patternClauses) {
-            // Each candidate pattern clause is of form <synonym> (arg1, arg2, [arg3 if while])
+            // Each candidate pattern clause is of form (not)? <synonym> (arg1, arg2, [arg3 if while])
 
-            pair<string, string> splitPair = QueryUtils::splitString(clause, '(');
+            bool isNegated;
+            string clauseSuffix;
+            tie(isNegated, clauseSuffix) = parseClauseNegationStatus(clause);
+
+            pair<string, string> splitPair = QueryUtils::splitString(clauseSuffix, '(');
             string synonym = splitPair.first;
             string argString = splitPair.second;
             argString.pop_back();
@@ -712,11 +732,12 @@ namespace PQL {
                     query.status = SYNTAX_ERR_ASSIGN_PATTERN_INVALID_NUM_ARGS;
                 }
 
-                // Attempt to parse the pattern clause with the SPA FE Parser during construction of pattern clause
+                // Attempt to parse the pattern clause with the SIMPLE expression parser from SPA FE
                 // If it fails, then the pattern string is not a valid infix arithmetic exprresion
                 try {
                     patterns.push_back({
-                        clause, PatternType::ASSIGN_PATTERN, synonym, parseEntityRef(referenceString), parsePattern(args.at(1))
+                        clause, isNegated, PatternType::ASSIGN_PATTERN, synonym,
+                        parseEntityRef(referenceString), parsePattern(args.at(1))
                     });
                 } catch (const invalid_argument&) {
                     // SYNTAX ERROR: pattern string is not a valid infix arithmetic expression
@@ -732,7 +753,8 @@ namespace PQL {
                     query.status = SYNTAX_ERR_WHILE_PATTERN_INVALID_SECOND_ARG;
                 } else {
                     patterns.push_back({
-                        clause, PatternType::WHILE_PATTERN, synonym, parseEntityRef(referenceString), parsePattern(args.at(1))
+                        clause, isNegated, PatternType::WHILE_PATTERN, synonym,
+                        parseEntityRef(referenceString), parsePattern(args.at(1))
                     });
                 }
                 break;
@@ -744,9 +766,10 @@ namespace PQL {
                     // SYNTAX ERROR: unallowed argument for while pattern clause
                     query.status = SYNTAX_ERR_IF_PATTERN_INVALID_SECOND_THIRD_ARG;
                 } else {
-                    // Pattern struct only stores first two args since third arg is fixed as '_' anyway
+                    // Pattern class only stores first two args since third arg is fixed as '_'
                     patterns.push_back({
-                        clause, PatternType::IF_PATTERN, synonym, parseEntityRef(referenceString), parsePattern(args.at(1))
+                        clause, isNegated, PatternType::IF_PATTERN, synonym,
+                        parseEntityRef(referenceString), parsePattern(args.at(1))
                     });
                 }
                 break;
@@ -765,14 +788,19 @@ namespace PQL {
         return true;
     }
 
+    // Receives a vector of with clause strings and constructs with clause objects
     bool QueryParser::parseWithClauses(Query& query, vector<string>& withClauses) {
         vector<WithClause> equalities;
 
         for (auto& clause : withClauses) {
-            // Each candidate with clause is of form <arg1> = <arg2>
+            // Each candidate with clause is of form (not)? <arg1> = <arg2>
+
+            bool isNegated;
+            string clauseSuffix;
+            tie(isNegated, clauseSuffix) = parseClauseNegationStatus(clause);
 
             string argString1, argString2;
-            tie(argString1, argString2) = QueryUtils::splitString(clause, '=');
+            tie(argString1, argString2) = QueryUtils::splitString(clauseSuffix, '=');
 
             if (!(QueryUtils::isValidRef(argString1) && QueryUtils::isValidRef(argString2))) {
                 // SYNTAX ERROR: invalid (reference) argument in with (equality) clause
@@ -794,13 +822,13 @@ namespace PQL {
             if ((arg1.first == ArgType::INTEGER || arg1.first == ArgType::IDENTIFIER) &&
                 (arg2.first == ArgType::INTEGER || arg2.first == ArgType::IDENTIFIER)) {
                 equalities.push_back({
-                    clause, WithType::LITERAL_EQUAL, arg1, arg2
+                    clause, isNegated, WithType::LITERAL_EQUAL, arg1, arg2
                 });
             } else {
                 // Equality type is currently unknown since the type of the values both
                 // expressions evaluate to have not been computed yet
                 equalities.push_back({
-                    clause, WithType::UNKNOWN_EQUAL, arg1, arg2
+                    clause, isNegated, WithType::UNKNOWN_EQUAL, arg1, arg2
                 });
             }
         }
@@ -819,6 +847,25 @@ namespace PQL {
             assert(QueryUtils::isValidIdentifier(arg));
             return { true, { arg, AttrType::NONE } };
         }
+    }
+
+    // Parses a clause to extract its negation status; returns a pair of true and the clause
+    // suffix if the clause is negated, otherwise returns false with the input clause string
+    pair<bool, string> QueryParser::parseClauseNegationStatus(string clause) {
+        // A negated clause will begin with the 'not' keyword, followed by a whitespace
+        // character and then either an alphabetical character (for relation or pattern
+        // clauses), or an alphanumeric character or quotation mark (for with clauses)
+        regex NEGATION_OPERATOR_PREFIX("^(?:not\\s+)(?=[A-Za-z0-9\"])");
+        smatch negmatch;
+
+        if (regex_search(clause, negmatch, NEGATION_OPERATOR_PREFIX, MODE_CONSUME)) {
+            // Consume the clause negation keyword and return true with the suffix string
+            return { true, QueryUtils::leftTrim(negmatch.suffix().str()) };
+        } else {
+            // Return false with the unmodified clause string
+            return { false, clause };
+        }
+
     }
 
     pair<ArgType, StmtEntRef> QueryParser::parseStmtRef(string arg) {

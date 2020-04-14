@@ -6,25 +6,31 @@ using std::vector;
 
 namespace PQL {
 
-    Clause::Clause(string clause, ClauseType clauseType)
-        : clause(clause), clauseType(clauseType) {
+    Clause::Clause(string clause, bool isNegated, ClauseType clauseType)
+        : clause(clause), isNegated(isNegated), clauseType(clauseType) {
     }
 
     bool Clause::operator==(const Clause& other) const {
-        return this->clause == other.clause && this->clauseType == other.clauseType;
+        return this->clause == other.clause && this->isNegated == other.isNegated &&
+            this->clauseType == other.clauseType;
     }
 
     string Clause::asString() {
         return this->clause;
     }
 
+    bool Clause::isNegatedClause() {
+        return this->isNegated;
+    }
+
     ClauseType Clause::getClauseType() {
         return this->clauseType;
     }
 
-    RelationClause::RelationClause(string clause, RelationType type,
+    RelationClause::RelationClause(string clause, bool isNegated, RelationType type,
         pair<ArgType, StmtEntRef> firstArg, pair<ArgType, StmtEntRef> secondArg)
-        : Clause(clause, ClauseType::RELATION), type(type), firstArg(firstArg), secondArg(secondArg) {
+        : Clause(clause, isNegated, ClauseType::RELATION), type(type),
+            firstArg(firstArg), secondArg(secondArg) {
     }
 
     bool RelationClause::operator==(const RelationClause& other) const {
@@ -53,9 +59,9 @@ namespace PQL {
         return { this->firstArg, this->secondArg };
     }
 
-    PatternClause::PatternClause(string clause, PatternType type, string synonym,
+    PatternClause::PatternClause(string clause, bool isNegated, PatternType type, string synonym,
         pair<ArgType, EntityRef> targetArg, pair<ArgType, Pattern> patternArg)
-        : Clause(clause, ClauseType::PATTERN), type(type), synonym(synonym),
+        : Clause(clause, isNegated, ClauseType::PATTERN), type(type), synonym(synonym),
             targetArg(targetArg), patternArg(patternArg) {
     }
 
@@ -77,9 +83,10 @@ namespace PQL {
         return { this->targetArg, this->patternArg };
     }
 
-    WithClause::WithClause(string clause, WithType type,
+    WithClause::WithClause(string clause, bool isNegated, WithType type,
         pair<ArgType, Ref> leftArg, pair<ArgType, Ref> rightArg)
-        : Clause(clause, ClauseType::WITH), type(type), leftArg(leftArg), rightArg(rightArg) {
+        : Clause(clause, isNegated, ClauseType::WITH), type(type),
+            leftArg(leftArg), rightArg(rightArg) {
     }
 
     bool WithClause::operator==(const WithClause& other) const {

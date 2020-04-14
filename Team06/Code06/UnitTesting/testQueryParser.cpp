@@ -58,6 +58,10 @@ namespace UnitTesting {
         string CHAINED_NO_WHITESPACE_QUERY = "assign a1,a2;while w;variable v;call cl;print pn;Select<a1,w,v,pn>pattern a1(v,_)and w(v,_)with pn.varName=cl.procName and pn.stmt#=69 pattern a2(_,_\"f*x+f*(x-dx)+dx*dy\"_)such that Next*(a1,a2)with \"xyz\"=\"xyz\" such that Uses(a1,v)and Modifies(w,v)";
         string CHAINED_EXTRA_WHITESPACE_QUERY = "\nprocedure  p\v;\rwhile\tw ;assign\va\r;  variable\fv1,  v2\n;\tcall\ncl\t;\vprog_line\rl\f;\nSelect\f<\vp. procName\r,\tw\n,  cl\f,\ncl\t.\rprocName\v,\fa >\n pattern\ta(  v1,\r_\"\t69-\v 420\"_ )\nwith\t\"i\"  =\r\"i\"\vand  17\r=w\t.  stmt#  and\fl\n=\tcl\r.\vstmt#\nsuch  that\fModifies\r(p\t,v1)\fand\rUses(\tw\v,  v1\n)  pattern\tw  (v2, _\v\f) such\t\tthat  Next*\f (\ta, w\v)\rand\tFollows(\na\r,\fcl  )\vwith p\n.\fprocName\r=\n\" function\t\"  and\rcl\v.\fprocName\n=  v2  .\tvarName\n";
         string PROJECT_REPORT_SAMPLE_QUERY = "assign a1, a2; constant c; prog_line l; while w; if ifs; read rd; print pn; procedure p; variable v1, v2; Select <a1, w.stmt#, rd.varName, pn, p> such that Modifies(a1, v1) and Uses(pn, v1) and Parent*(w, a1) with v2.varName = \"input\" pattern w(\"i\", _) and a1(_, _\"i + 1 + x / 2 + y - (3 * z)\"_) such that Calls(\"driver\", _) and Uses(p, \"j\") and Affects*(1, 64) with c.value = l and rd.varName = v2.varName and 3203 = 3230 pattern ifs(v2, _, _)";
+        string EXT_SIMPLE_NOT_QUERY = "assign a; constant c; while w; variable v; Select <a, w, v> such that not Parent*(w, a) pattern a(v, _) with not a.stmt# = c.value pattern not w(v, _) with not \"taiwan\" = \"china\" such that Uses(w, v) with c.value = w.stmt#";
+        string EXT_CHAINED_NOT_QUERY = "constant c; if ifs; while w; call cl; read rd; print pn; variable v1, v2; Select <v1, v2> such that Uses(pn, v1) and not Next*(rd, pn) with not cl.procName = v1.varName and v2.varName = cl.procName and not 2019 = 2020 pattern w(v1, _) and not ifs(v1, _, _) such that not Next*(pn, rd) and Modifies(rd, v2) pattern not w(v2, _) and ifs(v2, _, _) with w.stmt# = c.value and not c.value = ifs.stmt#";
+        string EXT_CONFUSING_NOT_QUERY = "assign not; constant c; variable v; Select not pattern not(\"x\", _) and not not(_, \"0\") with not not.stmt# = 1 and not.stmt# = c.value such that not Affects(not, _) and Modifies(not, v) pattern not(_, _\"0\"_)";
+        string EXT_CONFUSING_NOT_AND_QUERY = "assign and; procedure pattern; prog_line not; variable with; Select and with not not = 1337 and not and.stmt# = 62353535 pattern and(with, _) with not = and.stmt# and not with.varName = pattern.procName and and.stmt# = not and not \"not\" = pattern.procName";
 
         // Invalid queries that fail in validateQuerySyntax
         string EMPTY_QUERY = "";
@@ -134,6 +138,10 @@ namespace UnitTesting {
         string WITH_INVALID_WILDCARD_ARG_QUERY = "constant c; Select c with c.value = _";
         string WITH_UNQUOTED_IDENTIFIER_ARG_QUERY = "Select BOOLEAN with \"ok\" = \"missingQuote";
         string WITH_INVALID_ATTRIBUTE_SYNTAX_QUERY = "stmt s; Select s with s.stmt#.value = 1";
+        string INCORRECT_CLAUSE_CONCATENATION_OPERATOR_QUERY = "procedure p, q; Select p such that Calls(p, q) AND Calls(q, _)";
+        string INCORRECT_CLAUSE_NEGATION_OPERATOR_QUERY = "prog_line l; Select l with NOT l = 420";
+        string INCORRECT_COMPOUND_CLAUSE_NEGATION_QUERY = "procedure p; Select p not such that Uses(p, \"x\") and Uses(p, \"y\")";
+        string INCORRECT_DUAL_CLAUSE_OPERATOR_QUERY = "assign a; while w; if ifs; variable v; Select v pattern a(v, _) and not ifs(v, _, _) not w(v, _)";
 
         // Invalid queries that fail in parseDeclarations
         string DUPLICATE_BODY_QUERY = "prog_line l1, l2; Select l1; Select l2";
@@ -312,11 +320,11 @@ namespace UnitTesting {
                 { "a", DesignEntity::ASSIGN }
             },
             {
-                { "Follows*(4, 9)", RelationType::FOLLOWST,
+                { "Follows*(4, 9)", false, RelationType::FOLLOWST,
                     { ArgType::INTEGER, "4" }, { ArgType::INTEGER, "9" } }
             },
             {
-                { "a(\"x\", _\"(0)\"_)", PatternType::ASSIGN_PATTERN, "a",
+                { "a(\"x\", _\"(0)\"_)", false, PatternType::ASSIGN_PATTERN, "a",
                     { ArgType::IDENTIFIER, "x" }, { ArgType::INCLUSIVE_PATTERN, "_0_" } }
             },
             { }
@@ -333,11 +341,11 @@ namespace UnitTesting {
                 { "a", DesignEntity::ASSIGN },
             },
             {
-                { "Parent(ifs, a)", RelationType::PARENT,
+                { "Parent(ifs, a)", false, RelationType::PARENT,
                     { ArgType::SYNONYM, "ifs" }, { ArgType::SYNONYM, "a" } }
             },
             {
-                { "a(v, _)", PatternType::ASSIGN_PATTERN, "a",
+                { "a(v, _)", false, PatternType::ASSIGN_PATTERN, "a",
                     { ArgType::SYNONYM, "v" }, { ArgType::WILDCARD, "_" } }
             },
             { }
@@ -351,7 +359,7 @@ namespace UnitTesting {
                 { "stmt", DesignEntity::PROG_LINE }
             },
             {
-                { "Follows*(stmt, progline)", RelationType::FOLLOWST,
+                { "Follows*(stmt, progline)", false, RelationType::FOLLOWST,
                     { ArgType::SYNONYM, "stmt" }, { ArgType::SYNONYM, "progline" } }
             },
             { }, { }
@@ -370,7 +378,7 @@ namespace UnitTesting {
                 { "BOOLEAN", DesignEntity::CONSTANT },
             },
             {
-                { "Modifies(p, _)", RelationType::MODIFIESP,
+                { "Modifies(p, _)", false, RelationType::MODIFIESP,
                     { ArgType::SYNONYM, "p" }, { ArgType::WILDCARD, "_" } }
             },
             { }, { }
@@ -388,7 +396,7 @@ namespace UnitTesting {
                 { "rd", DesignEntity::READ }
             },
             {
-                { "Parent*(w, rd)", RelationType::PARENTT,
+                { "Parent*(w, rd)", false, RelationType::PARENTT,
                     { ArgType::SYNONYM, "w" }, { ArgType::SYNONYM, "rd" } }
             },
             { }, { }
@@ -404,7 +412,7 @@ namespace UnitTesting {
             },
             { },
             {
-                { "a(_, \"x + 1 - 2 * y / z % 3\")", PatternType::ASSIGN_PATTERN, "a",
+                { "a(_, \"x + 1 - 2 * y / z % 3\")", false, PatternType::ASSIGN_PATTERN, "a",
                     { ArgType::WILDCARD, "_" }, { ArgType::EXACT_PATTERN, "((x+1)-(((2*y)/z)%3))" } }
             }, { }
         };
@@ -414,7 +422,7 @@ namespace UnitTesting {
             { }, { },
             { }, { },
             {
-                { "1231 = 4231", WithType::LITERAL_EQUAL,
+                { "1231 = 4231", false, WithType::LITERAL_EQUAL,
                     { ArgType::INTEGER, { "1231", AttrType::NONE } }, { ArgType::INTEGER, { "4231", AttrType::NONE } } }
             }
         };
@@ -431,7 +439,7 @@ namespace UnitTesting {
             },
             { }, { },
             {
-                { "\"bL\" = \"satan\"", WithType::LITERAL_EQUAL,
+                { "\"bL\" = \"satan\"", false, WithType::LITERAL_EQUAL,
                     { ArgType::IDENTIFIER, { "bL", AttrType::NONE } }, { ArgType::IDENTIFIER, { "satan", AttrType::NONE } } }
             }
         };
@@ -446,7 +454,7 @@ namespace UnitTesting {
             },
             { }, { },
             {
-                { "cl.procName = \"procedure\"", WithType::IDENTIFIER_EQUAL,
+                { "cl.procName = \"procedure\"", false, WithType::IDENTIFIER_EQUAL,
                     { ArgType::ATTRIBUTE, { "cl", AttrType::PROC_NAME } }, { ArgType::IDENTIFIER, { "procedure", AttrType::NONE } } }
             }
         };
@@ -463,7 +471,7 @@ namespace UnitTesting {
             },
             { }, { },
             {
-                { "pn.stmt# = l", WithType::INTEGER_EQUAL,
+                { "pn.stmt# = l", false, WithType::INTEGER_EQUAL,
                     { ArgType::ATTRIBUTE, { "pn", AttrType::STMT_NUM } }, { ArgType::SYNONYM, { "l", AttrType::NONE } } }
             }
         };
@@ -480,8 +488,8 @@ namespace UnitTesting {
             },
             { }, { },
             {
-                { "p.procName = v.varName", WithType::IDENTIFIER_EQUAL,
-                    { ArgType::ATTRIBUTE, { "p", AttrType::PROC_NAME } } , { ArgType::ATTRIBUTE, { "v", AttrType::VAR_NAME } } }
+                { "p.procName = v.varName", false, WithType::IDENTIFIER_EQUAL,
+                    { ArgType::ATTRIBUTE, { "p", AttrType::PROC_NAME } }, { ArgType::ATTRIBUTE, { "v", AttrType::VAR_NAME } } }
             }
         };
 
@@ -497,11 +505,11 @@ namespace UnitTesting {
                 { "constant", DesignEntity::VARIABLE }
             },
             {
-                { "Uses(Modifies, while)", RelationType::USESS,
+                { "Uses(Modifies, while)", false, RelationType::USESS,
                     { ArgType::SYNONYM, "Modifies" }, { ArgType::SYNONYM, "while" } }
             },
             {
-                { "pattern(constant, _\"1\"_)", PatternType::ASSIGN_PATTERN, "pattern",
+                { "pattern(constant, _\"1\"_)", false, PatternType::ASSIGN_PATTERN, "pattern",
                     { ArgType::SYNONYM, "constant" }, { ArgType::INCLUSIVE_PATTERN, "_1_" } }
             },
             { }
@@ -521,11 +529,11 @@ namespace UnitTesting {
                 { "v", DesignEntity::VARIABLE }
             },
             {
-                { "Follows(a, cl)", RelationType::FOLLOWS,
+                { "Follows(a, cl)", false, RelationType::FOLLOWS,
                     { ArgType::SYNONYM, "a" }, { ArgType::SYNONYM, "cl" } }
             },
             {
-                { "a(v, _)", PatternType::ASSIGN_PATTERN, "a",
+                { "a(v, _)", false, PatternType::ASSIGN_PATTERN, "a",
                     { ArgType::SYNONYM, "v" }, { ArgType::WILDCARD, "_" } }
             }, { }
         };
@@ -540,7 +548,7 @@ namespace UnitTesting {
             },
             { },
             {
-                { "a(\"var\", _\"((p) - (q / 2) % r) * 3 - ((s + t % 5) - u) + v / 7\"_)", PatternType::ASSIGN_PATTERN, "a",
+                { "a(\"var\", _\"((p) - (q / 2) % r) * 3 - ((s + t % 5) - u) + v / 7\"_)", false, PatternType::ASSIGN_PATTERN, "a",
                     { ArgType::IDENTIFIER, "var" },
                     { ArgType::INCLUSIVE_PATTERN, "_((((p-((q/2)%r))*3)-((s+(t%5))-u))+(v/7))_" } }
             }, { }
@@ -559,15 +567,15 @@ namespace UnitTesting {
                 { "pn", DesignEntity::PRINT }
             },
             {
-                { "Uses(pn, v)", RelationType::USESS,
+                { "Uses(pn, v)", false, RelationType::USESS,
                     { ArgType::SYNONYM, "pn" }, { ArgType::SYNONYM, "v" } }
             },
             {
-                { "w(v, _)", PatternType::WHILE_PATTERN, "w",
+                { "w(v, _)", false, PatternType::WHILE_PATTERN, "w",
                     { ArgType::SYNONYM, "v" }, { ArgType::WILDCARD, "_" } }
             },
             {
-                { "rd.varName = v.varName", WithType::IDENTIFIER_EQUAL,
+                { "rd.varName = v.varName", false, WithType::IDENTIFIER_EQUAL,
                     { ArgType::ATTRIBUTE, { "rd", AttrType::VAR_NAME } }, { ArgType::ATTRIBUTE, { "v", AttrType::VAR_NAME } } }
             }
         };
@@ -577,11 +585,11 @@ namespace UnitTesting {
             { },
             { },
             {
-                { "Parent*(16, 25)", RelationType::PARENTT,
+                { "Parent*(16, 25)", false, RelationType::PARENTT,
                     { ArgType::INTEGER, "16" }, { ArgType::INTEGER, "25" } },
-                { "Uses(16, \"i\")", RelationType::USESS,
+                { "Uses(16, \"i\")", false, RelationType::USESS,
                     { ArgType::INTEGER, "16" }, { ArgType::IDENTIFIER, "i" } },
-                { "Modifies(25, \"i\")", RelationType::MODIFIESS,
+                { "Modifies(25, \"i\")", false, RelationType::MODIFIESS,
                     { ArgType::INTEGER, "25" }, { ArgType::IDENTIFIER, "i" } }
             },
             { }, { }
@@ -601,13 +609,13 @@ namespace UnitTesting {
                 { "rd", DesignEntity::READ }
             },
             {
-                { "Follows(l, ifs)", RelationType::FOLLOWS,
+                { "Follows(l, ifs)", false, RelationType::FOLLOWS,
                     { ArgType::SYNONYM, "l" }, { ArgType::SYNONYM, "ifs" } },
-                { "Parent*(ifs, rd)", RelationType::PARENTT,
+                { "Parent*(ifs, rd)", false, RelationType::PARENTT,
                     { ArgType::SYNONYM, "ifs" }, { ArgType::SYNONYM, "rd" } },
-                { "Uses(ifs, v)", RelationType::USESS,
+                { "Uses(ifs, v)", false, RelationType::USESS,
                     { ArgType::SYNONYM, "ifs" }, { ArgType::SYNONYM, "v" } },
-                { "Modifies(rd, v)", RelationType::MODIFIESS,
+                { "Modifies(rd, v)", false, RelationType::MODIFIESS,
                     { ArgType::SYNONYM, "rd" }, { ArgType::SYNONYM, "v" } }
             },
             { }, { }
@@ -617,9 +625,9 @@ namespace UnitTesting {
             STATUS_SUCCESS, CHAINED_PROCEDURE_RELATIONS_QUERY, true,
             { }, { },
             {
-                { "Modifies(\"main\", \"argv\")", RelationType::MODIFIESP,
+                { "Modifies(\"main\", \"argv\")", false, RelationType::MODIFIESP,
                     { ArgType::IDENTIFIER, "main" }, { ArgType::IDENTIFIER, "argv" } },
-                { "Uses(\"main\", \"argv\")", RelationType::USESP,
+                { "Uses(\"main\", \"argv\")", false, RelationType::USESP,
                     { ArgType::IDENTIFIER, "main" }, { ArgType::IDENTIFIER, "argv" } }
             },
             { }, { }
@@ -642,21 +650,21 @@ namespace UnitTesting {
                 { "l", DesignEntity::PROG_LINE }
             },
             {
-                { "Follows*(a, ifs)", RelationType::FOLLOWST,
+                { "Follows*(a, ifs)", false, RelationType::FOLLOWST,
                     { ArgType::SYNONYM, "a" }, { ArgType::SYNONYM, "ifs" } },
-                { "Modifies(p, v2)", RelationType::MODIFIESP,
+                { "Modifies(p, v2)", false, RelationType::MODIFIESP,
                     { ArgType::SYNONYM, "p" }, { ArgType::SYNONYM, "v2" } },
-                { "Parent(ifs, l)", RelationType::PARENT,
+                { "Parent(ifs, l)", false, RelationType::PARENT,
                     { ArgType::SYNONYM, "ifs" }, { ArgType::SYNONYM, "l" } },
-                { "Uses(l, v1)", RelationType::USESS,
+                { "Uses(l, v1)", false, RelationType::USESS,
                     { ArgType::SYNONYM, "l" }, { ArgType::SYNONYM, "v1" } }
             },
             {
-                { "a(v1, \"0\")", PatternType::ASSIGN_PATTERN, "a",
+                { "a(v1, \"0\")", false, PatternType::ASSIGN_PATTERN, "a",
                     { ArgType::SYNONYM, "v1" }, { ArgType::EXACT_PATTERN, "0" } },
-                { "w(v1, _)" , PatternType::WHILE_PATTERN, "w",
+                { "w(v1, _)", false, PatternType::WHILE_PATTERN, "w",
                     { ArgType::SYNONYM, "v1" }, { ArgType::WILDCARD, "_" } },
-                { "ifs(v2, _, _)", PatternType::IF_PATTERN, "ifs",
+                { "ifs(v2, _, _)", false, PatternType::IF_PATTERN, "ifs",
                     { ArgType::SYNONYM, "v2" }, { ArgType::WILDCARD, "_" } }
             },
             { }
@@ -678,11 +686,11 @@ namespace UnitTesting {
                 { "v", DesignEntity::VARIABLE }
             },
             {
-                { "Next*(cl, rd)", RelationType::NEXTT,
+                { "Next*(cl, rd)", false, RelationType::NEXTT,
                     { ArgType::SYNONYM, "cl" }, { ArgType::SYNONYM, "rd" } },
-                { "Modifies(rd, v)", RelationType::MODIFIESS,
+                { "Modifies(rd, v)", false, RelationType::MODIFIESS,
                     { ArgType::SYNONYM, "rd" }, { ArgType::SYNONYM, "v" } },
-                { "Calls(\"init\", _)", RelationType::CALLS,
+                { "Calls(\"init\", _)", false, RelationType::CALLS,
                     { ArgType::IDENTIFIER, "init" }, { ArgType::WILDCARD, "_" } }
             },
             { }, { }
@@ -699,11 +707,11 @@ namespace UnitTesting {
                 { "q", DesignEntity::PROCEDURE }
             },
             {
-                { "Calls(\"main\", p)", RelationType::CALLS,
+                { "Calls(\"main\", p)", false, RelationType::CALLS,
                     { ArgType::IDENTIFIER, "main" }, { ArgType::SYNONYM, "p" } },
-                { "Calls*(p, q)", RelationType::CALLST,
+                { "Calls*(p, q)", false, RelationType::CALLST,
                     { ArgType::SYNONYM, "p" }, { ArgType::SYNONYM, "q" } },
-                { "Calls(q, _)", RelationType::CALLS,
+                { "Calls(q, _)", false, RelationType::CALLS,
                     { ArgType::SYNONYM, "q" }, { ArgType::WILDCARD, "_" } }
             },
             { }, { }
@@ -720,13 +728,13 @@ namespace UnitTesting {
                 { "cl", DesignEntity::CALL }
             },
             {
-                { "Next(20, 30)", RelationType::NEXT,
+                { "Next(20, 30)", false, RelationType::NEXT,
                     { ArgType::INTEGER, "20" }, { ArgType::INTEGER, "30" } },
-                { "Next*(_, l)", RelationType::NEXTT,
+                { "Next*(_, l)", false, RelationType::NEXTT,
                     { ArgType::WILDCARD, "_" }, { ArgType::SYNONYM, "l" } },
-                { "Next(l, cl)", RelationType::NEXT,
+                { "Next(l, cl)", false, RelationType::NEXT,
                     { ArgType::SYNONYM, "l" }, { ArgType::SYNONYM, "cl" } },
-                { "Next*(cl, 25)", RelationType::NEXTT,
+                { "Next*(cl, 25)", false, RelationType::NEXTT,
                     { ArgType::SYNONYM, "cl" }, { ArgType::INTEGER, "25" } }
             },
             { }, { }
@@ -743,13 +751,13 @@ namespace UnitTesting {
                 { "a", DesignEntity::ASSIGN }
             },
             {
-                { "Affects(20, 40)", RelationType::AFFECTS,
+                { "Affects(20, 40)", false, RelationType::AFFECTS,
                     { ArgType::INTEGER, "20" }, { ArgType::INTEGER, "40" } },
-                { "Affects*(1, s)", RelationType::AFFECTST,
+                { "Affects*(1, s)", false, RelationType::AFFECTST,
                     { ArgType::INTEGER, "1" }, { ArgType::SYNONYM, "s" } },
-                { "Affects*(a, s)", RelationType::AFFECTST,
+                { "Affects*(a, s)", false, RelationType::AFFECTST,
                     { ArgType::SYNONYM, "a" }, { ArgType::SYNONYM, "s" } },
-                { "Affects(s, _)", RelationType::AFFECTS,
+                { "Affects(s, _)", false, RelationType::AFFECTS,
                     { ArgType::SYNONYM, "s" }, { ArgType::WILDCARD, "_" } }
             },
             { }, { }
@@ -768,15 +776,15 @@ namespace UnitTesting {
                 { "v", DesignEntity::VARIABLE }
             },
             {
-                { "Parent*(l1, s)", RelationType::PARENTT,
+                { "Parent*(l1, s)", false, RelationType::PARENTT,
                     { ArgType::SYNONYM, "l1" }, { ArgType::SYNONYM, "s" } },
-                { "Next*(s, l2)", RelationType::NEXTT,
+                { "Next*(s, l2)", false, RelationType::NEXTT,
                     { ArgType::SYNONYM, "s" }, { ArgType::SYNONYM, "l2" } },
-                { "Affects(l2, l1)", RelationType::AFFECTS,
+                { "Affects(l2, l1)", false, RelationType::AFFECTS,
                     { ArgType::SYNONYM, "l2" }, { ArgType::SYNONYM, "l1" } },
-                { "Uses(l1, v)", RelationType::USESS,
+                { "Uses(l1, v)", false, RelationType::USESS,
                     { ArgType::SYNONYM, "l1" }, { ArgType::SYNONYM, "v" } },
-                { "Modifies(l1, _)", RelationType::MODIFIESS,
+                { "Modifies(l1, _)", false, RelationType::MODIFIESS,
                     { ArgType::SYNONYM, "l1" }, { ArgType::WILDCARD, "_" } }
             },
             { }, { }
@@ -796,15 +804,15 @@ namespace UnitTesting {
                 { "v", DesignEntity::VARIABLE }
             },
             {
-                { "Uses(\"error\", v)", RelationType::USESP,
+                { "Uses(\"error\", v)", false, RelationType::USESP,
                     { ArgType::IDENTIFIER, "error" }, { ArgType::SYNONYM, "v" } },
-                { "Modifies(a, v)", RelationType::MODIFIESS,
+                { "Modifies(a, v)", false, RelationType::MODIFIESS,
                     { ArgType::SYNONYM, "a" }, { ArgType::SYNONYM, "v" } },
-                { "Affects(l, a)", RelationType::AFFECTS,
+                { "Affects(l, a)", false, RelationType::AFFECTS,
                     { ArgType::SYNONYM, "l" }, { ArgType::SYNONYM, "a" } },
-                { "Next*(a, cl)", RelationType::NEXTT,
+                { "Next*(a, cl)", false, RelationType::NEXTT,
                     { ArgType::SYNONYM, "a" }, { ArgType::SYNONYM, "cl" } },
-                { "Calls*(_, \"error\")", RelationType::CALLST,
+                { "Calls*(_, \"error\")", false, RelationType::CALLST,
                     { ArgType::WILDCARD, "_" }, { ArgType::IDENTIFIER, "error"} }
             },
             { }, { }
@@ -827,13 +835,13 @@ namespace UnitTesting {
             },
             { }, { },
             {
-                { "p.procName = \"lambda\"", WithType::IDENTIFIER_EQUAL,
+                { "p.procName = \"lambda\"", false, WithType::IDENTIFIER_EQUAL,
                     { ArgType::ATTRIBUTE, { "p", AttrType::PROC_NAME } }, { ArgType::IDENTIFIER, { "lambda", AttrType::NONE } } },
-                { "ifs.stmt# = 8", WithType::INTEGER_EQUAL,
+                { "ifs.stmt# = 8", false, WithType::INTEGER_EQUAL,
                     { ArgType::ATTRIBUTE, { "ifs", AttrType::STMT_NUM } }, { ArgType::INTEGER, { "8", AttrType::NONE } } },
-                { "v.varName = pn.varName", WithType::IDENTIFIER_EQUAL,
+                { "v.varName = pn.varName", false, WithType::IDENTIFIER_EQUAL,
                     { ArgType::ATTRIBUTE, { "v", AttrType::VAR_NAME } }, { ArgType::ATTRIBUTE, { "pn", AttrType::VAR_NAME } } },
-                { "l = c.value", WithType::INTEGER_EQUAL,
+                { "l = c.value", false, WithType::INTEGER_EQUAL,
                     { ArgType::SYNONYM, { "l", AttrType::NONE } }, { ArgType::ATTRIBUTE, { "c", AttrType::VALUE } } }
             }
         };
@@ -847,21 +855,21 @@ namespace UnitTesting {
                 { "a", DesignEntity::ASSIGN }
             },
             {
-                { "Next(operand, and)", RelationType::NEXT,
+                { "Next(operand, and)", false, RelationType::NEXT,
                     { ArgType::SYNONYM, "operand" }, { ArgType::SYNONYM, "and" } },
-                { "Affects*(and, and)", RelationType::AFFECTST,
+                { "Affects*(and, and)", false, RelationType::AFFECTST,
                     { ArgType::SYNONYM, "and" }, { ArgType::SYNONYM, "and" } }
             },
             {
-                { "a(_, \"and\")", PatternType::ASSIGN_PATTERN, "a",
+                { "a(_, \"and\")", false, PatternType::ASSIGN_PATTERN, "a",
                     { ArgType::WILDCARD, "_" }, { ArgType::EXACT_PATTERN, "and" } }
             },
             {
-                { "19 = and", WithType::INTEGER_EQUAL,
+                { "19 = and", false, WithType::INTEGER_EQUAL,
                     { ArgType::INTEGER, { "19", AttrType::NONE } }, { ArgType::SYNONYM, { "and", AttrType::NONE } } },
-                { "20 = operand", WithType::INTEGER_EQUAL,
+                { "20 = operand", false, WithType::INTEGER_EQUAL,
                     { ArgType::INTEGER, { "20", AttrType::NONE } }, { ArgType::SYNONYM, { "operand", AttrType::NONE } } },
-                { "operand = and", WithType::INTEGER_EQUAL,
+                { "operand = and", false, WithType::INTEGER_EQUAL,
                     { ArgType::SYNONYM, { "operand", AttrType::NONE } }, { ArgType::SYNONYM, { "and", AttrType::NONE } } }
             }
         };
@@ -881,21 +889,21 @@ namespace UnitTesting {
                 { "v", DesignEntity::VARIABLE }
             },
             {
-                { "Modifies(\"procedure\", v)", RelationType::MODIFIESP,
+                { "Modifies(\"procedure\", v)", false, RelationType::MODIFIESP,
                     { ArgType::IDENTIFIER, "procedure" }, { ArgType::SYNONYM, "v" } },
-                { "Calls(_, p)", RelationType::CALLS,
+                { "Calls(_, p)", false, RelationType::CALLS,
                     { ArgType::WILDCARD, "_" }, { ArgType::SYNONYM, "p" } },
-                { "Uses(p, v)", RelationType::USESP,
+                { "Uses(p, v)", false, RelationType::USESP,
                     { ArgType::SYNONYM, "p" }, { ArgType::SYNONYM, "v" } },
-                { "Parent(s, cl)", RelationType::PARENT,
+                { "Parent(s, cl)", false, RelationType::PARENT,
                     { ArgType::SYNONYM, "s" }, { ArgType::SYNONYM, "cl" } },
-                { "Modifies(cl, v)", RelationType::MODIFIESS,
+                { "Modifies(cl, v)", false, RelationType::MODIFIESS,
                     { ArgType::SYNONYM, "cl" }, { ArgType::SYNONYM, "v" } },
-                { "Follows*(cl, l)", RelationType::FOLLOWST,
+                { "Follows*(cl, l)", false, RelationType::FOLLOWST,
                     { ArgType::SYNONYM, "cl" }, { ArgType::SYNONYM, "l" } },
-                { "Next(l, a)", RelationType::NEXT,
+                { "Next(l, a)", false, RelationType::NEXT,
                     { ArgType::SYNONYM, "l" }, { ArgType::SYNONYM, "a" } },
-                { "Affects*(a, a)", RelationType::AFFECTST,
+                { "Affects*(a, a)", false, RelationType::AFFECTST,
                     { ArgType::SYNONYM, "a" }, { ArgType::SYNONYM, "a" } }
             },
             { }, { }
@@ -918,15 +926,15 @@ namespace UnitTesting {
             },
             { },
             {
-                { "w1(v, _)", PatternType::WHILE_PATTERN, "w1",
+                { "w1(v, _)", false, PatternType::WHILE_PATTERN, "w1",
                     { ArgType::SYNONYM, "v" }, { ArgType::WILDCARD, "_" } },
-                { "ifs(v, _, _)", PatternType::IF_PATTERN, "ifs",
+                { "ifs(v, _, _)", false, PatternType::IF_PATTERN, "ifs",
                     { ArgType::SYNONYM, "v"}, { ArgType::WILDCARD, "_" } },
-                { "a1(\"x\", _\"b * b - (4 * a * c) / 2\"_)", PatternType::ASSIGN_PATTERN, "a1",
+                { "a1(\"x\", _\"b * b - (4 * a * c) / 2\"_)", false, PatternType::ASSIGN_PATTERN, "a1",
                     { ArgType::IDENTIFIER, "x" }, { ArgType::INCLUSIVE_PATTERN, "_((b*b)-(((4*a)*c)/2))_" } },
-                { "a2(v, \"x0 + y0 + x * x - y * y\")", PatternType::ASSIGN_PATTERN, "a2",
+                { "a2(v, \"x0 + y0 + x * x - y * y\")", false, PatternType::ASSIGN_PATTERN, "a2",
                     { ArgType::SYNONYM, "v" }, { ArgType::EXACT_PATTERN, "(((x0+y0)+(x*x))-(y*y))" } },
-                { "w2(\"x0\", _)", PatternType::WHILE_PATTERN, "w2",
+                { "w2(\"x0\", _)", false, PatternType::WHILE_PATTERN, "w2",
                     { ArgType::IDENTIFIER, "x0" }, { ArgType::WILDCARD, "_" } }
             },
             { }
@@ -947,19 +955,19 @@ namespace UnitTesting {
             },
             { }, { },
             {
-                { "l3 = 420", WithType::INTEGER_EQUAL,
+                { "l3 = 420", false, WithType::INTEGER_EQUAL,
                     { ArgType::SYNONYM, { "l3", AttrType::NONE } }, { ArgType::INTEGER, { "420", AttrType::NONE } } },
-                { "rd.varName = pn.varName", WithType::IDENTIFIER_EQUAL,
+                { "rd.varName = pn.varName", false, WithType::IDENTIFIER_EQUAL,
                     { ArgType::ATTRIBUTE, { "rd", AttrType::VAR_NAME } }, { ArgType::ATTRIBUTE, { "pn", AttrType::VAR_NAME } } },
-                { "l1 = l2", WithType::INTEGER_EQUAL,
+                { "l1 = l2", false, WithType::INTEGER_EQUAL,
                     { ArgType::SYNONYM, { "l1", AttrType::NONE } }, { ArgType::SYNONYM, { "l2", AttrType::NONE } } },
-                { "cl.procName = \"lambda\"", WithType::IDENTIFIER_EQUAL,
+                { "cl.procName = \"lambda\"", false, WithType::IDENTIFIER_EQUAL,
                     { ArgType::ATTRIBUTE, { "cl", AttrType::PROC_NAME } }, { ArgType::IDENTIFIER, { "lambda", AttrType::NONE } } },
-                { "l1 = rd.stmt#", WithType::INTEGER_EQUAL,
+                { "l1 = rd.stmt#", false, WithType::INTEGER_EQUAL,
                     { ArgType::SYNONYM, { "l1", AttrType::NONE } }, { ArgType::ATTRIBUTE, { "rd", AttrType::STMT_NUM } } },
-                { "pn.stmt# = c1.value", WithType::INTEGER_EQUAL,
+                { "pn.stmt# = c1.value", false, WithType::INTEGER_EQUAL,
                     { ArgType::ATTRIBUTE, { "pn", AttrType::STMT_NUM } }, { ArgType::ATTRIBUTE, { "c1", AttrType::VALUE } } },
-                { "c2.value = 666", WithType::INTEGER_EQUAL,
+                { "c2.value = 666", false, WithType::INTEGER_EQUAL,
                     { ArgType::ATTRIBUTE, { "c2", AttrType::VALUE } }, { ArgType::INTEGER, { "666", AttrType::NONE } } }
             }
         };
@@ -981,27 +989,27 @@ namespace UnitTesting {
                 { "pn", DesignEntity::PRINT }
             },
             {
-                { "Next*(a1,a2)", RelationType::NEXTT,
+                { "Next*(a1,a2)", false, RelationType::NEXTT,
                     { ArgType::SYNONYM, "a1" }, { ArgType::SYNONYM, "a2" } },
-                { "Uses(a1,v)", RelationType::USESS,
+                { "Uses(a1,v)", false, RelationType::USESS,
                     { ArgType::SYNONYM, "a1" }, { ArgType::SYNONYM, "v" } },
-                { "Modifies(w,v)", RelationType::MODIFIESS,
+                { "Modifies(w,v)", false, RelationType::MODIFIESS,
                     { ArgType::SYNONYM, "w" }, { ArgType::SYNONYM, "v" } }
             },
             {
-                { "a1(v,_)", PatternType::ASSIGN_PATTERN, "a1",
+                { "a1(v,_)", false, PatternType::ASSIGN_PATTERN, "a1",
                     { ArgType::SYNONYM, "v" }, { ArgType::WILDCARD, "_" } },
-                { "w(v,_)", PatternType::WHILE_PATTERN, "w",
+                { "w(v,_)", false, PatternType::WHILE_PATTERN, "w",
                     { ArgType::SYNONYM, "v" }, { ArgType::WILDCARD, "_" } },
-                { "a2(_,_\"f*x+f*(x-dx)+dx*dy\"_)", PatternType::ASSIGN_PATTERN, "a2",
+                { "a2(_,_\"f*x+f*(x-dx)+dx*dy\"_)", false, PatternType::ASSIGN_PATTERN, "a2",
                     { ArgType::WILDCARD, "_" }, { ArgType::INCLUSIVE_PATTERN, "_(((f*x)+(f*(x-dx)))+(dx*dy))_" } }
             },
             {
-                { "pn.varName=cl.procName", WithType::IDENTIFIER_EQUAL,
+                { "pn.varName=cl.procName", false, WithType::IDENTIFIER_EQUAL,
                     { ArgType::ATTRIBUTE, { "pn", AttrType::VAR_NAME } }, { ArgType::ATTRIBUTE, { "cl", AttrType::PROC_NAME } } },
-                { "pn.stmt#=69", WithType::INTEGER_EQUAL,
+                { "pn.stmt#=69", false, WithType::INTEGER_EQUAL,
                     { ArgType::ATTRIBUTE, { "pn", AttrType::STMT_NUM } }, { ArgType::INTEGER, { "69", AttrType::NONE } } },
-                { "\"xyz\"=\"xyz\"", WithType::LITERAL_EQUAL,
+                { "\"xyz\"=\"xyz\"", false, WithType::LITERAL_EQUAL,
                     { ArgType::IDENTIFIER, { "xyz", AttrType::NONE } }, { ArgType::IDENTIFIER, { "xyz", AttrType::NONE } } }
             }
         };
@@ -1025,31 +1033,31 @@ namespace UnitTesting {
                 { "l", DesignEntity::PROG_LINE }
             },
             {
-                { "Modifies\r(p\t,v1)", RelationType::MODIFIESP,
+                { "Modifies\r(p\t,v1)", false, RelationType::MODIFIESP,
                     { ArgType::SYNONYM, "p" }, { ArgType::SYNONYM, "v1" } },
-                { "Uses(\tw\v,  v1\n)", RelationType::USESS,
+                { "Uses(\tw\v,  v1\n)", false, RelationType::USESS,
                     { ArgType::SYNONYM, "w" }, { ArgType::SYNONYM, "v1" } },
-                { "Next*\f (\ta, w\v)", RelationType::NEXTT,
+                { "Next*\f (\ta, w\v)", false, RelationType::NEXTT,
                     { ArgType::SYNONYM, "a" }, { ArgType::SYNONYM, "w" } },
-                { "Follows(\na\r,\fcl  )", RelationType::FOLLOWS,
+                { "Follows(\na\r,\fcl  )", false, RelationType::FOLLOWS,
                     { ArgType::SYNONYM, "a" }, { ArgType::SYNONYM, "cl" } }
             },
             {
-                { "a(  v1,\r_\"\t69-\v 420\"_ )", PatternType::ASSIGN_PATTERN, "a",
+                { "a(  v1,\r_\"\t69-\v 420\"_ )", false, PatternType::ASSIGN_PATTERN, "a",
                     { ArgType::SYNONYM, "v1" }, { ArgType::INCLUSIVE_PATTERN, "_(69-420)_" } },
-                { "w  (v2, _\v\f)", PatternType::WHILE_PATTERN, "w",
+                { "w  (v2, _\v\f)", false, PatternType::WHILE_PATTERN, "w",
                     { ArgType::SYNONYM, "v2" }, { ArgType::WILDCARD, "_" } }
             },
             {
-                { "\"i\"  =\r\"i\"", WithType::LITERAL_EQUAL,
+                { "\"i\"  =\r\"i\"", false, WithType::LITERAL_EQUAL,
                     { ArgType::IDENTIFIER, { "i", AttrType::NONE } }, { ArgType::IDENTIFIER, { "i", AttrType::NONE } } },
-                { "17\r=w\t.  stmt#", WithType::INTEGER_EQUAL,
+                { "17\r=w\t.  stmt#", false, WithType::INTEGER_EQUAL,
                     { ArgType::INTEGER, { "17", AttrType::NONE } }, { ArgType::ATTRIBUTE, { "w", AttrType::STMT_NUM } } },
-                { "l\n=\tcl\r.\vstmt#", WithType::INTEGER_EQUAL,
+                { "l\n=\tcl\r.\vstmt#", false, WithType::INTEGER_EQUAL,
                     { ArgType::SYNONYM, { "l", AttrType::NONE } }, { ArgType::ATTRIBUTE, { "cl", AttrType::STMT_NUM } } },
-                { "p\n.\fprocName\r=\n\" function\t\"", WithType::IDENTIFIER_EQUAL,
+                { "p\n.\fprocName\r=\n\" function\t\"", false, WithType::IDENTIFIER_EQUAL,
                     { ArgType::ATTRIBUTE, { "p", AttrType::PROC_NAME } }, { ArgType::IDENTIFIER, { "function", AttrType::NONE } } },
-                { "cl\v.\fprocName\n=  v2  .\tvarName", WithType::IDENTIFIER_EQUAL,
+                { "cl\v.\fprocName\n=  v2  .\tvarName", false, WithType::IDENTIFIER_EQUAL,
                     { ArgType::ATTRIBUTE, { "cl", AttrType::PROC_NAME } }, { ArgType::ATTRIBUTE, { "v2", AttrType::VAR_NAME } } }
             }
         };
@@ -1077,36 +1085,186 @@ namespace UnitTesting {
                 { "v2", DesignEntity::VARIABLE }
             },
             {
-                { "Modifies(a1, v1)", RelationType::MODIFIESS,
+                { "Modifies(a1, v1)", false, RelationType::MODIFIESS,
                     { ArgType::SYNONYM, "a1" }, { ArgType::SYNONYM, "v1" } },
-                { "Uses(pn, v1)", RelationType::USESS,
+                { "Uses(pn, v1)", false, RelationType::USESS,
                     { ArgType::SYNONYM, "pn" }, { ArgType::SYNONYM, "v1" } },
-                { "Parent*(w, a1)", RelationType::PARENTT,
+                { "Parent*(w, a1)", false, RelationType::PARENTT,
                     { ArgType::SYNONYM, "w" }, { ArgType::SYNONYM, "a1" } },
-                { "Calls(\"driver\", _)", RelationType::CALLS,
+                { "Calls(\"driver\", _)", false, RelationType::CALLS,
                     { ArgType::IDENTIFIER, "driver" }, { ArgType::WILDCARD, "_" } },
-                { "Uses(p, \"j\")", RelationType::USESP,
+                { "Uses(p, \"j\")", false, RelationType::USESP,
                     { ArgType::SYNONYM, "p" }, { ArgType::IDENTIFIER, "j" } },
-                { "Affects*(1, 64)", RelationType::AFFECTST,
+                { "Affects*(1, 64)", false, RelationType::AFFECTST,
                     { ArgType::INTEGER, "1" }, { ArgType::INTEGER, "64" } }
             },
             {
-                { "w(\"i\", _)", PatternType::WHILE_PATTERN, "w",
+                { "w(\"i\", _)", false, PatternType::WHILE_PATTERN, "w",
                     { ArgType::IDENTIFIER, "i" }, { ArgType::WILDCARD, "_" } },
-                { "a1(_, _\"i + 1 + x / 2 + y - (3 * z)\"_)", PatternType::ASSIGN_PATTERN, "a1",
+                { "a1(_, _\"i + 1 + x / 2 + y - (3 * z)\"_)", false, PatternType::ASSIGN_PATTERN, "a1",
                     { ArgType::WILDCARD, "_" }, { ArgType::INCLUSIVE_PATTERN, "_((((i+1)+(x/2))+y)-(3*z))_" } },
-                { "ifs(v2, _, _)", PatternType::IF_PATTERN, "ifs",
+                { "ifs(v2, _, _)", false, PatternType::IF_PATTERN, "ifs",
                     { ArgType::SYNONYM, "v2" }, { ArgType::WILDCARD, "_" } }
             },
             {
-                { "v2.varName = \"input\"", WithType::IDENTIFIER_EQUAL,
+                { "v2.varName = \"input\"", false, WithType::IDENTIFIER_EQUAL,
                     { ArgType::ATTRIBUTE, { "v2", AttrType::VAR_NAME } }, { ArgType::IDENTIFIER, { "input", AttrType::NONE } } },
-                { "c.value = l", WithType::INTEGER_EQUAL,
+                { "c.value = l", false, WithType::INTEGER_EQUAL,
                     { ArgType::ATTRIBUTE, { "c", AttrType::VALUE } }, { ArgType::SYNONYM, { "l", AttrType::NONE } } },
-                { "rd.varName = v2.varName", WithType::IDENTIFIER_EQUAL,
+                { "rd.varName = v2.varName", false, WithType::IDENTIFIER_EQUAL,
                     { ArgType::ATTRIBUTE, { "rd", AttrType::VAR_NAME } }, { ArgType::ATTRIBUTE, { "v2", AttrType::VAR_NAME } } },
-                { "3203 = 3230", WithType::LITERAL_EQUAL,
+                { "3203 = 3230", false, WithType::LITERAL_EQUAL,
                     { ArgType::INTEGER, { "3203", AttrType::NONE } }, { ArgType::INTEGER, { "3230", AttrType::NONE } } }
+            }
+        };
+
+        Query EXT_SIMPLE_NOT_QUERY_RESULT = {
+            STATUS_SUCCESS, EXT_SIMPLE_NOT_QUERY, false,
+            {
+                { "a", AttrType::NONE },
+                { "w", AttrType::NONE },
+                { "v", AttrType::NONE }
+            },
+            {
+                { "a", DesignEntity::ASSIGN },
+                { "c", DesignEntity::CONSTANT },
+                { "w", DesignEntity::WHILE },
+                { "v", DesignEntity::VARIABLE }
+            },
+            {
+                { "not Parent*(w, a)", true, RelationType::PARENTT,
+                    { ArgType::SYNONYM, "w" }, { ArgType::SYNONYM, "a" } },
+                { "Uses(w, v)", false, RelationType::USESS,
+                    { ArgType::SYNONYM, "w" }, { ArgType::SYNONYM, "v" } }
+            },
+            {
+                { "a(v, _)", false, PatternType::ASSIGN_PATTERN, "a",
+                    { ArgType::SYNONYM, "v" }, { ArgType::WILDCARD, "_" } },
+                { "not w(v, _)", true, PatternType::WHILE_PATTERN, "w",
+                    { ArgType::SYNONYM, "v" }, { ArgType::WILDCARD, "_" } }
+            },
+            {
+                { "not a.stmt# = c.value", true, WithType::INTEGER_EQUAL,
+                    { ArgType::ATTRIBUTE, { "a", AttrType::STMT_NUM } }, { ArgType::ATTRIBUTE, { "c", AttrType::VALUE } } },
+                { "not \"taiwan\" = \"china\"", true, WithType::LITERAL_EQUAL,
+                    { ArgType::IDENTIFIER, { "taiwan", AttrType::NONE } }, { ArgType::IDENTIFIER, { "china", AttrType::NONE } } },
+                { "c.value = w.stmt#", false, WithType::INTEGER_EQUAL,
+                    { ArgType::ATTRIBUTE, { "c", AttrType::VALUE } }, { ArgType::ATTRIBUTE, { "w", AttrType::STMT_NUM } } }
+            }
+        };
+
+        Query EXT_CHAINED_NOT_QUERY_RESULT = {
+            STATUS_SUCCESS, EXT_CHAINED_NOT_QUERY, false,
+            {
+                { "v1", AttrType::NONE },
+                { "v2", AttrType::NONE }
+            },
+            {
+                { "c", DesignEntity::CONSTANT },
+                { "ifs", DesignEntity::IF },
+                { "w", DesignEntity::WHILE },
+                { "cl", DesignEntity::CALL },
+                { "rd", DesignEntity::READ },
+                { "pn", DesignEntity::PRINT },
+                { "v1", DesignEntity::VARIABLE },
+                { "v2", DesignEntity::VARIABLE }
+            },
+            {
+                { "Uses(pn, v1)", false, RelationType::USESS,
+                    { ArgType::SYNONYM, "pn" }, { ArgType::SYNONYM, "v1" } },
+                { "not Next*(rd, pn)", true, RelationType::NEXTT,
+                    { ArgType::SYNONYM, "rd", }, { ArgType::SYNONYM, "pn" } },
+                { "not Next*(pn, rd)", true, RelationType::NEXTT,
+                    { ArgType::SYNONYM, "pn" }, { ArgType::SYNONYM, "rd" } },
+                { "Modifies(rd, v2)", false, RelationType::MODIFIESS,
+                    { ArgType::SYNONYM, "rd" }, { ArgType::SYNONYM, "v2" } }
+            },
+            {
+                { "w(v1, _)", false, PatternType::WHILE_PATTERN, "w",
+                    { ArgType::SYNONYM, "v1" }, { ArgType::WILDCARD, "_" } },
+                { "not ifs(v1, _, _)", true, PatternType::IF_PATTERN, "ifs",
+                    { ArgType::SYNONYM, "v1" }, { ArgType::WILDCARD, "_" } },
+                { "not w(v2, _)", true, PatternType::WHILE_PATTERN, "w",
+                    { ArgType::SYNONYM, "v2" }, { ArgType::WILDCARD, "_" } },
+                { "ifs(v2, _, _)", false, PatternType::IF_PATTERN, "ifs",
+                    { ArgType::SYNONYM, "v2" }, { ArgType::WILDCARD, "_" } }
+            },
+            {
+                { "not cl.procName = v1.varName", true, WithType::IDENTIFIER_EQUAL,
+                    { ArgType::ATTRIBUTE, { "cl", AttrType::PROC_NAME } }, { ArgType::ATTRIBUTE, { "v1", AttrType::VAR_NAME } } },
+                { "v2.varName = cl.procName", false, WithType::IDENTIFIER_EQUAL,
+                    { ArgType::ATTRIBUTE, { "v2", AttrType::VAR_NAME } }, { ArgType::ATTRIBUTE, { "cl", AttrType::PROC_NAME } } },
+                { "not 2019 = 2020", true, WithType::LITERAL_EQUAL,
+                    { ArgType::INTEGER, { "2019", AttrType::NONE } }, { ArgType::INTEGER, { "2020", AttrType::NONE } } },
+                { "w.stmt# = c.value", false, WithType::INTEGER_EQUAL,
+                    { ArgType::ATTRIBUTE, { "w", AttrType::STMT_NUM } }, { ArgType::ATTRIBUTE, { "c", AttrType::VALUE } } },
+                { "not c.value = ifs.stmt#", true, WithType::INTEGER_EQUAL,
+                    { ArgType::ATTRIBUTE, { "c", AttrType::VALUE } }, { ArgType::ATTRIBUTE, { "ifs", AttrType::STMT_NUM } } }
+            }
+        };
+
+        Query EXT_CONFUSING_NOT_QUERY_RESULT = {
+            STATUS_SUCCESS, EXT_CONFUSING_NOT_QUERY, false,
+            {
+                { "not", AttrType::NONE }
+            },
+            {
+                { "not", DesignEntity::ASSIGN },
+                { "c", DesignEntity::CONSTANT },
+                { "v", DesignEntity::VARIABLE }
+            },
+            {
+                { "not Affects(not, _)", true, RelationType::AFFECTS,
+                    { ArgType::SYNONYM, "not" }, { ArgType::WILDCARD, "_" } },
+                { "Modifies(not, v)", false, RelationType::MODIFIESS,
+                    { ArgType::SYNONYM, "not" }, { ArgType::SYNONYM, "v" } }
+            },
+            {
+                { "not(\"x\", _)", false, PatternType::ASSIGN_PATTERN, "not",
+                    { ArgType::IDENTIFIER, "x" }, { ArgType::WILDCARD, "_" } },
+                { "not not(_, \"0\")", true, PatternType::ASSIGN_PATTERN, "not",
+                    { ArgType::WILDCARD, "_" }, { ArgType::EXACT_PATTERN, "0" } },
+                { "not(_, _\"0\"_)", false, PatternType::ASSIGN_PATTERN, "not",
+                    { ArgType::WILDCARD, "_" }, { ArgType::INCLUSIVE_PATTERN, "_0_" } }
+            },
+            {
+                { "not not.stmt# = 1", true, WithType::INTEGER_EQUAL,
+                    { ArgType::ATTRIBUTE, { "not", AttrType::STMT_NUM } }, { ArgType::INTEGER, { "1", AttrType::NONE } } },
+                { "not.stmt# = c.value", false, WithType::INTEGER_EQUAL,
+                    { ArgType::ATTRIBUTE, { "not", AttrType::STMT_NUM } }, { ArgType::ATTRIBUTE, { "c", AttrType::VALUE } } }
+
+            }
+        };
+
+        Query EXT_CONFUSING_NOT_AND_QUERY_RESULT = {
+            STATUS_SUCCESS, EXT_CONFUSING_NOT_AND_QUERY, false,
+            {
+                { "and", AttrType::NONE }
+            },
+            {
+                { "and", DesignEntity::ASSIGN },
+                { "pattern", DesignEntity::PROCEDURE },
+                { "not", DesignEntity::PROG_LINE },
+                { "with", DesignEntity::VARIABLE }
+            },
+            { },
+            {
+                { "and(with, _)", false, PatternType::ASSIGN_PATTERN, "and",
+                    { ArgType::SYNONYM, "with" }, { ArgType::WILDCARD, "_" } }
+            },
+            {
+                { "not not = 1337", true, WithType::INTEGER_EQUAL,
+                    { ArgType::SYNONYM, { "not", AttrType::NONE } }, { ArgType::INTEGER, { "1337", AttrType::NONE } } },
+                { "not and.stmt# = 62353535", true, WithType::INTEGER_EQUAL,
+                    { ArgType::ATTRIBUTE, { "and", AttrType::STMT_NUM } }, { ArgType::INTEGER, { "62353535", AttrType::NONE } } },
+                { "not = and.stmt#", false, WithType::INTEGER_EQUAL,
+                    { ArgType::SYNONYM, { "not", AttrType::NONE } }, { ArgType::ATTRIBUTE, { "and", AttrType::STMT_NUM } } },
+                { "not with.varName = pattern.procName", true, WithType::IDENTIFIER_EQUAL,
+                    { ArgType::ATTRIBUTE, { "with", AttrType::VAR_NAME } }, { ArgType::ATTRIBUTE, { "pattern", AttrType::PROC_NAME } } },
+                { "and.stmt# = not", false, WithType::INTEGER_EQUAL,
+                    { ArgType::ATTRIBUTE, { "and", AttrType::STMT_NUM } }, { ArgType::SYNONYM, { "not", AttrType::NONE } } },
+                { "not \"not\" = pattern.procName", true, WithType::IDENTIFIER_EQUAL,
+                    { ArgType::IDENTIFIER, { "not", AttrType::NONE } }, { ArgType::ATTRIBUTE, { "pattern", AttrType::PROC_NAME } } }
             }
         };
 
@@ -1154,7 +1312,11 @@ namespace UnitTesting {
             { CHAINED_ALL_NON_LITERAL_EQUALITIES_QUERY, CHAINED_ALL_NON_LITERAL_EQUALITIES_QUERY_RESULT },
             { CHAINED_NO_WHITESPACE_QUERY, CHAINED_NO_WHITESPACE_QUERY_RESULT },
             { CHAINED_EXTRA_WHITESPACE_QUERY, CHAINED_EXTRA_WHITESPACE_QUERY_RESULT },
-            { PROJECT_REPORT_SAMPLE_QUERY, PROJECT_REPORT_SAMPLE_QUERY_RESULT }
+            { PROJECT_REPORT_SAMPLE_QUERY, PROJECT_REPORT_SAMPLE_QUERY_RESULT },
+            { EXT_SIMPLE_NOT_QUERY, EXT_SIMPLE_NOT_QUERY_RESULT },
+            { EXT_CHAINED_NOT_QUERY, EXT_CHAINED_NOT_QUERY_RESULT },
+            { EXT_CONFUSING_NOT_QUERY, EXT_CONFUSING_NOT_QUERY_RESULT },
+            { EXT_CONFUSING_NOT_AND_QUERY, EXT_CONFUSING_NOT_AND_QUERY_RESULT }
         };
 
         // Array containing all negative testcases, each comprising an invalid query with a single
@@ -1216,7 +1378,7 @@ namespace UnitTesting {
             { INVALID_AND_WITH_QUERY, SYNTAX_ERR_INVALID_AND_CHAINED_CLAUSES },
             { MISSING_RETURN_TYPE_QUERY, SYNTAX_ERR_INVALID_CLAUSES_IN_QUERY_BODY },
             { INCORRECT_RELATION_KEYWORD_QUERY, SYNTAX_ERR_INVALID_CLAUSES_IN_QUERY_BODY },
-            { INCORRECT_PATTERN_KEYWORD_QUERY,  SYNTAX_ERR_INVALID_CLAUSES_IN_QUERY_BODY },
+            { INCORRECT_PATTERN_KEYWORD_QUERY, SYNTAX_ERR_INVALID_CLAUSES_IN_QUERY_BODY },
             { INCORRECT_EQUALITY_KEYWORD_QUERY, SYNTAX_ERR_INVALID_CLAUSES_IN_QUERY_BODY },
             { RELATION_INVALID_ARG_CHARACTER_QUERY, SYNTAX_ERR_INVALID_CLAUSES_IN_QUERY_BODY },
             { RELATION_INVALID_ATTRIBUTE_ARG_QUERY, SYNTAX_ERR_INVALID_CLAUSES_IN_QUERY_BODY },
@@ -1233,6 +1395,10 @@ namespace UnitTesting {
             { WITH_INVALID_WILDCARD_ARG_QUERY, SYNTAX_ERR_INVALID_CLAUSES_IN_QUERY_BODY },
             { WITH_UNQUOTED_IDENTIFIER_ARG_QUERY, SYNTAX_ERR_INVALID_CLAUSES_IN_QUERY_BODY },
             { WITH_INVALID_ATTRIBUTE_SYNTAX_QUERY, SYNTAX_ERR_INVALID_CLAUSES_IN_QUERY_BODY },
+            { INCORRECT_CLAUSE_CONCATENATION_OPERATOR_QUERY, SYNTAX_ERR_INVALID_CLAUSES_IN_QUERY_BODY },
+            { INCORRECT_CLAUSE_NEGATION_OPERATOR_QUERY, SYNTAX_ERR_INVALID_CLAUSES_IN_QUERY_BODY },
+            { INCORRECT_COMPOUND_CLAUSE_NEGATION_QUERY, SYNTAX_ERR_INVALID_CLAUSES_IN_QUERY_BODY },
+            { INCORRECT_DUAL_CLAUSE_OPERATOR_QUERY, SYNTAX_ERR_INVALID_CLAUSES_IN_QUERY_BODY },
             // parseDeclarations
             { DUPLICATE_BODY_QUERY, SYNTAX_ERR_UNKNOWN_DESIGN_ENTITY_KEYWORD },
             { UNRECOGNISED_DESIGN_ENTITY_QUERY, SYNTAX_ERR_UNKNOWN_DESIGN_ENTITY_KEYWORD },
