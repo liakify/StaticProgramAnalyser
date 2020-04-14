@@ -1,0 +1,5 @@
+1 - Chained Affects
+stmt s1, s2, s3, s4, s5, s6;
+Select <s1, s6> such that Affects(s1, s2) and Affects(s2, s3) and Affects (s3, s4) and Affects (s4, s5) and Affects (s5, s6)
+
+5000
