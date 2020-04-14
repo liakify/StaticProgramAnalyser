@@ -100,7 +100,7 @@ namespace PQL {
                 StmtId arg1 = std::stoi(clause.getArgs().first.second);
                 Synonym arg2 = clause.getArgs().second.second;
 
-                std::unordered_set<StmtId> stmts = database.nextStarGetDirectNodes(arg1, NodeType::SUCCESSOR);
+                std::unordered_set<StmtId> stmts = database.nextGetDirectNodes(arg1, NodeType::SUCCESSOR);
                 ClauseResult clauseResult;
                 for (StmtId stmt : stmts) {
                     if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(stmt)->getType(), synonymTable[arg2])) {
@@ -115,7 +115,7 @@ namespace PQL {
                 Synonym arg1 = clause.getArgs().first.second;
                 StmtId arg2 = std::stoi(clause.getArgs().second.second);
 
-                std::unordered_set<StmtId> stmts = database.nextStarGetDirectNodes(arg2, NodeType::PREDECESSOR);
+                std::unordered_set<StmtId> stmts = database.nextGetDirectNodes(arg2, NodeType::PREDECESSOR);
                 ClauseResult clauseResult;
                 for (StmtId stmt : stmts) {
                     if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(stmt)->getType(), synonymTable[arg1])) {
@@ -191,7 +191,7 @@ namespace PQL {
 
             ClauseResult clauseResult;
             for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
-                std::unordered_set<StmtId> nextStmts = database.nextStarGetDirectNodes(i, NodeType::SUCCESSOR);
+                std::unordered_set<StmtId> nextStmts = database.nextGetDirectNodes(i, NodeType::SUCCESSOR);
                 for (StmtId nextStmt : nextStmts) {
                     if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i)->getType(), synonymTable[arg1]) &&
                         SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(nextStmt)->getType(), synonymTable[arg2])) {

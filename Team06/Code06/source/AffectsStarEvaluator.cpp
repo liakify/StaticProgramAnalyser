@@ -37,7 +37,7 @@ namespace PQL {
         * @return   The result of the evaluation.
         */
         ClauseResult evaluateAffectsStarClauseWildWild(PKB::PKB& database) {
-            for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
+            for (StmtId i : database.stmtTable.getStmtsByType(StmtType::ASSIGN)) {
                 if (database.affectsGetDirectNodes(i, NodeType::SUCCESSOR).size() > 0) {
                     ClauseResultEntry resultEntry;
                     resultEntry["_RESULT"] = "TRUE";
@@ -144,12 +144,13 @@ namespace PQL {
                 Synonym arg2 = clause.getArgs().second.second;
 
                 ClauseResult clauseResult;
-                for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
+                for (StmtId i : database.stmtTable.getStmtsByType(StmtType::ASSIGN)) {
                     if (database.affectsGetDirectNodes(i, NodeType::PREDECESSOR).size() > 0) {
                         ClauseResultEntry resultEntry;
                         resultEntry[arg2] = std::to_string(i);
                         clauseResult.emplace_back(resultEntry);
                     }
+                    database.affectsStarSetProcessedAll(i, NodeType::SUCCESSOR);
                 }
                 return clauseResult;
             } else {
@@ -157,12 +158,13 @@ namespace PQL {
                 Synonym arg1 = clause.getArgs().first.second;
 
                 ClauseResult clauseResult;
-                for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
+                for (StmtId i : database.stmtTable.getStmtsByType(StmtType::ASSIGN)) {
                     if (database.affectsGetDirectNodes(i, NodeType::SUCCESSOR).size() > 0) {
                         ClauseResultEntry resultEntry;
                         resultEntry[arg1] = std::to_string(i);
                         clauseResult.emplace_back(resultEntry);
                     }
+                    database.affectsStarSetProcessedAll(i, NodeType::PREDECESSOR);
                 }
                 return clauseResult;
             }
@@ -184,7 +186,7 @@ namespace PQL {
             bool singleSynonym = (arg1 == arg2);
 
             ClauseResult clauseResult;
-            for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
+            for (StmtId i : database.stmtTable.getStmtsByType(StmtType::ASSIGN)) {
                 std::unordered_set<StmtId> stmts = database.affectsStarGetAllNodes(i, NodeType::SUCCESSOR);
                 for (StmtId stmt : stmts) {
                     if (!singleSynonym) {
@@ -200,8 +202,8 @@ namespace PQL {
                         }
                     }
                 }
+                database.affectsStarSetProcessedAll(i, NodeType::PREDECESSOR);
             }
-
             return clauseResult;
         }
 

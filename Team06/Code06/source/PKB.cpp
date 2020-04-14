@@ -165,7 +165,7 @@ namespace PKB {
         return res;
     }
 
-    const std::unordered_set<StmtId>& PKB::nextStarGetDirectNodes(StmtId s, NodeType type) {
+    const std::unordered_set<StmtId>& PKB::nextGetDirectNodes(StmtId s, NodeType type) {
         return nextKB.getDirectNodes(s, type);
     }
 
