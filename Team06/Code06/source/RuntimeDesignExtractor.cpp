@@ -93,6 +93,15 @@ namespace FrontEnd {
         std::unordered_set<StmtId> neighbours = pkb->nextGetDirectNodes(curr, type);
 
         for (const auto& n : neighbours) {
+            if (pkb->nextStarProcessedAll(n, type)) {
+                std::unordered_set<StmtId> nodes = pkb->nextStarGetAllNodes(n, type);
+                for (StmtId id : nodes) {
+                    visited.insert(id);
+                    addBiDirEdge(root, id, type);
+                }
+                continue;
+            }
+
             // Add bi-directional edge first before cycle check for Next*(s, s)
             addBiDirEdge(root, n, type);
             if (visited.find(n) == visited.end()) {
@@ -227,6 +236,22 @@ namespace FrontEnd {
         std::unordered_set<StmtId> neighbours = pkb->affectsGetDirectNodes(curr, type);
 
         for (StmtId n : neighbours) {
+            if (pkb->affectsStarProcessedAll(n, type)) {
+                std::unordered_set<StmtId> nodes = pkb->affectsStarGetAllNodes(n, type);
+                for (StmtId id : nodes) {
+                    visited.insert(id);
+                    if (type == NodeType::SUCCESSOR) {
+                        pkb->addAffectsStar(root, id);
+                    } else {
+                        pkb->addAffectsStar(id, root);
+                    }
+                }
+                if (n == goal || nodes.find(goal) != nodes.end()) {
+                    return true;
+                }
+                continue;
+            }
+
             // Add bi-directional edge first before cycle check for Affects*(s, s)
             if (type == NodeType::SUCCESSOR) {
                 pkb->addAffectsStar(root, n);
