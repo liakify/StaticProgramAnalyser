@@ -1,0 +1,20 @@
+1 - related by s
+procedure p; stmt s;
+Select p such that Contains (p, s) with s.stmt# = 5
+ReadOnly
+5000
+2 - related by p
+procedure p; stmt s;
+Select s such that Contains (p, s) with p.procName = "ReadAndAssign"
+7, 8, 9
+5000
+3 - related by a
+procedure p; assign a;
+Select p such that Contains (p, a) with a.stmt# = 11
+Everything
+5000
+4 - related by r
+procedure p; print pn;
+Select p such that Contains (p, pn) with pn.stmt# = 6
+PrintOnly
+5000
