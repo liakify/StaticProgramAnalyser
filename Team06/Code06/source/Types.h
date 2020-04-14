@@ -35,8 +35,3 @@ using StmtRef = std::string;
 using EntityRef = std::string;
 
 using Synonym = std::string;
-
-using QueryResultEntry = std::vector<std::string>;
-using ClauseResultEntry = std::unordered_map<std::string, std::string>;
-using ClauseResult = std::vector<ClauseResultEntry>;
-using QueryResult = std::vector<QueryResultEntry>;

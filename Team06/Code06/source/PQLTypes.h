@@ -521,4 +521,13 @@ namespace PQL {
         std::vector<int> last;
     };
 
+    using ClauseResultEntry = std::vector<std::string>;
+
+    struct ClauseResult {
+        bool trueResult = false;
+        bool emptyResult = false;
+        std::vector<Synonym> syns;
+        std::vector<ClauseResultEntry> rows;
+    };
+
 }
