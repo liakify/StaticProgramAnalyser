@@ -8,6 +8,7 @@
 #include "AssignPatternEvaluator.h"
 #include "CallsEvaluator.h"
 #include "CallsStarEvaluator.h"
+#include "ContainsEvaluator.h"
 #include "FollowsEvaluator.h"
 #include "FollowsStarEvaluator.h"
 #include "IfPatternEvaluator.h"
@@ -336,6 +337,9 @@ namespace PQL {
             break;
         case RelationType::AFFECTST:
             return AffectsStarEvaluator::evaluateAffectsStarClause(this->database, relationClause, synonymTable);
+            break;
+        case RelationType::CONTAINS:
+            return ContainsEvaluator::evaluateContainsClause(this->database, relationClause, synonymTable);
             break;
         default:
             SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluateRelationClause: Unknown relation type %d\n", relationClause.getRelationType());
