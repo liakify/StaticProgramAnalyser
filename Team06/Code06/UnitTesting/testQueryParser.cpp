@@ -94,14 +94,20 @@ namespace UnitTesting {
         string MODIFIESP_LITERAL_NON_VARIABLE_ARG_QUERY = "if ifs; Select BOOLEAN such that Modifies(\"func\", ifs)";
         string CALLS_MISSING_SYNONYM_QUERY = "Select BOOLEAN such that Calls(p, _)";
         string CALLS_NON_PROCEDURE_ARG_QUERY = "call cl; Select cl such that Calls*(\"main\", cl)";
-        string INVALID_STMT_NUMBER_OVERFLOW_QUERY = "Select BOOLEAN such that Next*(2147483648, _)";
-        string INVALID_STMT_NUMBER_QUERY = "stmt s; Select s such that Follows(0, s)";
-        string INVALID_PROG_LINE_QUERY = "prog_line l; Select l such that Next*(0, l)";
-        string FOLLOWS_MISSING_SYNONYM_QUERY = "print pn; Select pn such that Follows(rd, pn)";
-        string NEXT_MISSING_SYNONYM_QUERY = "prog_line l1; Select l1 such that Next(l1, l2)";
+        string CONTAINS_MISSING_FIRST_SYNONYM_QUERY = "read rd; Select BOOLEAN such that Contains(p, rd)";
+        string CONTAINS_NON_PROCEDURE_ARG_QUERY = "assign a; if ifs; Select a such that Contains(ifs, a)";
+        string CONTAINS_STMT_NUMBER_OVERFLOW_QUERY = "procedure p; Select BOOLEAN such that Contains(p, 2147483648)";
+        string CONTAINS_INVALID_STMT_NUMBER_QUERY = "Select BOOLEAN such that Contains(_, 0000)";
+        string CONTAINS_MISSING_SECOND_SYNONYM_QUERY = "procedure p; Select p such that Contains(p, cl)";
+        string CONTAINS_NON_STATEMENT_ARG = "procedure p; constant c; Select c such that Contains(p, c)";
+        string FPNA_STMT_NUMBER_OVERFLOW_QUERY = "Select BOOLEAN such that Next*(2147483648, _)";
+        string FPNA_INVALID_STMT_NUMBER_QUERY = "stmt s; Select s such that Follows(0, s)";
+        string FPNA_INVALID_PROG_LINE_QUERY = "prog_line l; Select l such that Next*(0, l)";
+        string FOLLOWS_MISSING_FIRST_SYNONYM_QUERY = "print pn; Select pn such that Follows(rd, pn)";
+        string NEXT_MISSING_SECOND_SYNONYM_QUERY = "prog_line l1; Select l1 such that Next(l1, l2)";
         string AFFECTS_NON_ASSIGN_ARG_QUERY = "read rd; Select rd such that Affects*(rd, 69)";
-        string PARENT_NON_STMT_ARG_QUERY = "variable v; Select BOOLEAN such that Parent*(_, v)";
-        string NEXT_NON_STMT_ARG_QUERY = "constant c; Select c such that Next(c, 42)";
+        string PARENT_NON_STATEMENT_ARG_QUERY = "variable v; Select BOOLEAN such that Parent*(_, v)";
+        string NEXT_NON_STATEMENT_ARG_QUERY = "constant c; Select c such that Next(c, 42)";
         string PATTERN_MISSING_SYNONYM_QUERY = "assign a; Select a pattern a(v, \"x\")";
         string PATTERN_NON_VARIABLE_ARG_QUERY = "call cl; assign a; Select cl pattern a(cl, _)";
         string WITH_DIFFERING_LITERAL_ARG_TYPE_QUERY = "Select BOOLEAN with 1 = \"one\"";
@@ -177,6 +183,8 @@ namespace UnitTesting {
         string CALLS_NON_ENTITY_REF_ARG_QUERY = "procedure p; Select p such that Calls*(p, __)";
         string NEXT_NON_LINE_REF_ARG_QUERY = "Select BOOLEAN such that Next(1231, \"tough\")";
         string AFFECTS_NON_STMT_REF_QUERY = "assign a; Select a such that Affects*(a, 1_024)";
+        string CONTAINS_NON_ENT_REF_QUERY = "call cl; Select BOOLEAN such that Contains(\"1\", cl)";
+        string CONTAINS_NON_STMT_REF_QUERY = "procedure p; Select p such that Contains(p, \"737\")";
 
         // Invalid queries that fail in parsePatternClauses
         string PATTERN_UNDECLARED_SYNONYM_QUERY = "variable v; Select v pattern a(v, _)";
@@ -1352,14 +1360,20 @@ namespace UnitTesting {
             { MODIFIESP_LITERAL_NON_VARIABLE_ARG_QUERY, SEMANTIC_ERR_USES_MODIFIES_NON_VARIABLE_SECOND_SYNONYM },
             { CALLS_MISSING_SYNONYM_QUERY, SEMANTIC_ERR_CALLS_UNDECLARED_SYNONYM },
             { CALLS_NON_PROCEDURE_ARG_QUERY, SEMANTIC_ERR_CALLS_NON_PROCEDURE_SYNONYM },
-            { INVALID_STMT_NUMBER_OVERFLOW_QUERY, SEMANTIC_ERR_FPNA_STMT_NUMBER_OVERFLOW },
-            { INVALID_STMT_NUMBER_QUERY, SEMANTIC_ERR_FPNA_NON_POSITIVE_STMT_NUMBER },
-            { INVALID_PROG_LINE_QUERY, SEMANTIC_ERR_FPNA_NON_POSITIVE_STMT_NUMBER },
-            { FOLLOWS_MISSING_SYNONYM_QUERY, SEMANTIC_ERR_FPNA_UNDECLARED_SYNONYM },
-            { NEXT_MISSING_SYNONYM_QUERY, SEMANTIC_ERR_FPNA_UNDECLARED_SYNONYM },
+            { CONTAINS_MISSING_FIRST_SYNONYM_QUERY, SEMANTIC_ERR_CONTAINS_UNDECLARED_FIRST_SYNONYM },
+            { CONTAINS_NON_PROCEDURE_ARG_QUERY, SEMANTIC_ERR_CONTAINS_NON_PROCEDURE_FIRST_SYNONYM },
+            { CONTAINS_STMT_NUMBER_OVERFLOW_QUERY, SEMANTIC_ERR_CONTAINS_STMT_NUMBER_OVERFLOW },
+            { CONTAINS_INVALID_STMT_NUMBER_QUERY, SEMANTIC_ERR_CONTAINS_NON_POSITIVE_STMT_NUMBER },
+            { CONTAINS_MISSING_SECOND_SYNONYM_QUERY, SEMANTIC_ERR_CONTAINS_UNDECLARED_SECOND_SYNONYM },
+            { CONTAINS_NON_STATEMENT_ARG, SEMANTIC_ERR_CONTAINS_NON_STATEMENT_SECOND_SYNONYM },
+            { FPNA_STMT_NUMBER_OVERFLOW_QUERY, SEMANTIC_ERR_FPNA_STMT_NUMBER_OVERFLOW },
+            { FPNA_INVALID_STMT_NUMBER_QUERY, SEMANTIC_ERR_FPNA_NON_POSITIVE_STMT_NUMBER },
+            { FPNA_INVALID_PROG_LINE_QUERY, SEMANTIC_ERR_FPNA_NON_POSITIVE_STMT_NUMBER },
+            { FOLLOWS_MISSING_FIRST_SYNONYM_QUERY, SEMANTIC_ERR_FPNA_UNDECLARED_SYNONYM },
+            { NEXT_MISSING_SECOND_SYNONYM_QUERY, SEMANTIC_ERR_FPNA_UNDECLARED_SYNONYM },
             { AFFECTS_NON_ASSIGN_ARG_QUERY, SEMANTIC_ERR_AFFECTS_NON_ASSIGN_SYNONYM },
-            { PARENT_NON_STMT_ARG_QUERY, SEMANTIC_ERR_FPN_NON_STATEMENT_SYNONYM },
-            { NEXT_NON_STMT_ARG_QUERY, SEMANTIC_ERR_FPN_NON_STATEMENT_SYNONYM },
+            { PARENT_NON_STATEMENT_ARG_QUERY, SEMANTIC_ERR_FPN_NON_STATEMENT_SYNONYM },
+            { NEXT_NON_STATEMENT_ARG_QUERY, SEMANTIC_ERR_FPN_NON_STATEMENT_SYNONYM },
             { PATTERN_MISSING_SYNONYM_QUERY, SEMANTIC_ERR_PATTERN_UNDECLARED_FIRST_SYNONYM },
             { PATTERN_NON_VARIABLE_ARG_QUERY, SEMANTIC_ERR_PATTERN_NON_VARIABLE_FIRST_SYNONYM },
             { WITH_DIFFERING_LITERAL_ARG_TYPE_QUERY, SEMANTIC_ERR_WITH_CLAUSE_DIFF_LITERAL_TYPE },
@@ -1431,6 +1445,8 @@ namespace UnitTesting {
             { CALLS_NON_ENTITY_REF_ARG_QUERY, SYNTAX_ERR_CALLS_INVALID_ENT_REF },
             { NEXT_NON_LINE_REF_ARG_QUERY, SYNTAX_ERR_NEXT_INVALID_LINE_REF },
             { AFFECTS_NON_STMT_REF_QUERY, SYNTAX_ERR_AFFECTS_INVALID_STMT_REF },
+            { CONTAINS_NON_ENT_REF_QUERY, SYNTAX_ERR_CONTAINS_INVALID_ENT_REF },
+            { CONTAINS_NON_STMT_REF_QUERY, SYNTAX_ERR_CONTAINS_INVALID_STMT_REF },
             // parsePatternClauses
             { PATTERN_UNDECLARED_SYNONYM_QUERY, SEMANTIC_ERR_UNDECLARED_PATTERN_TYPE_SYNONYM },
             { PATTERN_NON_ENTITY_REF_ARG_QUERY, SYNTAX_ERR_PATTERN_INVALID_ENT_REF },
