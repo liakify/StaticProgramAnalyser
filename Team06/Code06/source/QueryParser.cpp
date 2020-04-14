@@ -235,7 +235,7 @@ namespace PQL {
                             return false;
                         } else if (find(NON_STMTS.begin(), NON_STMTS.end(), synonymMapping->second) != NON_STMTS.end()) {
                             // SEMANTIC ERROR: design entity type error (not a STMT or any of its subtypes)
-                            query.status = SEMANTIC_ERR_FPN_NON_STMT_SYNONYM;
+                            query.status = SEMANTIC_ERR_FPN_NON_STATEMENT_SYNONYM;
                             return false;
                         }
                     }
