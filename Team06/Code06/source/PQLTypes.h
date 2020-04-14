@@ -307,6 +307,13 @@ namespace PQL {
         std::string asString();
 
         /**
+         *  Returns the boolean describing if this clause has been negated.
+         *
+         *  @return     true if this clause has the unary negation operator applied to it.
+         */
+        bool isNegatedClause();
+
+        /**
          *  Returns the clause type of this Clause instance.
          *
          *  @return     ClauseType enum value describing the type of this clause.
@@ -315,12 +322,14 @@ namespace PQL {
 
      protected:
         std::string clause;
+        bool isNegated;
         ClauseType clauseType;
 
         /**
-         *  Constructs a new Clause instance with its input string and clause type.
+         *  Constructs a new Clause instance with its input string, clause type and a boolean
+         *  flag describing if this clause is negated.
          */
-        Clause(std::string clause, ClauseType clauseType);
+        Clause(std::string clause, bool isNegated, ClauseType clauseType);
     };
 
     /**
@@ -331,10 +340,10 @@ namespace PQL {
     class RelationClause : public Clause {
      public:
         /**
-         *  Constructs a new RelationClause instance with its input string, relation type
-         *  and two positional argument pairs.
+         *  Constructs a new RelationClause instance with its input string, relation type, two
+         *  positional argument pairs, and a boolean flag describing if this clause is negated.
          */
-        RelationClause(std::string clause, RelationType type,
+        RelationClause(std::string clause, bool isNegated, RelationType type,
             std::pair<ArgType, StmtEntRef> firstArg, std::pair<ArgType, StmtEntRef> secondArg);
 
         /**
@@ -387,10 +396,10 @@ namespace PQL {
      public:
         /**
          *  Constructs a new PatternClause instance with its input string, pattern type,
-         *  pattern synonym, an argument pair for entities, and another argument pair for
-         *  the pattern string.
+         *  pattern synonym, an argument pair for entities, an argument pair for the pattern
+         *  string, and a boolean flag describing if this clause is negated.
          */
-        PatternClause(std::string clause, PatternType type, std::string synonym,
+        PatternClause(std::string clause, bool isNegated, PatternType type, std::string synonym,
             std::pair<ArgType, EntityRef> targetArg, std::pair<ArgType, Pattern> patternArg);
 
         /**
@@ -441,10 +450,11 @@ namespace PQL {
     class WithClause : public Clause {
      public:
         /**
-         *  Constructs a new WithClause instance with its input string, equality type and
-         *  two positional argument pairs, one for each of the left and right arguments.
+         *  Constructs a new WithClause instance with its input string, equality type, two
+         *  positional argument pairs (one for each of the left and right arguments), and a
+         *  boolean flag describing if this clause is negated.
          */
-        WithClause(std::string clause, WithType type,
+        WithClause(std::string clause, bool isNegated, WithType type,
             std::pair<ArgType, Ref> leftArg, std::pair<ArgType, Ref> rightArg);
 
         /**

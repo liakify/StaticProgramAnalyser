@@ -32,6 +32,8 @@ namespace FrontEnd {
         * Note that populateUses/populateModifies must be called after
         * populateCalls/populateCallStar as the former is unable to detect
         * cyclic calls. 
+        * Also note that populateContains relies on updateStmtContainerId,
+        * so it should only be called after updateStmtContainerId.
         */
         void populateCalls();
         void populateCallStar();
@@ -44,6 +46,7 @@ namespace FrontEnd {
         void populatePattern();
         void populateNext();
         void updateStmtContainerId();
+        void populateContains();
 
         // Helper functions
         void populateParentKB(StmtId stmtId, StmtListId stmtLstId);

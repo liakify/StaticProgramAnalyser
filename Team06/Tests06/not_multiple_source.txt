@@ -1,0 +1,10 @@
+procedure short {
+    X = X;
+    A = A;
+    A = X;
+    X = A;
+    X = A - X;
+    A = A + X;
+    use = 0;
+    use = X * A / use;
+}

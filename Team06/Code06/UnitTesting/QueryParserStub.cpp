@@ -37,7 +37,7 @@ namespace UnitTesting {
                 { },
                 {
                     {
-                        "pattern a(_, _\"x\"_)", PatternType::ASSIGN_PATTERN, "a",
+                        "pattern a(_, _\"x\"_)", false, PatternType::ASSIGN_PATTERN, "a",
                         { ArgType::WILDCARD, "_" },
                         { ArgType::INCLUSIVE_PATTERN, "_x_" }
                     }
@@ -95,7 +95,7 @@ namespace UnitTesting {
                 { { "l1", DesignEntity::PROG_LINE }, { "l2", DesignEntity::PROG_LINE } },
                 {
                     {
-                        "Next*(l1, l2)", RelationType::NEXTT,
+                        "Next*(l1, l2)", false, RelationType::NEXTT,
                         { ArgType::SYNONYM, "l1" },
                         { ArgType::SYNONYM, "l2" }
                     }
