@@ -147,7 +147,7 @@ namespace PQL {
             // With clauses are not relation clauses
             node.advancedRelation = false;
 
-            if (arg1.first != ArgType::SYNONYM && arg2.first != ArgType::SYNONYM) {
+            if (with.getWithType() == WithType::LITERAL_EQUAL) {
                 node.booleanResult = true;
             }
 
