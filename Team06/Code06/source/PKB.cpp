@@ -125,6 +125,14 @@ namespace PKB {
         affectsKB.setAffectsFullyComputed();
     }
 
+    bool PKB::affectsIsCached(StmtId s1, StmtId s2) {
+        return affectsKB.affectsIsCached(s1, s2);
+    }
+
+    bool PKB::affectsStarIsCached(StmtId s1, StmtId s2) {
+        return affectsKB.affectsStarIsCached(s1, s2);
+    }
+
     void PKB::addNext(StmtId s1, StmtId s2) {
         nextKB.addNext(s1, s2);
     }
@@ -157,7 +165,7 @@ namespace PKB {
         return res;
     }
 
-    const std::unordered_set<StmtId>& PKB::nextStarGetDirectNodes(StmtId s, NodeType type) {
+    const std::unordered_set<StmtId>& PKB::nextGetDirectNodes(StmtId s, NodeType type) {
         return nextKB.getDirectNodes(s, type);
     }
 
@@ -198,6 +206,10 @@ namespace PKB {
 
     bool PKB::hasNextRelation() {
         return nextKB.hasNextRelation();
+    }
+
+    bool PKB::nextStarIsCached(StmtId s1, StmtId s2) {
+        return nextKB.nextStarIsCached(s1, s2);
     }
 
     void PKB::clear() {

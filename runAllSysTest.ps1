@@ -17,79 +17,91 @@ $regression_test_path = '.\Team06\Tests06\regression_tests\'
 $list_of_test_files = @(
   # SAMPLE FAILED TEST CASE (to verify that this works)
   # '..\modifies_0',
+  
+  # DO NOT MODIFY THE FOLLOWING IN ANY COMMITS
+  'valid_simple\simple_procNameEqualVarName'
+  'select_syn',
+  'select_valid',
+  'select_invalid',
+  'select_attr',
+  'follows_0',
+  'followsStar_0',
+  'parent_0',
+  'parentStar_0',
+  'patternAssign_0',
+  'patternAssign_1',
+  'patternAssign_exactMatch'
+  'suchthatPatternAssign_0',
+  'uses_0',
+  'modifies_0',
+  'patternIf_0',
+  'patternWhile_0',
+  'patternIf_operators', 
+  'patternWhile_operators',
+  'suchthatPatternIf_0',
+  'suchthatPatternWhile_0',
+  'calls_0',
+  'callsStar_0',
+  'calls_1',
+  'callsStar_1',
+  'callsStar_twoDiamonds',
+  'callsStar_threePronged',
+  'tuples_0',
+  'tuples_invalid'
+  'next_0',
+  'next_invalidArgs',
+  'nextStar_0',
+  'nextStar_invalidArgs',
+  'suchthatPattern_1',
+  'suchthatPatternIf_next+Star',
+  'suchthatPatternWhile_next+Star',
+  'invalid_doubleClause',
+  'with_0',
+  'withPatternAssign_0',
+  'withPatternIf_0',
+  'withPatternWhile_0',
+  'andPattern_0',
+  'andPattern_invalid',
+  'andSuchthat_0',
+  'andSuchthat_invalid',
+  'andWith_0',
+  'andWith_invalid',
+  'withSuchthat_0',
+  'withSuchthat_1',
+  'withSuchthat_2',
+  'withSuchthat_3',
+  'withSuchthat_4',
+  'withSuchthat_5',
+  'withSuchthat_6',
+  'affects_0'
+  'affects_1'
+  'affects_2'
+  'affects_3'
+  'affects_4'
+  'affects_singleStmt'
+  'affects_invalidArgs'
+  'affectsStar_0'
+  'affectsStar_1'
+  'affectsStar_2'
+  'affectsStar_singleStmt'
+  'affectsStar_invalidArgs'
+  'suchthatPattern_affects+Star'
+  'withSuchthat_7'
+  'given_0'
+  'given_1'
+  'given_2'
 
-# DO NOT MODIFY THE FOLLOWING IN ANY COMMITS
-'select_0_1',
-'follows_0',
-'followsStar_0',
-'parent_0',
-'parentStar_0',
-'patternAssign_0',
-'patternAssign_1',
-'suchthatPatternAssign_0',
-'uses_0',
-'modifies_0',
-'patternIf_0',
-'patternWhile_0',
-'patternIf_operators', 
-'patternWhile_operators',
-'suchthatPatternIf_0',
-'suchthatPatternWhile_0',
-'calls_0',
-'callsStar_0',
-'calls_1',
-'callsStar_1',
-'callsStar_twoDiamonds',
-'callsStar_threePronged',
-'valid_simple\simple_procNameEqualVarName'
-
-# STAGED TESTS
-'..\select_syn',
-'..\select_valid',
-'..\patternIf_0fix',
-'..\patternWhile_0fix',
-'..\tuples_invalid'
-'..\next_invalidArgs',
-'..\nextStar_invalidArgs',
-'..\invalid_doubleClause',
-'..\withSuchthat_0',
-'..\withSuchthat_6'
-
-# ONLY MODIFY THE BELOW
-# '..\suchthatPattern_1',
-# '..\select_invalid',
-# '..\select_attr',
-# '..\tuples_0',
-# '..\next_0',
-# '..\nextStar_0',
-# '..\suchthatPatternIf_next+Star',
-# '..\suchthatPatternWhile_next+Star',
-# '..\with_0',
-# '..\withPatternAssign_0',
-# '..\withPatternIf_0',
-# '..\withPatternWhile_0',
-# '..\withSuchthat_1',
-# '..\withSuchthat_2',
-# '..\withSuchthat_3',
-# '..\withSuchthat_4',
-# '..\withSuchthat_5',
-# '..\andPattern_0',
-# '..\andPattern_invalid',
-# '..\andSuchthat_0',
-# '..\andSuchthat_invalid',
-# '..\andWith_0',
-# '..\andWith_invalid'
-
-# '..\affects_0'
-# '..\affects_1'
-# '..\affects_2'
-# '..\affects_3'
-# '..\affects_invalidArgs'
-# '..\affectsStar_0'
-# '..\affectsStar_1'
-# '..\affectsStar_invalidArgs'
-# '..\suchthatPattern_affects+Star'
-# '..\mixed_0'
+  # STAGED TESTS
+  '..\mixed_0'
+  '..\performance600_single'
+  '..\performance600_chainedNext'
+  
+  # TESTS BELOW CURRENTLY FAIL / TIMEOUT
+  # '..\nextStar_tle'
+  # '..\performance600_chainedNextStar'
+  # '..\performance600_chainedAffects'
+  # '..\performance600_chainedAffectsStar'
+  # '..\performance600_nextStar+AffectsStar+Tuple'
 )
 
 $list_of_no_xml_tests = @(

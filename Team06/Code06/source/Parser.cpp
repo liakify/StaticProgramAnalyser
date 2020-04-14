@@ -270,19 +270,9 @@ namespace FrontEnd {
         return CondExpr(left, right);
     }
 
-    int Parser::get_op_rank(char op) {
-        if (op == '*' || op == '/' || op == '%') {
-            return 1;
-        } else if (op == '+' || op == '-') {
-            return 0;
-        } else {
-            throw invalid_argument("Unknown operator while parsing expression in SIMPLE.");
-        }
-    }
-
     // -1 if op1 < op2, 0 if op1 == op2, 1 if op1 > op2
     int Parser::compare_op(char op1, char op2) {
-        return get_op_rank(op1) - get_op_rank(op2);
+        return opRank.at(op1) - opRank.at(op2);
     }
 
     void Parser::combine_op(std::stack<Expression>& operands, std::stack<char>& operators) {

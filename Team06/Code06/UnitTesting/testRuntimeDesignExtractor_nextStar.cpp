@@ -503,27 +503,39 @@ namespace UnitTesting {
             Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(41, NodeType::PREDECESSOR) == EMPTY_RESULT);
         }
 
-        TEST_METHOD(caching) {
+        TEST_METHOD(nextStarIsCached) {
             /*
-                Currently can only be manually verified that previous clauses are cached by stepping into the functions.
-                Cache saves both TRUE and FALSE relations
+                Next* cache tests. 
+                Note that out-of-range queries or stmts with no next/prev are terminated early, 
+                and thus they are never cached i.e. not tested here.
             */
             pkbNextStar.clear();
+            Assert::IsFalse(pkbNextStar.nextStarIsCached(2, 4));
             Assert::IsTrue(pkbNextStar.nextStar(2, 4));
+            Assert::IsTrue(pkbNextStar.nextStarIsCached(2, 4));
             Assert::IsTrue(pkbNextStar.nextStar(2, 4));
 
-            std::unordered_set<StmtId> whileLoopAndAft{ 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17 };
-            Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(2, NodeType::SUCCESSOR) == whileLoopAndAft);
-            Assert::IsTrue(pkbNextStar.nextStar(2, 3));
-            Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(2, NodeType::SUCCESSOR) == whileLoopAndAft);
-
-            std::unordered_set<StmtId> procDWhile = { 25, 26, 27, 28, 29 };
-            Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(26, NodeType::PREDECESSOR) == procDWhile);
-            Assert::IsTrue(pkbNextStar.nextStar(25, 26));
-            Assert::IsTrue(pkbNextStar.nextStarGetAllNodes(26, NodeType::PREDECESSOR) == procDWhile);
-
+            pkbNextStar.clear();
+            Assert::IsFalse(pkbNextStar.nextStarIsCached(40, 30));
             Assert::IsFalse(pkbNextStar.nextStar(40, 30));
+            Assert::IsTrue(pkbNextStar.nextStarIsCached(40, 30));
             Assert::IsFalse(pkbNextStar.nextStar(40, 30));
+
+            pkbNextStar.clear();
+            Assert::IsFalse(pkbNextStar.nextStarProcessedAll(2, NodeType::SUCCESSOR));
+            std::unordered_set<StmtId> successorNodes = pkbNextStar.nextStarGetAllNodes(2, NodeType::SUCCESSOR);
+            for (StmtId id : successorNodes) {
+                Assert::IsTrue(pkbNextStar.nextStarIsCached(2, id));
+            }
+            Assert::IsTrue(pkbNextStar.nextStarProcessedAll(2, NodeType::SUCCESSOR));
+
+            pkbNextStar.clear();
+            Assert::IsFalse(pkbNextStar.nextStarProcessedAll(26, NodeType::PREDECESSOR));
+            std::unordered_set<StmtId> predecessorNodes = pkbNextStar.nextStarGetAllNodes(26, NodeType::PREDECESSOR);
+            for (StmtId id : predecessorNodes) {
+                Assert::IsTrue(pkbNextStar.nextStarIsCached(id, 26));
+            }
+            Assert::IsTrue(pkbNextStar.nextStarProcessedAll(26, NodeType::PREDECESSOR));
         }
     };
 }

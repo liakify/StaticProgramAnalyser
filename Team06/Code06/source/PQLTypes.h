@@ -292,6 +292,14 @@ namespace PQL {
     class Clause {
      public:
         /**
+         *  Compares this Clause instance to another Clause instance and returns true if
+         *  the values of every attribute is equal in both instances.
+         *
+         *  @return     true if both Clause instances are equal.
+         */
+        bool operator==(const Clause& other) const;
+
+        /**
          *  Returns the input string corresponding to this Clause instance.
          *
          *  @return     string representation of this clause.
@@ -306,13 +314,13 @@ namespace PQL {
         ClauseType getClauseType();
 
      protected:
+        std::string clause;
+        ClauseType clauseType;
+
         /**
          *  Constructs a new Clause instance with its input string and clause type.
          */
         Clause(std::string clause, ClauseType clauseType);
-     private:
-        std::string clause;
-        ClauseType clauseType;
     };
 
     /**
@@ -328,6 +336,14 @@ namespace PQL {
          */
         RelationClause(std::string clause, RelationType type,
             std::pair<ArgType, StmtEntRef> firstArg, std::pair<ArgType, StmtEntRef> secondArg);
+
+        /**
+         *  Compares this RelationClause instance to another RelationClause instance and
+         *  returns true if the values of every attribute is equal in both instances.
+         *
+         *  @return     true if both RelationClause instances are equal.
+         */
+        bool operator==(const RelationClause& other) const;
 
         /**
          *  Modifies the relation type of this RelationClause instance to the procedure variant,
@@ -378,6 +394,14 @@ namespace PQL {
             std::pair<ArgType, EntityRef> targetArg, std::pair<ArgType, Pattern> patternArg);
 
         /**
+         *  Compares this PatternClause instance to another PatternClause instance and
+         *  returns true if the values of every attribute is equal in both instances.
+         *
+         *  @return     true if both PatternClause instances are equal.
+         */
+        bool operator==(const PatternClause& other) const;
+
+        /**
          *  Returns the pattern type of this PatternClause instance.
          *
          *  @return     PatternType enum value describing the relation type of this clause.
@@ -422,6 +446,14 @@ namespace PQL {
          */
         WithClause(std::string clause, WithType type,
             std::pair<ArgType, Ref> leftArg, std::pair<ArgType, Ref> rightArg);
+
+        /**
+         *  Compares this WithClause instance to another WithClause instance and returns
+         *  true if the values of every attribute is equal in both instances.
+         *
+         *  @return     true if both WithClause instances are equal.
+         */
+        bool operator==(const WithClause& other) const;
 
         /**
          *  Modifies the equality type of this WithClause instance to the given WithType enum
@@ -473,6 +505,7 @@ namespace PQL {
         std::vector<RelationClause> relations;
         std::vector<PatternClause> patterns;
         std::vector<WithClause> equalities;
+        bool operator==(const Query& other) const;
     };
 
     /**

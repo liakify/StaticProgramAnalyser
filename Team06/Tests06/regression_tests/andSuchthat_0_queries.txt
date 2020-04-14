@@ -1,0 +1,15 @@
+1 - unrelated
+stmt s1, s2; assign a; prog_line p1, p2;
+Select s1 such that Follows(s2, a) and Next* (p1, p2)
+1, 2, 3, 4, 5, 6, 7, 8
+5000
+2
+procedure p, q, r;
+Select p such that Calls(p, q) such that Calls (q, r) and Modifies (p, "var")
+AndSuchthat
+5000
+3
+stmt s1, s2; procedure p; variable v;
+Select <s1, v> such that Modifies(s1, v) and Uses (p, v) such that Parent (s2, s1)
+2 var
+5000

@@ -1,0 +1,13 @@
+procedure AffectsStar2 {
+	One = affects2 - 1;
+	Two = One + affects4 + affects7;
+	Three = affects4 + affects6;
+	Four = Two + Three + affects8;
+	Five = affects8;
+	Six = Three + affects8;
+	Seven = Two + affects9;
+	Eight = Four + Five + Six + affects9;
+	Nine = Seven + Eight + affects10 + affects11 + affects12;
+	Ten = Nine % 9;
+	Eleven = Nine * 9;
+	Twelve = Nine / 9; }
