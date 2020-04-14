@@ -134,10 +134,10 @@ namespace PQL {
             arg1 = with.getArgs().first;
             arg2 = with.getArgs().second;
 
-            if (arg1.first == ArgType::SYNONYM) {
+            if (arg1.first == ArgType::SYNONYM || arg1.first == ArgType::ATTRIBUTE) {
                 node.synonyms.emplace_back(arg1.second.first);
             }
-            if (arg2.first == ArgType::SYNONYM) {
+            if (arg2.first == ArgType::SYNONYM || arg2.first == ArgType::ATTRIBUTE) {
                 node.synonyms.emplace_back(arg2.second.first);
             }
 
