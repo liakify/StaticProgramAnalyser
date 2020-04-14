@@ -58,10 +58,13 @@ namespace UnitTesting {
         string CHAINED_NO_WHITESPACE_QUERY = "assign a1,a2;while w;variable v;call cl;print pn;Select<a1,w,v,pn>pattern a1(v,_)and w(v,_)with pn.varName=cl.procName and pn.stmt#=69 pattern a2(_,_\"f*x+f*(x-dx)+dx*dy\"_)such that Next*(a1,a2)with \"xyz\"=\"xyz\" such that Uses(a1,v)and Modifies(w,v)";
         string CHAINED_EXTRA_WHITESPACE_QUERY = "\nprocedure  p\v;\rwhile\tw ;assign\va\r;  variable\fv1,  v2\n;\tcall\ncl\t;\vprog_line\rl\f;\nSelect\f<\vp. procName\r,\tw\n,  cl\f,\ncl\t.\rprocName\v,\fa >\n pattern\ta(  v1,\r_\"\t69-\v 420\"_ )\nwith\t\"i\"  =\r\"i\"\vand  17\r=w\t.  stmt#  and\fl\n=\tcl\r.\vstmt#\nsuch  that\fModifies\r(p\t,v1)\fand\rUses(\tw\v,  v1\n)  pattern\tw  (v2, _\v\f) such\t\tthat  Next*\f (\ta, w\v)\rand\tFollows(\na\r,\fcl  )\vwith p\n.\fprocName\r=\n\" function\t\"  and\rcl\v.\fprocName\n=  v2  .\tvarName\n";
         string PROJECT_REPORT_SAMPLE_QUERY = "assign a1, a2; constant c; prog_line l; while w; if ifs; read rd; print pn; procedure p; variable v1, v2; Select <a1, w.stmt#, rd.varName, pn, p> such that Modifies(a1, v1) and Uses(pn, v1) and Parent*(w, a1) with v2.varName = \"input\" pattern w(\"i\", _) and a1(_, _\"i + 1 + x / 2 + y - (3 * z)\"_) such that Calls(\"driver\", _) and Uses(p, \"j\") and Affects*(1, 64) with c.value = l and rd.varName = v2.varName and 3203 = 3230 pattern ifs(v2, _, _)";
+        string EXT_SIMPLE_CONTAINS_QUERY = "procedure p; assign a; Select BOOLEAN such that Contains(p, a)";
+        string EXT_CHAINED_CONTAINS_QUERY = "procedure p, q; assign a; print pn; if ifs; Select <p, q> such that Contains(\"main\", 1) such that Contains(p, a) and Contains(p, pn) such that Contains(_, ifs) and Contains(q, _)";
         string EXT_SIMPLE_NOT_QUERY = "assign a; constant c; while w; variable v; Select <a, w, v> such that not Parent*(w, a) pattern a(v, _) with not a.stmt# = c.value pattern not w(v, _) with not \"taiwan\" = \"china\" such that Uses(w, v) with c.value = w.stmt#";
         string EXT_CHAINED_NOT_QUERY = "constant c; if ifs; while w; call cl; read rd; print pn; variable v1, v2; Select <v1, v2> such that Uses(pn, v1) and not Next*(rd, pn) with not cl.procName = v1.varName and v2.varName = cl.procName and not 2019 = 2020 pattern w(v1, _) and not ifs(v1, _, _) such that not Next*(pn, rd) and Modifies(rd, v2) pattern not w(v2, _) and ifs(v2, _, _) with w.stmt# = c.value and not c.value = ifs.stmt#";
         string EXT_CONFUSING_NOT_QUERY = "assign not; constant c; variable v; Select not pattern not(\"x\", _) and not not(_, \"0\") with not not.stmt# = 1 and not.stmt# = c.value such that not Affects(not, _) and Modifies(not, v) pattern not(_, _\"0\"_)";
         string EXT_CONFUSING_NOT_AND_QUERY = "assign and; procedure pattern; prog_line not; variable with; Select and with not not = 1337 and not and.stmt# = 62353535 pattern and(with, _) with not = and.stmt# and not with.varName = pattern.procName and and.stmt# = not and not \"not\" = pattern.procName";
+        string EXT_CHAINED_CONTAINS_NOT_QUERY = "procedure p, q; read rd; print pn; call cl; assign a; variable v; Select <p, q, rd.varName> such that Next*(rd, cl) and Contains(p, cl) with cl.procName = q.procName pattern a(v, _) such that not Contains(p, a) and Modifies(rd, v) with rd.varName = pn.varName such that Contains(q, pn) and not Contains(q, a)";
 
         // Invalid queries that fail in validateQuerySyntax
         string EMPTY_QUERY = "";
@@ -1126,6 +1129,48 @@ namespace UnitTesting {
             }
         };
 
+        Query EXT_SIMPLE_CONTAINS_QUERY_RESULT = {
+            STATUS_SUCCESS, EXT_SIMPLE_CONTAINS_QUERY, true,
+            { },
+            {
+                { "p", DesignEntity::PROCEDURE },
+                { "a", DesignEntity::ASSIGN }
+            },
+            {
+                { "Contains(p, a)", false, RelationType::CONTAINS,
+                    { ArgType::SYNONYM, "p" }, { ArgType::SYNONYM, "a" } }
+            },
+            { }, { }
+        };
+
+        Query EXT_CHAINED_CONTAINS_QUERY_RESULT = {
+            STATUS_SUCCESS, EXT_CHAINED_CONTAINS_QUERY, false,
+            {
+                { "p", AttrType::NONE },
+                { "q", AttrType::NONE }
+            },
+            {
+                { "p", DesignEntity::PROCEDURE },
+                { "q", DesignEntity::PROCEDURE },
+                { "a", DesignEntity::ASSIGN },
+                { "pn", DesignEntity::PRINT },
+                { "ifs", DesignEntity::IF }
+            },
+            {
+                { "Contains(\"main\", 1)", false, RelationType::CONTAINS,
+                    { ArgType::IDENTIFIER, "main" }, { ArgType::INTEGER, "1" } },
+                { "Contains(p, a)", false, RelationType::CONTAINS,
+                    { ArgType::SYNONYM, "p" }, { ArgType::SYNONYM, "a" } },
+                { "Contains(p, pn)", false, RelationType::CONTAINS,
+                    { ArgType::SYNONYM, "p" }, { ArgType::SYNONYM, "pn" } },
+                { "Contains(_, ifs)", false, RelationType::CONTAINS,
+                    { ArgType::WILDCARD, "_" }, { ArgType::SYNONYM, "ifs" } },
+                { "Contains(q, _)", false, RelationType::CONTAINS,
+                    { ArgType::SYNONYM, "q" }, { ArgType::WILDCARD, "_" } }
+            },
+            { }, { }
+        };
+
         Query EXT_SIMPLE_NOT_QUERY_RESULT = {
             STATUS_SUCCESS, EXT_SIMPLE_NOT_QUERY, false,
             {
@@ -1276,6 +1321,48 @@ namespace UnitTesting {
             }
         };
 
+        Query EXT_CHAINED_CONTAINS_NOT_QUERY_RESULT = {
+            STATUS_SUCCESS, EXT_CHAINED_CONTAINS_NOT_QUERY, false,
+            {
+                { "p", AttrType::NONE },
+                { "q", AttrType::NONE },
+                { "rd", AttrType::VAR_NAME }
+            },
+            {
+                { "p", DesignEntity::PROCEDURE },
+                { "q", DesignEntity::PROCEDURE },
+                { "rd", DesignEntity::READ },
+                { "pn", DesignEntity::PRINT },
+                { "cl", DesignEntity::CALL },
+                { "a", DesignEntity::ASSIGN },
+                { "v", DesignEntity::VARIABLE }
+            },
+            {
+                { "Next*(rd, cl)", false, RelationType::NEXTT,
+                    { ArgType::SYNONYM, "rd" }, { ArgType::SYNONYM, "cl" } },
+                { "Contains(p, cl)", false, RelationType::CONTAINS,
+                    { ArgType::SYNONYM, "p" }, { ArgType::SYNONYM, "cl" } },
+                { "not Contains(p, a)", true, RelationType::CONTAINS,
+                    { ArgType::SYNONYM, "p" }, { ArgType::SYNONYM, "a" } },
+                { "Modifies(rd, v)", false, RelationType::MODIFIESS,
+                    { ArgType::SYNONYM, "rd" }, { ArgType::SYNONYM, "v" } },
+                { "Contains(q, pn)", false, RelationType::CONTAINS,
+                    { ArgType::SYNONYM, "q" }, { ArgType::SYNONYM, "pn" } },
+                { "not Contains(q, a)", true, RelationType::CONTAINS,
+                    { ArgType::SYNONYM, "q" }, { ArgType::SYNONYM, "a" } }
+            },
+            {
+                { "a(v, _)", false, PatternType::ASSIGN_PATTERN, "a",
+                    { ArgType::SYNONYM, "v" }, { ArgType::WILDCARD, "_" } }
+            },
+            {
+                { "cl.procName = q.procName", false, WithType::IDENTIFIER_EQUAL,
+                    { ArgType::ATTRIBUTE, { "cl", AttrType::PROC_NAME } }, { ArgType::ATTRIBUTE, { "q", AttrType::PROC_NAME } } },
+                { "rd.varName = pn.varName", false, WithType::IDENTIFIER_EQUAL,
+                    { ArgType::ATTRIBUTE, { "rd", AttrType::VAR_NAME } }, { ArgType::ATTRIBUTE, { "pn", AttrType::VAR_NAME } } }
+            }
+        };
+
         // Array containing all positive testcases, each a pair comprising a valid query and the
         // expected Query object produced by the Query Parser after parsing and validation
         vector<pair<string, Query>> VALID_QUERY_TESTCASES = {
@@ -1321,10 +1408,13 @@ namespace UnitTesting {
             { CHAINED_NO_WHITESPACE_QUERY, CHAINED_NO_WHITESPACE_QUERY_RESULT },
             { CHAINED_EXTRA_WHITESPACE_QUERY, CHAINED_EXTRA_WHITESPACE_QUERY_RESULT },
             { PROJECT_REPORT_SAMPLE_QUERY, PROJECT_REPORT_SAMPLE_QUERY_RESULT },
+            { EXT_SIMPLE_CONTAINS_QUERY, EXT_SIMPLE_CONTAINS_QUERY_RESULT },
+            { EXT_CHAINED_CONTAINS_QUERY, EXT_CHAINED_CONTAINS_QUERY_RESULT },
             { EXT_SIMPLE_NOT_QUERY, EXT_SIMPLE_NOT_QUERY_RESULT },
             { EXT_CHAINED_NOT_QUERY, EXT_CHAINED_NOT_QUERY_RESULT },
             { EXT_CONFUSING_NOT_QUERY, EXT_CONFUSING_NOT_QUERY_RESULT },
-            { EXT_CONFUSING_NOT_AND_QUERY, EXT_CONFUSING_NOT_AND_QUERY_RESULT }
+            { EXT_CONFUSING_NOT_AND_QUERY, EXT_CONFUSING_NOT_AND_QUERY_RESULT },
+            { EXT_CHAINED_CONTAINS_NOT_QUERY, EXT_CHAINED_CONTAINS_NOT_QUERY_RESULT }
         };
 
         // Array containing all negative testcases, each comprising an invalid query with a single
