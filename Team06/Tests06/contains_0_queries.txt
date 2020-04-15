@@ -58,43 +58,48 @@ Select s such that Contains (_, s)
 Select BOOLEAN such that Contains (_, 5)
 TRUE
 5000
-13 - Contains (_, _)
+13 - Contains (_, INT) => empty
+
+Select BOOLEAN such that Contains (_, 17)
+FALSE
+5000
+14 - Contains (_, s)
 
 Select BOOLEAN such that Contains (_, s)
 TRUE
 5000
-14 - Contains (_, pl)
+15 - Contains (_, pl)
 prog_line pl;
 Select pl such that Contains (_, pl)
 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
 5000
-15 - Contains (_, a)
+16 - Contains (_, a)
 assign a;
 Select a such that Contains (_, a)
 2, 3, 11, 16
 5000
-16 - Contains (_, r)
+17 - Contains (_, r)
 read r;
 Select r such that Contains (_, r)
 5, 14
 5000
-17 - Contains (_, pn)
+18 - Contains (_, pn)
 print pn;
 Select pn such that Contains (_, pn)
 6, 15
 5000
-18 - Contains (_, w)
+19 - Contains (_, w)
 while w;
 Select w such that Contains (_, w)
 4, 7, 13
 5000
-19 - Contains (_, ifs)
+20 - Contains (_, ifs)
 if ifs;
 Select ifs such that Contains (_, ifs)
 1, 10
 5000
-20 - Contains (NAME, c)
+21 - Contains (NAME, c)
 call c;
 Select c such that Contains ("ReadAndAssign", c)
-5, 6
+8, 9
 5000

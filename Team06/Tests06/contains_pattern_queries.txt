@@ -11,7 +11,7 @@ Everything
 3 - patternIf
 procedure p; if ifs; variable v;
 Select p such that Contains (p, ifs) pattern ifs (v, _, _)
-AssignOnly, Everything
+AssignOnly
 5000
 4 - patternIf
 procedure p; if ifs;
