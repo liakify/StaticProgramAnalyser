@@ -109,8 +109,8 @@ enum class ArgType {
 
 namespace PQL {
 
-    const std::string NON_SYNONYM_ID = "-1";
-    const std::string UNSET_SYNONYM_ID = "";
+    const int UNSET_SYNONYM_ID = -1;
+    const int NON_SYNONYM_ID = -2;
 
     /**
      *  All status messages in use by the Query Parser during query parsing and
@@ -291,7 +291,7 @@ namespace PQL {
      */
     struct ReturnType {
         std::string synonym;
-        std::string synonymId;
+        int synonymId;
         AttrType attrType;
         bool operator==(const ReturnType& other) const;
     };
@@ -299,13 +299,13 @@ namespace PQL {
     /**
      *  Struct representing an argument to a clause. Contains the parsed argument type,
      *  argument value (excluding attribute, if any), an integer string to identify synonym
-     *  arguments (otherwise set to NON_SYNONYM_ID, and the parsed attribute type for
-     *  attribute arguments (otherwise set to AttrType::NONE).
+     *  arguments (otherwise set to NON_SYNONYM_ID), and the parsed attribute type for
+     *  attribute arguments (set to AttrType::INVALID for arguments not accepting attributes).
      */
     struct Argument {
         ArgType type;
         std::string value;
-        std::string synonymId;
+        int synonymId;
         AttrType attrType;
         bool operator==(const Argument& other) const;
     };
@@ -381,6 +381,26 @@ namespace PQL {
         bool setProcedureVariant();
 
         /**
+         *  Sets the synonym ID of the first argument of this RelationClause instance to a
+         *  non-negative integer, if the first argument is a synonym and its ID has not been
+         *  previously set. Returns true if the update was successful, otherwise returns false
+         *  without modifying the synonym ID.
+         *
+         *  @return     true if the synonym ID of the first argument was updated.
+         */
+        bool setFirstSynonymId(int synonymId);
+
+        /**
+         *  Sets the synonym ID of the second argument of this RelationClause instance to a
+         *  non-negative integer, if the second argument is a synonym and its ID has not been
+         *  previously set. Returns true if the update was successful, otherwise returns false
+         *  without modifying the synonym ID.
+         *
+         *  @return     true if the synonym ID of the second argument was updated.
+         */
+        bool setSecondSynonymId(int synonymId);
+
+        /**
          *  Returns the relation type of this RelationClause instance.
          *
          *  @return     RelationType enum value describing the relation type of this clause.
@@ -421,6 +441,25 @@ namespace PQL {
          *  @return     true if both PatternClause instances are equal.
          */
         bool operator==(const PatternClause& other) const;
+
+        /**
+         *  Sets the synonym ID of the pattern synonym argument of this PatternClause instance
+         *  to a non-negative integer, if it has not been previously set. Returns true if the
+         *  update was successful, otherwise returns false without modifying the synonym ID.
+         *
+         *  @return     true if the synonym ID of the pattern synonym argument was updated.
+         */
+        bool setPatternSynonymId(int synonymId);
+
+        /**
+         *  Sets the synonym ID of the first argument of this PatternClause instance to a
+         *  non-negative integer, if the first argument is a synonym and its ID has not been
+         *  previously set. Returns true if the update was successful, otherwise returns false
+         *  without modifying the synonym ID.
+         *
+         *  @return     true if the synonym ID of the first argument was updated.
+         */
+        bool setFirstSynonymId(int synonymId);
 
         /**
          *  Returns the pattern type of this PatternClause instance.
@@ -481,6 +520,26 @@ namespace PQL {
          *  @return     true if the equality type was successfully updated.
          */
         bool setWithType(WithType type);
+
+        /**
+         *  Sets the synonym ID of the left argument of this WithClause instance to a
+         *  non-negative integer, if the left argument is a synonym or attribute and its ID
+         *  has not been previously set. Returns true if the update was successful, otherwise
+         *  returns false without modifying the synonym ID.
+         *
+         *  @return     true if the synonym ID of the left argument was updated.
+         */
+        bool setLeftSynonymId(int synonymId);
+
+        /**
+         *  Sets the synonym ID of the right argument of this WithClause instance to a
+         *  non-negative integer, if the right argument is a synonym or attribute and its ID
+         *  has not been previously set. Returns true if the update was successful, otherwise
+         *  returns false without modifying the synonym ID.
+         *
+         *  @return     true if the synonym ID of the right argument was updated.
+         */
+        bool setRightSynonymId(int synonymId);
 
         /**
          *  Returns the equality type of this WithClause instance.

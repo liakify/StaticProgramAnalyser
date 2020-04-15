@@ -55,6 +55,34 @@ namespace PQL {
         return true;
     }
 
+    bool RelationClause::setFirstSynonymId(int synonymId) {
+        if (synonymId < 0 || this->firstArg.type != ArgType::SYNONYM) {
+            // Synonym ID supplied is negative or argument is not a synonym => reject
+            return false;
+        } else if (this->firstArg.synonymId != UNSET_SYNONYM_ID) {
+            // Synonym ID has been previously set => reject modification
+            return false;
+        }
+
+        // Otherwise accept the modification and set this synonym argument's synonym ID
+        this->firstArg.synonymId = synonymId;
+        return true;
+    }
+
+    bool RelationClause::setSecondSynonymId(int synonymId) {
+        if (synonymId < 0 || this->secondArg.type != ArgType::SYNONYM) {
+            // Synonym ID supplied is negative or argument is not a synonym => reject
+            return false;
+        } else if (this->secondArg.synonymId != UNSET_SYNONYM_ID) {
+            // Synonym ID has been previously set => reject modification
+            return false;
+        }
+
+        // Otherwise accept the modification and set this synonym argument's synonym ID
+        this->secondArg.synonymId = synonymId;
+        return true;
+    }
+
     RelationType RelationClause::getRelationType() {
         return this->type;
     }
@@ -73,6 +101,31 @@ namespace PQL {
         return Clause::operator==(other) &&
             this->type == other.type && this->synonymArg == other.synonymArg &&
             this->targetArg == other.targetArg && this->patternArg == other.patternArg;
+    }
+
+    bool PatternClause::setPatternSynonymId(int synonymId) {
+        if (synonymId < 0 || this->synonymArg.synonymId != UNSET_SYNONYM_ID) {
+            // Synonym ID supplied is negative or synonym ID has been previously set => reject
+            return false;
+        }
+
+        // Otherwise accept the modification and set this synonym argument's synonym ID
+        this->synonymArg.synonymId = synonymId;
+        return true;
+    }
+
+    bool PatternClause::setFirstSynonymId(int synonymId) {
+        if (synonymId < 0 || this->targetArg.type != ArgType::SYNONYM) {
+            // Synonym ID supplied is negative or argument is not a synonym => reject
+            return false;
+        } else if (this->targetArg.synonymId != UNSET_SYNONYM_ID) {
+            // Synonym ID has been previously set => reject modification
+            return false;
+        }
+
+        // Otherwise accept the modification and set this synonym argument's synonym ID
+        this->targetArg.synonymId = synonymId;
+        return true;
     }
 
     PatternType PatternClause::getPatternType() {
@@ -102,6 +155,40 @@ namespace PQL {
         }
 
         this->type = type;
+        return true;
+    }
+
+    bool WithClause::setLeftSynonymId(int synonymId) {
+        if (synonymId < 0) {
+            // Synonym ID supplied is negative => reject modification
+            return false;
+        } else if (this->leftArg.type != ArgType::SYNONYM && this->leftArg.type != ArgType::ATTRIBUTE) {
+            // Left argument is not a synonym or attribute => reject modification
+            return false;
+        } else if (this->leftArg.synonymId != UNSET_SYNONYM_ID) {
+            // Synonym ID has been previously set => reject modification
+            return false;
+        }
+
+        // Otherwise accept the modification and set this synonym argument's synonym ID
+        this->leftArg.synonymId = synonymId;
+        return true;
+    }
+
+    bool WithClause::setRightSynonymId(int synonymId) {
+        if (synonymId < 0) {
+            // Synonym ID supplied is negative => reject modification
+            return false;
+        } else if (this->rightArg.type != ArgType::SYNONYM && this->rightArg.type != ArgType::ATTRIBUTE) {
+            // Left argument is not a synonym or attribute => reject modification
+            return false;
+        } else if (this->rightArg.synonymId != UNSET_SYNONYM_ID) {
+            // Synonym ID has been previously set => reject modification
+            return false;
+        }
+
+        // Otherwise accept the modification and set this synonym argument's synonym ID
+        this->rightArg.synonymId = synonymId;
         return true;
     }
 
