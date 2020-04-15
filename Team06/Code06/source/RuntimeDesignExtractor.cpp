@@ -277,7 +277,7 @@ namespace FrontEnd {
 
         for (StmtId id : assignStmts) {
             // Only need to populate forward as each edge added is bi-directional
-            processAffectsGetDirectNodes(id, NodeType::SUCCESSOR, this->pkb);  // affectsSetProcessedDirect(i, NodeType::SUCCESSOR) is called here
+            pkb->affectsGetDirectNodes(id, NodeType::SUCCESSOR);  // affectsSetProcessedDirect(i, NodeType::SUCCESSOR) is called here
             pkb->affectsSetProcessedDirect(id, NodeType::PREDECESSOR);
         }
 
