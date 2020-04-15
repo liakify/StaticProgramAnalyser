@@ -87,7 +87,7 @@ namespace PQL {
                 // Case 1: Statement number
                 StmtId arg1 = std::stoi(clause.getArgs().first.second);
                 Synonym arg2 = clause.getArgs().second.second;
-                
+
                 ClauseResult clauseResult;
                 clauseResult.syns.emplace_back(arg2);
                 std::unordered_set<VarId> modifiedVars = database.modifiesKB.getAllVarsModifiedByStmt(arg1);

@@ -88,7 +88,7 @@ namespace PQL {
                 // Case 1: Integer, Synonym
                 StmtId arg1 = std::stoi(clause.getArgs().first.second);
                 Synonym arg2 = clause.getArgs().second.second;
-                
+
                 ClauseResult clauseResult;
                 clauseResult.syns.emplace_back(arg2);
                 std::unordered_set<StmtId> followers = database.followsKB.getAllFollowers(arg1);
@@ -150,7 +150,7 @@ namespace PQL {
                 return clauseResult;
             } else {
                 Synonym arg1 = clause.getArgs().first.second;
-                
+
                 // Case 2: Synonym, Wildcard
                 ClauseResult clauseResult;
                 clauseResult.syns.emplace_back(arg1);
@@ -181,7 +181,7 @@ namespace PQL {
             Synonym arg2 = clause.getArgs().second.second;
 
             bool singleSynonym = (arg1 == arg2);
-            
+
             ClauseResult clauseResult;
             if (singleSynonym) {
                 clauseResult.syns.emplace_back(arg1);

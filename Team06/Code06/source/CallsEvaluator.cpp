@@ -195,7 +195,7 @@ namespace PQL {
                         resultEntry.emplace_back(database.procTable.get(callee).getName());
                         resultEntry.emplace_back(database.procTable.get(caller).getName());
                     }
-                    
+
                     clauseResult.rows.emplace_back(resultEntry);
                 }
             }

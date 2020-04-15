@@ -287,7 +287,7 @@ namespace PQL {
                 }
 
                 ClauseResult clauseResult;
-                
+
                 bool singleSynonym = (syn1 == syn2);
 
                 if (singleSynonym) {

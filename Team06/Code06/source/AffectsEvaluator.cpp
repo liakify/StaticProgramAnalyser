@@ -36,7 +36,7 @@ namespace PQL {
         * @return   The result of the evaluation.
         */
         ClauseResult evaluateAffectsClauseWildWild(PKB::PKB& database) {
-            
+
             ClauseResult clauseResult;
             for (StmtId i : database.stmtTable.getStmtsByType(StmtType::ASSIGN)) {
                 if (database.affectsGetDirectNodes(i, NodeType::SUCCESSOR).size() > 0) {
@@ -107,7 +107,7 @@ namespace PQL {
                     resultEntry.emplace_back(std::to_string(stmt));
                     clauseResult.rows.emplace_back(resultEntry);
                 }
-                
+
                 return clauseResult;
             } else {
                 // Case 2: Synonym, Integer
@@ -123,7 +123,7 @@ namespace PQL {
                     resultEntry.emplace_back(std::to_string(stmt));
                     clauseResult.rows.emplace_back(resultEntry);
                 }
-                
+
                 return clauseResult;
             }
         }
@@ -154,7 +154,7 @@ namespace PQL {
                         resultEntry.emplace_back(std::to_string(i));
                         clauseResult.rows.emplace_back(resultEntry);
                     }
-                    
+
                     database.affectsSetProcessedDirect(i, NodeType::SUCCESSOR);
                 }
                 database.setAffectsFullyComputed();
@@ -205,7 +205,7 @@ namespace PQL {
                     clauseResult.syns.emplace_back(arg2);
                     clauseResult.syns.emplace_back(arg1);
                 }
-                
+
             }
 
             for (StmtId i : database.stmtTable.getStmtsByType(StmtType::ASSIGN)) {
