@@ -33,6 +33,7 @@ namespace PQL {
     ClauseResult QueryEvaluator::getClauseResultWithAllValues(Synonym synonym, DesignEntity designEntity) {
 
         ClauseResult clauseResult;
+        clauseResult.syns.emplace_back(synonym);
 
         switch (designEntity) {
         case DesignEntity::ASSIGN:
@@ -44,8 +45,8 @@ namespace PQL {
             std::unordered_set<StmtId> stmts = database.stmtTable.getStmtsByType(SPA::TypeUtils::getStmtTypeFromDesignEntity(designEntity));
             for (StmtId stmt : stmts) {
                 ClauseResultEntry resultEntry;
-                resultEntry[synonym] = std::to_string(stmt);
-                clauseResult.emplace_back(resultEntry);
+                resultEntry.emplace_back(std::to_string(stmt));
+                clauseResult.rows.emplace_back(resultEntry);
             }
             return clauseResult;
             break;
@@ -54,8 +55,8 @@ namespace PQL {
         case DesignEntity::STATEMENT: {
             for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
                 ClauseResultEntry resultEntry;
-                resultEntry[synonym] = std::to_string(i);
-                clauseResult.emplace_back(resultEntry);
+                resultEntry.emplace_back(std::to_string(i));
+                clauseResult.rows.emplace_back(resultEntry);
             }
             return clauseResult;
             break;
@@ -63,8 +64,8 @@ namespace PQL {
         case DesignEntity::CONSTANT: {
             for (ConstId i = 1; i <= database.constTable.size(); i++) {
                 ClauseResultEntry resultEntry;
-                resultEntry[synonym] = database.constTable.get(i);
-                clauseResult.emplace_back(resultEntry);
+                resultEntry.emplace_back(database.constTable.get(i));
+                clauseResult.rows.emplace_back(resultEntry);
             }
             return clauseResult;
             break;
@@ -72,8 +73,8 @@ namespace PQL {
         case DesignEntity::PROCEDURE: {
             for (ProcId i = 1; i <= database.procTable.size(); i++) {
                 ClauseResultEntry resultEntry;
-                resultEntry[synonym] = database.procTable.get(i).getName();
-                clauseResult.emplace_back(resultEntry);
+                resultEntry.emplace_back(database.procTable.get(i).getName());
+                clauseResult.rows.emplace_back(resultEntry);
             }
             return clauseResult;
             break;
@@ -82,14 +83,14 @@ namespace PQL {
             std::unordered_set<VarName> allVars = database.varTable.getAllVars();
             for (VarName var : allVars) {
                 ClauseResultEntry resultEntry;
-                resultEntry[synonym] = var;
-                clauseResult.emplace_back(resultEntry);
+                resultEntry.emplace_back(var);
+                clauseResult.rows.emplace_back(resultEntry);
             }
             return clauseResult;
             break;
         }
         }
-        return {};
+        return clauseResult;
     }
 
     ClauseResult QueryEvaluator::evaluateQuery(Query &query) {
@@ -103,9 +104,7 @@ namespace PQL {
 
         // Add table containing "TRUE" to every group
         for (ClauseResult& clauseResult : clauseResults) {
-            ClauseResultEntry trueResultEntry;
-            trueResultEntry["_RESULT"] = "TRUE";
-            clauseResult.emplace_back(trueResultEntry);
+            clauseResult.trueResult = true;
         }
 
         // Construct set of all target synonyms
@@ -161,7 +160,7 @@ namespace PQL {
             }
 
             // If the result is empty, we can stop evaluation immediately
-            if (result.empty()) {
+            if (result.rows.empty()) {
                 return extractQueryResults(query, ClauseResult());
             }
 
@@ -169,7 +168,7 @@ namespace PQL {
             clauseResults[optQuery.groups[i]] = combineTwoClauseResults(result, clauseResults[optQuery.groups[i]]);
 
             // If the merged table is empty, stop evaluation immediately
-            if (clauseResults[optQuery.groups[i]].empty()) {
+            if (clauseResults[optQuery.groups[i]].rows.empty()) {
                 return extractQueryResults(query, ClauseResult());
             }
         }
@@ -193,64 +192,77 @@ namespace PQL {
         if (query.returnsBool) {
             ClauseResult result;
             ClauseResultEntry resultEntry;
-            if (combinedResult.empty()) {
-                resultEntry["_BOOLEAN"] = "FALSE";
+            if (combinedResult.rows.empty()) {
+                resultEntry.emplace_back("FALSE");
             } else {
-                resultEntry["_BOOLEAN"] = "TRUE";
+                resultEntry.emplace_back("TRUE");
             }
-            result.emplace_back(resultEntry);
+            result.rows.emplace_back(resultEntry);
             return result;
-        } else if (combinedResult.empty()) {
+        } else if (combinedResult.rows.empty()) {
             SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::extractQueryResults: Empty Result!\n");
-            return {};
+            return ClauseResult();
         } else {
             std::vector<Ref> &targets = query.targetEntities;
+            std::vector<std::pair<Ref, int> > mapper;
+            for (int i = 0; i < targets.size(); i++) {
+                mapper.emplace_back(std::make_pair(targets[i], i));
+            }
+            std::sort(mapper.begin(), mapper.end());
+
             ClauseResult finalResult;
-            for (ClauseResultEntry resultEntry : combinedResult) {
-                ClauseResultEntry finalResultEntry;
-                for (Ref target : targets) {
-                    if (target.second == AttrType::NONE) {
-                        finalResultEntry[target.first] = resultEntry[target.first];
-                    } else if (target.second == AttrType::STMT_NUM) {
-                        finalResultEntry[target.first + ".stmt#"] = resultEntry[target.first];
-                    } else if (target.second == AttrType::VALUE) {
-                        finalResultEntry[target.first + ".value"] = resultEntry[target.first];
-                    } else if (target.second == AttrType::PROC_NAME) {
-                        if (query.synonymTable[target.first] == DesignEntity::PROCEDURE) {
-                            finalResultEntry[target.first + ".procName"] = resultEntry[target.first];
+            for (ClauseResultEntry& resultEntry : combinedResult.rows) {
+                ClauseResultEntry finalResultEntry(targets.size());
+                // Two pointers method to extract results
+                int j;
+                for (int i = 0; i < mapper.size(); i++) {
+                    while (combinedResult.syns[j] != mapper[i].first.first) {
+                        j++;
+                    }
+                    Synonym targetSyn = mapper[i].first.first;
+                    AttrType targetAttr = mapper[i].first.second;
+                    int position = mapper[i].second;
+
+                    if (targetAttr == AttrType::NONE) {
+                        finalResultEntry[position] = resultEntry[j];
+                    } else if (targetAttr == AttrType::STMT_NUM) {
+                        finalResultEntry[position] = resultEntry[j];
+                    } else if (targetAttr == AttrType::VALUE) {
+                        finalResultEntry[position] = resultEntry[j];
+                    } else if (targetAttr == AttrType::PROC_NAME) {
+                        if (query.synonymTable[targetSyn] == DesignEntity::PROCEDURE) {
+                            finalResultEntry[position] = resultEntry[j];
                         } else {
-                            CallStmt *callStmt = dynamic_cast<CallStmt*>(database.stmtTable.get(std::stoi(resultEntry[target.first])).get());
-                            finalResultEntry[target.first + ".procName"] = callStmt->getProc();
+                            CallStmt *callStmt = dynamic_cast<CallStmt*>(database.stmtTable.get(std::stoi(resultEntry[j])).get());
+                            finalResultEntry[position] = callStmt->getProc();
                         }
-                    } else if (target.second == AttrType::VAR_NAME) {
-                        if (query.synonymTable[target.first] == DesignEntity::READ) {
-                            ReadStmt* readStmt = dynamic_cast<ReadStmt*>(database.stmtTable.get(std::stoi(resultEntry[target.first])).get());
-                            finalResultEntry[target.first + ".varName"] = database.varTable.get(readStmt->getVar());
-                        } else if (query.synonymTable[target.first] == DesignEntity::PRINT) {
-                            PrintStmt* printStmt = dynamic_cast<PrintStmt*>(database.stmtTable.get(std::stoi(resultEntry[target.first])).get());
-                            finalResultEntry[target.first + ".varName"] = database.varTable.get(printStmt->getVar());
+                    } else if (targetAttr == AttrType::VAR_NAME) {
+                        if (query.synonymTable[targetSyn] == DesignEntity::READ) {
+                            ReadStmt* readStmt = dynamic_cast<ReadStmt*>(database.stmtTable.get(std::stoi(resultEntry[j])).get());
+                            finalResultEntry[position] = database.varTable.get(readStmt->getVar());
+                        } else if (query.synonymTable[targetSyn] == DesignEntity::PRINT) {
+                            PrintStmt* printStmt = dynamic_cast<PrintStmt*>(database.stmtTable.get(std::stoi(resultEntry[j])).get());
+                            finalResultEntry[position] = database.varTable.get(printStmt->getVar());
                         } else {
-                            finalResultEntry[target.first + ".varName"] = resultEntry[target.first];
+                            finalResultEntry[position] = resultEntry[j];
                         }
                     }
                 }
-                finalResult.emplace_back(finalResultEntry);
+                finalResult.rows.emplace_back(finalResultEntry);
             }
             return finalResult;
         }
     }
 
     ClauseResultEntry QueryEvaluator::combineTwoClauseResultEntries(ClauseResultEntry &entry1, ClauseResultEntry &entry2,
-        std::unordered_set<Synonym> &commonSynonyms) {
+        std::vector<std::pair<int, int> > &combStruct) {
 
         ClauseResultEntry combinedEntry;
-        for (std::pair<std::string, std::string> field : entry1) {
-            combinedEntry.insert(field);
-        }
-
-        for (std::pair<std::string, std::string> field : entry2) {
-            if (commonSynonyms.find(field.first) == commonSynonyms.end()) {
-                combinedEntry.insert(field);
+        for (auto entry : combStruct) {
+            if (entry.second == 0) {
+                combinedEntry.emplace_back(entry1[entry.first]);
+            } else {
+                combinedEntry.emplace_back(entry2[entry.first]);
             }
         }
 
@@ -258,9 +270,9 @@ namespace PQL {
     }
 
     bool QueryEvaluator::checkCommonSynonyms(ClauseResultEntry &entry1, ClauseResultEntry &entry2,
-        std::unordered_set<Synonym> &commonSynonyms) {
-        for (Synonym synonym : commonSynonyms) {
-            if (entry1[synonym] != entry2[synonym]) {
+        std::vector<std::pair<int, int> > &commonSynonyms) {
+        for (std::pair<int, int> synonym : commonSynonyms) {
+            if (entry1[synonym.first] != entry2[synonym.second]) {
                 return false;
             }
         }
@@ -268,24 +280,62 @@ namespace PQL {
     }
 
     ClauseResult QueryEvaluator::combineTwoClauseResults(ClauseResult clauseResults1, ClauseResult clauseResults2) {
-        if (clauseResults1.empty() || clauseResults2.empty()) {
-            return {};
+        if (clauseResults1.trueResult && clauseResults2.trueResult) {
+            return clauseResults1;
+        } else if (clauseResults1.trueResult && !clauseResults2.rows.empty()) {
+            return clauseResults2;
+        } else if (!clauseResults1.rows.empty() && clauseResults2.trueResult) {
+            return clauseResults1;
         }
 
-        // Extract common synonyms
-        std::unordered_set<Synonym> commonSynonyms;
-        for (std::pair<std::string, std::string> entry : clauseResults1[0]) {
-            if (clauseResults2[0].find(entry.first) != clauseResults2[0].end()) {
-                commonSynonyms.insert(entry.first);
+        if (clauseResults1.rows.empty() || clauseResults2.rows.empty()) {
+            return clauseResults1;
+        }
+
+        // Extract common synonyms and get structure of combined result
+        std::vector<std::pair<int, int> > commonSynonyms;
+        std::vector<std::pair<int, int> > combStruct;
+        int i = 0, j = 0;
+        while (i < clauseResults1.syns.size()) {
+            while (j < clauseResults2.syns.size() && clauseResults2.syns[j] < clauseResults1.syns[i]) {
+                combStruct.emplace_back(std::make_pair(j, 1));
+                j++;
             }
+            if (j >= clauseResults2.syns.size()) {
+                break;
+            }
+            if (clauseResults1.syns[i] == clauseResults2.syns[j]) {
+                commonSynonyms.emplace_back(std::make_pair(i, j));
+                combStruct.emplace_back(std::make_pair(i, 0));
+                j++;
+            }
+            combStruct.emplace_back(std::make_pair(i, 0));
+            i++;
+        }
+        while (i < clauseResults1.syns.size()) {
+            combStruct.emplace_back(std::make_pair(i, 0));
+            i++;
+        }
+        while (j < clauseResults2.syns.size()) {
+            combStruct.emplace_back(std::make_pair(j, 1));
+            j++;
         }
 
         ClauseResult combinedResult;
+        // Populate synonym list
+        for (int i = 0; i < combStruct.size(); i++) {
+            if (combStruct[i].second == 0) {
+                combinedResult.syns.emplace_back(clauseResults1.syns[combStruct[i].first]);
+            } else {
+                combinedResult.syns.emplace_back(clauseResults2.syns[combStruct[i].first]);
+            }
+        }
+
         // Perform a Cartesian Product
-        for (ClauseResultEntry entry1 : clauseResults1) {
-            for (ClauseResultEntry entry2 : clauseResults2) {
+        for (ClauseResultEntry& entry1 : clauseResults1.rows) {
+            for (ClauseResultEntry& entry2 : clauseResults2.rows) {
                 if (checkCommonSynonyms(entry1, entry2, commonSynonyms)) {
-                    combinedResult.emplace_back(combineTwoClauseResultEntries(entry1, entry2, commonSynonyms));
+                    combinedResult.rows.emplace_back(combineTwoClauseResultEntries(entry1, entry2, combStruct));
                 }
             }
         }
