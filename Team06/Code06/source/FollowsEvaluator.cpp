@@ -20,13 +20,13 @@ namespace PQL {
             StmtId arg1 = std::stoi(clause.getArgs().first.second);
             StmtId arg2 = std::stoi(clause.getArgs().second.second);
 
+            ClauseResult clauseResult;
             if (database.followsKB.follows(arg1, arg2)) {
-                ClauseResultEntry resultEntry;
-                resultEntry["_RESULT"] = "TRUE";
-                return { resultEntry };
+                clauseResult.trueResult = true;
             } else {
-                return {};
+                clauseResult.emptyResult = true;
             }
+            return clauseResult;
         }
 
         /**
@@ -36,14 +36,13 @@ namespace PQL {
         * @return   The result of the evaluation.
         */
         ClauseResult evaluateFollowsClauseWildWild(PKB::PKB& database) {
-            for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
-                if (database.followsKB.getFollower(i) != 0) {
-                    ClauseResultEntry resultEntry;
-                    resultEntry["_RESULT"] = "TRUE";
-                    return { resultEntry };
-                }
+            ClauseResult clauseResult;
+            if (database.followsKB.hasFollowsRelation()) {
+                clauseResult.trueResult = true;
+            } else {
+                clauseResult.emptyResult = true;
             }
-            return {};
+            return clauseResult;
         }
 
         /**
@@ -60,23 +59,23 @@ namespace PQL {
             if (argType1 == ArgType::INTEGER && argType2 == ArgType::WILDCARD) {
                 // Case 1: Integer, Wildcard
                 StmtId arg1 = std::stoi(clause.getArgs().first.second);
+                ClauseResult clauseResult;
                 if (database.followsKB.getFollower(arg1) != 0) {
-                    ClauseResultEntry resultEntry;
-                    resultEntry["_RESULT"] = "TRUE";
-                    return { resultEntry };
+                    clauseResult.trueResult = true;
                 } else {
-                    return {};
+                    clauseResult.emptyResult = true;
                 }
+                return clauseResult;
             } else {
                 // Case 2: Wildcard, Integer
                 StmtId arg2 = std::stoi(clause.getArgs().second.second);
+                ClauseResult clauseResult;
                 if (database.followsKB.getFollowing(arg2) != 0) {
-                    ClauseResultEntry resultEntry;
-                    resultEntry["_RESULT"] = "TRUE";
-                    return { resultEntry };
+                    clauseResult.trueResult = true;
                 } else {
-                    return {};
+                    clauseResult.emptyResult = true;
                 }
+                return clauseResult;
             }
         }
 
@@ -98,34 +97,41 @@ namespace PQL {
                 StmtId arg1 = std::stoi(clause.getArgs().first.second);
                 Synonym arg2 = clause.getArgs().second.second;
 
+                ClauseResult clauseResult;
                 StmtId follower = database.followsKB.getFollower(arg1);
                 if (follower == 0) {
-                    return {};
+                    clauseResult.emptyResult = true;
+                    return clauseResult;
                 } else {
+                    clauseResult.syns.emplace_back(arg2);
                     if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(follower)->getType(), synonymTable[arg2])) {
                         ClauseResultEntry resultEntry;
-                        resultEntry[arg2] = std::to_string(follower);
-                        return { resultEntry };
+                        resultEntry.emplace_back(std::to_string(follower));
+                        clauseResult.rows.emplace_back(resultEntry);
                     } else {
-                        return {};
+                        clauseResult.emptyResult = true;
                     }
+                    return clauseResult;
                 }
             } else {
                 // Case 2: Synonym, Integer
                 Synonym arg1 = clause.getArgs().first.second;
                 StmtId arg2 = std::stoi(clause.getArgs().second.second);
 
+                ClauseResult clauseResult;
                 StmtId following = database.followsKB.getFollowing(arg2);
                 if (following == 0) {
-                    return {};
+                    clauseResult.emptyResult = true;
+                    return clauseResult;
                 } else {
                     if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(following)->getType(), synonymTable[arg1])) {
                         ClauseResultEntry resultEntry;
-                        resultEntry[arg1] = std::to_string(following);
-                        return { resultEntry };
+                        resultEntry.emplace_back(std::to_string(following));
+                        clauseResult.rows.emplace_back(resultEntry);
                     } else {
-                        return {};
+                        clauseResult.emptyResult = true;
                     }
+                    return clauseResult;
                 }
             }
         }
@@ -147,26 +153,27 @@ namespace PQL {
                 Synonym arg2 = clause.getArgs().second.second;
 
                 // Case 1: Wildcard, Synonym
-                ClauseResult clauseResult = {};
+                ClauseResult clauseResult;
+                clauseResult.syns.emplace_back(arg2);
                 for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
                     if (database.followsKB.getFollowing(i) != 0 &&
                         SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i)->getType(), synonymTable[arg2])) {
                         ClauseResultEntry resultEntry;
-                        resultEntry[arg2] = std::to_string(i);
-                        clauseResult.emplace_back(resultEntry);
+                        resultEntry.emplace_back(std::to_string(i));
+                        clauseResult.rows.emplace_back(resultEntry);
                     }
                 }
                 return clauseResult;
             } else {
                 Synonym arg1 = clause.getArgs().first.second;
                 // Case 2: Synonym, Wildcard
-                ClauseResult clauseResult = {};
+                ClauseResult clauseResult;
                 for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
                     if (database.followsKB.getFollower(i) != 0 &&
                         SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i)->getType(), synonymTable[arg1])) {
                         ClauseResultEntry resultEntry;
-                        resultEntry[arg1] = std::to_string(i);
-                        clauseResult.emplace_back(resultEntry);
+                        resultEntry.emplace_back(std::to_string(i));
+                        clauseResult.rows.emplace_back(resultEntry);
                     }
                 }
                 return clauseResult;
@@ -188,7 +195,17 @@ namespace PQL {
 
             bool singleSynonym = (arg1 == arg2);
 
-            ClauseResult clauseResult = {};
+            ClauseResult clauseResult;
+            if (singleSynonym) {
+                clauseResult.syns.emplace_back(arg1);
+            } else if (arg1 < arg2) {
+                clauseResult.syns.emplace_back(arg1);
+                clauseResult.syns.emplace_back(arg2);
+            } else {
+                clauseResult.syns.emplace_back(arg2);
+                clauseResult.syns.emplace_back(arg1);
+            }
+
             for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
                 StmtId follower = database.followsKB.getFollower(i);
                 if (follower != 0) {
@@ -196,14 +213,19 @@ namespace PQL {
                         SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(follower)->getType(), synonymTable[arg2])) {
                         if (!singleSynonym) {
                             ClauseResultEntry resultEntry;
-                            resultEntry[arg1] = std::to_string(i);
-                            resultEntry[arg2] = std::to_string(follower);
-                            clauseResult.emplace_back(resultEntry);
+                            if (arg1 < arg2) {
+                                resultEntry.emplace_back(std::to_string(i));
+                                resultEntry.emplace_back(std::to_string(follower));
+                            } else {
+                                resultEntry.emplace_back(std::to_string(follower));
+                                resultEntry.emplace_back(std::to_string(i));
+                            }
+                            clauseResult.rows.emplace_back(resultEntry);
                         } else {
                             if (i == follower) {
                                 ClauseResultEntry resultEntry;
-                                resultEntry[arg1] = std::to_string(i);
-                                clauseResult.emplace_back(resultEntry);
+                                resultEntry.emplace_back(std::to_string(i));
+                                clauseResult.rows.emplace_back(resultEntry);
                             }
                         }
                     }

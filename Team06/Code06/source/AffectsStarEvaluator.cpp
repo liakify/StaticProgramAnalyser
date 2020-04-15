@@ -115,9 +115,6 @@ namespace PQL {
                     resultEntry.emplace_back(std::to_string(stmt));
                     clauseResult.rows.emplace_back(resultEntry);
                 }
-
-                clauseResult.emptyResult = clauseResult.rows.empty();
-
                 return clauseResult;
             } else {
                 // Case 2: Synonym, Integer
@@ -134,9 +131,6 @@ namespace PQL {
                     resultEntry.emplace_back(std::to_string(stmt));
                     clauseResult.rows.emplace_back(resultEntry);
                 }
-
-                clauseResult.emptyResult = clauseResult.rows.empty();
-
                 return clauseResult;
             }
         }
@@ -169,7 +163,6 @@ namespace PQL {
                     }
                     database.affectsStarSetProcessedAll(i, NodeType::SUCCESSOR);
                 }
-                clauseResult.emptyResult = clauseResult.rows.empty();
                 return clauseResult;
             } else {
                 // Case 2: Synonym, Wildcard
@@ -186,7 +179,6 @@ namespace PQL {
                     }
                     database.affectsStarSetProcessedAll(i, NodeType::PREDECESSOR);
                 }
-                clauseResult.emptyResult = clauseResult.rows.empty();
                 return clauseResult;
             }
         }
@@ -244,7 +236,6 @@ namespace PQL {
                 }
                 database.affectsStarSetProcessedAll(i, NodeType::PREDECESSOR);
             }
-            clauseResult.emptyResult = clauseResult.rows.empty();
             return clauseResult;
         }
 

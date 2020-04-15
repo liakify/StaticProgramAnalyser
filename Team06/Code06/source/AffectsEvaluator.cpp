@@ -115,8 +115,6 @@ namespace PQL {
                     clauseResult.rows.emplace_back(resultEntry);
                 }
                 
-                clauseResult.emptyResult = clauseResult.rows.empty();
-                
                 return clauseResult;
             } else {
                 // Case 2: Synonym, Integer
@@ -134,8 +132,6 @@ namespace PQL {
                     clauseResult.rows.emplace_back(resultEntry);
                 }
                 
-                clauseResult.emptyResult = clauseResult.rows.empty();
-
                 return clauseResult;
             }
         }
@@ -170,7 +166,6 @@ namespace PQL {
                     database.affectsSetProcessedDirect(i, NodeType::SUCCESSOR);
                 }
                 database.setAffectsFullyComputed();
-                clauseResult.emptyResult = clauseResult.rows.empty();
                 return clauseResult;
             } else {
                 // Case 2: Synonym, Wildcard
@@ -188,7 +183,6 @@ namespace PQL {
                     database.affectsSetProcessedDirect(i, NodeType::PREDECESSOR);
                 }
                 database.setAffectsFullyComputed();
-                clauseResult.emptyResult = clauseResult.rows.empty();
                 return clauseResult;
             }
         }
@@ -246,7 +240,6 @@ namespace PQL {
                 database.affectsSetProcessedDirect(i, NodeType::PREDECESSOR);
             }
             database.setAffectsFullyComputed();
-            clauseResult.emptyResult = clauseResult.rows.empty();
             return clauseResult;
         }
 
