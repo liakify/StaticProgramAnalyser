@@ -4,36 +4,26 @@
 namespace PQL {
 
     void QueryProjector::formatResult(ClauseResult& result, PQL::Query& query, std::list<std::string>& resultList) {
-        // Use a set to remove duplicates
+
         std::unordered_set<std::string> uniqueResultSet;
 
         if (query.returnsBool) {
-            resultList.push_back(result[0]["_BOOLEAN"]);
+            resultList.push_back(result.rows[0][0]);
             return;
         }
 
-        for (ClauseResultEntry& resultEntry : result) {
-            std::stringstream s;
+        for (ClauseResultEntry& resultEntry : result.rows) {
+            std::string s;
             bool first = true;
-            for (ReturnType& targetEntity : query.targetEntities) {
+            for (std::string result : resultEntry) {
                 if (first) {
                     first = false;
                 } else {
-                    s << " ";
+                    s.append(" ");
                 }
-                if (targetEntity.attrType == AttrType::PROC_NAME) {
-                    s << resultEntry[targetEntity.synonym + ".procName"];
-                } else if (targetEntity.attrType == AttrType::VAR_NAME) {
-                    s << resultEntry[targetEntity.synonym + ".varName"];
-                } else if (targetEntity.attrType == AttrType::STMT_NUM) {
-                    s << resultEntry[targetEntity.synonym + ".stmt#"];
-                } else if (targetEntity.attrType == AttrType::VALUE) {
-                    s << resultEntry[targetEntity.synonym + ".value"];
-                } else {
-                    s << resultEntry[targetEntity.synonym];
-                }
+                s.append(result);
             }
-            uniqueResultSet.insert(s.str());
+            uniqueResultSet.insert(s);
         }
 
         for (auto itr3 = uniqueResultSet.begin(); itr3 != uniqueResultSet.end(); ++itr3) {

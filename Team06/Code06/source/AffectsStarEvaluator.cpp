@@ -22,13 +22,12 @@ namespace PQL {
             StmtId arg1 = std::stoi(args.first.value);
             StmtId arg2 = std::stoi(args.second.value);
 
+            ClauseResult clauseResult;
             if (database.affectsStar(arg1, arg2)) {
-                ClauseResultEntry resultEntry;
-                resultEntry["_RESULT"] = "TRUE";
-                return { resultEntry };
-            } else {
-                return {};
+                clauseResult.trueResult = true;
             }
+
+            return clauseResult;
         }
 
         /**
@@ -38,15 +37,15 @@ namespace PQL {
         * @return   The result of the evaluation.
         */
         ClauseResult evaluateAffectsStarClauseWildWild(PKB::PKB& database) {
+
+            ClauseResult clauseResult;
             for (StmtId i : database.stmtTable.getStmtsByType(StmtType::ASSIGN)) {
                 if (database.affectsGetDirectNodes(i, NodeType::SUCCESSOR).size() > 0) {
-                    ClauseResultEntry resultEntry;
-                    resultEntry["_RESULT"] = "TRUE";
-                    return { resultEntry };
+                    clauseResult.trueResult = true;
+                    return clauseResult;
                 }
             }
-
-            return {};
+            return clauseResult;
         }
 
         /**
@@ -61,27 +60,28 @@ namespace PQL {
             ArgType argType1 = args.first.type;
             ArgType argType2 = args.second.type;
 
+            ClauseResult clauseResult;
+
             if (argType1 == ArgType::INTEGER && argType2 == ArgType::WILDCARD) {
                 // Case 1: Integer, Wildcard
                 StmtId arg1 = std::stoi(args.first.value);
                 if (database.affectsGetDirectNodes(arg1, NodeType::SUCCESSOR).size() > 0) {
-                    ClauseResultEntry resultEntry;
-                    resultEntry["_RESULT"] = "TRUE";
-                    return { resultEntry };
+                    clauseResult.trueResult = true;
                 } else {
-                    return {};
+                    clauseResult.trueResult = false;
                 }
+                return clauseResult;
             } else {
                 // Case 2: Wildcard, Integer
                 StmtId arg2 = std::stoi(args.second.value);
                 if (database.affectsGetDirectNodes(arg2, NodeType::PREDECESSOR).size() > 0) {
-                    ClauseResultEntry resultEntry;
-                    resultEntry["_RESULT"] = "TRUE";
-                    return { resultEntry };
+                    clauseResult.trueResult = true;
                 } else {
-                    return {};
+                    clauseResult.trueResult = false;
                 }
             }
+
+            return clauseResult;
         }
 
         /**
@@ -104,12 +104,14 @@ namespace PQL {
                 StmtId arg1 = std::stoi(args.first.value);
                 Synonym arg2 = args.second.value;
 
-                std::unordered_set<StmtId> stmts = database.affectsStarGetAllNodes(arg1, NodeType::SUCCESSOR);
                 ClauseResult clauseResult;
+                clauseResult.syns.emplace_back(arg2);
+
+                std::unordered_set<StmtId> stmts = database.affectsStarGetAllNodes(arg1, NodeType::SUCCESSOR);
                 for (StmtId stmt : stmts) {
                     ClauseResultEntry resultEntry;
-                    resultEntry[arg2] = std::to_string(stmt);
-                    clauseResult.emplace_back(resultEntry);
+                    resultEntry.emplace_back(std::to_string(stmt));
+                    clauseResult.rows.emplace_back(resultEntry);
                 }
                 return clauseResult;
             } else {
@@ -117,12 +119,14 @@ namespace PQL {
                 Synonym arg1 = args.first.value;
                 StmtId arg2 = std::stoi(args.second.value);
 
-                std::unordered_set<StmtId> stmts = database.affectsStarGetAllNodes(arg2, NodeType::PREDECESSOR);
                 ClauseResult clauseResult;
+                clauseResult.syns.emplace_back(arg1);
+
+                std::unordered_set<StmtId> stmts = database.affectsStarGetAllNodes(arg2, NodeType::PREDECESSOR);
                 for (StmtId stmt : stmts) {
                     ClauseResultEntry resultEntry;
-                    resultEntry[arg1] = std::to_string(stmt);
-                    clauseResult.emplace_back(resultEntry);
+                    resultEntry.emplace_back(std::to_string(stmt));
+                    clauseResult.rows.emplace_back(resultEntry);
                 }
                 return clauseResult;
             }
@@ -148,11 +152,13 @@ namespace PQL {
                 Synonym arg2 = args.second.value;
 
                 ClauseResult clauseResult;
+                clauseResult.syns.emplace_back(arg2);
+
                 for (StmtId i : database.stmtTable.getStmtsByType(StmtType::ASSIGN)) {
                     if (database.affectsGetDirectNodes(i, NodeType::PREDECESSOR).size() > 0) {
                         ClauseResultEntry resultEntry;
-                        resultEntry[arg2] = std::to_string(i);
-                        clauseResult.emplace_back(resultEntry);
+                        resultEntry.emplace_back(std::to_string(i));
+                        clauseResult.rows.emplace_back(resultEntry);
                     }
                     database.affectsStarSetProcessedAll(i, NodeType::SUCCESSOR);
                 }
@@ -162,11 +168,13 @@ namespace PQL {
                 Synonym arg1 = args.first.value;
 
                 ClauseResult clauseResult;
+                clauseResult.syns.emplace_back(arg1);
+
                 for (StmtId i : database.stmtTable.getStmtsByType(StmtType::ASSIGN)) {
                     if (database.affectsGetDirectNodes(i, NodeType::SUCCESSOR).size() > 0) {
                         ClauseResultEntry resultEntry;
-                        resultEntry[arg1] = std::to_string(i);
-                        clauseResult.emplace_back(resultEntry);
+                        resultEntry.emplace_back(std::to_string(i));
+                        clauseResult.rows.emplace_back(resultEntry);
                     }
                     database.affectsStarSetProcessedAll(i, NodeType::PREDECESSOR);
                 }
@@ -192,19 +200,37 @@ namespace PQL {
             bool singleSynonym = (arg1 == arg2);
 
             ClauseResult clauseResult;
+            if (singleSynonym) {
+                clauseResult.syns.emplace_back(arg1);
+            } else {
+                if (arg1 < arg2) {
+                    clauseResult.syns.emplace_back(arg1);
+                    clauseResult.syns.emplace_back(arg2);
+                } else {
+                    clauseResult.syns.emplace_back(arg2);
+                    clauseResult.syns.emplace_back(arg1);
+                }
+
+            }
+
             for (StmtId i : database.stmtTable.getStmtsByType(StmtType::ASSIGN)) {
                 std::unordered_set<StmtId> stmts = database.affectsStarGetAllNodes(i, NodeType::SUCCESSOR);
                 for (StmtId stmt : stmts) {
                     if (!singleSynonym) {
                         ClauseResultEntry resultEntry;
-                        resultEntry[arg1] = std::to_string(i);
-                        resultEntry[arg2] = std::to_string(stmt);
-                        clauseResult.emplace_back(resultEntry);
+                        if (arg1 < arg2) {
+                            resultEntry.emplace_back(std::to_string(i));
+                            resultEntry.emplace_back(std::to_string(stmt));
+                        } else {
+                            resultEntry.emplace_back(std::to_string(stmt));
+                            resultEntry.emplace_back(std::to_string(i));
+                        }
+                        clauseResult.rows.emplace_back(resultEntry);
                     } else {
                         if (i == stmt) {
                             ClauseResultEntry resultEntry;
-                            resultEntry[arg1] = std::to_string(i);
-                            clauseResult.emplace_back(resultEntry);
+                            resultEntry.emplace_back(std::to_string(i));
+                            clauseResult.rows.emplace_back(resultEntry);
                         }
                     }
                 }

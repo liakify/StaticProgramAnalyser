@@ -21,10 +21,11 @@ namespace PQL {
             Synonym arg0 = clause.getSynonym().value;
 
             ClauseResult clauseResult;
+            clauseResult.syns.emplace_back(arg0);
             for (StmtId stmt : stmts) {
                 ClauseResultEntry resultEntry;
-                resultEntry[arg0] = std::to_string(stmt);
-                clauseResult.emplace_back(resultEntry);
+                resultEntry.emplace_back(std::to_string(stmt));
+                clauseResult.rows.emplace_back(resultEntry);
             }
             return clauseResult;
         }
@@ -46,10 +47,11 @@ namespace PQL {
             std::unordered_set<StmtId> stmts = database.patternKB.getIfPatternStmts(arg1);
 
             ClauseResult clauseResult;
+            clauseResult.syns.emplace_back(arg0);
             for (StmtId stmt : stmts) {
                 ClauseResultEntry resultEntry;
-                resultEntry[arg0] = std::to_string(stmt);
-                clauseResult.emplace_back(resultEntry);
+                resultEntry.emplace_back(std::to_string(stmt));
+                clauseResult.rows.emplace_back(resultEntry);
             }
             return clauseResult;
         }
@@ -69,6 +71,13 @@ namespace PQL {
             Synonym arg1 = clause.getArgs().first.value;
 
             ClauseResult clauseResult;
+            if (arg0 < arg1) {
+                clauseResult.syns.emplace_back(arg0);
+                clauseResult.syns.emplace_back(arg1);
+            } else {
+                clauseResult.syns.emplace_back(arg1);
+                clauseResult.syns.emplace_back(arg0);
+            }
 
             std::unordered_set<StmtId> stmts = database.stmtTable.getStmtsByType(StmtType::IF);
             for (StmtId stmt : stmts) {
@@ -76,9 +85,14 @@ namespace PQL {
                 std::unordered_set<VarId> vars = ifStmt->getCondExpr().getVarIds();
                 for (VarId var : vars) {
                     ClauseResultEntry resultEntry;
-                    resultEntry[arg0] = std::to_string(stmt);
-                    resultEntry[arg1] = database.varTable.get(var);
-                    clauseResult.emplace_back(resultEntry);
+                    if (arg0 < arg1) {
+                        resultEntry.emplace_back(std::to_string(stmt));
+                        resultEntry.emplace_back(database.varTable.get(var));
+                    } else {
+                        resultEntry.emplace_back(database.varTable.get(var));
+                        resultEntry.emplace_back(std::to_string(stmt));
+                    }
+                    clauseResult.rows.emplace_back(resultEntry);
                 }
             }
 
