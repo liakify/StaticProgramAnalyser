@@ -71,7 +71,7 @@ namespace PQL {
                 // Case 2: Wildcard, Identifier
                 ProcId arg2 = database.procTable.getProcId(clause.getArgs().second.second);
                 ClauseResult clauseResult;
-                if (database.callsKB.hasCaller(arg2) != 0) {
+                if (database.callsKB.hasCaller(arg2)) {
                     clauseResult.trueResult = true;
                 } else {
                     clauseResult.emptyResult = true;
