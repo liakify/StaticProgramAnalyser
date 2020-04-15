@@ -23,8 +23,6 @@ namespace PQL {
             ClauseResult clauseResult;
             if (database.callsKB.callStar(arg1, arg2)) {
                 clauseResult.trueResult = true;
-            } else {
-                clauseResult.emptyResult = true;
             }
             return clauseResult;
         }
@@ -40,8 +38,6 @@ namespace PQL {
             ClauseResult clauseResult;
             if (database.callsKB.hasCallsRelation()) {
                 clauseResult.trueResult = true;
-            } else {
-                clauseResult.emptyResult = true;
             }
             return clauseResult;
         }
@@ -63,8 +59,6 @@ namespace PQL {
                 ProcId arg1 = database.procTable.getProcId(clause.getArgs().first.second);
                 if (database.callsKB.hasCallee(arg1)) {
                     clauseResult.trueResult = true;
-                } else {
-                    clauseResult.emptyResult = true;
                 }
                 return clauseResult;
             } else {
@@ -73,8 +67,6 @@ namespace PQL {
                 ProcId arg2 = database.procTable.getProcId(clause.getArgs().second.second);
                 if (database.callsKB.hasCaller(arg2)) {
                     clauseResult.trueResult = true;
-                } else {
-                    clauseResult.emptyResult = true;
                 }
                 return clauseResult;
             }
@@ -182,7 +174,6 @@ namespace PQL {
             ClauseResult clauseResult;
             if (arg1 == arg2) {
                 // In SIMPLE, a procedure should not be able to call itself.
-                clauseResult.emptyResult = true;
                 return clauseResult;
             }
             if (arg1 < arg2) {

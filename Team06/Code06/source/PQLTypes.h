@@ -525,7 +525,6 @@ namespace PQL {
 
     struct ClauseResult {
         bool trueResult = false;
-        bool emptyResult = false;
         std::vector<Synonym> syns;
         std::vector<ClauseResultEntry> rows;
     };

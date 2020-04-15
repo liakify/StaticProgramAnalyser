@@ -23,8 +23,6 @@ namespace PQL {
             ClauseResult clauseResult;
             if (database.followsKB.follows(arg1, arg2)) {
                 clauseResult.trueResult = true;
-            } else {
-                clauseResult.emptyResult = true;
             }
             return clauseResult;
         }
@@ -39,8 +37,6 @@ namespace PQL {
             ClauseResult clauseResult;
             if (database.followsKB.hasFollowsRelation()) {
                 clauseResult.trueResult = true;
-            } else {
-                clauseResult.emptyResult = true;
             }
             return clauseResult;
         }
@@ -62,8 +58,6 @@ namespace PQL {
                 ClauseResult clauseResult;
                 if (database.followsKB.getFollower(arg1) != 0) {
                     clauseResult.trueResult = true;
-                } else {
-                    clauseResult.emptyResult = true;
                 }
                 return clauseResult;
             } else {
@@ -72,8 +66,6 @@ namespace PQL {
                 ClauseResult clauseResult;
                 if (database.followsKB.getFollowing(arg2) != 0) {
                     clauseResult.trueResult = true;
-                } else {
-                    clauseResult.emptyResult = true;
                 }
                 return clauseResult;
             }
@@ -100,7 +92,6 @@ namespace PQL {
                 ClauseResult clauseResult;
                 StmtId follower = database.followsKB.getFollower(arg1);
                 if (follower == 0) {
-                    clauseResult.emptyResult = true;
                     return clauseResult;
                 } else {
                     clauseResult.syns.emplace_back(arg2);
@@ -108,8 +99,6 @@ namespace PQL {
                         ClauseResultEntry resultEntry;
                         resultEntry.emplace_back(std::to_string(follower));
                         clauseResult.rows.emplace_back(resultEntry);
-                    } else {
-                        clauseResult.emptyResult = true;
                     }
                     return clauseResult;
                 }
@@ -121,15 +110,12 @@ namespace PQL {
                 ClauseResult clauseResult;
                 StmtId following = database.followsKB.getFollowing(arg2);
                 if (following == 0) {
-                    clauseResult.emptyResult = true;
                     return clauseResult;
                 } else {
                     if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(following)->getType(), synonymTable[arg1])) {
                         ClauseResultEntry resultEntry;
                         resultEntry.emplace_back(std::to_string(following));
                         clauseResult.rows.emplace_back(resultEntry);
-                    } else {
-                        clauseResult.emptyResult = true;
                     }
                     return clauseResult;
                 }

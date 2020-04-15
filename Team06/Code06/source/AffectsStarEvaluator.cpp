@@ -24,8 +24,6 @@ namespace PQL {
             ClauseResult clauseResult;
             if (database.affectsStar(arg1, arg2)) {
                 clauseResult.trueResult = true;
-            } else {
-                clauseResult.emptyResult = true;
             }
 
             return clauseResult;
@@ -46,7 +44,6 @@ namespace PQL {
                     return clauseResult;
                 }
             }
-            clauseResult.emptyResult = true;
             return clauseResult;
         }
 
