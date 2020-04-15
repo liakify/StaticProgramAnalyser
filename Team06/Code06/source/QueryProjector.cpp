@@ -15,22 +15,22 @@ namespace PQL {
         for (ClauseResultEntry& resultEntry : result) {
             std::stringstream s;
             bool first = true;
-            for (Ref& targetEntitity : query.targetEntities) {
+            for (ReturnType& targetEntity : query.targetEntities) {
                 if (first) {
                     first = false;
                 } else {
                     s << " ";
                 }
-                if (targetEntitity.second == AttrType::PROC_NAME) {
-                    s << resultEntry[targetEntitity.first + ".procName"];
-                } else if (targetEntitity.second == AttrType::VAR_NAME) {
-                    s << resultEntry[targetEntitity.first + ".varName"];
-                } else if (targetEntitity.second == AttrType::STMT_NUM) {
-                    s << resultEntry[targetEntitity.first + ".stmt#"];
-                } else if (targetEntitity.second == AttrType::VALUE) {
-                    s << resultEntry[targetEntitity.first + ".value"];
+                if (targetEntity.attrType == AttrType::PROC_NAME) {
+                    s << resultEntry[targetEntity.synonym + ".procName"];
+                } else if (targetEntity.attrType == AttrType::VAR_NAME) {
+                    s << resultEntry[targetEntity.synonym + ".varName"];
+                } else if (targetEntity.attrType == AttrType::STMT_NUM) {
+                    s << resultEntry[targetEntity.synonym + ".stmt#"];
+                } else if (targetEntity.attrType == AttrType::VALUE) {
+                    s << resultEntry[targetEntity.synonym + ".value"];
                 } else {
-                    s << resultEntry[targetEntitity.first];
+                    s << resultEntry[targetEntity.synonym];
                 }
             }
             uniqueResultSet.insert(s.str());

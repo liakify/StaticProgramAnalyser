@@ -1,6 +1,7 @@
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
+#include <utility>
 
 #include "AssignPatternEvaluator.h"
 #include "LoggingUtils.h"
@@ -17,7 +18,7 @@ namespace PQL {
         */
         ClauseResult evaluateAssignPatternClauseWildWild(PKB::PKB& database, PatternClause &clause) {
 
-            Synonym arg0 = clause.getSynonym();
+            Synonym arg0 = clause.getSynonym().value;
 
             std::unordered_set<StmtId> stmts = database.stmtTable.getStmtsByType(StmtType::ASSIGN);
 
@@ -39,8 +40,8 @@ namespace PQL {
         * @return   The result of the evaluation.
         */
         ClauseResult evaluateAssignPatternClauseWildPtn(PKB::PKB& database, PatternClause &clause) {
-            Synonym arg0 = clause.getSynonym();
-            Pattern arg2 = clause.getArgs().second.second;
+            Synonym arg0 = clause.getSynonym().value;
+            Pattern arg2 = clause.getArgs().second.value;
 
             std::unordered_set<StmtId> stmts = database.patternKB.getAssignPatternStmts(arg2);
 
@@ -63,8 +64,8 @@ namespace PQL {
         * @return   The result of the evaluation.
         */
         ClauseResult evaluateAssignPatternClauseIdWild(PKB::PKB& database, PatternClause& clause) {
-            Synonym arg0 = clause.getSynonym();
-            VarName arg1 = clause.getArgs().first.second;
+            Synonym arg0 = clause.getSynonym().value;
+            VarName arg1 = clause.getArgs().first.value;
             VarId arg1Id = database.varTable.getVarId(arg1);
 
             std::unordered_set<StmtId> stmts = database.modifiesKB.getAllStmtsModifyVar(arg1Id);
@@ -88,10 +89,12 @@ namespace PQL {
         * @return   The result of the evaluation.
         */
         ClauseResult evaluateAssignPatternClauseIdPtn(PKB::PKB& database, PatternClause& clause) {
-            Synonym arg0 = clause.getSynonym();
-            VarName arg1 = clause.getArgs().first.second;
+            Synonym arg0 = clause.getSynonym().value;
+
+            std::pair<Argument, Argument> args = clause.getArgs();
+            VarName arg1 = args.first.value;
             VarId arg1Id = database.varTable.getVarId(arg1);
-            Pattern arg2 = clause.getArgs().second.second;
+            Pattern arg2 = args.second.value;
 
             std::unordered_set<StmtId> stmts1 = database.modifiesKB.getAllStmtsModifyVar(arg1Id);
             std::unordered_set<StmtId> stmts2 = database.patternKB.getAssignPatternStmts(arg2);
@@ -126,8 +129,8 @@ namespace PQL {
         */
         ClauseResult evaluateAssignPatternClauseSynWild(PKB::PKB& database, PatternClause& clause,
             std::unordered_map<std::string, DesignEntity>& synonymTable) {
-            Synonym arg0 = clause.getSynonym();
-            Synonym arg1 = clause.getArgs().first.second;
+            Synonym arg0 = clause.getSynonym().value;
+            Synonym arg1 = clause.getArgs().first.value;
 
             std::unordered_set<StmtId> stmts = database.stmtTable.getStmtsByType(StmtType::ASSIGN);
 
@@ -158,9 +161,11 @@ namespace PQL {
         */
         ClauseResult evaluateAssignPatternClauseSynPtn(PKB::PKB& database, PatternClause& clause,
             std::unordered_map<std::string, DesignEntity>& synonymTable) {
-            Synonym arg0 = clause.getSynonym();
-            Synonym arg1 = clause.getArgs().first.second;
-            Pattern arg2 = clause.getArgs().second.second;
+            Synonym arg0 = clause.getSynonym().value;
+
+            std::pair<Argument, Argument> args = clause.getArgs();
+            Synonym arg1 = args.first.value;
+            Pattern arg2 = args.second.value;
 
             std::unordered_set<StmtId> stmts1 = database.stmtTable.getStmtsByType(StmtType::ASSIGN);
             std::unordered_set<StmtId> stmts2 = database.patternKB.getAssignPatternStmts(arg2);
@@ -192,8 +197,9 @@ namespace PQL {
         ClauseResult evaluateAssignPatternClause(PKB::PKB& database, PatternClause clause,
             std::unordered_map<std::string, DesignEntity>& synonymTable) {
 
-            ArgType argType1 = clause.getArgs().first.first;
-            ArgType argType2 = clause.getArgs().second.first;
+            std::pair<Argument, Argument> args = clause.getArgs();
+            ArgType argType1 = args.first.type;
+            ArgType argType2 = args.second.type;
 
             if (argType1 == ArgType::WILDCARD && argType2 == ArgType::WILDCARD) {
                 // 2 wildcards

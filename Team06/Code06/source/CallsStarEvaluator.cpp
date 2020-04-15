@@ -1,6 +1,7 @@
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
+#include <utility>
 
 #include "CallsStarEvaluator.h"
 #include "LoggingUtils.h"
@@ -17,8 +18,9 @@ namespace PQL {
         * @return   The result of the evaluation.
         */
         ClauseResult evaluateCallsStarClauseIdId(PKB::PKB& database, RelationClause clause) {
-            ProcId arg1 = database.procTable.getProcId(clause.getArgs().first.second);
-            ProcId arg2 = database.procTable.getProcId(clause.getArgs().second.second);
+            std::pair<Argument, Argument> args = clause.getArgs();
+            ProcId arg1 = database.procTable.getProcId(args.first.value);
+            ProcId arg2 = database.procTable.getProcId(args.second.value);
 
             if (database.callsKB.callStar(arg1, arg2)) {
                 ClauseResultEntry resultEntry;
@@ -54,12 +56,13 @@ namespace PQL {
         * @return   The result of the evaluation.
         */
         ClauseResult evaluateCallsStarClauseIdWild(PKB::PKB& database, RelationClause clause) {
-            ArgType argType1 = clause.getArgs().first.first;
-            ArgType argType2 = clause.getArgs().second.first;
+            std::pair<Argument, Argument> args = clause.getArgs();
+            ArgType argType1 = args.first.type;
+            ArgType argType2 = args.second.type;
 
             if (argType1 == ArgType::IDENTIFIER && argType2 == ArgType::WILDCARD) {
                 // Case 1: Identifier, Wildcard
-                ProcId arg1 = database.procTable.getProcId(clause.getArgs().first.second);
+                ProcId arg1 = database.procTable.getProcId(args.first.value);
                 if (database.callsKB.hasCallee(arg1)) {
                     ClauseResultEntry resultEntry;
                     resultEntry["_RESULT"] = "TRUE";
@@ -69,7 +72,7 @@ namespace PQL {
                 }
             } else {
                 // Case 2: Wildcard, Identifier
-                ProcId arg2 = database.procTable.getProcId(clause.getArgs().second.second);
+                ProcId arg2 = database.procTable.getProcId(args.second.value);
                 if (database.callsKB.hasCaller(arg2) != 0) {
                     ClauseResultEntry resultEntry;
                     resultEntry["_RESULT"] = "TRUE";
@@ -90,13 +93,15 @@ namespace PQL {
         */
         ClauseResult evaluateCallsStarClauseIdSyn(PKB::PKB& database, RelationClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable) {
-            ArgType argType1 = clause.getArgs().first.first;
-            ArgType argType2 = clause.getArgs().second.first;
+
+            std::pair<Argument, Argument> args = clause.getArgs();
+            ArgType argType1 = args.first.type;
+            ArgType argType2 = args.second.type;
 
             if (argType1 == ArgType::IDENTIFIER && argType2 == ArgType::SYNONYM) {
                 // Case 1: Identifier, Synonym
-                ProcId arg1 = database.procTable.getProcId(clause.getArgs().first.second);
-                Synonym arg2 = clause.getArgs().second.second;
+                ProcId arg1 = database.procTable.getProcId(args.first.value);
+                Synonym arg2 = args.second.value;
 
                 std::unordered_set<StmtId> allCallees = database.callsKB.getAllNodes(arg1, NodeType::SUCCESSOR);
                 ClauseResult clauseResult;
@@ -108,8 +113,8 @@ namespace PQL {
                 return clauseResult;
             } else {
                 // Case 2: Synonym, Integer
-                Synonym arg1 = clause.getArgs().first.second;
-                ProcId arg2 = database.procTable.getProcId(clause.getArgs().second.second);
+                Synonym arg1 = args.first.value;
+                ProcId arg2 = database.procTable.getProcId(args.second.value);
 
                 std::unordered_set<StmtId> allCallers = database.callsKB.getAllNodes(arg2, NodeType::PREDECESSOR);
                 ClauseResult clauseResult;
@@ -132,11 +137,13 @@ namespace PQL {
         */
         ClauseResult evaluateCallsStarClauseWildSyn(PKB::PKB& database, RelationClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable) {
-            ArgType argType1 = clause.getArgs().first.first;
-            ArgType argType2 = clause.getArgs().second.first;
+
+            std::pair<Argument, Argument> args = clause.getArgs();
+            ArgType argType1 = args.first.type;
+            ArgType argType2 = args.second.type;
 
             if (argType1 == ArgType::WILDCARD && argType2 == ArgType::SYNONYM) {
-                Synonym arg2 = clause.getArgs().second.second;
+                Synonym arg2 = args.second.value;
 
                 // Case 1: Wildcard, Synonym
                 std::unordered_set<ProcId> callees = database.callsKB.getAllCallees();
@@ -149,7 +156,7 @@ namespace PQL {
                 }
                 return clauseResult;
             } else {
-                Synonym arg1 = clause.getArgs().first.second;
+                Synonym arg1 = args.first.value;
 
                 // Case 2: Synonym, Wildcard
                 std::unordered_set<ProcId> callers = database.callsKB.getAllCallers();
@@ -174,8 +181,10 @@ namespace PQL {
         */
         ClauseResult evaluateCallsStarClauseSynSyn(PKB::PKB& database, RelationClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable) {
-            Synonym arg1 = clause.getArgs().first.second;
-            Synonym arg2 = clause.getArgs().second.second;
+
+            std::pair<Argument, Argument> args = clause.getArgs();
+            Synonym arg1 = args.first.value;
+            Synonym arg2 = args.second.value;
 
             if (arg1 == arg2) {
                 // In SIMPLE, a procedure should not be able to call itself.
@@ -198,8 +207,9 @@ namespace PQL {
         ClauseResult evaluateCallsStarClause(PKB::PKB& database, RelationClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable) {
 
-            ArgType argType1 = clause.getArgs().first.first;
-            ArgType argType2 = clause.getArgs().second.first;
+            std::pair<Argument, Argument> args = clause.getArgs();
+            ArgType argType1 = args.first.type;
+            ArgType argType2 = args.second.type;
 
             if (argType1 == ArgType::IDENTIFIER && argType2 == ArgType::IDENTIFIER) {
                 // Two identifiers supplied

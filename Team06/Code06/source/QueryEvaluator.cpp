@@ -105,22 +105,22 @@ namespace PQL {
 
         // Construct set of all target synonyms
         std::unordered_set<Synonym> targetSynonyms;
-        for (Ref ref : query.targetEntities) {
-            targetSynonyms.insert(ref.first);
+        for (ReturnType ref : query.targetEntities) {
+            targetSynonyms.insert(ref.synonym);
         }
 
         // Evaluate Relation Clauses
         for (RelationClause relation : query.relations) {
             clauseResults.emplace_back(evaluateRelationClause(relation, query.synonymTable));
             // Remove all present synonyms from target synonyms
-            std::pair<ArgType, std::string> arg1, arg2;
-            arg1 = relation.getArgs().first;
-            arg2 = relation.getArgs().second;
-            if (arg1.first == ArgType::SYNONYM) {
-                targetSynonyms.erase(arg1.second);
+            std::pair<Argument, Argument> args = relation.getArgs();
+            Argument arg1 = args.first;
+            Argument arg2 = args.second;
+            if (arg1.type == ArgType::SYNONYM) {
+                targetSynonyms.erase(arg1.value);
             }
-            if (arg2.first == ArgType::SYNONYM) {
-                targetSynonyms.erase(arg2.second);
+            if (arg2.type == ArgType::SYNONYM) {
+                targetSynonyms.erase(arg2.value);
             }
         }
 
@@ -128,15 +128,15 @@ namespace PQL {
         for (PatternClause pattern : query.patterns) {
             clauseResults.emplace_back(evaluatePatternClause(pattern, query.synonymTable));
             // Remove all present synonyms from target synonyms
-            std::pair<ArgType, std::string> arg1, arg2;
-            arg1 = pattern.getArgs().first;
-            arg2 = pattern.getArgs().second;
-            targetSynonyms.erase(pattern.getSynonym());
-            if (arg1.first == ArgType::SYNONYM) {
-                targetSynonyms.erase(arg1.second);
+            std::pair<Argument, Argument> args = pattern.getArgs();
+            Argument arg1 = args.first;
+            Argument arg2 = args.second;
+            targetSynonyms.erase(pattern.getSynonym().value);
+            if (arg1.type == ArgType::SYNONYM) {
+                targetSynonyms.erase(arg1.value);
             }
-            if (arg2.first == ArgType::SYNONYM) {
-                targetSynonyms.erase(arg2.second);
+            if (arg2.type == ArgType::SYNONYM) {
+                targetSynonyms.erase(arg2.value);
             }
         }
 
@@ -144,14 +144,14 @@ namespace PQL {
         for (WithClause with : query.equalities) {
             clauseResults.emplace_back(evaluateWithClause(with, query.synonymTable));
             // Remove all present synonyms from target synonyms
-            std::pair<ArgType, Ref> arg1, arg2;
-            arg1 = with.getArgs().first;
-            arg2 = with.getArgs().second;
-            if (arg1.first == ArgType::SYNONYM) {
-                targetSynonyms.erase(arg1.second.first);
+            std::pair<Argument, Argument> args = with.getArgs();
+            Argument arg1 = args.first;
+            Argument arg2 = args.second;
+            if (arg1.type == ArgType::SYNONYM) {
+                targetSynonyms.erase(arg1.value);
             }
-            if (arg2.first == ArgType::SYNONYM) {
-                targetSynonyms.erase(arg2.second.first);
+            if (arg2.type == ArgType::SYNONYM) {
+                targetSynonyms.erase(arg2.value);
             }
         }
 
@@ -185,33 +185,33 @@ namespace PQL {
             SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::extractQueryResults: Empty Result!\n");
             return {};
         } else {
-            std::vector<Ref> &targets = query.targetEntities;
+            std::vector<ReturnType> &targets = query.targetEntities;
             ClauseResult finalResult;
             for (ClauseResultEntry resultEntry : combinedResult) {
                 ClauseResultEntry finalResultEntry;
-                for (Ref target : targets) {
-                    if (target.second == AttrType::NONE) {
-                        finalResultEntry[target.first] = resultEntry[target.first];
-                    } else if (target.second == AttrType::STMT_NUM) {
-                        finalResultEntry[target.first + ".stmt#"] = resultEntry[target.first];
-                    } else if (target.second == AttrType::VALUE) {
-                        finalResultEntry[target.first + ".value"] = resultEntry[target.first];
-                    } else if (target.second == AttrType::PROC_NAME) {
-                        if (query.synonymTable[target.first] == DesignEntity::PROCEDURE) {
-                            finalResultEntry[target.first + ".procName"] = resultEntry[target.first];
+                for (ReturnType target : targets) {
+                    if (target.attrType == AttrType::NONE) {
+                        finalResultEntry[target.synonym] = resultEntry[target.synonym];
+                    } else if (target.attrType == AttrType::STMT_NUM) {
+                        finalResultEntry[target.synonym + ".stmt#"] = resultEntry[target.synonym];
+                    } else if (target.attrType == AttrType::VALUE) {
+                        finalResultEntry[target.synonym + ".value"] = resultEntry[target.synonym];
+                    } else if (target.attrType == AttrType::PROC_NAME) {
+                        if (query.synonymTable[target.synonym] == DesignEntity::PROCEDURE) {
+                            finalResultEntry[target.synonym + ".procName"] = resultEntry[target.synonym];
                         } else {
-                            CallStmt *callStmt = dynamic_cast<CallStmt*>(database.stmtTable.get(std::stoi(resultEntry[target.first])).get());
-                            finalResultEntry[target.first + ".procName"] = callStmt->getProc();
+                            CallStmt *callStmt = dynamic_cast<CallStmt*>(database.stmtTable.get(std::stoi(resultEntry[target.synonym])).get());
+                            finalResultEntry[target.synonym + ".procName"] = callStmt->getProc();
                         }
-                    } else if (target.second == AttrType::VAR_NAME) {
-                        if (query.synonymTable[target.first] == DesignEntity::READ) {
-                            ReadStmt* readStmt = dynamic_cast<ReadStmt*>(database.stmtTable.get(std::stoi(resultEntry[target.first])).get());
-                            finalResultEntry[target.first + ".varName"] = database.varTable.get(readStmt->getVar());
-                        } else if (query.synonymTable[target.first] == DesignEntity::PRINT) {
-                            PrintStmt* printStmt = dynamic_cast<PrintStmt*>(database.stmtTable.get(std::stoi(resultEntry[target.first])).get());
-                            finalResultEntry[target.first + ".varName"] = database.varTable.get(printStmt->getVar());
+                    } else if (target.attrType == AttrType::VAR_NAME) {
+                        if (query.synonymTable[target.synonym] == DesignEntity::READ) {
+                            ReadStmt* readStmt = dynamic_cast<ReadStmt*>(database.stmtTable.get(std::stoi(resultEntry[target.synonym])).get());
+                            finalResultEntry[target.synonym + ".varName"] = database.varTable.get(readStmt->getVar());
+                        } else if (query.synonymTable[target.synonym] == DesignEntity::PRINT) {
+                            PrintStmt* printStmt = dynamic_cast<PrintStmt*>(database.stmtTable.get(std::stoi(resultEntry[target.synonym])).get());
+                            finalResultEntry[target.synonym + ".varName"] = database.varTable.get(printStmt->getVar());
                         } else {
-                            finalResultEntry[target.first + ".varName"] = resultEntry[target.first];
+                            finalResultEntry[target.synonym + ".varName"] = resultEntry[target.synonym];
                         }
                     }
                 }
