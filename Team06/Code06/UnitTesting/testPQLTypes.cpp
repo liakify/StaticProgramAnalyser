@@ -10,6 +10,40 @@ namespace UnitTesting {
 
     TEST_CLASS(TestPQLTypes) {
     public:
+        TEST_METHOD(returnTypeEquality) {
+            PQL::ReturnType target = { "rd", PQL::UNSET_SYNONYM_ID, AttrType::NONE };
+            PQL::ReturnType target2 = { "rd", PQL::UNSET_SYNONYM_ID, AttrType::NONE };
+
+            Assert::IsTrue(target == target);
+            Assert::IsTrue(target == target2);
+
+            PQL::ReturnType diffSynonym = { "r", PQL::UNSET_SYNONYM_ID, AttrType::NONE };
+            PQL::ReturnType diffSynonymId = { "rd", 0, AttrType::NONE };
+            PQL::ReturnType diffAttrType = { "rd", PQL::UNSET_SYNONYM_ID, AttrType::VAR_NAME };
+
+            Assert::IsFalse(target == diffSynonym);
+            Assert::IsFalse(target == diffSynonymId);
+            Assert::IsFalse(target == diffAttrType);
+        }
+
+        TEST_METHOD(argumentEquality) {
+            PQL::Argument arg = { ArgType::SYNONYM, "l", PQL::UNSET_SYNONYM_ID, AttrType::NONE };
+            PQL::Argument arg2 = { ArgType::SYNONYM, "l", PQL::UNSET_SYNONYM_ID, AttrType::NONE };
+
+            Assert::IsTrue(arg == arg);
+            Assert::IsTrue(arg == arg2);
+
+            PQL::Argument diffType = { ArgType::IDENTIFIER, "l", PQL::UNSET_SYNONYM_ID, AttrType::NONE };
+            PQL::Argument diffValue = { ArgType::SYNONYM, "l2", PQL::UNSET_SYNONYM_ID, AttrType::NONE };
+            PQL::Argument diffSynonymId = { ArgType::SYNONYM, "l", 3203, AttrType::NONE };
+            PQL::Argument diffAttrType = { ArgType::SYNONYM, "l", PQL::UNSET_SYNONYM_ID, AttrType::INVALID };
+
+            Assert::IsFalse(arg == diffType);
+            Assert::IsFalse(arg == diffValue);
+            Assert::IsFalse(arg == diffSynonymId);
+            Assert::IsFalse(arg == diffAttrType);
+        }
+
         TEST_METHOD(relationClauseEquality) {
             PQL::RelationClause relation = { "Modifies(w, \"i\")", RelationType::MODIFIESS,
                 { ArgType::SYNONYM, "w", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
