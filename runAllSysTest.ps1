@@ -93,9 +93,15 @@ $list_of_test_files = @(
 
   # STAGED TESTS
   '..\mixed_0'
+  '..\performance600_single'
+  '..\performance600_chainedNext'
   
-  # ONLY MODIFY THE BELOW
+  # TESTS BELOW CURRENTLY FAIL / TIMEOUT
   # '..\nextStar_tle'
+  # '..\performance600_chainedNextStar'
+  # '..\performance600_chainedAffects'
+  # '..\performance600_chainedAffectsStar'
+  # '..\performance600_nextStar+AffectsStar+Tuple'
 )
 
 $list_of_no_xml_tests = @(

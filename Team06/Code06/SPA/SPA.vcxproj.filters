@@ -131,6 +131,7 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\source\ContainsKB.cpp">
+    <ClCompile Include="..\source\QueryOptimiser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -274,6 +275,7 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\source\ContainsKB.h">
+    <ClInclude Include="..\source\QueryOptimiser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
