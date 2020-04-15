@@ -253,8 +253,6 @@ namespace FrontEnd {
         std::unordered_set<StmtId> neighbours = pkb->affectsGetDirectNodes(curr, type);
 
         for (StmtId n : neighbours) {
-
-
             // Add bi-directional edge first before cycle check for Affects*(s, s)
             if (type == NodeType::SUCCESSOR) {
                 pkb->addAffectsStar(root, n);
