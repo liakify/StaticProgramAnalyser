@@ -20,13 +20,13 @@ namespace PQL {
             ProcId arg1 = database.procTable.getProcId(clause.getArgs().first.second);
             ProcId arg2 = database.procTable.getProcId(clause.getArgs().second.second);
 
+            ClauseResult clauseResult;
             if (database.callsKB.calls(arg1, arg2)) {
-                ClauseResultEntry resultEntry;
-                resultEntry["_RESULT"] = "TRUE";
-                return { resultEntry };
+                clauseResult.trueResult = true;
             } else {
-                return {};
+                clauseResult.emptyResult = true;
             }
+            return clauseResult;
         }
 
         /**
@@ -37,13 +37,13 @@ namespace PQL {
         */
         ClauseResult evaluateCallsClauseWildWild(PKB::PKB& database) {
 
+            ClauseResult clauseResult;
             if (database.callsKB.hasCallsRelation()) {
-                ClauseResultEntry resultEntry;
-                resultEntry["_RESULT"] = "TRUE";
-                return { resultEntry };
+                clauseResult.trueResult = true;
             } else {
-                return {};
+                clauseResult.emptyResult = true;
             }
+            return clauseResult;
         }
 
         /**
@@ -60,23 +60,23 @@ namespace PQL {
             if (argType1 == ArgType::IDENTIFIER && argType2 == ArgType::WILDCARD) {
                 // Case 1: Identifier, Wildcard
                 ProcId arg1 = database.procTable.getProcId(clause.getArgs().first.second);
+                ClauseResult clauseResult;
                 if (database.callsKB.hasCallee(arg1)) {
-                    ClauseResultEntry resultEntry;
-                    resultEntry["_RESULT"] = "TRUE";
-                    return { resultEntry };
+                    clauseResult.trueResult = true;
                 } else {
-                    return {};
+                    clauseResult.emptyResult = true;
                 }
+                return clauseResult;
             } else {
                 // Case 2: Wildcard, Identifier
                 ProcId arg2 = database.procTable.getProcId(clause.getArgs().second.second);
+                ClauseResult clauseResult;
                 if (database.callsKB.hasCaller(arg2) != 0) {
-                    ClauseResultEntry resultEntry;
-                    resultEntry["_RESULT"] = "TRUE";
-                    return { resultEntry };
+                    clauseResult.trueResult = true;
                 } else {
-                    return {};
+                    clauseResult.emptyResult = true;
                 }
+                return clauseResult;
             }
         }
 
@@ -98,12 +98,13 @@ namespace PQL {
                 ProcId arg1 = database.procTable.getProcId(clause.getArgs().first.second);
                 Synonym arg2 = clause.getArgs().second.second;
 
-                std::unordered_set<StmtId> directCallees = database.callsKB.getDirectNodes(arg1, NodeType::SUCCESSOR);
                 ClauseResult clauseResult;
+                clauseResult.syns.emplace_back(arg2);
+                std::unordered_set<StmtId> directCallees = database.callsKB.getDirectNodes(arg1, NodeType::SUCCESSOR);
                 for (ProcId callee : directCallees) {
                     ClauseResultEntry resultEntry;
-                    resultEntry[arg2] = database.procTable.get(callee).getName();
-                    clauseResult.emplace_back(resultEntry);
+                    resultEntry.emplace_back(database.procTable.get(callee).getName());
+                    clauseResult.rows.emplace_back(resultEntry);
                 }
                 return clauseResult;
             } else {
@@ -111,12 +112,13 @@ namespace PQL {
                 Synonym arg1 = clause.getArgs().first.second;
                 ProcId arg2 = database.procTable.getProcId(clause.getArgs().second.second);
 
-                std::unordered_set<StmtId> directCallers = database.callsKB.getDirectNodes(arg2, NodeType::PREDECESSOR);
                 ClauseResult clauseResult;
+                clauseResult.syns.emplace_back(arg1);
+                std::unordered_set<StmtId> directCallers = database.callsKB.getDirectNodes(arg2, NodeType::PREDECESSOR);
                 for (ProcId caller : directCallers) {
                     ClauseResultEntry resultEntry;
-                    resultEntry[arg1] = database.procTable.get(caller).getName();
-                    clauseResult.emplace_back(resultEntry);
+                    resultEntry.emplace_back(database.procTable.get(caller).getName());
+                    clauseResult.rows.emplace_back(resultEntry);
                 }
                 return clauseResult;
             }
@@ -139,26 +141,26 @@ namespace PQL {
                 Synonym arg2 = clause.getArgs().second.second;
 
                 // Case 1: Wildcard, Synonym
+                ClauseResult clauseResult;
+                clauseResult.syns.emplace_back(arg2);
                 std::unordered_set<ProcId> callees = database.callsKB.getAllCallees();
-
-                ClauseResult clauseResult = {};
                 for (ProcId callee : callees) {
                     ClauseResultEntry resultEntry;
-                    resultEntry[arg2] = database.procTable.get(callee).getName();
-                    clauseResult.emplace_back(resultEntry);
+                    resultEntry.emplace_back(database.procTable.get(callee).getName());
+                    clauseResult.rows.emplace_back(resultEntry);
                 }
                 return clauseResult;
             } else {
                 Synonym arg1 = clause.getArgs().first.second;
 
                 // Case 2: Synonym, Wildcard
+                ClauseResult clauseResult;
+                clauseResult.syns.emplace_back(arg1);
                 std::unordered_set<ProcId> callers = database.callsKB.getAllCallers();
-
-                ClauseResult clauseResult = {};
                 for (ProcId caller : callers) {
                     ClauseResultEntry resultEntry;
-                    resultEntry[arg1] = database.procTable.get(caller).getName();
-                    clauseResult.emplace_back(resultEntry);
+                    resultEntry.emplace_back(database.procTable.get(caller).getName());
+                    clauseResult.rows.emplace_back(resultEntry);
                 }
                 return clauseResult;
             }
@@ -177,19 +179,33 @@ namespace PQL {
             Synonym arg1 = clause.getArgs().first.second;
             Synonym arg2 = clause.getArgs().second.second;
 
+            ClauseResult clauseResult;
             if (arg1 == arg2) {
                 // In SIMPLE, a procedure should not be able to call itself.
-                return {};
+                clauseResult.emptyResult = true;
+                return clauseResult;
             }
 
-            ClauseResult clauseResult = {};
+            if (arg1 < arg2) {
+                clauseResult.syns.emplace_back(arg1);
+                clauseResult.syns.emplace_back(arg2);
+            } else {
+                clauseResult.syns.emplace_back(arg2);
+                clauseResult.syns.emplace_back(arg1);
+            }
             for (ProcId caller = 1; caller <= database.procTable.size(); caller++) {
                 std::unordered_set<ProcId> callees = database.callsKB.getDirectNodes(caller, NodeType::SUCCESSOR);
                 for (ProcId callee : callees) {
                     ClauseResultEntry resultEntry;
-                    resultEntry[arg1] = database.procTable.get(caller).getName();
-                    resultEntry[arg2] = database.procTable.get(callee).getName();
-                    clauseResult.emplace_back(resultEntry);
+                    if (arg1 < arg2) {
+                        resultEntry.emplace_back(database.procTable.get(caller).getName());
+                        resultEntry.emplace_back(database.procTable.get(callee).getName());
+                    } else {
+                        resultEntry.emplace_back(database.procTable.get(callee).getName());
+                        resultEntry.emplace_back(database.procTable.get(caller).getName());
+                    }
+                    
+                    clauseResult.rows.emplace_back(resultEntry);
                 }
             }
             return clauseResult;
