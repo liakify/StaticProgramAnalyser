@@ -279,6 +279,92 @@ namespace UnitTesting {
             Assert::IsTrue(equalityIdent.getWithType() == WithType::IDENTIFIER_EQUAL);
         }
 
+        TEST_METHOD(synonymIdSetters) {
+            PQL::RelationClause relationSynInt = { "Affects*(l, 16)", RelationType::AFFECTST,
+                { ArgType::SYNONYM, "l", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                { ArgType::INTEGER, "16", PQL::NON_SYNONYM_ID, AttrType::INVALID } };
+            PQL::RelationClause relationIdentSyn = { "Uses(\"main\", v)", RelationType::USESP,
+                { ArgType::IDENTIFIER, "f", PQL::NON_SYNONYM_ID, AttrType::INVALID },
+                { ArgType::SYNONYM, "v", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } };
+            PQL::RelationClause relationIntWild = { "Follows(1, _)", RelationType::FOLLOWS,
+                { ArgType::INTEGER, "1", PQL::NON_SYNONYM_ID, AttrType::INVALID },
+                { ArgType::WILDCARD, "_", PQL::NON_SYNONYM_ID, AttrType::INVALID } };
+            PQL::RelationClause relationWildIdent = { "Calls(_, \"f\")", RelationType::CALLS,
+                { ArgType::WILDCARD, "_", PQL::NON_SYNONYM_ID, AttrType::INVALID },
+                { ArgType::IDENTIFIER, "f", PQL::NON_SYNONYM_ID, AttrType::INVALID } };
+
+            Assert::IsFalse(relationSynInt.setFirstSynonymId(-3203));
+            Assert::IsTrue(relationSynInt.setFirstSynonymId(0));
+            Assert::IsFalse(relationSynInt.setFirstSynonymId(1));
+
+            Assert::IsFalse(relationIdentSyn.setSecondSynonymId(-1997));
+            Assert::IsTrue(relationIdentSyn.setSecondSynonymId(2));
+            Assert::IsFalse(relationIdentSyn.setSecondSynonymId(3));
+
+            Assert::IsFalse(relationSynInt.setSecondSynonymId(1101));
+            Assert::IsFalse(relationIdentSyn.setFirstSynonymId(1231));
+            Assert::IsFalse(relationIntWild.setFirstSynonymId(2030));
+            Assert::IsFalse(relationIntWild.setSecondSynonymId(2040));
+            Assert::IsFalse(relationWildIdent.setFirstSynonymId(2100));
+            Assert::IsFalse(relationWildIdent.setSecondSynonymId(2105));
+
+            PQL::PatternClause patternIdentExact = { "a1(\"i\", \"0\")", PatternType::ASSIGN_PATTERN,
+                { ArgType::SYNONYM, "a1", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                { ArgType::IDENTIFIER, "i", PQL::NON_SYNONYM_ID, AttrType::INVALID },
+                { ArgType::EXACT_PATTERN, "_0_", PQL::NON_SYNONYM_ID, AttrType::INVALID } };
+            PQL::PatternClause patternVarWild = { "a2(v, _)", PatternType::ASSIGN_PATTERN,
+                { ArgType::SYNONYM, "a2", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                { ArgType::SYNONYM, "v", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                { ArgType::WILDCARD, "_", PQL::NON_SYNONYM_ID, AttrType::INVALID } };
+            PQL::PatternClause patternWildInclusive = { "a3(_, _\"i + 1\"_)", PatternType::ASSIGN_PATTERN,
+                { ArgType::SYNONYM, "a3", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                { ArgType::WILDCARD, "_", PQL::NON_SYNONYM_ID, AttrType::INVALID },
+                { ArgType::INCLUSIVE_PATTERN, "_(i+1)_", PQL::NON_SYNONYM_ID, AttrType::INVALID } };
+
+            Assert::IsFalse(patternIdentExact.setPatternSynonymId(-995));
+            Assert::IsTrue(patternIdentExact.setPatternSynonymId(4));
+            Assert::IsFalse(patternIdentExact.setPatternSynonymId(5));
+
+            Assert::IsFalse(patternVarWild.setFirstSynonymId(-999));
+            Assert::IsTrue(patternVarWild.setFirstSynonymId(6));
+            Assert::IsFalse(patternVarWild.setFirstSynonymId(7));
+
+            Assert::IsFalse(patternIdentExact.setFirstSynonymId(2106));
+            Assert::IsFalse(patternWildInclusive.setFirstSynonymId(3203));
+
+            PQL::WithClause equalityIntSyn = { "369 = l", WithType::INTEGER_EQUAL,
+                { ArgType::INTEGER, "369", PQL::NON_SYNONYM_ID, AttrType::NONE },
+                { ArgType::SYNONYM, "l", PQL::UNSET_SYNONYM_ID, AttrType::NONE } };
+            PQL::WithClause equalitySynInt = { "pizzaHut = 62353535", WithType::INTEGER_EQUAL,
+                { ArgType::SYNONYM, "pizzaHut", PQL::UNSET_SYNONYM_ID, AttrType::NONE },
+                { ArgType::INTEGER, "62353535", PQL::NON_SYNONYM_ID, AttrType::NONE } };
+            PQL::WithClause equalityAttrIdent = { "show.procName = \"BROOKLYN99\"", WithType::IDENTIFIER_EQUAL,
+               { ArgType::ATTRIBUTE, "show", PQL::UNSET_SYNONYM_ID, AttrType::PROC_NAME },
+               { ArgType::IDENTIFIER, "BROOKLYN99", PQL::NON_SYNONYM_ID, AttrType::NONE } };
+            PQL::WithClause equalityIdentAttr = { "\"COVID19\" = kills.value", WithType::IDENTIFIER_EQUAL,
+               { ArgType::IDENTIFIER, "COVID19", PQL::NON_SYNONYM_ID, AttrType::NONE },
+               { ArgType::SYNONYM, "kills", PQL::UNSET_SYNONYM_ID, AttrType::VALUE } };
+
+            Assert::IsFalse(equalitySynInt.setLeftSynonymId(-314159));
+            Assert::IsTrue(equalitySynInt.setLeftSynonymId(6));
+            Assert::IsFalse(equalitySynInt.setLeftSynonymId(7));
+            Assert::IsFalse(equalityAttrIdent.setLeftSynonymId(-271828));
+            Assert::IsTrue(equalityAttrIdent.setLeftSynonymId(8));
+            Assert::IsFalse(equalityAttrIdent.setLeftSynonymId(9));
+
+            Assert::IsFalse(equalityIntSyn.setRightSynonymId(-404));
+            Assert::IsTrue(equalityIntSyn.setRightSynonymId(10));
+            Assert::IsFalse(equalityIntSyn.setRightSynonymId(11));
+            Assert::IsFalse(equalityIdentAttr.setRightSynonymId(-400));
+            Assert::IsTrue(equalityIdentAttr.setRightSynonymId(12));
+            Assert::IsFalse(equalityIdentAttr.setRightSynonymId(13));
+
+            Assert::IsFalse(equalitySynInt.setRightSynonymId(3210));
+            Assert::IsFalse(equalityIntSyn.setLeftSynonymId(3230));
+            Assert::IsFalse(equalityAttrIdent.setRightSynonymId(4231));
+            Assert::IsFalse(equalityIdentAttr.setLeftSynonymId(4232));
+        }
+
         TEST_METHOD(queryEquality) {
             std::string queryString = "prog_line l; assign a; while w; call cl; Select <w, a, cl.procName> such that Follows*(1, l) and Next*(a, w) and Parent(w, cl) pattern a(v, \"0\") and w(v, _) with cl.procName = \"solve\" and w.stmt# = l";
 
