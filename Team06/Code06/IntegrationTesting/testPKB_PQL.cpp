@@ -39,7 +39,7 @@ namespace IntegrationTesting {
         string query_relCond_Parent = "stmt s1, s2; Select s1 such that Parent(s1, s2)";
         string query_relCond_Follows = "stmt s1, s2; Select s1 such that Follows(s1, s2)";
         string query_relCond_Next = "prog_line n1, n2; Select n1 such that Next(n1, n2)";
-        string query_relCond_Affects = "assign a1, a2; Select a1 such that Affects(n1, n2)";
+        string query_relCond_Affects = "assign a1, a2; Select a1 such that Affects(a1, a2)";
 
         string query_patternCond_Assign = "assign a; Select a pattern a (_, _\"a\"_)";
         string query_patternCond_If = "if ifs; variable v; Select v pattern ifs (v, _, _)";
@@ -74,7 +74,7 @@ namespace IntegrationTesting {
         pkb.stmtListTable.insertStmtLst(StatementList(std::vector<StmtId>({ 1, 2, 3 }))); // StmtListId = 1
         pkb.stmtListTable.insertStmtLst(StatementList(std::vector<StmtId>({ 4 }))); // StmtListId = 2
         pkb.stmtListTable.insertStmtLst(StatementList(std::vector<StmtId>({ 5 }))); // StmtListId = 3
-        pkb.stmtListTable.insertStmtLst(StatementList(std::vector<StmtId>({ 6, 7 }))); // StmtListId = 4
+        pkb.stmtListTable.insertStmtLst(StatementList(std::vector<StmtId>({ 6, 7, 9}))); // StmtListId = 4
         pkb.stmtListTable.insertStmtLst(StatementList(std::vector<StmtId>({ 8 }))); // StmtListId = 5
 
         pkb.procTable.insertProc(Procedure("p", 1)); // ProcId = 1
@@ -88,6 +88,7 @@ namespace IntegrationTesting {
         pkb.stmtTable.insertStmt(std::shared_ptr<AssignStmt>(new AssignStmt(3, expr_3))); // StmtId = 6
         pkb.stmtTable.insertStmt(std::shared_ptr<WhileStmt>(new WhileStmt(cond_z_greater_0, 5))); // StmtId = 7
         pkb.stmtTable.insertStmt(std::shared_ptr<AssignStmt>(new AssignStmt(3, expr_x_plus_a))); // StmtId = 8
+        pkb.stmtTable.insertStmt(std::shared_ptr<AssignStmt>(new AssignStmt(3, expr_z))); //StmtId = 9
 
         pkb.followsKB.addFollows(1, 2);
         pkb.followsKB.addFollows(2, 3);
@@ -109,6 +110,7 @@ namespace IntegrationTesting {
         pkb.usesKB.addStmtUses(7, 4);
         pkb.usesKB.addStmtUses(8, 1);
         pkb.usesKB.addStmtUses(8, 4);
+        pkb.usesKB.addStmtUses(9, 3);
         pkb.usesKB.addProcUses(1, 1);
         pkb.usesKB.addProcUses(1, 2);
         pkb.usesKB.addProcUses(1, 4);
@@ -124,9 +126,11 @@ namespace IntegrationTesting {
         pkb.modifiesKB.addStmtModifies(6, 3);
         pkb.modifiesKB.addStmtModifies(7, 3);
         pkb.modifiesKB.addStmtModifies(8, 3);
+        pkb.modifiesKB.addStmtModifies(9, 2);
         pkb.modifiesKB.addProcModifies(1, 1);
         pkb.modifiesKB.addProcModifies(1, 2);
         pkb.modifiesKB.addProcModifies(1, 3);
+        pkb.modifiesKB.addProcModifies(2, 2);
         pkb.modifiesKB.addProcModifies(2, 3);
 
         pkb.addNext(1, 2);
@@ -135,6 +139,8 @@ namespace IntegrationTesting {
         pkb.addNext(3, 5);
         pkb.addNext(6, 7);
         pkb.addNext(7, 8);
+        pkb.addNext(7, 9);
+        pkb.addNext(8, 7);
 
         pkb.callsKB.addCalls(1, 2);
 
@@ -150,6 +156,8 @@ namespace IntegrationTesting {
         pkb.patternKB.addAssignPattern("_(x+a)_", 8);
         pkb.patternKB.addAssignPattern("_a_", 8);
         pkb.patternKB.addAssignPattern("_x_", 8);
+        pkb.patternKB.addAssignPattern(expr_z.getStr(), 9);
+        pkb.patternKB.addAssignPattern("_z_", 9);
         pkb.patternKB.addIfPattern(1, 3);
         pkb.patternKB.addIfPattern(2, 3);
         pkb.patternKB.addWhilePattern(3, 7);
@@ -159,7 +167,7 @@ namespace IntegrationTesting {
 
     TEST_METHOD(evaluateQuery) {
         pql.evaluateQuery(query_selectDesignEntity_STMT, results);
-        Assert::IsTrue(results == std::list<string>({ "1", "2", "3", "4", "5", "6", "7", "8" }));
+        Assert::IsTrue(results == std::list<string>({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }));
         results.clear();
 
         pql.evaluateQuery(query_selectDesignEntity_READ, results);
@@ -183,7 +191,7 @@ namespace IntegrationTesting {
         results.clear();
 
         pql.evaluateQuery(query_selectDesignEntity_ASSIGN, results);
-        Assert::IsTrue(results == std::list<string>({ "4", "6", "8" }));
+        Assert::IsTrue(results == std::list<string>({ "4", "6", "8", "9" }));
         results.clear();
 
         pql.evaluateQuery(query_selectDesignEntity_VAR, results);
@@ -195,7 +203,7 @@ namespace IntegrationTesting {
         results.clear();
 
         pql.evaluateQuery(query_selectDesignEntity_PROGLINE, results);
-        Assert::IsTrue(results == std::list<string>({ "1", "2", "3", "4", "5", "6", "7", "8" }));
+        Assert::IsTrue(results == std::list<string>({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }));
         results.clear();
 
         pql.evaluateQuery(query_selectDesignEntity_PROC, results);
@@ -207,7 +215,7 @@ namespace IntegrationTesting {
         results.clear();
 
         pql.evaluateQuery(query_relCond_ModifiesS, results);
-        Assert::IsTrue(results == std::list<string>({ "4", "6", "8" }));
+        Assert::IsTrue(results == std::list<string>({ "4", "6", "8", "9" }));
         results.clear();
 
         pql.evaluateQuery(query_relCond_UsesP, results);
@@ -215,7 +223,7 @@ namespace IntegrationTesting {
         results.clear();
 
         pql.evaluateQuery(query_relCond_UsesS, results);
-        Assert::IsTrue(results == std::list<string>({ "4", "8" }));
+        Assert::IsTrue(results == std::list<string>({ "4", "8", "9" }));
         results.clear();
 
         pql.evaluateQuery(query_relCond_Calls, results);
@@ -231,12 +239,12 @@ namespace IntegrationTesting {
         results.clear();
 
         pql.evaluateQuery(query_relCond_Next, results);
-        Assert::IsTrue(results == std::list<string>({ "1", "2", "3", "6", "7" }));
+        Assert::IsTrue(results == std::list<string>({ "1", "2", "3", "6", "7", "8" }));
         results.clear();
 
-        //pql.evaluateQuery(query_relCond_Affects, results);
-        //Assert::IsTrue(results == std::list<string>({}));
-        //results.clear();
+        pql.evaluateQuery(query_relCond_Affects, results);
+        Assert::IsTrue(results == std::list<string>({ "6", "8" }));
+        results.clear();
 
         pql.evaluateQuery(query_patternCond_Assign, results);
         Assert::IsTrue(results == std::list<string>({ "8" }));
