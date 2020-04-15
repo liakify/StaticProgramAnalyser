@@ -17,17 +17,31 @@ comment_invalid_args = " - invalid: argument type"
 
 suchthatclauses = ['Follows ', 'Follows*', 'Parent ', 'Parent*']
 
-designEntities = {"stmt": 's', 
+designEntities = {
+  "stmt": 's', 
   "read" : 'r',
- "print" : 'pn',
- "call": 'c',
+  "print" : 'pn',
+  "call": 'c',
   "while" : 'w',
   "if": 'ifs',
-# "assign" : 'a',
- "variable": 'v',
+  "assign" : 'a',
+  "variable": 'v',
+  "constant": 'cn',
+  # "procedure" : 'p',
+  "prog_line": 'pl'
+  }
+designEntities2 = {
+  # "stmt": 's', 
+  # "read" : 'r',
+  # "print" : 'pn',
+  # "call": 'c',
+  # "while" : 'w',
+  # "if": 'ifs',
+  # "assign" : 'a',
+  "variable": 'v',
   "constant": 'cn',
   "procedure" : 'p',
-   "prog_line": 'pl'
+  # "prog_line": 'pl'
    }
 
 relRef = ["Follows", "Follows*", "Parent", "Parent*",
@@ -39,28 +53,18 @@ attrNames = ["stmt#", "procName", "varName", "value"]
 for de in designEntities:
   query = comment_invalid_args + '\n'
   query += de + ' ' + designEntities[de] + ';' + '\n'
-  query += sel + bol + ' ' + suchthat + 'Affects*(' + designEntities[de] + ', _)' + '\n'
-  query += "\n"
-  query += "5000" + '\n'
-  query += comment_invalid_args + '\n'
-  query += de + ' ' + designEntities[de] + ';' + '\n'
-  query += sel + bol + ' ' + suchthat + 'Affects*(_, ' + designEntities[de] + ')' + '\n'
+  query += sel + bol + ' ' + suchthat + 'Contains (' + designEntities[de] + ', _)' + '\n'
   query += "\n"
   query += "5000"
+  print(query)
 
-  # if (de != 'variable'):
-  #   query = comment_invalid_args + '\n'
-  #   query += de + ' ' + designEntities[de] + '; if ifs;' + '\n'
-  #   query += sel + designEntities[de] + ' ' + suchthat + 'pattern ifs ' + '('+ designEntities[de] + ', _, _)' + '\n'
-  #   query += "\n"
-  #   # query += "5000" + '\n'
-  #   # query += comment_invalid_args + '\n'
-  #   # query += de + ' ' + designEntities[de] + '; if ifs;' + '\n'
-  #   # query += sel + designEntities[de] + ' ' + suchthat + 'pattern ifs ' + '(_, '+ designEntities[de] + ')' + '\n'
-  #   # query += "\n"
-  #   query += "5000"
-  
-  # print(query)
+for de in designEntities2:
+  query = comment_invalid_args + '\n'
+  query += de + ' ' + designEntities2[de] + ';' + '\n'
+  query += sel + bol + ' ' + suchthat + 'Contains (_, ' + designEntities2[de] + ')' + '\n'
+  query += "\n"
+  query += "5000"
+  print(query)
 
 
 # answer = ""
@@ -68,5 +72,5 @@ for de in designEntities:
 #   answer += str(x) + ", "
 # print(answer)
 
-unsorted = list(int(i) for i in argv[1].split(','))
-print(sorted(unsorted))
+# unsorted = list(int(i) for i in argv[1].split(','))
+# print(sorted(unsorted))

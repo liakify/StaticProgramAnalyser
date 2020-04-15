@@ -1,0 +1,85 @@
+1 - invalid: argument type
+stmt s;
+Select BOOLEAN such that Contains (s, _)
+
+5000
+2 - invalid: argument type
+read r;
+Select BOOLEAN such that Contains (r, _)
+
+5000
+3 - invalid: argument type
+print pn;
+Select BOOLEAN such that Contains (pn, _)
+
+5000
+4 - invalid: argument type
+call c;
+Select BOOLEAN such that Contains (c, _)
+
+5000
+5 - invalid: argument type
+while w;
+Select BOOLEAN such that Contains (w, _)
+
+5000
+6 - invalid: argument type
+if ifs;
+Select BOOLEAN such that Contains (ifs, _)
+
+5000
+7 - invalid: argument type
+assign a;
+Select BOOLEAN such that Contains (a, _)
+
+5000
+8 - invalid: argument type
+variable v;
+Select BOOLEAN such that Contains (v, _)
+
+5000
+9 - invalid: argument type
+constant cn;
+Select BOOLEAN such that Contains (cn, _)
+
+5000
+10 - invalid: argument type
+prog_line pl;
+Select BOOLEAN such that Contains (pl, _)
+
+5000
+11 - invalid: argument type
+variable v;
+Select BOOLEAN such that Contains (_, v)
+
+5000
+12 - invalid: argument type
+constant cn;
+Select BOOLEAN such that Contains (_, cn)
+
+5000
+13 - invalid: argument type
+procedure p;
+Select BOOLEAN such that Contains (_, p)
+
+5000
+14 - invalid: argument type
+
+Select BOOLEAN such that Contains (1, 1)
+
+5000
+15 - invalid: argument type
+
+Select BOOLEAN such that Contains (1, _)
+
+5000
+16 - invalid: argument type
+
+Select BOOLEAN such that Contains (_, "NAME")
+
+5000
+17 - invalid: argument type
+
+Select BOOLEAN such that Contains ("NAME", "NAME")
+
+5000
