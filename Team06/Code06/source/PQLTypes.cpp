@@ -6,6 +6,16 @@ using std::vector;
 
 namespace PQL {
 
+    bool ReturnType::operator==(const ReturnType& other) const {
+        return this->synonym == other.synonym && this->synonymId == other.synonymId &&
+            this->attrType == other.attrType;
+    }
+
+    bool Argument::operator==(const Argument& other) const {
+        return this->type == other.type && this->value == other.value &&
+            this->synonymId == other.synonymId && this->attrType == other.attrType;
+    }
+
     Clause::Clause(string clause, ClauseType clauseType)
         : clause(clause), clauseType(clauseType) {
     }
@@ -23,7 +33,7 @@ namespace PQL {
     }
 
     RelationClause::RelationClause(string clause, RelationType type,
-        pair<ArgType, StmtEntRef> firstArg, pair<ArgType, StmtEntRef> secondArg)
+        Argument firstArg, Argument secondArg)
         : Clause(clause, ClauseType::RELATION), type(type), firstArg(firstArg), secondArg(secondArg) {
     }
 
@@ -49,19 +59,19 @@ namespace PQL {
         return this->type;
     }
 
-    pair<pair<ArgType, StmtEntRef>, pair<ArgType, StmtEntRef>> RelationClause::getArgs() {
+    pair<Argument, Argument> RelationClause::getArgs() {
         return { this->firstArg, this->secondArg };
     }
 
-    PatternClause::PatternClause(string clause, PatternType type, string synonym,
-        pair<ArgType, EntityRef> targetArg, pair<ArgType, Pattern> patternArg)
-        : Clause(clause, ClauseType::PATTERN), type(type), synonym(synonym),
+    PatternClause::PatternClause(string clause, PatternType type, Argument synonymArg,
+        Argument targetArg, Argument patternArg)
+        : Clause(clause, ClauseType::PATTERN), type(type), synonymArg(synonymArg),
             targetArg(targetArg), patternArg(patternArg) {
     }
 
     bool PatternClause::operator==(const PatternClause& other) const {
         return Clause::operator==(other) &&
-            this->type == other.type && this->synonym == other.synonym &&
+            this->type == other.type && this->synonymArg == other.synonymArg &&
             this->targetArg == other.targetArg && this->patternArg == other.patternArg;
     }
 
@@ -69,16 +79,15 @@ namespace PQL {
         return this->type;
     }
 
-    string PatternClause::getSynonym() {
-        return this->synonym;
+    Argument PatternClause::getSynonym() {
+        return this->synonymArg;
     }
 
-    pair<pair<ArgType, EntityRef>, pair<ArgType, Pattern>> PatternClause::getArgs() {
+    pair<Argument, Argument> PatternClause::getArgs() {
         return { this->targetArg, this->patternArg };
     }
 
-    WithClause::WithClause(string clause, WithType type,
-        pair<ArgType, Ref> leftArg, pair<ArgType, Ref> rightArg)
+    WithClause::WithClause(string clause, WithType type, Argument leftArg, Argument rightArg)
         : Clause(clause, ClauseType::WITH), type(type), leftArg(leftArg), rightArg(rightArg) {
     }
 
@@ -100,7 +109,7 @@ namespace PQL {
         return this->type;
     }
 
-    pair<pair<ArgType, Ref>, pair<ArgType, Ref>> WithClause::getArgs() {
+    pair<Argument, Argument> WithClause::getArgs() {
         return { this->leftArg, this->rightArg };
     }
 
