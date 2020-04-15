@@ -11,6 +11,13 @@ namespace PQL {
             this->attrType == other.attrType;
     }
 
+    bool ReturnType::operator<(const ReturnType& other) const {
+        // Compare two return types lexicographically by synonym, breaking ties by attribute type
+        return this->synonym != other.synonym
+            ? this->synonym < other.synonym
+            : this->attrType < other.attrType;
+    }
+
     bool Argument::operator==(const Argument& other) const {
         return this->type == other.type && this->value == other.value &&
             this->synonymId == other.synonymId && this->attrType == other.attrType;

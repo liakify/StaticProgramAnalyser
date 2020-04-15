@@ -26,6 +26,41 @@ namespace UnitTesting {
             Assert::IsFalse(target == diffAttrType);
         }
 
+        TEST_METHOD(returnTypeLessThan) {
+            PQL::ReturnType target = { "cl", PQL::UNSET_SYNONYM_ID, AttrType::NONE };
+
+            Assert::IsFalse(target < target);
+
+            PQL::ReturnType diffSynonymId = { "cl", 0, AttrType::NONE };
+
+            // Two return types with different synonym ID are not comparable
+            Assert::IsFalse(target < diffSynonymId);
+            Assert::IsFalse(diffSynonymId < target);
+
+            PQL::ReturnType ltSynonym1 = { "c", PQL::UNSET_SYNONYM_ID, AttrType::NONE };
+            PQL::ReturnType ltSynonym2 = { "ck", PQL::UNSET_SYNONYM_ID, AttrType::NONE };
+            PQL::ReturnType gtSynonym1 = { "cla", PQL::UNSET_SYNONYM_ID, AttrType::NONE };
+            PQL::ReturnType gtSynonym2 = { "cm", PQL::UNSET_SYNONYM_ID, AttrType::NONE };
+
+            Assert::IsFalse(target < ltSynonym1);
+            Assert::IsTrue(ltSynonym1 < ltSynonym2);
+            Assert::IsFalse(target < ltSynonym2);
+            Assert::IsTrue(target < gtSynonym1);
+            Assert::IsTrue(gtSynonym1 < gtSynonym2);
+            Assert::IsTrue(target < gtSynonym2);
+
+            PQL::ReturnType gtAttrType1 = { "cl", PQL::UNSET_SYNONYM_ID, AttrType::PROC_NAME };
+            PQL::ReturnType gtAttrType2 = { "cl", PQL::UNSET_SYNONYM_ID, AttrType::VAR_NAME };
+            PQL::ReturnType gtAttrType3 = { "cl", PQL::UNSET_SYNONYM_ID, AttrType::VALUE };
+            PQL::ReturnType gtAttrType4 = { "cl", PQL::UNSET_SYNONYM_ID, AttrType::STMT_NUM };
+
+            // Less than is a transitive relation
+            Assert::IsTrue(target < gtAttrType1);
+            Assert::IsTrue(gtAttrType1 < gtAttrType2);
+            Assert::IsTrue(gtAttrType2 < gtAttrType3);
+            Assert::IsTrue(gtAttrType3 < gtAttrType4);
+        }
+
         TEST_METHOD(argumentEquality) {
             PQL::Argument arg = { ArgType::SYNONYM, "l", PQL::UNSET_SYNONYM_ID, AttrType::NONE };
             PQL::Argument arg2 = { ArgType::SYNONYM, "l", PQL::UNSET_SYNONYM_ID, AttrType::NONE };

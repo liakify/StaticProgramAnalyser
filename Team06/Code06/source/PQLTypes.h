@@ -294,6 +294,7 @@ namespace PQL {
         int synonymId;
         AttrType attrType;
         bool operator==(const ReturnType& other) const;
+        bool operator<(const ReturnType& other) const;
     };
 
     /**
