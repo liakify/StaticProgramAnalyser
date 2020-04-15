@@ -60,6 +60,7 @@ namespace PQL {
                 if (database.modifiesKB.getAllVarsModifiedByStmt(arg1).size() > 0) {
                     clauseResult.trueResult = true;
                 }
+                return clauseResult;
             } else {
                 // Case 2: Procedure name provided
                 ProcId arg1 = database.procTable.getProcId(clause.getArgs().first.second);
@@ -67,8 +68,8 @@ namespace PQL {
                 if (database.modifiesKB.getAllVarsModifiedByProc(arg1).size() > 0) {
                     clauseResult.trueResult = true;
                 }
+                return clauseResult;
             }
-
         }
 
         /**

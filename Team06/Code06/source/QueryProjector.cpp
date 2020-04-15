@@ -4,7 +4,7 @@
 namespace PQL {
 
     void QueryProjector::formatResult(ClauseResult& result, PQL::Query& query, std::list<std::string>& resultList) {
-        // Use a set to remove duplicates
+
         std::unordered_set<std::string> uniqueResultSet;
 
         if (query.returnsBool) {
@@ -13,17 +13,17 @@ namespace PQL {
         }
 
         for (ClauseResultEntry& resultEntry : result.rows) {
-            std::stringstream s;
+            std::string s;
             bool first = true;
             for (std::string result : resultEntry) {
                 if (first) {
                     first = false;
                 } else {
-                    s << " ";
+                    s.append(" ");
                 }
-                s << result;
+                s.append(result);
             }
-            uniqueResultSet.insert(s.str());
+            uniqueResultSet.insert(s);
         }
 
         for (auto itr3 = uniqueResultSet.begin(); itr3 != uniqueResultSet.end(); ++itr3) {

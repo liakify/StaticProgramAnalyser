@@ -102,6 +102,9 @@ namespace PQL {
         // Maintain one ClauseResult structure for each group
         // +1 in case there are no groups at all
         std::vector<ClauseResult> clauseResults = std::vector<ClauseResult>(optQuery.groups.size() + 1);
+        
+        // To determine if each group should participate in inter-group merging
+        std::vector<bool> toMerge = std::vector<bool>(optQuery.groups.size() + 1, false);
 
         // Add table containing "TRUE" to every group
         for (ClauseResult& clauseResult : clauseResults) {
@@ -110,8 +113,10 @@ namespace PQL {
 
         // Construct set of all target synonyms
         std::unordered_set<Synonym> targetSynonyms;
+        std::unordered_set<Synonym> missingTargetSynonyms;
         for (Ref ref : query.targetEntities) {
             targetSynonyms.insert(ref.first);
+            missingTargetSynonyms.insert(ref.first);
         }
 
         // Evaluate clauses
@@ -126,10 +131,16 @@ namespace PQL {
                 arg1 = relation->getArgs().first;
                 arg2 = relation->getArgs().second;
                 if (arg1.first == ArgType::SYNONYM) {
-                    targetSynonyms.erase(arg1.second);
+                    missingTargetSynonyms.erase(arg1.second);
+                    if (targetSynonyms.find(arg1.second) != targetSynonyms.end()) {
+                        toMerge[optQuery.groups[i]] = true;
+                    }
                 }
                 if (arg2.first == ArgType::SYNONYM) {
-                    targetSynonyms.erase(arg2.second);
+                    missingTargetSynonyms.erase(arg2.second);
+                    if (targetSynonyms.find(arg2.second) != targetSynonyms.end()) {
+                        toMerge[optQuery.groups[i]] = true;
+                    }
                 }
             } else if (clause->getClauseType() == ClauseType::PATTERN) {
                 PatternClause* pattern = static_cast<PatternClause*>(clause);
@@ -138,12 +149,21 @@ namespace PQL {
                 std::pair<ArgType, std::string> arg1, arg2;
                 arg1 = pattern->getArgs().first;
                 arg2 = pattern->getArgs().second;
-                targetSynonyms.erase(pattern->getSynonym());
+                missingTargetSynonyms.erase(pattern->getSynonym());
+                if (targetSynonyms.find(pattern->getSynonym()) != targetSynonyms.end()) {
+                    toMerge[optQuery.groups[i]] = true;
+                }
                 if (arg1.first == ArgType::SYNONYM) {
-                    targetSynonyms.erase(arg1.second);
+                    missingTargetSynonyms.erase(arg1.second);
+                    if (targetSynonyms.find(arg1.second) != targetSynonyms.end()) {
+                        toMerge[optQuery.groups[i]] = true;
+                    }
                 }
                 if (arg2.first == ArgType::SYNONYM) {
-                    targetSynonyms.erase(arg2.second);
+                    missingTargetSynonyms.erase(arg2.second);
+                    if (targetSynonyms.find(arg2.second) != targetSynonyms.end()) {
+                        toMerge[optQuery.groups[i]] = true;
+                    }
                 }
             } else if (clause->getClauseType() == ClauseType::WITH) {
                 WithClause* with = static_cast<WithClause*>(clause);
@@ -153,10 +173,16 @@ namespace PQL {
                 arg1 = with->getArgs().first;
                 arg2 = with->getArgs().second;
                 if (arg1.first == ArgType::SYNONYM) {
-                    targetSynonyms.erase(arg1.second.first);
+                    missingTargetSynonyms.erase(arg1.second.first);
+                    if (targetSynonyms.find(arg1.second.first) != targetSynonyms.end()) {
+                        toMerge[optQuery.groups[i]] = true;
+                    }
                 }
                 if (arg2.first == ArgType::SYNONYM) {
-                    targetSynonyms.erase(arg2.second.first);
+                    missingTargetSynonyms.erase(arg2.second.first);
+                    if (targetSynonyms.find(arg2.second.first) != targetSynonyms.end()) {
+                        toMerge[optQuery.groups[i]] = true;
+                    }
                 }
             }
 
@@ -166,6 +192,7 @@ namespace PQL {
             }
 
             // Merge this table with the intermediate table of the corresponding group
+            SPA::LoggingUtils::LogInfoMessage("Performing merge between tables of size %d and %d\n", result.rows.size(), clauseResults[optQuery.groups[i]].rows.size());
             clauseResults[optQuery.groups[i]] = combineTwoClauseResults(result, clauseResults[optQuery.groups[i]]);
 
             // If the merged table is empty, stop evaluation immediately
@@ -174,13 +201,22 @@ namespace PQL {
             }
         }
 
+        // Find all groups that should participate in inter-group merging
+        std::vector<ClauseResult> mergingGroups;
+        for (int i = 0; i < optQuery.clauses.size(); i++) {
+            if (toMerge[optQuery.groups[i]]) {
+                mergingGroups.emplace_back(clauseResults[optQuery.groups[i]]);
+                toMerge[optQuery.groups[i]] = false;
+            }
+        }
+
         // Merge a table for each synonym not present in any clause
-        for (Synonym synonym : targetSynonyms) {
-            clauseResults.emplace_back(getClauseResultWithAllValues(synonym, query.synonymTable[synonym]));
+        for (Synonym synonym : missingTargetSynonyms) {
+            mergingGroups.emplace_back(getClauseResultWithAllValues(synonym, query.synonymTable[synonym]));
         }
 
         // Combine all results
-        ClauseResult combinedResult = combineClauseResults(clauseResults);
+        ClauseResult combinedResult = combineClauseResults(mergingGroups);
 
         // Extract necessary results to answer query
         ClauseResult result = extractQueryResults(query, combinedResult);
@@ -215,7 +251,7 @@ namespace PQL {
             for (ClauseResultEntry& resultEntry : combinedResult.rows) {
                 ClauseResultEntry finalResultEntry(targets.size());
                 // Two pointers method to extract results
-                int j;
+                int j = 0;
                 for (int i = 0; i < mapper.size(); i++) {
                     while (combinedResult.syns[j] != mapper[i].first.first) {
                         j++;
@@ -340,6 +376,9 @@ namespace PQL {
                 }
             }
         }
+
+        std::sort(combinedResult.rows.begin(), combinedResult.rows.end());
+        combinedResult.rows.resize(std::distance(combinedResult.rows.begin(), std::unique(combinedResult.rows.begin(), combinedResult.rows.end())));
 
         return combinedResult;
     }
