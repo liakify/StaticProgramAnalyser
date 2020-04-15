@@ -65,6 +65,7 @@ namespace PQL {
     // Additional validation is performed during parsing of declarations, query body and clauses
     bool QueryParser::validateQuerySyntax(Query& query, vector<string> statements) {
         if (statements.size() == 1 && statements.at(0) == "") {
+            // SYNTAX ERROR: empty query string
             query.status = SYNTAX_ERR_EMPTY_QUERY;
             return false;
         }
@@ -136,6 +137,8 @@ namespace PQL {
 
             if (relationClass == RelationType::USESS || relationClass == RelationType::MODIFIESS ||
                 relationClass == RelationType::USESP || relationClass == RelationType::MODIFIESP) {
+                // Relation is between a variable and either a statement or procedure
+
                 // Validate the first argument assuming the statement variant of Uses/Modifies
                 if (args.first.first == ArgType::WILDCARD) {
                     // SEMANTIC ERROR: ill-defined wildcard argument
@@ -168,7 +171,7 @@ namespace PQL {
                     }
                 }
 
-                // Validate the second argument
+                // Validate the second argument if it is a synonym
                 if (args.second.first == ArgType::SYNONYM) {
                     auto synonymMapping = synonymTable.find(args.second.second);
                     if (synonymMapping == synonymTable.end()) {
@@ -197,6 +200,53 @@ namespace PQL {
                             query.status = SEMANTIC_ERR_CALLS_NON_PROCEDURE_SYNONYM;
                             return false;
                         }
+                    }
+                }
+            } else if (relationClass == RelationType::CONTAINS) {
+                // Relation is between a procedure and a statement
+
+                // Validate the first argument if it is a synonym
+                if (args.first.first == ArgType::SYNONYM) {
+                    auto synonymMapping = synonymTable.find(args.first.second);
+                    if (synonymMapping == synonymTable.end()) {
+                        // SEMANTIC ERROR: synonym referenced in Contains clause is undeclared
+                        query.status = SEMANTIC_ERR_CONTAINS_UNDECLARED_FIRST_SYNONYM;
+                        return false;
+                    } else if (synonymMapping->second != DesignEntity::PROCEDURE) {
+                        // SEMANTIC ERROR: design entity type error (non-PROCEDURE)
+                        query.status = SEMANTIC_ERR_CONTAINS_NON_PROCEDURE_FIRST_SYNONYM;
+                        return false;
+                    }
+                }
+
+                // Validate the second argument if it is an integer (statement number) or synonym
+                if (args.second.first == ArgType::INTEGER) {
+                    int lineNo;
+
+                    try {
+                        lineNo = stoi(args.second.second);
+                    } catch (const out_of_range&) {
+                        // SEMANTIC ERROR: statement or line number exceeds 32-bit limit
+                        query.status = SEMANTIC_ERR_CONTAINS_STMT_NUMBER_OVERFLOW;
+                        return false;
+                    }
+
+                    if (lineNo <= 0) {
+                        // SEMANTIC ERROR: statement or line number is not positive
+                        // Not possible to determine now if statement or line number exceeds length of program
+                        query.status = SEMANTIC_ERR_CONTAINS_NON_POSITIVE_STMT_NUMBER;
+                        return false;
+                    }
+                } else if (args.second.first == ArgType::SYNONYM) {
+                    auto synonymMapping = synonymTable.find(args.second.second);
+                    if (synonymMapping == synonymTable.end()) {
+                        // SEMANTIC ERROR: synonym referenced in Contains clause is undeclared
+                        query.status = SEMANTIC_ERR_CONTAINS_UNDECLARED_SECOND_SYNONYM;
+                        return false;
+                    } else if (find(NON_STMTS.begin(), NON_STMTS.end(), synonymMapping->second) != NON_STMTS.end()) {
+                        // SEMANTIC ERROR: design entity type error (not a STMT or any of its subtypes)
+                        query.status = SEMANTIC_ERR_CONTAINS_NON_STATEMENT_SECOND_SYNONYM;
+                        return false;
                     }
                 }
             } else {
@@ -235,7 +285,7 @@ namespace PQL {
                             return false;
                         } else if (find(NON_STMTS.begin(), NON_STMTS.end(), synonymMapping->second) != NON_STMTS.end()) {
                             // SEMANTIC ERROR: design entity type error (not a STMT or any of its subtypes)
-                            query.status = SEMANTIC_ERR_FPN_NON_STMT_SYNONYM;
+                            query.status = SEMANTIC_ERR_FPN_NON_STATEMENT_SYNONYM;
                             return false;
                         }
                     }
@@ -315,7 +365,7 @@ namespace PQL {
                     // First validate the synonym used in the attribute ref has been declared
                     auto synonymMapping = synonymTable.find(arg.second.first);
                     if (synonymMapping == synonymTable.end()) {
-                        // SEMANTIC ERROR: synonym appearing in attribute arg is undeclared
+                        // SEMANTIC ERROR: synonym referenced in attribute arg is undeclared
                         query.status = SEMANTIC_ERR_WITH_CLAUSE_UNDECLARED_SYNONYM_IN_ATTRIBUTE_ARG;
                         return false;
                     }
@@ -641,6 +691,7 @@ namespace PQL {
             case RelationType::CALLS:
                 // Fallthrough
             case RelationType::CALLST:
+                // Interpret and validate both arguments as entity references
                 if (!(QueryUtils::isValidEntityRef(arg1) && QueryUtils::isValidEntityRef(arg2))) {
                     // SYNTAX ERROR: at least one argument is not a valid entity reference
                     query.status = SYNTAX_ERR_CALLS_INVALID_ENT_REF;
@@ -673,6 +724,21 @@ namespace PQL {
                 } else {
                     relations.push_back({
                         clause, isNegated, relationClass, parseStmtRef(arg1), parseStmtRef(arg2)
+                    });
+                }
+                break;
+            case RelationType::CONTAINS:
+                // Interpret and validate first argument as an entity reference, and the
+                // second argument as a statement reference
+                if (!QueryUtils::isValidEntityRef(arg1)) {
+                    // SYNTAX ERROR: first argument is not a valid entity reference
+                    query.status = SYNTAX_ERR_CONTAINS_INVALID_ENT_REF;
+                } else if (!QueryUtils::isValidStmtRef(arg2)) {
+                    // SYNTAX ERROR: second argument is not a valid statement reference
+                    query.status = SYNTAX_ERR_CONTAINS_INVALID_STMT_REF;
+                } else {
+                    relations.push_back({
+                        clause, isNegated, relationClass, parseEntityRef(arg1), parseStmtRef(arg2)
                     });
                 }
                 break;

@@ -19,6 +19,7 @@
     <ClCompile Include="..\source\CallsStarEvaluator.cpp" />
     <ClCompile Include="..\source\ConstTable.cpp" />
     <ClCompile Include="..\source\AssignPatternEvaluator.cpp" />
+    <ClCompile Include="..\source\ContainsEvaluator.cpp" />
     <ClCompile Include="..\source\ContainsKB.cpp" />
     <ClCompile Include="..\source\DesignExtractor.cpp" />
     <ClCompile Include="..\source\FollowsEvaluator.cpp" />
@@ -66,6 +67,7 @@
     <ClInclude Include="..\source\ConstTable.h" />
     <ClInclude Include="..\source\Constants.h" />
     <ClInclude Include="..\source\AssignPatternEvaluator.h" />
+    <ClInclude Include="..\source\ContainsEvaluator.h" />
     <ClInclude Include="..\source\ContainsKB.h" />
     <ClInclude Include="..\source\FollowsEvaluator.h" />
     <ClInclude Include="..\source\FollowsKB.h" />
