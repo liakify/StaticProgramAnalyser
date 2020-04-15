@@ -118,7 +118,6 @@ namespace PQL {
                 clauseResult.syns.emplace_back(arg1);
 
                 std::unordered_set<StmtId> stmts = database.affectsGetDirectNodes(arg2, NodeType::PREDECESSOR);
-                ClauseResult clauseResult;
                 for (StmtId stmt : stmts) {
                     ClauseResultEntry resultEntry;
                     resultEntry.emplace_back(std::to_string(stmt));
@@ -197,14 +196,14 @@ namespace PQL {
 
             ClauseResult clauseResult;
             if (singleSynonym) {
-                clauseResult.rows.emplace_back(arg1);
+                clauseResult.syns.emplace_back(arg1);
             } else {
                 if (arg1 < arg2) {
-                    clauseResult.rows.emplace_back(arg1);
-                    clauseResult.rows.emplace_back(arg2);
+                    clauseResult.syns.emplace_back(arg1);
+                    clauseResult.syns.emplace_back(arg2);
                 } else {
-                    clauseResult.rows.emplace_back(arg2);
-                    clauseResult.rows.emplace_back(arg1);
+                    clauseResult.syns.emplace_back(arg2);
+                    clauseResult.syns.emplace_back(arg1);
                 }
                 
             }

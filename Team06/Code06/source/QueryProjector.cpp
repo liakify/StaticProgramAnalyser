@@ -8,30 +8,20 @@ namespace PQL {
         std::unordered_set<std::string> uniqueResultSet;
 
         if (query.returnsBool) {
-            resultList.push_back(result[0]["_BOOLEAN"]);
+            resultList.push_back(result.rows[0][0]);
             return;
         }
 
-        for (ClauseResultEntry& resultEntry : result) {
+        for (ClauseResultEntry& resultEntry : result.rows) {
             std::stringstream s;
             bool first = true;
-            for (Ref& targetEntitity : query.targetEntities) {
+            for (std::string result : resultEntry) {
                 if (first) {
                     first = false;
                 } else {
                     s << " ";
                 }
-                if (targetEntitity.second == AttrType::PROC_NAME) {
-                    s << resultEntry[targetEntitity.first + ".procName"];
-                } else if (targetEntitity.second == AttrType::VAR_NAME) {
-                    s << resultEntry[targetEntitity.first + ".varName"];
-                } else if (targetEntitity.second == AttrType::STMT_NUM) {
-                    s << resultEntry[targetEntitity.first + ".stmt#"];
-                } else if (targetEntitity.second == AttrType::VALUE) {
-                    s << resultEntry[targetEntitity.first + ".value"];
-                } else {
-                    s << resultEntry[targetEntitity.first];
-                }
+                s << result;
             }
             uniqueResultSet.insert(s.str());
         }
