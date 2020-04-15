@@ -144,6 +144,7 @@ namespace PQL {
             } else {
                 // Case 2: Synonym is a statement
                 ClauseResult clauseResult;
+                clauseResult.syns.emplace_back(arg1);
                 std::unordered_set<StmtId> modifyingStmts = database.modifiesKB.getAllStmtsModifyVar(arg2);
                 for (StmtId stmt : modifyingStmts) {
                     if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(stmt)->getType(), synonymTable[arg1])) {
@@ -172,6 +173,7 @@ namespace PQL {
             if (synonymTable[arg1] == DesignEntity::PROCEDURE) {
                 // Case 1: Synonym is a procedure
                 ClauseResult clauseResult;
+                clauseResult.syns.emplace_back(arg1);
                 for (ProcId i = 1; i <= database.procTable.size(); i++) {
                     if (database.modifiesKB.getAllVarsModifiedByProc(i).size() > 0) {
                         ClauseResultEntry resultEntry;
@@ -182,7 +184,8 @@ namespace PQL {
                 return clauseResult;
             } else {
                 // Case 2: Synonym is a statement
-                ClauseResult clauseResult = {};
+                ClauseResult clauseResult;
+                clauseResult.syns.emplace_back(arg1);
                 for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
                     if (database.modifiesKB.getAllVarsModifiedByStmt(i).size() > 0) {
                         if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i)->getType(), synonymTable[arg1])) {

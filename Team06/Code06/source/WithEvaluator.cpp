@@ -156,29 +156,29 @@ namespace PQL {
                     auto entry2 = result2.find(entry1.first);
                     if (entry2 != result2.end()) {
                         ClauseResultEntry resultEntry;
-                        std::string result1, result2;
+                        std::string val1, val2;
                         if (entry1.second != 0) {
-                            result1 = std::to_string(entry1.second);
+                            val1 = std::to_string(entry1.second);
                         } else {
-                            result1 = entry1.first;
+                            val1 = entry1.first;
                         }
                         if (entry2->second != 0) {
-                            result2 = std::to_string(entry2->second);
+                            val2 = std::to_string(entry2->second);
                         } else {
-                            result2 = entry2->first;
+                            val2 = entry2->first;
                         }
 
                         if (singleSynonym) {
-                            if (result1 == result2) {
-                                resultEntry.emplace_back(result1);
+                            if (val1 == val2) {
+                                resultEntry.emplace_back(val1);
                             }
                         } else {
                             if (syn1 < syn2) {
-                                resultEntry.emplace_back(result1);
-                                resultEntry.emplace_back(result2);
+                                resultEntry.emplace_back(val1);
+                                resultEntry.emplace_back(val2);
                             } else {
-                                resultEntry.emplace_back(result2);
-                                resultEntry.emplace_back(result1);
+                                resultEntry.emplace_back(val2);
+                                resultEntry.emplace_back(val1);
                             }
                         }
                         clauseResult.rows.emplace_back(resultEntry);

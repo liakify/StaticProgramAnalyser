@@ -102,9 +102,10 @@ namespace PQL {
         // Maintain one ClauseResult structure for each group
         // +1 in case there are no groups at all
         std::vector<ClauseResult> clauseResults = std::vector<ClauseResult>(optQuery.groups.size() + 1);
-        
+
         // To determine if each group should participate in inter-group merging
         std::vector<bool> toMerge = std::vector<bool>(optQuery.groups.size() + 1, false);
+        toMerge[optQuery.groups.size()] = true;
 
         // Add table containing "TRUE" to every group
         for (ClauseResult& clauseResult : clauseResults) {
@@ -172,13 +173,13 @@ namespace PQL {
                 std::pair<ArgType, Ref> arg1, arg2;
                 arg1 = with->getArgs().first;
                 arg2 = with->getArgs().second;
-                if (arg1.first == ArgType::SYNONYM) {
+                if (arg1.first == ArgType::SYNONYM || arg1.first == ArgType::ATTRIBUTE) {
                     missingTargetSynonyms.erase(arg1.second.first);
                     if (targetSynonyms.find(arg1.second.first) != targetSynonyms.end()) {
                         toMerge[optQuery.groups[i]] = true;
                     }
                 }
-                if (arg2.first == ArgType::SYNONYM) {
+                if (arg2.first == ArgType::SYNONYM || arg2.first == ArgType::ATTRIBUTE) {
                     missingTargetSynonyms.erase(arg2.second.first);
                     if (targetSynonyms.find(arg2.second.first) != targetSynonyms.end()) {
                         toMerge[optQuery.groups[i]] = true;
@@ -187,7 +188,7 @@ namespace PQL {
             }
 
             // If the result is empty, we can stop evaluation immediately
-            if (result.rows.empty()) {
+            if (!result.trueResult && result.rows.empty()) {
                 return extractQueryResults(query, ClauseResult());
             }
 
@@ -196,7 +197,7 @@ namespace PQL {
             clauseResults[optQuery.groups[i]] = combineTwoClauseResults(result, clauseResults[optQuery.groups[i]]);
 
             // If the merged table is empty, stop evaluation immediately
-            if (clauseResults[optQuery.groups[i]].rows.empty()) {
+            if (!clauseResults[optQuery.groups[i]].trueResult && clauseResults[optQuery.groups[i]].rows.empty()) {
                 return extractQueryResults(query, ClauseResult());
             }
         }
@@ -209,6 +210,8 @@ namespace PQL {
                 toMerge[optQuery.groups[i]] = false;
             }
         }
+
+        mergingGroups.emplace_back(clauseResults[optQuery.groups.size()]);
 
         // Merge a table for each synonym not present in any clause
         for (Synonym synonym : missingTargetSynonyms) {
@@ -229,10 +232,12 @@ namespace PQL {
         if (query.returnsBool) {
             ClauseResult result;
             ClauseResultEntry resultEntry;
-            if (combinedResult.rows.empty()) {
-                resultEntry.emplace_back("FALSE");
-            } else {
+            if (combinedResult.trueResult) {
                 resultEntry.emplace_back("TRUE");
+            } else if (!combinedResult.rows.empty()) {
+                resultEntry.emplace_back("TRUE");
+            } else {
+                resultEntry.emplace_back("FALSE");
             }
             result.rows.emplace_back(resultEntry);
             return result;

@@ -112,6 +112,7 @@ namespace PQL {
                 if (following == 0) {
                     return clauseResult;
                 } else {
+                    clauseResult.syns.emplace_back(arg1);
                     if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(following)->getType(), synonymTable[arg1])) {
                         ClauseResultEntry resultEntry;
                         resultEntry.emplace_back(std::to_string(following));
@@ -154,6 +155,7 @@ namespace PQL {
                 Synonym arg1 = clause.getArgs().first.second;
                 // Case 2: Synonym, Wildcard
                 ClauseResult clauseResult;
+                clauseResult.syns.emplace_back(arg1);
                 for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
                     if (database.followsKB.getFollower(i) != 0 &&
                         SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i)->getType(), synonymTable[arg1])) {
