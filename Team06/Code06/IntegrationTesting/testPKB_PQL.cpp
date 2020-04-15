@@ -29,6 +29,20 @@ namespace IntegrationTesting {
         string query_selectDesignEntity_CONST = "constant cn; Select cn";
         string query_selectDesignEntity_PROGLINE = "prog_line n; Select n";
         string query_selectDesignEntity_PROC = "procedure p; Select p";
+
+        string query_selectAttrRef_p_procName = "procedure p; Select p.procName";
+        string query_selectAttrRef_c_procName = "call c; Select c.procName";
+        string query_selectAttrRef_v_varName = "variable v; Select v.varName";
+        string query_selectAttrRef_r_varName = "read r; Select r.varName";
+        string query_selectAttrRef_pn_varName = "print pn; Select pn.varName";
+        string query_selectAttrRef_cn_value = "constant cn; Select cn.value";
+        string query_selectAttrRef_s_stmt = "stmt s; Select s.stmt#";
+        string query_selectAttrRef_r_stmt = "read r; Select r.stmt#";
+        string query_selectAttrRef_pn_stmt = "print pn; Select pn.stmt#";
+        string query_selectAttrRef_c_stmt = "call c; Select c.stmt#";
+        string query_selectAttrRef_w_stmt = "while w; Select w.stmt#";
+        string query_selectAttrRef_if_stmt = "if ifs; Select ifs.stmt#";
+        string query_selectAttrRef_a_stmt = "assign a; Select a.stmt#";
         
         //Star relationships not tested because DE is not used in this test.
         string query_relCond_ModifiesP = "variable v; procedure p; Select p such that Modifies(p,v)";
@@ -208,6 +222,58 @@ namespace IntegrationTesting {
 
         pql.evaluateQuery(query_selectDesignEntity_PROC, results);
         Assert::IsTrue(results == std::list<string>({ "p2", "p"}));
+        results.clear();
+
+        pql.evaluateQuery(query_selectAttrRef_p_procName, results);
+        Assert::IsTrue(results == std::list<string>({ "p2", "p" }));
+        results.clear();
+
+        pql.evaluateQuery(query_selectAttrRef_c_procName, results);
+        Assert::IsTrue(results == std::list<string>({ "p2" }));
+        results.clear();
+
+        pql.evaluateQuery(query_selectAttrRef_v_varName, results);
+        Assert::IsTrue(results == std::list<string>({ "x", "y", "a", "z" }));
+        results.clear();
+
+        pql.evaluateQuery(query_selectAttrRef_r_varName, results);
+        Assert::IsTrue(results == std::list<string>({ "x" }));
+        results.clear();
+
+        pql.evaluateQuery(query_selectAttrRef_pn_varName, results);
+        Assert::IsTrue(results == std::list<string>({ "y" }));
+        results.clear();
+
+        pql.evaluateQuery(query_selectAttrRef_cn_value, results);
+        Assert::IsTrue(results == std::list<string>({ "5", "3", "0" }));
+        results.clear();
+
+        pql.evaluateQuery(query_selectAttrRef_s_stmt, results);
+        Assert::IsTrue(results == std::list<string>({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }));
+        results.clear();
+
+        pql.evaluateQuery(query_selectAttrRef_r_stmt, results);
+        Assert::IsTrue(results == std::list<string>({ "1" }));
+        results.clear();
+
+        pql.evaluateQuery(query_selectAttrRef_pn_stmt, results);
+        Assert::IsTrue(results == std::list<string>({ "2" }));
+        results.clear();
+
+        pql.evaluateQuery(query_selectAttrRef_c_stmt, results);
+        Assert::IsTrue(results == std::list<string>({ "5" }));
+        results.clear();
+
+        pql.evaluateQuery(query_selectAttrRef_w_stmt, results);
+        Assert::IsTrue(results == std::list<string>({ "7" }));
+        results.clear();
+
+        pql.evaluateQuery(query_selectAttrRef_if_stmt, results);
+        Assert::IsTrue(results == std::list<string>({ "3" }));
+        results.clear();
+
+        pql.evaluateQuery(query_selectAttrRef_a_stmt, results);
+        Assert::IsTrue(results == std::list<string>({ "4", "6", "8", "9" }));
         results.clear();
 
         pql.evaluateQuery(query_relCond_ModifiesP, results);
