@@ -12,21 +12,27 @@ namespace UnitTesting {
     public:
         TEST_METHOD(relationClauseEquality) {
             PQL::RelationClause relation = { "Modifies(w, \"i\")", RelationType::MODIFIESS,
-                { ArgType::SYNONYM, "w" }, { ArgType::IDENTIFIER, "i" } };
+                { ArgType::SYNONYM, "w", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                { ArgType::IDENTIFIER, "i", PQL::NON_SYNONYM_ID, AttrType::INVALID } };
             PQL::RelationClause relation2 = { "Modifies(w, \"i\")", RelationType::MODIFIESS,
-                { ArgType::SYNONYM, "w" }, { ArgType::IDENTIFIER, "i" } };
+                { ArgType::SYNONYM, "w", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                { ArgType::IDENTIFIER, "i", PQL::NON_SYNONYM_ID, AttrType::INVALID } };
 
             Assert::IsTrue(relation == relation);
             Assert::IsTrue(relation == relation2);
 
             PQL::RelationClause diffClause = { "Modifies(w, i)", RelationType::MODIFIESS,
-                { ArgType::SYNONYM, "w" }, { ArgType::IDENTIFIER, "i" } };
+                { ArgType::SYNONYM, "w", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                { ArgType::IDENTIFIER, "i", PQL::NON_SYNONYM_ID, AttrType::INVALID } };
             PQL::RelationClause diffType = { "Modifies(w, \"i\")", RelationType::USESS,
-                { ArgType::SYNONYM, "w" }, { ArgType::IDENTIFIER, "i" } };
+                { ArgType::SYNONYM, "w", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                { ArgType::IDENTIFIER, "i", PQL::NON_SYNONYM_ID, AttrType::INVALID } };
             PQL::RelationClause diffArg1 = { "Modifies(w, \"i\")", RelationType::MODIFIESS,
-                { ArgType::SYNONYM, "while" }, { ArgType::IDENTIFIER, "i" } };
+                { ArgType::SYNONYM, "while", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                { ArgType::IDENTIFIER, "i", PQL::NON_SYNONYM_ID, AttrType::INVALID } };
             PQL::RelationClause diffArg2 = { "Modifies(w, \"i\")", RelationType::MODIFIESS,
-                { ArgType::SYNONYM, "w" }, { ArgType::SYNONYM, "i" } };
+                { ArgType::SYNONYM, "w", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                { ArgType::SYNONYM, "i", PQL::NON_SYNONYM_ID, AttrType::INVALID } };
 
             Assert::IsFalse(relation == diffClause);
             Assert::IsFalse(relation == diffType);
@@ -35,24 +41,38 @@ namespace UnitTesting {
         }
 
         TEST_METHOD(patternClauseEquality) {
-            PQL::PatternClause pattern = { "a(v, _\"i + 1\"_)", PatternType::ASSIGN_PATTERN, "a",
-                { ArgType::SYNONYM, "v" }, { ArgType::INCLUSIVE_PATTERN , "_(i+1)_" } };
-            PQL::PatternClause pattern2 = { "a(v, _\"i + 1\"_)", PatternType::ASSIGN_PATTERN, "a",
-                { ArgType::SYNONYM, "v" }, { ArgType::INCLUSIVE_PATTERN , "_(i+1)_" } };
+            PQL::PatternClause pattern = { "a(v, _\"i + 1\"_)", PatternType::ASSIGN_PATTERN,
+                { ArgType::SYNONYM, "a", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                { ArgType::SYNONYM, "v", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                { ArgType::INCLUSIVE_PATTERN, "_(i+1)_", PQL::NON_SYNONYM_ID, AttrType::INVALID } };
+            PQL::PatternClause pattern2 = { "a(v, _\"i + 1\"_)", PatternType::ASSIGN_PATTERN,
+                { ArgType::SYNONYM, "a", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                { ArgType::SYNONYM, "v", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                { ArgType::INCLUSIVE_PATTERN, "_(i+1)_", PQL::NON_SYNONYM_ID, AttrType::INVALID } };
 
             Assert::IsTrue(pattern == pattern);
             Assert::IsTrue(pattern == pattern2);
 
-            PQL::PatternClause diffClause = { "a(v, \"i + 1\")", PatternType::ASSIGN_PATTERN, "a",
-                { ArgType::SYNONYM, "v" }, { ArgType::INCLUSIVE_PATTERN , "_(i+1)_" } };
-            PQL::PatternClause diffType = { "a(v, _\"i + 1\"_)", PatternType::IF_PATTERN, "a",
-                { ArgType::SYNONYM, "v" }, { ArgType::INCLUSIVE_PATTERN , "_(i+1)_" } };
-            PQL::PatternClause diffSynonym = { "a(v, _\"i + 1\"_)", PatternType::ASSIGN_PATTERN, "a2",
-                { ArgType::SYNONYM, "v" }, { ArgType::INCLUSIVE_PATTERN , "_(i+1)_" } };
-            PQL::PatternClause diffTargetArg = { "a(v, _\"i + 1\"_)", PatternType::ASSIGN_PATTERN, "a",
-                { ArgType::IDENTIFIER, "v" }, { ArgType::INCLUSIVE_PATTERN , "_(i+1)_" } };
-            PQL::PatternClause diffPatternArg = { "a(v, _\"i + 1\"_)", PatternType::ASSIGN_PATTERN, "a",
-                { ArgType::SYNONYM, "v" }, { ArgType::INCLUSIVE_PATTERN , "(i+1)" } };
+            PQL::PatternClause diffClause = { "a(v, \"i + 1\")", PatternType::ASSIGN_PATTERN,
+                { ArgType::SYNONYM, "a", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                { ArgType::SYNONYM, "v", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                { ArgType::INCLUSIVE_PATTERN, "_(i+1)_", PQL::NON_SYNONYM_ID, AttrType::INVALID } };
+            PQL::PatternClause diffType = { "a(v, _\"i + 1\"_)", PatternType::IF_PATTERN,
+                { ArgType::SYNONYM, "a", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                { ArgType::SYNONYM, "v", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                { ArgType::INCLUSIVE_PATTERN, "_(i+1)_", PQL::NON_SYNONYM_ID, AttrType::INVALID } };
+            PQL::PatternClause diffSynonym = { "a(v, _\"i + 1\"_)", PatternType::ASSIGN_PATTERN,
+                { ArgType::SYNONYM, "a2", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                { ArgType::SYNONYM, "v", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                { ArgType::INCLUSIVE_PATTERN, "_(i+1)_", PQL::NON_SYNONYM_ID, AttrType::INVALID } };
+            PQL::PatternClause diffTargetArg = { "a(v, _\"i + 1\"_)", PatternType::ASSIGN_PATTERN,
+                { ArgType::SYNONYM, "a", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                { ArgType::IDENTIFIER, "v", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                { ArgType::INCLUSIVE_PATTERN, "_(i+1)_", PQL::NON_SYNONYM_ID, AttrType::INVALID } };
+            PQL::PatternClause diffPatternArg = { "a(v, _\"i + 1\"_)", PatternType::ASSIGN_PATTERN,
+                { ArgType::SYNONYM, "a", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                { ArgType::SYNONYM, "v", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                { ArgType::INCLUSIVE_PATTERN, "(i+1)", PQL::NON_SYNONYM_ID, AttrType::INVALID } };
 
             Assert::IsFalse(pattern == diffClause);
             Assert::IsFalse(pattern == diffType);
@@ -63,30 +83,30 @@ namespace UnitTesting {
 
         TEST_METHOD(withClauseEquality) {
             PQL::WithClause equality = { "2020 = a.stmt#", WithType::INTEGER_EQUAL,
-                { ArgType::INTEGER, { "2020", AttrType::NONE } },
-                { ArgType::ATTRIBUTE, { "a", AttrType::STMT_NUM } } };
+                { ArgType::INTEGER, "2020", PQL::NON_SYNONYM_ID, AttrType::NONE },
+                { ArgType::ATTRIBUTE, "a", PQL::UNSET_SYNONYM_ID, AttrType::STMT_NUM } };
             PQL::WithClause equality2 = { "2020 = a.stmt#", WithType::INTEGER_EQUAL,
-                { ArgType::INTEGER, { "2020", AttrType::NONE } },
-                { ArgType::ATTRIBUTE, { "a", AttrType::STMT_NUM } } };
+                { ArgType::INTEGER, "2020", PQL::NON_SYNONYM_ID, AttrType::NONE },
+                { ArgType::ATTRIBUTE, "a", PQL::UNSET_SYNONYM_ID, AttrType::STMT_NUM } };
 
             Assert::IsTrue(equality == equality);
             Assert::IsTrue(equality == equality2);
 
             PQL::WithClause diffClause = { "a.stmt# = 2020", WithType::INTEGER_EQUAL,
-                { ArgType::INTEGER, { "2020", AttrType::NONE } },
-                { ArgType::ATTRIBUTE, { "a", AttrType::STMT_NUM } } };
+                { ArgType::INTEGER, "2020", PQL::NON_SYNONYM_ID, AttrType::NONE },
+                { ArgType::ATTRIBUTE, "a", PQL::UNSET_SYNONYM_ID, AttrType::STMT_NUM } };
             PQL::WithClause diffType = { "2020 = a.stmt#", WithType::IDENTIFIER_EQUAL,
-                { ArgType::INTEGER, { "2020", AttrType::NONE } },
-                { ArgType::ATTRIBUTE, { "a", AttrType::STMT_NUM } } };
+                { ArgType::INTEGER, "2020", PQL::NON_SYNONYM_ID, AttrType::NONE },
+                { ArgType::ATTRIBUTE, "a", PQL::UNSET_SYNONYM_ID, AttrType::STMT_NUM } };
             PQL::WithClause diffLHS = { "2020 = a.stmt#", WithType::INTEGER_EQUAL,
-                { ArgType::WILDCARD, { "2020", AttrType::NONE } },
-                { ArgType::ATTRIBUTE, { "a", AttrType::STMT_NUM } } };
+                { ArgType::WILDCARD, "2020", PQL::NON_SYNONYM_ID, AttrType::NONE },
+                { ArgType::ATTRIBUTE, "a", PQL::UNSET_SYNONYM_ID, AttrType::STMT_NUM } };
             PQL::WithClause diffRHSArg = { "2020 = a.stmt#", WithType::INTEGER_EQUAL,
-                { ArgType::INTEGER, { "2020", AttrType::NONE } },
-                { ArgType::ATTRIBUTE, { "cl", AttrType::STMT_NUM } } };
+                { ArgType::INTEGER, "2020", PQL::NON_SYNONYM_ID, AttrType::NONE },
+                { ArgType::ATTRIBUTE, "cl", PQL::UNSET_SYNONYM_ID, AttrType::STMT_NUM } };
             PQL::WithClause diffRHSAttrType = { "2020 = a.stmt#", WithType::INTEGER_EQUAL,
-                { ArgType::INTEGER, { "2020", AttrType::NONE } },
-                { ArgType::ATTRIBUTE, { "a", AttrType::VALUE } } };
+                { ArgType::INTEGER, "2020", PQL::NON_SYNONYM_ID, AttrType::NONE },
+                { ArgType::ATTRIBUTE, "a", PQL::UNSET_SYNONYM_ID, AttrType::VALUE } };
 
             Assert::IsFalse(equality == diffClause);
             Assert::IsFalse(equality == diffType);
@@ -97,60 +117,90 @@ namespace UnitTesting {
 
         TEST_METHOD(clauseGetters) {
             PQL::RelationClause relationSS = { "Affects*(1, a)", RelationType::AFFECTS,
-                { ArgType::INTEGER, "1" }, { ArgType::SYNONYM, "a" } };
+                { ArgType::INTEGER, "1", PQL::NON_SYNONYM_ID, AttrType::INVALID },
+                { ArgType::SYNONYM, "a", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } };
             PQL::RelationClause relationSE = { "Uses(a, \"x\")", RelationType::USESS,
-                { ArgType::SYNONYM, "a" }, { ArgType::IDENTIFIER, "x" } };
+                { ArgType::SYNONYM, "a", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                { ArgType::IDENTIFIER, "x", PQL::NON_SYNONYM_ID, AttrType::INVALID } };
+            PQL::Argument relArg1 = { ArgType::INTEGER, "1", PQL::NON_SYNONYM_ID, AttrType::INVALID };
+            PQL::Argument relArg2 = { ArgType::SYNONYM, "a", PQL::UNSET_SYNONYM_ID, AttrType::INVALID };
+            PQL::Argument relArg3 = { ArgType::SYNONYM, "a", PQL::UNSET_SYNONYM_ID, AttrType::INVALID };
+            PQL::Argument relArg4 = { ArgType::IDENTIFIER, "x", PQL::NON_SYNONYM_ID, AttrType::INVALID };
 
             Assert::IsTrue(relationSS.asString() == "Affects*(1, a)");
             Assert::IsTrue(relationSE.getClauseType() == ClauseType::RELATION);
             Assert::IsTrue(relationSS.getRelationType() == RelationType::AFFECTS);
-            Assert::IsTrue(relationSS.getArgs().first == std::pair<ArgType, StmtEntRef>{ ArgType::INTEGER, "1" });
-            Assert::IsTrue(relationSS.getArgs().second == std::pair<ArgType, StmtEntRef>{ ArgType::SYNONYM, "a" });
-            Assert::IsTrue(relationSE.getArgs().first == std::pair<ArgType, StmtEntRef>{ ArgType::SYNONYM, "a" });
-            Assert::IsTrue(relationSE.getArgs().second == std::pair<ArgType, StmtEntRef>{ ArgType::IDENTIFIER, "x" });
+            Assert::IsTrue(relationSS.getArgs().first == relArg1);
+            Assert::IsTrue(relationSS.getArgs().second == relArg2);
+            Assert::IsTrue(relationSE.getArgs().first == relArg3);
+            Assert::IsTrue(relationSE.getArgs().second == relArg4);
 
-            PQL::PatternClause patternA = { "a(v, _\"x\"_)", PatternType::ASSIGN_PATTERN, "a",
-                { ArgType::SYNONYM, "v" }, { ArgType::INCLUSIVE_PATTERN, "_x_" } };
-            PQL::PatternClause patternI = { "ifs(\"i\", _, _)", PatternType::IF_PATTERN, "ifs",
-                { ArgType::IDENTIFIER, "i" }, { ArgType::WILDCARD, "_" } };
-            PQL::PatternClause patternW = { "w(_, _)", PatternType::WHILE_PATTERN, "w",
-                { ArgType::WILDCARD, "_" }, { ArgType::WILDCARD, "_" } };
+            PQL::PatternClause patternA = { "a(v, _\"x\"_)", PatternType::ASSIGN_PATTERN,
+                { ArgType::SYNONYM, "a", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                { ArgType::SYNONYM, "v", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                { ArgType::INCLUSIVE_PATTERN, "_x_", PQL::NON_SYNONYM_ID, AttrType::INVALID } };
+            PQL::PatternClause patternI = { "ifs(\"i\", _, _)", PatternType::IF_PATTERN,
+                { ArgType::SYNONYM, "ifs", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                { ArgType::IDENTIFIER, "i", PQL::NON_SYNONYM_ID, AttrType::INVALID },
+                { ArgType::WILDCARD, "_", PQL::NON_SYNONYM_ID, AttrType::INVALID } };
+            PQL::PatternClause patternW = { "w(_, _)", PatternType::WHILE_PATTERN,
+                { ArgType::SYNONYM, "w", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                { ArgType::WILDCARD, "_", PQL::NON_SYNONYM_ID, AttrType::INVALID },
+                { ArgType::WILDCARD, "_", PQL::NON_SYNONYM_ID, AttrType::INVALID } };
+            PQL::Argument patArg1 = { ArgType::SYNONYM, "v", PQL::UNSET_SYNONYM_ID, AttrType::INVALID };
+            PQL::Argument patArg2 = { ArgType::INCLUSIVE_PATTERN, "_x_", PQL::NON_SYNONYM_ID, AttrType::INVALID };
+            PQL::Argument patArg3 = { ArgType::IDENTIFIER, "i", PQL::NON_SYNONYM_ID, AttrType::INVALID };
+            PQL::Argument patArg4 = { ArgType::WILDCARD, "_", PQL::NON_SYNONYM_ID, AttrType::INVALID };
+            PQL::Argument patArg5 = { ArgType::WILDCARD, "_", PQL::NON_SYNONYM_ID, AttrType::INVALID };
+            PQL::Argument patArg6 = { ArgType::WILDCARD, "_", PQL::NON_SYNONYM_ID, AttrType::INVALID };
 
             Assert::IsTrue(patternA.asString() == "a(v, _\"x\"_)");
             Assert::IsTrue(patternI.getClauseType() == ClauseType::PATTERN);
             Assert::IsTrue(patternW.getPatternType() == PatternType::WHILE_PATTERN);
-            Assert::IsTrue(patternA.getArgs().first == std::pair<ArgType, EntityRef>{ ArgType::SYNONYM, "v" });
-            Assert::IsTrue(patternA.getArgs().second == std::pair<ArgType, Pattern>{ ArgType::INCLUSIVE_PATTERN, "_x_" });
-            Assert::IsTrue(patternI.getArgs().first == std::pair<ArgType, EntityRef>{ ArgType::IDENTIFIER, "i" });
-            Assert::IsTrue(patternI.getArgs().second == std::pair<ArgType, Pattern>{ ArgType::WILDCARD, "_" });
-            Assert::IsTrue(patternW.getArgs().first == std::pair<ArgType, EntityRef>{ ArgType::WILDCARD, "_" });
-            Assert::IsTrue(patternW.getArgs().second == std::pair<ArgType, Pattern>{ ArgType::WILDCARD, "_" });
+            Assert::IsTrue(patternA.getArgs().first == patArg1);
+            Assert::IsTrue(patternA.getArgs().second == patArg2);
+            Assert::IsTrue(patternI.getArgs().first == patArg3);
+            Assert::IsTrue(patternI.getArgs().second == patArg4);
+            Assert::IsTrue(patternW.getArgs().first == patArg5);
+            Assert::IsTrue(patternW.getArgs().second == patArg6);
 
             PQL::WithClause equalityLit = { "1234 = 4321", WithType::LITERAL_EQUAL,
-                { ArgType::INTEGER, { "1234", AttrType::NONE } }, { ArgType::INTEGER, { "4321", AttrType::NONE } } };
+                { ArgType::INTEGER, "1234", PQL::NON_SYNONYM_ID, AttrType::NONE },
+                { ArgType::INTEGER, "4321", PQL::NON_SYNONYM_ID, AttrType::NONE } };
             PQL::WithClause equalityInt = { "69 = l", WithType::UNKNOWN_EQUAL,
-                { ArgType::INTEGER, { "69", AttrType::NONE } }, { ArgType::SYNONYM, { "l", AttrType::NONE } } };
+                { ArgType::INTEGER, "69", PQL::NON_SYNONYM_ID, AttrType::NONE },
+                { ArgType::SYNONYM, "l", PQL::UNSET_SYNONYM_ID, AttrType::NONE } };
             PQL::WithClause equalityIdent = { "cl.procName = \"bob\"", WithType::UNKNOWN_EQUAL,
-                { ArgType::ATTRIBUTE, { "cl", AttrType::PROC_NAME } }, { ArgType::IDENTIFIER, { "bob", AttrType::NONE } } };
+                { ArgType::ATTRIBUTE, "cl", PQL::UNSET_SYNONYM_ID, AttrType::PROC_NAME },
+                { ArgType::IDENTIFIER, "bob", PQL::NON_SYNONYM_ID, AttrType::NONE } };
+            PQL::Argument eqArg1 = { ArgType::INTEGER, "1234", PQL::NON_SYNONYM_ID, AttrType::NONE };
+            PQL::Argument eqArg2 = { ArgType::INTEGER, "4321", PQL::NON_SYNONYM_ID, AttrType::NONE };
+            PQL::Argument eqArg3 = { ArgType::INTEGER, "69", PQL::NON_SYNONYM_ID, AttrType::NONE };
+            PQL::Argument eqArg4 = { ArgType::SYNONYM, "l", PQL::UNSET_SYNONYM_ID, AttrType::NONE };
+            PQL::Argument eqArg5 = { ArgType::ATTRIBUTE, "cl", PQL::UNSET_SYNONYM_ID, AttrType::PROC_NAME };
+            PQL::Argument eqArg6 = { ArgType::IDENTIFIER, "bob", PQL::NON_SYNONYM_ID, AttrType::NONE };
 
             Assert::IsTrue(equalityLit.asString() == "1234 = 4321");
             Assert::IsTrue(equalityInt.getClauseType() == ClauseType::WITH);
             Assert::IsTrue(equalityIdent.getWithType() == WithType::UNKNOWN_EQUAL);
-            Assert::IsTrue(equalityLit.getArgs().first == std::pair<ArgType, Ref>{ ArgType::INTEGER, { "1234", AttrType::NONE } });
-            Assert::IsTrue(equalityLit.getArgs().second == std::pair<ArgType, Ref>{ ArgType::INTEGER, { "4321", AttrType::NONE } });
-            Assert::IsTrue(equalityInt.getArgs().first == std::pair<ArgType, Ref>{ ArgType::INTEGER, { "69", AttrType::NONE } });
-            Assert::IsTrue(equalityInt.getArgs().second == std::pair<ArgType, Ref>{ ArgType::SYNONYM, { "l", AttrType::NONE } });
-            Assert::IsTrue(equalityIdent.getArgs().first == std::pair<ArgType, Ref>{ ArgType::ATTRIBUTE, { "cl", AttrType::PROC_NAME } });
-            Assert::IsTrue(equalityIdent.getArgs().second == std::pair<ArgType, Ref>{ ArgType::IDENTIFIER, { "bob", AttrType::NONE } });
+            Assert::IsTrue(equalityLit.getArgs().first == eqArg1);
+            Assert::IsTrue(equalityLit.getArgs().second == eqArg2);
+            Assert::IsTrue(equalityInt.getArgs().first == eqArg3);
+            Assert::IsTrue(equalityInt.getArgs().second == eqArg4);
+            Assert::IsTrue(equalityIdent.getArgs().first == eqArg5);
+            Assert::IsTrue(equalityIdent.getArgs().second == eqArg6);
         }
 
         TEST_METHOD(setProcedureVariant) {
             PQL::RelationClause relationSS = { "Next*(_, a)", RelationType::NEXTT,
-                { ArgType::WILDCARD, "_" }, { ArgType::SYNONYM, "a" } };
+                { ArgType::WILDCARD, "_", PQL::NON_SYNONYM_ID, AttrType::INVALID },
+                { ArgType::SYNONYM, "a", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } };
             PQL::RelationClause relationUsesP = { "Uses(_, v)", RelationType::USESS,
-                { ArgType::SYNONYM, "p" }, { ArgType::IDENTIFIER, "x" } };
+                { ArgType::SYNONYM, "p", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                { ArgType::IDENTIFIER, "x", PQL::NON_SYNONYM_ID, AttrType::INVALID } };
             PQL::RelationClause relationModifiesP = { "Modifies(p, \"i\")", RelationType::MODIFIESS,
-                { ArgType::SYNONYM, "p" }, { ArgType::IDENTIFIER, "x" } };
+                { ArgType::SYNONYM, "p", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                { ArgType::IDENTIFIER, "x", PQL::NON_SYNONYM_ID, AttrType::INVALID } };
 
             Assert::IsFalse(relationSS.setProcedureVariant());
             Assert::IsTrue(relationSS.getRelationType() == RelationType::NEXTT);
@@ -170,11 +220,14 @@ namespace UnitTesting {
 
         TEST_METHOD(setWithType) {
             PQL::WithClause equalityLit = { "\"orange\" = \"black\"", WithType::LITERAL_EQUAL,
-                { ArgType::IDENTIFIER, { "orange", AttrType::NONE } }, { ArgType::IDENTIFIER, { "black", AttrType::NONE } } };
+                { ArgType::IDENTIFIER, "orange", PQL::NON_SYNONYM_ID, AttrType::NONE },
+                { ArgType::IDENTIFIER, "black", PQL::NON_SYNONYM_ID, AttrType::NONE } };
             PQL::WithClause equalityInt = { "l = 42", WithType::UNKNOWN_EQUAL,
-               { ArgType::SYNONYM, { "l", AttrType::NONE } }, { ArgType::INTEGER, { "42", AttrType::NONE } } };
+               { ArgType::SYNONYM, "l", PQL::UNSET_SYNONYM_ID, AttrType::NONE },
+               { ArgType::INTEGER, "42", PQL::NON_SYNONYM_ID, AttrType::NONE } };
             PQL::WithClause equalityIdent = { "\"count\" = rd.varName", WithType::UNKNOWN_EQUAL,
-                { ArgType::IDENTIFIER, { "count", AttrType::NONE } }, { ArgType::ATTRIBUTE, { "rd", AttrType::VAR_NAME } } };
+                { ArgType::IDENTIFIER, "count", PQL::NON_SYNONYM_ID, AttrType::NONE },
+                { ArgType::ATTRIBUTE, "rd", PQL::UNSET_SYNONYM_ID, AttrType::VAR_NAME } };
 
             Assert::IsFalse(equalityLit.setWithType(WithType::INTEGER_EQUAL));
             Assert::IsTrue(equalityLit.getWithType() == WithType::LITERAL_EQUAL);
@@ -198,9 +251,9 @@ namespace UnitTesting {
             PQL::Query query = {
                 PQL::STATUS_SUCCESS, queryString, true,
                 {   // List of return types in tuple
-                    { "w", AttrType::NONE },
-                    { "a", AttrType::NONE },
-                    { "cl", AttrType::PROC_NAME }
+                    { "w", PQL::UNSET_SYNONYM_ID, AttrType::NONE },
+                    { "a", PQL::UNSET_SYNONYM_ID, AttrType::NONE },
+                    { "cl", PQL::UNSET_SYNONYM_ID, AttrType::PROC_NAME }
                 },
                 {   // List of declared synonyms
                     { "l", DesignEntity::PROG_LINE },
@@ -210,23 +263,32 @@ namespace UnitTesting {
                 },
                 {   // List of parsed relation clauses
                     { "Follows*(1, l)", RelationType::FOLLOWST,
-                        { ArgType::INTEGER, "1" }, { ArgType::SYNONYM, "l" } },
+                        { ArgType::INTEGER, "1", PQL::NON_SYNONYM_ID, AttrType::INVALID },
+                        { ArgType::SYNONYM, "l", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } },
                     { "Next*(a, w)", RelationType::NEXTT,
-                        { ArgType::SYNONYM, "a" }, { ArgType::SYNONYM, "w" } },
+                        { ArgType::SYNONYM, "a", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                        { ArgType::SYNONYM, "w", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } },
                     { "Parent(w, cl)", RelationType::PARENT,
-                        { ArgType::SYNONYM, "w" }, { ArgType::SYNONYM, "cl" } }
+                        { ArgType::SYNONYM, "w", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                        { ArgType::SYNONYM, "cl", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } }
                 },
                 {   // List of parsed pattern clauses
-                    { "a(v, \"0\")", PatternType::ASSIGN_PATTERN, "a",
-                        { ArgType::SYNONYM, "v" }, { ArgType::EXACT_PATTERN, "0" } },
-                    { "w(v, _)", PatternType::WHILE_PATTERN, "w",
-                        { ArgType::SYNONYM, "v" }, { ArgType::WILDCARD, "_" } }
+                    { "a(v, \"0\")", PatternType::ASSIGN_PATTERN,
+                        { ArgType::SYNONYM, "a", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                        { ArgType::SYNONYM, "v", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                        { ArgType::EXACT_PATTERN, "0", PQL::NON_SYNONYM_ID, AttrType::INVALID } },
+                    { "w(v, _)", PatternType::WHILE_PATTERN,
+                        { ArgType::SYNONYM, "w", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                        { ArgType::SYNONYM, "v", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                        { ArgType::WILDCARD, "_", PQL::NON_SYNONYM_ID, AttrType::INVALID } }
                 },
                 {   // List of parsed with (equality) clauses
                     { "cl.procName = \"solve\"", WithType::IDENTIFIER_EQUAL,
-                        { ArgType::ATTRIBUTE, { "cl", AttrType::PROC_NAME } }, { ArgType::IDENTIFIER, { "solve", AttrType::NONE } } },
+                        { ArgType::ATTRIBUTE, "cl", PQL::UNSET_SYNONYM_ID, AttrType::PROC_NAME },
+                        { ArgType::IDENTIFIER, "solve", PQL::NON_SYNONYM_ID, AttrType::NONE } },
                     { "w.stmt# = l", WithType::INTEGER_EQUAL,
-                        { ArgType::ATTRIBUTE, { "w", AttrType::STMT_NUM } }, { ArgType::SYNONYM, { "l", AttrType::NONE } } }
+                        { ArgType::ATTRIBUTE, "w", PQL::UNSET_SYNONYM_ID, AttrType::STMT_NUM },
+                        { ArgType::SYNONYM, "l", PQL::UNSET_SYNONYM_ID, AttrType::NONE } }
                 }
             };
 
@@ -256,10 +318,10 @@ namespace UnitTesting {
             std::swap(reorderedTargets.targetEntities.at(0), reorderedTargets.targetEntities.at(2));
 
             PQL::Query modifiedTarget = query;
-            modifiedTarget.targetEntities.at(1).second = AttrType::STMT_NUM;
+            modifiedTarget.targetEntities.at(1).attrType = AttrType::STMT_NUM;
 
             PQL::Query extraTarget = query;
-            extraTarget.targetEntities.push_back({ "l", AttrType::NONE });
+            extraTarget.targetEntities.push_back({ "l", PQL::UNSET_SYNONYM_ID, AttrType::NONE });
 
             PQL::Query missingMapping = query;
             missingMapping.synonymTable.erase("w");
@@ -282,12 +344,14 @@ namespace UnitTesting {
             // Not possible to arbitrarily modify RelationClause instance after created
             PQL::Query modifiedRelation = missingRelation;
             modifiedRelation.relations.insert(
-                modifiedRelation.relations.begin() + 1,
-                { "Next*(a, w)", RelationType::NEXT, { ArgType::SYNONYM, "a" }, { ArgType::SYNONYM, "w" } });
+                modifiedRelation.relations.begin() + 1, { "Next*(a, w)", RelationType::NEXT,
+                    { ArgType::SYNONYM, "a", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "w", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } });
 
             PQL::Query extraRelation = query;
-            extraRelation.relations.push_back(
-                { "Uses(\"main\", v)", RelationType::USESP, { ArgType::IDENTIFIER, "main"}, { ArgType::SYNONYM, "v" } });
+            extraRelation.relations.push_back({ "Uses(\"main\", v)", RelationType::USESP,
+                    { ArgType::IDENTIFIER, "main", PQL::NON_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "v", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } });
 
             PQL::Query missingPattern = query;
             missingPattern.patterns.pop_back();
@@ -297,13 +361,17 @@ namespace UnitTesting {
 
             // Not possible to arbitrarily modify PatternClause instance after created
             PQL::Query modifiedPattern = missingPattern;
-            modifiedPattern.patterns.push_back(
-                { "w(v, _)", PatternType::WHILE_PATTERN, "w2", { ArgType::SYNONYM, "v" }, { ArgType::WILDCARD, "_" } });
+            modifiedPattern.patterns.push_back({ "w(v, _)", PatternType::WHILE_PATTERN,
+                { ArgType::SYNONYM, "w2", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                { ArgType::SYNONYM, "v", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                { ArgType::WILDCARD, "_", PQL::NON_SYNONYM_ID, AttrType::INVALID } });
 
             PQL::Query extraPattern = query;
             extraPattern.patterns.insert(
-                extraPattern.patterns.begin(),
-                { "ifs(v, _)", PatternType::IF_PATTERN, "ifs", { ArgType::SYNONYM, "v" }, { ArgType::WILDCARD, "_" } });
+                extraPattern.patterns.begin(), { "ifs(v, _)", PatternType::IF_PATTERN,
+                { ArgType::SYNONYM, "ifs", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                { ArgType::SYNONYM, "v", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                { ArgType::WILDCARD, "_", PQL::NON_SYNONYM_ID, AttrType::INVALID } });
 
             PQL::Query missingEquality = query;
             missingEquality.equalities.erase(missingEquality.equalities.begin());
@@ -313,15 +381,15 @@ namespace UnitTesting {
 
             PQL::Query modifiedEquality = missingEquality;
             modifiedEquality.equalities.insert(
-                modifiedEquality.equalities.begin(),
-                { "cl.procName = \"solve\"", WithType::IDENTIFIER_EQUAL,
-                    { ArgType::ATTRIBUTE, { "cl", AttrType::STMT_NUM } }, { ArgType::IDENTIFIER, { "solve", AttrType::NONE } } });
+                modifiedEquality.equalities.begin(), { "cl.procName = \"solve\"", WithType::IDENTIFIER_EQUAL,
+                    { ArgType::ATTRIBUTE, "cl", PQL::UNSET_SYNONYM_ID, AttrType::STMT_NUM },
+                    { ArgType::IDENTIFIER, "solve", PQL::NON_SYNONYM_ID, AttrType::NONE } });
 
             PQL::Query extraEquality = query;
             extraEquality.equalities.insert(
-                extraEquality.equalities.begin() + 1,
-                { "\"COVID19\" = \"sux\"", WithType::LITERAL_EQUAL,
-                    { ArgType::ATTRIBUTE, { "cl", AttrType::PROC_NAME } }, { ArgType::IDENTIFIER, { "solve", AttrType::NONE } } });
+                extraEquality.equalities.begin() + 1, { "\"COVID19\" = \"sux\"", WithType::LITERAL_EQUAL,
+                    { ArgType::ATTRIBUTE, "cl", PQL::UNSET_SYNONYM_ID, AttrType::PROC_NAME },
+                    { ArgType::IDENTIFIER, "solve", PQL::NON_SYNONYM_ID, AttrType::NONE } });
 
             std::vector<PQL::Query> diffQueries = {
                 diffStatus, diffQueryString, diffBool,
