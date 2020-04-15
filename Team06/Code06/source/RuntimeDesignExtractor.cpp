@@ -233,6 +233,23 @@ namespace FrontEnd {
     bool RuntimeDesignExtractor::affectsStarDFS(StmtId root, StmtId curr, std::unordered_set<StmtId>& visited, NodeType type, StmtId goal) {
         visited.insert(curr);
 
+        if (pkb->affectsStarProcessedAll(curr, type)) {
+
+            std::unordered_set<StmtId> nodes = pkb->affectsStarGetAllNodes(curr, type);
+            for (StmtId id : nodes) {
+                visited.insert(id);
+                if (type == NodeType::SUCCESSOR) {
+                    pkb->addAffectsStar(root, id);
+                } else {
+                    pkb->addAffectsStar(id, root);
+                }
+            }
+            if (nodes.find(goal) != nodes.end()) {
+                return true;
+            }
+            return false;
+        }
+
         std::unordered_set<StmtId> neighbours = pkb->affectsGetDirectNodes(curr, type);
 
         for (StmtId n : neighbours) {
