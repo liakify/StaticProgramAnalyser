@@ -98,6 +98,7 @@ $list_of_test_files = @(
   
   # TESTS BELOW CURRENTLY FAIL / TIMEOUT
   # '..\nextStar_tle'
+  # '..\performance600_runtimeCache'
   # '..\performance600_chainedNextStar'
   # '..\performance600_chainedAffects'
   # '..\performance600_chainedAffectsStar'
