@@ -115,31 +115,31 @@ namespace PQL {
         // Construct set of all target synonyms
         std::unordered_set<Synonym> targetSynonyms;
         std::unordered_set<Synonym> missingTargetSynonyms;
-        for (Ref ref : query.targetEntities) {
-            targetSynonyms.insert(ref.first);
-            missingTargetSynonyms.insert(ref.first);
+        for (ReturnType& ref : query.targetEntities) {
+            targetSynonyms.insert(ref.synonym);
+            missingTargetSynonyms.insert(ref.synonym);
         }
 
         // Evaluate clauses
-        for (int i = 0; i < optQuery.clauses.size(); i++) {
+        for (unsigned int i = 0; i < optQuery.clauses.size(); i++) {
             ClauseResult result;
             Clause* clause = optQuery.clauses[i];
             if (clause->getClauseType() == ClauseType::RELATION) {
                 RelationClause* relation = static_cast<RelationClause*>(clause);
                 result = evaluateRelationClause(*relation, query.synonymTable);
                 // Remove all present synonyms from target synonyms
-                std::pair<ArgType, std::string> arg1, arg2;
-                arg1 = relation->getArgs().first;
-                arg2 = relation->getArgs().second;
-                if (arg1.first == ArgType::SYNONYM) {
-                    missingTargetSynonyms.erase(arg1.second);
-                    if (targetSynonyms.find(arg1.second) != targetSynonyms.end()) {
+                std::pair<Argument, Argument> args = relation->getArgs();
+                Argument arg1 = args.first;
+                Argument arg2 = args.second;
+                if (arg1.type == ArgType::SYNONYM) {
+                    missingTargetSynonyms.erase(arg1.value);
+                    if (targetSynonyms.find(arg1.value) != targetSynonyms.end()) {
                         toMerge[optQuery.groups[i]] = true;
                     }
                 }
-                if (arg2.first == ArgType::SYNONYM) {
-                    missingTargetSynonyms.erase(arg2.second);
-                    if (targetSynonyms.find(arg2.second) != targetSynonyms.end()) {
+                if (arg2.type == ArgType::SYNONYM) {
+                    missingTargetSynonyms.erase(arg2.value);
+                    if (targetSynonyms.find(arg2.value) != targetSynonyms.end()) {
                         toMerge[optQuery.groups[i]] = true;
                     }
                 }
@@ -147,22 +147,23 @@ namespace PQL {
                 PatternClause* pattern = static_cast<PatternClause*>(clause);
                 result = evaluatePatternClause(*pattern, query.synonymTable);
                 // Remove all present synonyms from target synonyms
-                std::pair<ArgType, std::string> arg1, arg2;
-                arg1 = pattern->getArgs().first;
-                arg2 = pattern->getArgs().second;
-                missingTargetSynonyms.erase(pattern->getSynonym());
-                if (targetSynonyms.find(pattern->getSynonym()) != targetSynonyms.end()) {
+                std::pair<Argument, Argument> args = pattern->getArgs();
+                Argument arg0 = pattern->getSynonym();
+                Argument arg1 = args.first;
+                Argument arg2 = args.second;
+                missingTargetSynonyms.erase(arg0.value);
+                if (targetSynonyms.find(arg0.value) != targetSynonyms.end()) {
                     toMerge[optQuery.groups[i]] = true;
                 }
-                if (arg1.first == ArgType::SYNONYM) {
-                    missingTargetSynonyms.erase(arg1.second);
-                    if (targetSynonyms.find(arg1.second) != targetSynonyms.end()) {
+                if (arg1.type == ArgType::SYNONYM) {
+                    missingTargetSynonyms.erase(arg1.value);
+                    if (targetSynonyms.find(arg1.value) != targetSynonyms.end()) {
                         toMerge[optQuery.groups[i]] = true;
                     }
                 }
-                if (arg2.first == ArgType::SYNONYM) {
-                    missingTargetSynonyms.erase(arg2.second);
-                    if (targetSynonyms.find(arg2.second) != targetSynonyms.end()) {
+                if (arg2.type == ArgType::SYNONYM) {
+                    missingTargetSynonyms.erase(arg2.value);
+                    if (targetSynonyms.find(arg2.value) != targetSynonyms.end()) {
                         toMerge[optQuery.groups[i]] = true;
                     }
                 }
@@ -170,18 +171,18 @@ namespace PQL {
                 WithClause* with = static_cast<WithClause*>(clause);
                 result = evaluateWithClause(*with, query.synonymTable);
                 // Remove all present synonyms from target synonyms
-                std::pair<ArgType, Ref> arg1, arg2;
-                arg1 = with->getArgs().first;
-                arg2 = with->getArgs().second;
-                if (arg1.first == ArgType::SYNONYM || arg1.first == ArgType::ATTRIBUTE) {
-                    missingTargetSynonyms.erase(arg1.second.first);
-                    if (targetSynonyms.find(arg1.second.first) != targetSynonyms.end()) {
+                std::pair<Argument, Argument> args = with->getArgs();
+                Argument arg1 = args.first;
+                Argument arg2 = args.second;
+                if (arg1.type == ArgType::SYNONYM || arg1.type == ArgType::ATTRIBUTE) {
+                    missingTargetSynonyms.erase(arg1.value);
+                    if (targetSynonyms.find(arg1.value) != targetSynonyms.end()) {
                         toMerge[optQuery.groups[i]] = true;
                     }
                 }
-                if (arg2.first == ArgType::SYNONYM || arg2.first == ArgType::ATTRIBUTE) {
-                    missingTargetSynonyms.erase(arg2.second.first);
-                    if (targetSynonyms.find(arg2.second.first) != targetSynonyms.end()) {
+                if (arg2.type == ArgType::SYNONYM || arg2.type == ArgType::ATTRIBUTE) {
+                    missingTargetSynonyms.erase(arg2.value);
+                    if (targetSynonyms.find(arg2.value) != targetSynonyms.end()) {
                         toMerge[optQuery.groups[i]] = true;
                     }
                 }
@@ -204,7 +205,7 @@ namespace PQL {
 
         // Find all groups that should participate in inter-group merging
         std::vector<ClauseResult> mergingGroups;
-        for (int i = 0; i < optQuery.clauses.size(); i++) {
+        for (unsigned int i = 0; i < optQuery.clauses.size(); i++) {
             if (toMerge[optQuery.groups[i]]) {
                 mergingGroups.emplace_back(clauseResults[optQuery.groups[i]]);
                 toMerge[optQuery.groups[i]] = false;
@@ -245,9 +246,9 @@ namespace PQL {
             SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::extractQueryResults: Empty Result!\n");
             return ClauseResult();
         } else {
-            std::vector<Ref> &targets = query.targetEntities;
-            std::vector<std::pair<Ref, int> > mapper;
-            for (int i = 0; i < targets.size(); i++) {
+            std::vector<ReturnType> &targets = query.targetEntities;
+            std::vector<std::pair<ReturnType, int> > mapper;
+            for (unsigned int i = 0; i < targets.size(); i++) {
                 mapper.emplace_back(std::make_pair(targets[i], i));
             }
             std::sort(mapper.begin(), mapper.end());
@@ -257,12 +258,12 @@ namespace PQL {
                 ClauseResultEntry finalResultEntry(targets.size());
                 // Two pointers method to extract results
                 int j = 0;
-                for (int i = 0; i < mapper.size(); i++) {
-                    while (combinedResult.syns[j] != mapper[i].first.first) {
+                for (unsigned int i = 0; i < mapper.size(); i++) {
+                    while (combinedResult.syns[j] != mapper[i].first.synonym) {
                         j++;
                     }
-                    Synonym targetSyn = mapper[i].first.first;
-                    AttrType targetAttr = mapper[i].first.second;
+                    Synonym targetSyn = mapper[i].first.synonym;
+                    AttrType targetAttr = mapper[i].first.attrType;
                     int position = mapper[i].second;
 
                     if (targetAttr == AttrType::NONE) {
@@ -337,7 +338,7 @@ namespace PQL {
         // Extract common synonyms and get structure of combined result
         std::vector<std::pair<int, int> > commonSynonyms;
         std::vector<std::pair<int, int> > combStruct;
-        int i = 0, j = 0;
+        unsigned int i = 0, j = 0;
         while (i < clauseResults1.syns.size()) {
             while (j < clauseResults2.syns.size() && clauseResults2.syns[j] < clauseResults1.syns[i]) {
                 combStruct.emplace_back(std::make_pair(j, 1));
@@ -365,7 +366,7 @@ namespace PQL {
 
         ClauseResult combinedResult;
         // Populate synonym list
-        for (int i = 0; i < combStruct.size(); i++) {
+        for (unsigned int i = 0; i < combStruct.size(); i++) {
             if (combStruct[i].second == 0) {
                 combinedResult.syns.emplace_back(clauseResults1.syns[combStruct[i].first]);
             } else {
