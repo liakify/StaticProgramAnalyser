@@ -1,6 +1,7 @@
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
+#include <utility>
 
 #include "FollowsStarEvaluator.h"
 #include "LoggingUtils.h"
@@ -17,16 +18,15 @@ namespace PQL {
         * @return   The result of the evaluation.
         */
         ClauseResult evaluateFollowsStarClauseIntInt(PKB::PKB& database, RelationClause clause) {
-            StmtId arg1 = std::stoi(clause.getArgs().first.second);
-            StmtId arg2 = std::stoi(clause.getArgs().second.second);
+            std::pair<Argument, Argument> args = clause.getArgs();
+            StmtId arg1 = std::stoi(args.first.value);
+            StmtId arg2 = std::stoi(args.second.value);
 
+            ClauseResult clauseResult;
             if (database.followsKB.followStar(arg1, arg2)) {
-                ClauseResultEntry resultEntry;
-                resultEntry["_RESULT"] = "TRUE";
-                return { resultEntry };
-            } else {
-                return {};
+                clauseResult.trueResult = true;
             }
+            return clauseResult;
         }
 
         /**
@@ -36,14 +36,11 @@ namespace PQL {
         * @return   The result of the evaluation.
         */
         ClauseResult evaluateFollowsStarClauseWildWild(PKB::PKB& database) {
-            for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
-                if (database.followsKB.getFollower(i) != 0) {
-                    ClauseResultEntry resultEntry;
-                    resultEntry["_RESULT"] = "TRUE";
-                    return { resultEntry };
-                }
+            ClauseResult clauseResult;
+            if (database.followsKB.hasFollowsRelation()) {
+                clauseResult.trueResult = true;
             }
-            return {};
+            return clauseResult;
         }
 
         /**
@@ -54,29 +51,26 @@ namespace PQL {
         * @return   The result of the evaluation.
         */
         ClauseResult evaluateFollowsStarClauseIntWild(PKB::PKB& database, RelationClause clause) {
-            ArgType argType1 = clause.getArgs().first.first;
-            ArgType argType2 = clause.getArgs().second.first;
+            std::pair<Argument, Argument> args = clause.getArgs();
+            ArgType argType1 = args.first.type;
+            ArgType argType2 = args.second.type;
 
             if (argType1 == ArgType::INTEGER && argType2 == ArgType::WILDCARD) {
                 // Case 1: Integer, Wildcard
-                StmtId arg1 = std::stoi(clause.getArgs().first.second);
+                StmtId arg1 = std::stoi(args.first.value);
+                ClauseResult clauseResult;
                 if (database.followsKB.getFollower(arg1) != 0) {
-                    ClauseResultEntry resultEntry;
-                    resultEntry["_RESULT"] = "TRUE";
-                    return { resultEntry };
-                } else {
-                    return {};
+                    clauseResult.trueResult = true;
                 }
+                return clauseResult;
             } else {
                 // Case 2: Wildcard, Integer
-                StmtId arg2 = std::stoi(clause.getArgs().second.second);
+                StmtId arg2 = std::stoi(args.second.value);
+                ClauseResult clauseResult;
                 if (database.followsKB.getFollowing(arg2) != 0) {
-                    ClauseResultEntry resultEntry;
-                    resultEntry["_RESULT"] = "TRUE";
-                    return { resultEntry };
-                } else {
-                    return {};
+                    clauseResult.trueResult = true;
                 }
+                return clauseResult;
             }
         }
 
@@ -90,36 +84,40 @@ namespace PQL {
         */
         ClauseResult evaluateFollowsStarClauseIntSyn(PKB::PKB& database, RelationClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable) {
-            ArgType argType1 = clause.getArgs().first.first;
-            ArgType argType2 = clause.getArgs().second.first;
+
+            std::pair<Argument, Argument> args = clause.getArgs();
+            ArgType argType1 = args.first.type;
+            ArgType argType2 = args.second.type;
 
             if (argType1 == ArgType::INTEGER && argType2 == ArgType::SYNONYM) {
                 // Case 1: Integer, Synonym
-                StmtId arg1 = std::stoi(clause.getArgs().first.second);
-                Synonym arg2 = clause.getArgs().second.second;
+                StmtId arg1 = std::stoi(args.first.value);
+                Synonym arg2 = args.second.value;
 
-                ClauseResult clauseResult = {};
+                ClauseResult clauseResult;
+                clauseResult.syns.emplace_back(arg2);
                 std::unordered_set<StmtId> followers = database.followsKB.getAllFollowers(arg1);
                 for (StmtId follower : followers) {
                     if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(follower)->getType(), synonymTable[arg2])) {
                         ClauseResultEntry resultEntry;
-                        resultEntry[arg2] = std::to_string(follower);
-                        clauseResult.emplace_back(resultEntry);
+                        resultEntry.emplace_back(std::to_string(follower));
+                        clauseResult.rows.emplace_back(resultEntry);
                     }
                 }
                 return clauseResult;
             } else {
                 // Case 2: Synonym, Integer
-                Synonym arg1 = clause.getArgs().first.second;
-                StmtId arg2 = std::stoi(clause.getArgs().second.second);
+                Synonym arg1 = args.first.value;
+                StmtId arg2 = std::stoi(args.second.value);
 
-                ClauseResult clauseResult = {};
+                ClauseResult clauseResult;
+                clauseResult.syns.emplace_back(arg1);
                 std::unordered_set<StmtId> following = database.followsKB.getAllFollowing(arg2);
                 for (StmtId follow : following) {
                     if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(follow)->getType(), synonymTable[arg1])) {
                         ClauseResultEntry resultEntry;
-                        resultEntry[arg1] = std::to_string(follow);
-                        clauseResult.emplace_back(resultEntry);
+                        resultEntry.emplace_back(std::to_string(follow));
+                        clauseResult.rows.emplace_back(resultEntry);
                     }
                 }
                 return clauseResult;
@@ -136,34 +134,39 @@ namespace PQL {
         */
         ClauseResult evaluateFollowsStarClauseWildSyn(PKB::PKB& database, RelationClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable) {
-            ArgType argType1 = clause.getArgs().first.first;
-            ArgType argType2 = clause.getArgs().second.first;
+
+            std::pair<Argument, Argument> args = clause.getArgs();
+            ArgType argType1 = args.first.type;
+            ArgType argType2 = args.second.type;
 
             if (argType1 == ArgType::WILDCARD && argType2 == ArgType::SYNONYM) {
-                Synonym arg2 = clause.getArgs().second.second;
+                Synonym arg2 = args.second.value;
 
                 // Case 1: Wildcard, Synonym
-                ClauseResult clauseResult = {};
+                ClauseResult clauseResult;
+                clauseResult.syns.emplace_back(arg2);
                 for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
                     if (database.followsKB.getFollowing(i) != 0) {
                         if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i)->getType(), synonymTable[arg2])) {
                             ClauseResultEntry resultEntry;
-                            resultEntry[arg2] = std::to_string(i);
-                            clauseResult.emplace_back(resultEntry);
+                            resultEntry.emplace_back(std::to_string(i));
+                            clauseResult.rows.emplace_back(resultEntry);
                         }
                     }
                 }
                 return clauseResult;
             } else {
-                Synonym arg1 = clause.getArgs().first.second;
+                Synonym arg1 = args.first.value;
+
                 // Case 2: Synonym, Wildcard
-                ClauseResult clauseResult = {};
+                ClauseResult clauseResult;
+                clauseResult.syns.emplace_back(arg1);
                 for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
                     if (database.followsKB.getFollower(i) != 0) {
                         if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i)->getType(), synonymTable[arg1])) {
                             ClauseResultEntry resultEntry;
-                            resultEntry[arg1] = std::to_string(i);
-                            clauseResult.emplace_back(resultEntry);
+                            resultEntry.emplace_back(std::to_string(i));
+                            clauseResult.rows.emplace_back(resultEntry);
                         }
                     }
                 }
@@ -181,12 +184,26 @@ namespace PQL {
         */
         ClauseResult evaluateFollowsStarClauseSynSyn(PKB::PKB& database, RelationClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable) {
-            Synonym arg1 = clause.getArgs().first.second;
-            Synonym arg2 = clause.getArgs().second.second;
+
+            std::pair<Argument, Argument> args = clause.getArgs();
+            Synonym arg1 = args.first.value;
+            Synonym arg2 = args.second.value;
 
             bool singleSynonym = (arg1 == arg2);
 
-            ClauseResult clauseResult = {};
+            ClauseResult clauseResult;
+            if (singleSynonym) {
+                clauseResult.syns.emplace_back(arg1);
+            } else {
+                if (arg1 < arg2) {
+                    clauseResult.syns.emplace_back(arg1);
+                    clauseResult.syns.emplace_back(arg2);
+                } else {
+                    clauseResult.syns.emplace_back(arg2);
+                    clauseResult.syns.emplace_back(arg1);
+                }
+            }
+
             for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
                 std::unordered_set<StmtId> followers = database.followsKB.getAllFollowers(i);
                 for (StmtId follower : followers) {
@@ -194,14 +211,19 @@ namespace PQL {
                         SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(follower)->getType(), synonymTable[arg2])) {
                         if (!singleSynonym) {
                             ClauseResultEntry resultEntry;
-                            resultEntry[arg1] = std::to_string(i);
-                            resultEntry[arg2] = std::to_string(follower);
-                            clauseResult.emplace_back(resultEntry);
+                            if (arg1 < arg2) {
+                                resultEntry.emplace_back(std::to_string(i));
+                                resultEntry.emplace_back(std::to_string(follower));
+                            } else {
+                                resultEntry.emplace_back(std::to_string(follower));
+                                resultEntry.emplace_back(std::to_string(i));
+                            }
+                            clauseResult.rows.emplace_back(resultEntry);
                         } else {
                             if (i == follower) {
                                 ClauseResultEntry resultEntry;
-                                resultEntry[arg1] = std::to_string(i);
-                                clauseResult.emplace_back(resultEntry);
+                                resultEntry.emplace_back(std::to_string(i));
+                                clauseResult.rows.emplace_back(resultEntry);
                             }
                         }
                     }
@@ -213,8 +235,9 @@ namespace PQL {
         ClauseResult evaluateFollowsStarClause(PKB::PKB& database, RelationClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable) {
 
-            ArgType argType1 = clause.getArgs().first.first;
-            ArgType argType2 = clause.getArgs().second.first;
+            std::pair<Argument, Argument> args = clause.getArgs();
+            ArgType argType1 = args.first.type;
+            ArgType argType2 = args.second.type;
 
             if (argType1 == ArgType::INTEGER && argType2 == ArgType::INTEGER) {
                 // Two statement numbers supplied

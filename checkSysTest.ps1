@@ -16,15 +16,21 @@ $regression_test_path = '.\Team06\Tests06\regression_tests\'
 
 $list_of_test_files = @(
   
-  # 'affects_singleStmt'
-  # 'affectsStar_singleStmt'
-  '..\mixed_0'
-
   '..\contains_0'
   '..\contains_invalidArgs'
   '..\contains_multi'
   '..\contains_pattern'
   '..\contains_with'
+
+  # '..\performance600_single'
+  # '..\performance600_chainedNext'
+
+  # TEST BELOW CURRENTLY FAIL / TIMEOUT
+  # '..\performance600_runtimeCache'
+  # '..\performance600_chainedNextStar'
+  # '..\performance600_chainedAffects'
+  # '..\performance600_chainedAffectsStar'
+  # '..\performance600_nextStar+AffectsStar+Tuple'
 )
 
 $list_of_no_xml_tests = @(

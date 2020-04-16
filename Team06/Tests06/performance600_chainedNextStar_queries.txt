@@ -1,0 +1,5 @@
+1 - Chained NextStar
+stmt s1, s2, s3;
+Select <s1, s3> such that Next*(s1, s2) and Next*(s2, s3)
+
+5000

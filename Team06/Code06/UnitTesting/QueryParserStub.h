@@ -22,7 +22,7 @@ namespace UnitTesting {
         const std::string TUPLE_UNKNOWN_DECL_KEYWORD_QUERY = "while w; progline l; Select <w, l>";
         const std::string TUPLE_REPEATED_DECLARATION_QUERY = "procedure p, p; Select <p.procName>";
         const std::string TUPLE_CONFLICTING_DECLARATION_QUERY = "stmt s; constant c; call c; Select <s, c.value>";
-        const std::string INVALID_RETURN_TYPE_QUERY = "call cl; Select [cl]";
+        const std::string INVALID_RETURN_TYPE_QUERY = "call cl; Select (cl)";
     }
 
     /**

@@ -1,0 +1,5 @@
+1 - Chained AffectsStar
+stmt s1, s2, s3;
+Select <s1, s3> such that Affects*(s1, s2) and Affects*(s2, s3)
+
+5000

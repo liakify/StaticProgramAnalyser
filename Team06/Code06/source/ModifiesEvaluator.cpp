@@ -1,6 +1,7 @@
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
+#include <utility>
 
 #include "ModifiesEvaluator.h"
 #include "LoggingUtils.h"
@@ -17,32 +18,29 @@ namespace PQL {
         * @return   The result of the evaluation.
         */
         ClauseResult evaluateModifiesClauseIntIdId(PKB::PKB& database, RelationClause clause) {
-            ArgType argType1 = clause.getArgs().first.first;
+            std::pair<Argument, Argument> args = clause.getArgs();
+            ArgType argType1 = args.first.type;
 
             if (argType1 == ArgType::INTEGER) {
                 // Case 1: Statement number provided
-                StmtId arg1 = std::stoi(clause.getArgs().first.second);
-                VarId arg2 = database.varTable.getVarId(clause.getArgs().second.second);
+                StmtId arg1 = std::stoi(args.first.value);
+                VarId arg2 = database.varTable.getVarId(args.second.value);
 
+                ClauseResult clauseResult;
                 if (database.modifiesKB.stmtModifies(arg1, arg2)) {
-                    ClauseResultEntry resultEntry;
-                    resultEntry["_RESULT"] = "TRUE";
-                    return { resultEntry };
-                } else {
-                    return {};
+                    clauseResult.trueResult = true;
                 }
+                return clauseResult;
             } else {
                 // Case 2: Procedure name provided
-                ProcId arg1 = database.procTable.getProcId(clause.getArgs().first.second);
-                VarId arg2 = database.varTable.getVarId(clause.getArgs().second.second);
+                ProcId arg1 = database.procTable.getProcId(args.first.value);
+                VarId arg2 = database.varTable.getVarId(args.second.value);
 
+                ClauseResult clauseResult;
                 if (database.modifiesKB.procModifies(arg1, arg2)) {
-                    ClauseResultEntry resultEntry;
-                    resultEntry["_RESULT"] = "TRUE";
-                    return { resultEntry };
-                } else {
-                    return {};
+                    clauseResult.trueResult = true;
                 }
+                return clauseResult;
             }
 
         }
@@ -55,30 +53,26 @@ namespace PQL {
         * @return   The result of the evaluation.
         */
         ClauseResult evaluateModifiesClauseIntIdWild(PKB::PKB& database, RelationClause clause) {
-            ArgType argType1 = clause.getArgs().first.first;
+            std::pair<Argument, Argument> args = clause.getArgs();
+            ArgType argType1 = args.first.type;
 
             if (argType1 == ArgType::INTEGER) {
                 // Case 1: Statement number provided
-                StmtId arg1 = std::stoi(clause.getArgs().first.second);
+                StmtId arg1 = std::stoi(args.first.value);
+                ClauseResult clauseResult;
                 if (database.modifiesKB.getAllVarsModifiedByStmt(arg1).size() > 0) {
-                    ClauseResultEntry resultEntry;
-                    resultEntry["_RESULT"] = "TRUE";
-                    return { resultEntry };
-                } else {
-                    return {};
+                    clauseResult.trueResult = true;
                 }
+                return clauseResult;
             } else {
                 // Case 2: Procedure name provided
-                ProcId arg1 = database.procTable.getProcId(clause.getArgs().first.second);
+                ProcId arg1 = database.procTable.getProcId(args.first.value);
+                ClauseResult clauseResult;
                 if (database.modifiesKB.getAllVarsModifiedByProc(arg1).size() > 0) {
-                    ClauseResultEntry resultEntry;
-                    resultEntry["_RESULT"] = "TRUE";
-                    return { resultEntry };
-                } else {
-                    return {};
+                    clauseResult.trueResult = true;
                 }
+                return clauseResult;
             }
-
         }
 
         /**
@@ -91,32 +85,36 @@ namespace PQL {
         */
         ClauseResult evaluateModifiesClauseIntIdSyn(PKB::PKB& database, RelationClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable) {
-            ArgType argType1 = clause.getArgs().first.first;
+
+            std::pair<Argument, Argument> args = clause.getArgs();
+            ArgType argType1 = args.first.type;
 
             if (argType1 == ArgType::INTEGER) {
                 // Case 1: Statement number
-                StmtId arg1 = std::stoi(clause.getArgs().first.second);
-                Synonym arg2 = clause.getArgs().second.second;
+                StmtId arg1 = std::stoi(args.first.value);
+                Synonym arg2 = args.second.value;
 
-                std::unordered_set<VarId> modifiedVars = database.modifiesKB.getAllVarsModifiedByStmt(arg1);
                 ClauseResult clauseResult;
+                clauseResult.syns.emplace_back(arg2);
+                std::unordered_set<VarId> modifiedVars = database.modifiesKB.getAllVarsModifiedByStmt(arg1);
                 for (VarId var : modifiedVars) {
                     ClauseResultEntry resultEntry;
-                    resultEntry[arg2] = database.varTable.get(var);
-                    clauseResult.emplace_back(resultEntry);
+                    resultEntry.emplace_back(database.varTable.get(var));
+                    clauseResult.rows.emplace_back(resultEntry);
                 }
                 return clauseResult;
             } else {
                 // Case 2: Procedure name
-                ProcId arg1 = database.procTable.getProcId(clause.getArgs().first.second);
-                Synonym arg2 = clause.getArgs().second.second;
+                ProcId arg1 = database.procTable.getProcId(args.first.value);
+                Synonym arg2 = args.second.value;
 
-                std::unordered_set<VarId> modifiedVars = database.modifiesKB.getAllVarsModifiedByProc(arg1);
                 ClauseResult clauseResult;
+                clauseResult.syns.emplace_back(arg2);
+                std::unordered_set<VarId> modifiedVars = database.modifiesKB.getAllVarsModifiedByProc(arg1);
                 for (VarId var : modifiedVars) {
                     ClauseResultEntry resultEntry;
-                    resultEntry[arg2] = database.varTable.get(var);
-                    clauseResult.emplace_back(resultEntry);
+                    resultEntry.emplace_back(database.varTable.get(var));
+                    clauseResult.rows.emplace_back(resultEntry);
                 }
 
                 return clauseResult;
@@ -134,28 +132,31 @@ namespace PQL {
         ClauseResult evaluateModifiesClauseSynId(PKB::PKB& database, RelationClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable) {
 
-            Synonym arg1 = clause.getArgs().first.second;
-            VarId arg2 = database.varTable.getVarId(clause.getArgs().second.second);
+            std::pair<Argument, Argument> args = clause.getArgs();
+            Synonym arg1 = args.first.value;
+            VarId arg2 = database.varTable.getVarId(args.second.value);
 
             if (synonymTable[arg1] == DesignEntity::PROCEDURE) {
                 // Case 1: Synonym is a procedure
-                std::unordered_set<StmtId> modifyingProcs = database.modifiesKB.getAllProcModifyVar(arg2);
                 ClauseResult clauseResult;
+                clauseResult.syns.emplace_back(arg1);
+                std::unordered_set<StmtId> modifyingProcs = database.modifiesKB.getAllProcModifyVar(arg2);
                 for (ProcId proc : modifyingProcs) {
                     ClauseResultEntry resultEntry;
-                    resultEntry[arg1] = database.procTable.get(proc).getName();
-                    clauseResult.emplace_back(resultEntry);
+                    resultEntry.emplace_back(database.procTable.get(proc).getName());
+                    clauseResult.rows.emplace_back(resultEntry);
                 }
                 return clauseResult;
             } else {
                 // Case 2: Synonym is a statement
-                std::unordered_set<StmtId> modifyingStmts = database.modifiesKB.getAllStmtsModifyVar(arg2);
                 ClauseResult clauseResult;
+                clauseResult.syns.emplace_back(arg1);
+                std::unordered_set<StmtId> modifyingStmts = database.modifiesKB.getAllStmtsModifyVar(arg2);
                 for (StmtId stmt : modifyingStmts) {
                     if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(stmt)->getType(), synonymTable[arg1])) {
                         ClauseResultEntry resultEntry;
-                        resultEntry[arg1] = std::to_string(stmt);
-                        clauseResult.emplace_back(resultEntry);
+                        resultEntry.emplace_back(std::to_string(stmt));
+                        clauseResult.rows.emplace_back(resultEntry);
                     }
                 }
                 return clauseResult;
@@ -173,28 +174,30 @@ namespace PQL {
         ClauseResult evaluateModifiesClauseSynWild(PKB::PKB& database, RelationClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable) {
 
-            Synonym arg1 = clause.getArgs().first.second;
+            Synonym arg1 = clause.getArgs().first.value;
 
             if (synonymTable[arg1] == DesignEntity::PROCEDURE) {
                 // Case 1: Synonym is a procedure
-                ClauseResult clauseResult = {};
+                ClauseResult clauseResult;
+                clauseResult.syns.emplace_back(arg1);
                 for (ProcId i = 1; i <= database.procTable.size(); i++) {
                     if (database.modifiesKB.getAllVarsModifiedByProc(i).size() > 0) {
                         ClauseResultEntry resultEntry;
-                        resultEntry[arg1] = database.procTable.get(i).getName();
-                        clauseResult.emplace_back(resultEntry);
+                        resultEntry.emplace_back(database.procTable.get(i).getName());
+                        clauseResult.rows.emplace_back(resultEntry);
                     }
                 }
                 return clauseResult;
             } else {
                 // Case 2: Synonym is a statement
-                ClauseResult clauseResult = {};
+                ClauseResult clauseResult;
+                clauseResult.syns.emplace_back(arg1);
                 for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
                     if (database.modifiesKB.getAllVarsModifiedByStmt(i).size() > 0) {
                         if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i)->getType(), synonymTable[arg1])) {
                             ClauseResultEntry resultEntry;
-                            resultEntry[arg1] = std::to_string(i);
-                            clauseResult.emplace_back(resultEntry);
+                            resultEntry.emplace_back(std::to_string(i));
+                            clauseResult.rows.emplace_back(resultEntry);
                         }
                     }
                 }
@@ -212,31 +215,49 @@ namespace PQL {
         */
         ClauseResult evaluateModifiesClauseSynSyn(PKB::PKB& database, RelationClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable) {
-            Synonym arg1 = clause.getArgs().first.second;
-            Synonym arg2 = clause.getArgs().second.second;
 
+            std::pair<Argument, Argument> args = clause.getArgs();
+            Synonym arg1 = args.first.value;
+            Synonym arg2 = args.second.value;
+
+            ClauseResult clauseResult;
+            if (arg1 < arg2) {
+                clauseResult.syns.emplace_back(arg1);
+                clauseResult.syns.emplace_back(arg2);
+            } else {
+                clauseResult.syns.emplace_back(arg2);
+                clauseResult.syns.emplace_back(arg1);
+            }
             if (synonymTable[arg1] == DesignEntity::PROCEDURE) {
-                ClauseResult clauseResult = {};
                 for (ProcId i = 1; i <= database.procTable.size(); i++) {
                     std::unordered_set<VarId> modifiedVars = database.modifiesKB.getAllVarsModifiedByProc(i);
                     for (VarId var : modifiedVars) {
                         ClauseResultEntry resultEntry;
-                        resultEntry[arg1] = database.procTable.get(i).getName();
-                        resultEntry[arg2] = database.varTable.get(var);
-                        clauseResult.emplace_back(resultEntry);
+                        if (arg1 < arg2) {
+                            resultEntry.emplace_back(database.procTable.get(i).getName());
+                            resultEntry.emplace_back(database.varTable.get(var));
+                        } else {
+                            resultEntry.emplace_back(database.varTable.get(var));
+                            resultEntry.emplace_back(database.procTable.get(i).getName());
+                        }
+                        clauseResult.rows.emplace_back(resultEntry);
                     }
                 }
                 return clauseResult;
             } else {
-                ClauseResult clauseResult = {};
                 for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
                     if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i)->getType(), synonymTable[arg1])) {
                         std::unordered_set<VarId> modifiedVars = database.modifiesKB.getAllVarsModifiedByStmt(i);
                         for (VarId var : modifiedVars) {
                             ClauseResultEntry resultEntry;
-                            resultEntry[arg1] = std::to_string(i);
-                            resultEntry[arg2] = database.varTable.get(var);
-                            clauseResult.emplace_back(resultEntry);
+                            if (arg1 < arg2) {
+                                resultEntry.emplace_back(std::to_string(i));
+                                resultEntry.emplace_back(database.varTable.get(var));
+                            } else {
+                                resultEntry.emplace_back(database.varTable.get(var));
+                                resultEntry.emplace_back(std::to_string(i));
+                            }
+                            clauseResult.rows.emplace_back(resultEntry);
                         }
                     }
                 }
@@ -247,8 +268,9 @@ namespace PQL {
         ClauseResult evaluateModifiesClause(PKB::PKB& database, RelationClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable) {
 
-            ArgType argType1 = clause.getArgs().first.first;
-            ArgType argType2 = clause.getArgs().second.first;
+            std::pair<Argument, Argument> args = clause.getArgs();
+            ArgType argType1 = args.first.type;
+            ArgType argType2 = args.second.type;
 
             if ((argType1 == ArgType::INTEGER || argType1 == ArgType::IDENTIFIER) && argType2 == ArgType::IDENTIFIER) {
                 // One statement number/procedure name, one identifier supplied
