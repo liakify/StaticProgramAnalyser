@@ -1,6 +1,7 @@
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
+#include <utility>
 
 #include "ParentEvaluator.h"
 #include "LoggingUtils.h"
@@ -17,16 +18,15 @@ namespace PQL {
         * @return   The result of the evaluation.
         */
         ClauseResult evaluateParentClauseIntInt(PKB::PKB& database, RelationClause clause) {
-            StmtId arg1 = std::stoi(clause.getArgs().first.second);
-            StmtId arg2 = std::stoi(clause.getArgs().second.second);
+            std::pair<Argument, Argument> args = clause.getArgs();
+            StmtId arg1 = std::stoi(args.first.value);
+            StmtId arg2 = std::stoi(args.second.value);
 
+            ClauseResult clauseResult;
             if (database.parentKB.parent(arg1, arg2)) {
-                ClauseResultEntry resultEntry;
-                resultEntry["_RESULT"] = "TRUE";
-                return { resultEntry };
-            } else {
-                return {};
+                clauseResult.trueResult = true;
             }
+            return clauseResult;
         }
 
         /**
@@ -36,14 +36,11 @@ namespace PQL {
         * @return   The result of the evaluation.
         */
         ClauseResult evaluateParentClauseWildWild(PKB::PKB& database) {
-            for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
-                if (database.parentKB.getParent(i) != 0) {
-                    ClauseResultEntry resultEntry;
-                    resultEntry["_RESULT"] = "TRUE";
-                    return { resultEntry };
-                }
+            ClauseResult clauseResult;
+            if (database.parentKB.hasParentRelation()) {
+                clauseResult.trueResult = true;
             }
-            return {};
+            return clauseResult;
         }
 
         /**
@@ -54,29 +51,26 @@ namespace PQL {
         * @return   The result of the evaluation.
         */
         ClauseResult evaluateParentClauseIntWild(PKB::PKB& database, RelationClause clause) {
-            ArgType argType1 = clause.getArgs().first.first;
-            ArgType argType2 = clause.getArgs().second.first;
+            std::pair<Argument, Argument> args = clause.getArgs();
+            ArgType argType1 = args.first.type;
+            ArgType argType2 = args.second.type;
 
             if (argType1 == ArgType::INTEGER && argType2 == ArgType::WILDCARD) {
                 // Case 1: Integer, Wildcard
-                StmtId arg1 = std::stoi(clause.getArgs().first.second);
+                StmtId arg1 = std::stoi(args.first.value);
+                ClauseResult clauseResult;
                 if (database.parentKB.getDirectChildren(arg1).size() > 0) {
-                    ClauseResultEntry resultEntry;
-                    resultEntry["_RESULT"] = "TRUE";
-                    return { resultEntry };
-                } else {
-                    return {};
+                    clauseResult.trueResult = true;
                 }
+                return clauseResult;
             } else {
                 // Case 2: Wildcard, Integer
-                StmtId arg2 = std::stoi(clause.getArgs().second.second);
+                StmtId arg2 = std::stoi(args.second.value);
+                ClauseResult clauseResult;
                 if (database.parentKB.getParent(arg2) != 0) {
-                    ClauseResultEntry resultEntry;
-                    resultEntry["_RESULT"] = "TRUE";
-                    return { resultEntry };
-                } else {
-                    return {};
+                    clauseResult.trueResult = true;
                 }
+                return clauseResult;
             }
         }
 
@@ -90,40 +84,44 @@ namespace PQL {
         */
         ClauseResult evaluateParentClauseIntSyn(PKB::PKB& database, RelationClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable) {
-            ArgType argType1 = clause.getArgs().first.first;
-            ArgType argType2 = clause.getArgs().second.first;
+
+            std::pair<Argument, Argument> args = clause.getArgs();
+            ArgType argType1 = args.first.type;
+            ArgType argType2 = args.second.type;
 
             if (argType1 == ArgType::INTEGER && argType2 == ArgType::SYNONYM) {
                 // Case 1: Integer, Synonym
-                StmtId arg1 = std::stoi(clause.getArgs().first.second);
-                Synonym arg2 = clause.getArgs().second.second;
+                StmtId arg1 = std::stoi(args.first.value);
+                Synonym arg2 = args.second.value;
 
                 std::unordered_set<StmtId> directChildren = database.parentKB.getDirectChildren(arg1);
                 ClauseResult clauseResult;
+                clauseResult.syns.emplace_back(arg2);
                 for (StmtId child : directChildren) {
                     if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(child)->getType(), synonymTable[arg2])) {
                         ClauseResultEntry resultEntry;
-                        resultEntry[arg2] = std::to_string(child);
-                        clauseResult.emplace_back(resultEntry);
+                        resultEntry.emplace_back(std::to_string(child));
+                        clauseResult.rows.emplace_back(resultEntry);
                     }
                 }
                 return clauseResult;
             } else {
                 // Case 2: Synonym, Integer
-                Synonym arg1 = clause.getArgs().first.second;
-                StmtId arg2 = std::stoi(clause.getArgs().second.second);
+                Synonym arg1 = args.first.value;
+                StmtId arg2 = std::stoi(args.second.value);
 
                 StmtId parent = database.parentKB.getParent(arg2);
+                ClauseResult clauseResult;
                 if (parent == 0) {
-                    return {};
+                    return clauseResult;
                 } else {
+                    clauseResult.syns.emplace_back(arg1);
                     if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(parent)->getType(), synonymTable[arg1])) {
                         ClauseResultEntry resultEntry;
-                        resultEntry[arg1] = std::to_string(parent);
-                        return { resultEntry };
-                    } else {
-                        return {};
+                        resultEntry.emplace_back(std::to_string(parent));
+                        clauseResult.rows.emplace_back(resultEntry);
                     }
+                    return clauseResult;
                 }
             }
         }
@@ -138,33 +136,37 @@ namespace PQL {
         */
         ClauseResult evaluateParentClauseWildSyn(PKB::PKB& database, RelationClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable) {
-            ArgType argType1 = clause.getArgs().first.first;
-            ArgType argType2 = clause.getArgs().second.first;
+
+            std::pair<Argument, Argument> args = clause.getArgs();
+            ArgType argType1 = args.first.type;
+            ArgType argType2 = args.second.type;
 
             if (argType1 == ArgType::WILDCARD && argType2 == ArgType::SYNONYM) {
-                Synonym arg2 = clause.getArgs().second.second;
+                Synonym arg2 = args.second.value;
 
                 // Case 1: Wildcard, Synonym
-                ClauseResult clauseResult = {};
+                ClauseResult clauseResult;
+                clauseResult.syns.emplace_back(arg2);
                 for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
                     if (database.parentKB.getParent(i) != 0 &&
                         SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i)->getType(), synonymTable[arg2])) {
                         ClauseResultEntry resultEntry;
-                        resultEntry[arg2] = std::to_string(i);
-                        clauseResult.emplace_back(resultEntry);
+                        resultEntry.emplace_back(std::to_string(i));
+                        clauseResult.rows.emplace_back(resultEntry);
                     }
                 }
                 return clauseResult;
             } else {
-                Synonym arg1 = clause.getArgs().first.second;
+                Synonym arg1 = args.first.value;
                 // Case 2: Synonym, Wildcard
-                ClauseResult clauseResult = {};
+                ClauseResult clauseResult;
+                clauseResult.syns.emplace_back(arg1);
                 for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
                     if (database.parentKB.getDirectChildren(i).size() != 0 &&
                         SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i)->getType(), synonymTable[arg1])) {
                         ClauseResultEntry resultEntry;
-                        resultEntry[arg1] = std::to_string(i);
-                        clauseResult.emplace_back(resultEntry);
+                        resultEntry.emplace_back(std::to_string(i));
+                        clauseResult.rows.emplace_back(resultEntry);
                     }
                 }
                 return clauseResult;
@@ -181,12 +183,24 @@ namespace PQL {
         */
         ClauseResult evaluateParentClauseSynSyn(PKB::PKB& database, RelationClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable) {
-            Synonym arg1 = clause.getArgs().first.second;
-            Synonym arg2 = clause.getArgs().second.second;
+
+            std::pair<Argument, Argument> args = clause.getArgs();
+            Synonym arg1 = args.first.value;
+            Synonym arg2 = args.second.value;
 
             bool singleSynonym = (arg1 == arg2);
 
-            ClauseResult clauseResult = {};
+            ClauseResult clauseResult;
+            if (singleSynonym) {
+                clauseResult.syns.emplace_back(arg1);
+            } else if (arg1 < arg2) {
+                clauseResult.syns.emplace_back(arg1);
+                clauseResult.syns.emplace_back(arg2);
+            } else {
+                clauseResult.syns.emplace_back(arg2);
+                clauseResult.syns.emplace_back(arg1);
+            }
+
             for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
                 StmtId parent = database.parentKB.getParent(i);
                 if (parent != 0) {
@@ -194,14 +208,19 @@ namespace PQL {
                         SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i)->getType(), synonymTable[arg2])) {
                         if (!singleSynonym) {
                             ClauseResultEntry resultEntry;
-                            resultEntry[arg1] = std::to_string(parent);
-                            resultEntry[arg2] = std::to_string(i);
-                            clauseResult.emplace_back(resultEntry);
+                            if (arg1 < arg2) {
+                                resultEntry.emplace_back(std::to_string(parent));
+                                resultEntry.emplace_back(std::to_string(i));
+                            } else {
+                                resultEntry.emplace_back(std::to_string(i));
+                                resultEntry.emplace_back(std::to_string(parent));
+                            }
+                            clauseResult.rows.emplace_back(resultEntry);
                         } else {
                             if (i == parent) {
                                 ClauseResultEntry resultEntry;
-                                resultEntry[arg1] = std::to_string(i);
-                                clauseResult.emplace_back(resultEntry);
+                                resultEntry.emplace_back(std::to_string(i));
+                                clauseResult.rows.emplace_back(resultEntry);
                             }
                         }
                     }
@@ -213,8 +232,9 @@ namespace PQL {
         ClauseResult evaluateParentClause(PKB::PKB& database, RelationClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable) {
 
-            ArgType argType1 = clause.getArgs().first.first;
-            ArgType argType2 = clause.getArgs().second.first;
+            std::pair<Argument, Argument> args = clause.getArgs();
+            ArgType argType1 = args.first.type;
+            ArgType argType2 = args.second.type;
 
             if (argType1 == ArgType::INTEGER && argType2 == ArgType::INTEGER) {
                 // Two statement numbers supplied

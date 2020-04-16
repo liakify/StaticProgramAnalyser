@@ -57,50 +57,53 @@ namespace PQL {
         ClauseResult evaluateIdentifierEqual(PKB::PKB& database, WithClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable) {
 
-            std::pair<ArgType, Ref> arg1 = clause.getArgs().first;
-            std::pair<ArgType, Ref> arg2 = clause.getArgs().second;
+            std::pair<Argument, Argument> args = clause.getArgs();
+            Argument arg1 = args.first;
+            Argument arg2 = args.second;
 
-            if (arg1.first == ArgType::IDENTIFIER && arg2.first == ArgType::ATTRIBUTE) {
+            if (arg1.type == ArgType::IDENTIFIER && arg2.type == ArgType::ATTRIBUTE) {
                 // Always ensure that arg1 is the attribute
                 std::swap(arg1, arg2);
             }
 
-            ArgType argType1 = arg1.first;
-            ArgType argType2 = arg2.first;
+            ArgType argType1 = arg1.type;
+            ArgType argType2 = arg2.type;
 
             if (argType1 == ArgType::ATTRIBUTE && argType2 == ArgType::IDENTIFIER) {
                 // Case 1: LHS is an attribute, RHS is an identifier
 
-                Synonym syn1 = arg1.second.first;
+                Synonym syn1 = arg1.value;
 
                 if (synonymTable[syn1] == DesignEntity::CALL || synonymTable[syn1] == DesignEntity::READ || synonymTable[syn1] == DesignEntity::PRINT) {
                     ClauseResult clauseResult;
-
+                    clauseResult.syns.emplace_back(syn1);
                     std::unordered_multimap<ProcName, StmtId> stmts =
                         getStmtDataPairs(database, SPA::TypeUtils::getStmtTypeFromDesignEntity(synonymTable[syn1]));
                     for (std::pair<std::string, StmtId> stmt : stmts) {
-                        if (stmt.first == arg2.second.first) {
+                        if (stmt.first == arg2.value) {
                             ClauseResultEntry resultEntry;
-                            resultEntry[syn1] = std::to_string(stmt.second);
-                            clauseResult.emplace_back(resultEntry);
+                            resultEntry.emplace_back(std::to_string(stmt.second));
+                            clauseResult.rows.emplace_back(resultEntry);
                         }
                     }
                     return clauseResult;
 
                 } else if (synonymTable[syn1] == DesignEntity::PROCEDURE) {
                     ClauseResult clauseResult;
-                    if (database.procTable.getProcId(arg2.second.first) != -1) {
+                    clauseResult.syns.emplace_back(syn1);
+                    if (database.procTable.getProcId(arg2.value) != -1) {
                         ClauseResultEntry resultEntry;
-                        resultEntry[syn1] = arg2.second.first;
-                        clauseResult.emplace_back(resultEntry);
+                        resultEntry.emplace_back(arg2.value);
+                        clauseResult.rows.emplace_back(resultEntry);
                     }
                     return clauseResult;
                 } else if (synonymTable[syn1] == DesignEntity::VARIABLE) {
                     ClauseResult clauseResult;
-                    if (database.varTable.getVarId(arg2.second.first) != -1) {
+                    clauseResult.syns.emplace_back(syn1);
+                    if (database.varTable.getVarId(arg2.value) != -1) {
                         ClauseResultEntry resultEntry;
-                        resultEntry[syn1] = arg2.second.first;
-                        clauseResult.emplace_back(resultEntry);
+                        resultEntry.emplace_back(arg2.value);
+                        clauseResult.rows.emplace_back(resultEntry);
                     }
                     return clauseResult;
                 }
@@ -111,8 +114,8 @@ namespace PQL {
                 std::unordered_multimap<std::string, StmtId> result1;
                 std::unordered_multimap<std::string, StmtId> result2;
 
-                Synonym syn1 = arg1.second.first;
-                Synonym syn2 = arg2.second.first;
+                Synonym syn1 = arg1.value;
+                Synonym syn2 = arg2.value;
 
                 if (synonymTable[syn1] == DesignEntity::CALL || synonymTable[syn1] == DesignEntity::READ || synonymTable[syn1] == DesignEntity::PRINT) {
                     result1 = getStmtDataPairs(database, SPA::TypeUtils::getStmtTypeFromDesignEntity(synonymTable[syn1]));
@@ -139,22 +142,49 @@ namespace PQL {
                 }
 
                 ClauseResult clauseResult;
+                bool singleSynonym = (syn1 == syn2);
+                if (singleSynonym) {
+                    clauseResult.syns.emplace_back(syn1);
+                } else if (syn1 < syn2) {
+                    clauseResult.syns.emplace_back(syn1);
+                    clauseResult.syns.emplace_back(syn2);
+                } else {
+                    clauseResult.syns.emplace_back(syn2);
+                    clauseResult.syns.emplace_back(syn1);
+                }
 
                 for (std::pair<std::string, StmtId> entry1 : result1) {
-                    auto entry2 = result2.find(entry1.first);
-                    if (entry2 != result2.end()) {
-                        ClauseResultEntry resultEntry;
-                        if (entry1.second != 0) {
-                            resultEntry[syn1] = std::to_string(entry1.second);
-                        } else {
-                            resultEntry[syn1] = entry1.first;
+                    auto entry2Range = result2.equal_range(entry1.first);
+                    if (entry2Range.first != result2.end()) {
+                        for (auto entry2 = entry2Range.first; entry2 != entry2Range.second; entry2++) {
+                            ClauseResultEntry resultEntry;
+                            std::string val1, val2;
+                            if (entry1.second != 0) {
+                                val1 = std::to_string(entry1.second);
+                            } else {
+                                val1 = entry1.first;
+                            }
+                            if (entry2->second != 0) {
+                                val2 = std::to_string(entry2->second);
+                            } else {
+                                val2 = entry2->first;
+                            }
+
+                            if (singleSynonym) {
+                                if (val1 == val2) {
+                                    resultEntry.emplace_back(val1);
+                                }
+                            } else {
+                                if (syn1 < syn2) {
+                                    resultEntry.emplace_back(val1);
+                                    resultEntry.emplace_back(val2);
+                                } else {
+                                    resultEntry.emplace_back(val2);
+                                    resultEntry.emplace_back(val1);
+                                }
+                            }
+                            clauseResult.rows.emplace_back(resultEntry);
                         }
-                        if (entry2->second != 0) {
-                            resultEntry[syn2] = std::to_string(entry2->second);
-                        } else {
-                            resultEntry[syn2] = entry2->first;
-                        }
-                        clauseResult.emplace_back(resultEntry);
                     }
                 }
 
@@ -179,44 +209,47 @@ namespace PQL {
         ClauseResult evaluateIntegerEqual(PKB::PKB& database, WithClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable) {
 
-            std::pair<ArgType, Ref> arg1 = clause.getArgs().first;
-            std::pair<ArgType, Ref> arg2 = clause.getArgs().second;
+            std::pair<Argument, Argument> args = clause.getArgs();
+            Argument arg1 = args.first;
+            Argument arg2 = args.second;
 
-            if (arg1.first == ArgType::INTEGER && (arg2.first == ArgType::ATTRIBUTE || arg2.first == ArgType::SYNONYM)) {
+            if (arg1.type == ArgType::INTEGER && (arg2.type == ArgType::ATTRIBUTE || arg2.type == ArgType::SYNONYM)) {
                 // Always ensure that arg1 is the attribute
                 std::swap(arg1, arg2);
             }
 
-            ArgType argType1 = arg1.first;
-            ArgType argType2 = arg2.first;
+            ArgType argType1 = arg1.type;
+            ArgType argType2 = arg2.type;
 
             if ((argType1 == ArgType::ATTRIBUTE || argType1 == ArgType::SYNONYM) && argType2 == ArgType::INTEGER) {
-                Synonym syn1 = arg1.second.first;
+                Synonym syn1 = arg1.value;
 
+                ClauseResult clauseResult;
+                clauseResult.syns.emplace_back(syn1);
                 // Case 1: LHS is a synonym, RHS is an integer
                 if (synonymTable[syn1] == DesignEntity::CONSTANT) {
-                    if (database.constTable.getConstId(arg2.second.first) != -1) {
+                    if (database.constTable.getConstId(arg2.value) != -1) {
                         ClauseResultEntry resultEntry;
-                        resultEntry[syn1] = arg2.second.first;
-                        return { resultEntry };
+                        resultEntry.emplace_back(arg2.value);
+                        clauseResult.rows.emplace_back(resultEntry);
                     }
-                    return {};
+                    return clauseResult;
                 } else if (synonymTable[syn1] == DesignEntity::STATEMENT || synonymTable[syn1] == DesignEntity::PROG_LINE) {
-                    StmtId stmtNumber = std::stoi(arg2.second.first);
+                    StmtId stmtNumber = std::stoi(arg2.value);
                     if (1 <= stmtNumber && stmtNumber <= database.stmtTable.size()) {
                         ClauseResultEntry resultEntry;
-                        resultEntry[syn1] = arg2.second.first;
-                        return { resultEntry };
+                        resultEntry.emplace_back(arg2.value);
+                        clauseResult.rows.emplace_back(resultEntry);
                     }
-                    return {};
+                    return clauseResult;
                 } else {
                     std::unordered_set<StmtId> stmts = database.stmtTable.getStmtsByType(SPA::TypeUtils::getStmtTypeFromDesignEntity(synonymTable[syn1]));
-                    if (stmts.find(std::stoi(arg2.second.first)) != stmts.end()) {
+                    if (stmts.find(std::stoi(arg2.value)) != stmts.end()) {
                         ClauseResultEntry resultEntry;
-                        resultEntry[syn1] = arg2.second.first;
-                        return { resultEntry };
+                        resultEntry.emplace_back(arg2.value);
+                        clauseResult.rows.emplace_back(resultEntry);
                     }
-                    return {};
+                    return clauseResult;
                 }
 
             } else if ((argType1 == ArgType::ATTRIBUTE || argType1 == ArgType::SYNONYM) && (argType2 == ArgType::ATTRIBUTE || argType2 == ArgType::SYNONYM)) {
@@ -224,43 +257,63 @@ namespace PQL {
                 std::unordered_set<std::string> result1;
                 std::unordered_set<std::string> result2;
 
-                if (synonymTable[arg1.second.first] == DesignEntity::STATEMENT || synonymTable[arg1.second.first] == DesignEntity::PROG_LINE) {
+                Synonym syn1 = arg1.value;
+                Synonym syn2 = arg2.value;
+
+                if (synonymTable[syn1] == DesignEntity::STATEMENT || synonymTable[syn1] == DesignEntity::PROG_LINE) {
                     for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
                         result1.insert(std::to_string(i));
                     }
-                } else if (synonymTable[arg1.second.first] == DesignEntity::CONSTANT) {
+                } else if (synonymTable[syn1] == DesignEntity::CONSTANT) {
                     for (ConstId i = 1; i <= database.constTable.size(); i++) {
                         result1.insert(database.constTable.get(i));
                     }
                 }  else {
-                    std::unordered_set<StmtId> stmts = database.stmtTable.getStmtsByType(SPA::TypeUtils::getStmtTypeFromDesignEntity(synonymTable[arg1.second.first]));
+                    std::unordered_set<StmtId> stmts = database.stmtTable.getStmtsByType(SPA::TypeUtils::getStmtTypeFromDesignEntity(synonymTable[syn1]));
                     for (StmtId stmt : stmts) {
                         result1.insert(std::to_string(stmt));
                     }
                 }
 
-                if (synonymTable[arg2.second.first] == DesignEntity::STATEMENT || synonymTable[arg2.second.first] == DesignEntity::PROG_LINE) {
+                if (synonymTable[syn2] == DesignEntity::STATEMENT || synonymTable[syn2] == DesignEntity::PROG_LINE) {
                     for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
                         result2.insert(std::to_string(i));
                     }
-                } else if (synonymTable[arg2.second.first] == DesignEntity::CONSTANT) {
+                } else if (synonymTable[syn2] == DesignEntity::CONSTANT) {
                     for (ConstId i = 1; i <= database.constTable.size(); i++) {
                         result2.insert(database.constTable.get(i));
                     }
                 } else {
-                    std::unordered_set<StmtId> stmts = database.stmtTable.getStmtsByType(SPA::TypeUtils::getStmtTypeFromDesignEntity(synonymTable[arg2.second.first]));
+                    std::unordered_set<StmtId> stmts = database.stmtTable.getStmtsByType(SPA::TypeUtils::getStmtTypeFromDesignEntity(synonymTable[syn2]));
                     for (StmtId stmt : stmts) {
                         result2.insert(std::to_string(stmt));
                     }
                 }
 
                 ClauseResult clauseResult;
+
+                bool singleSynonym = (syn1 == syn2);
+
+                if (singleSynonym) {
+                    clauseResult.syns.emplace_back(syn1);
+                } else if (syn1 < syn2) {
+                    clauseResult.syns.emplace_back(syn1);
+                    clauseResult.syns.emplace_back(syn2);
+                } else {
+                    clauseResult.syns.emplace_back(syn2);
+                    clauseResult.syns.emplace_back(syn1);
+                }
+
                 for (std::string result : result1) {
                     if (result2.find(result) != result2.end()) {
                         ClauseResultEntry resultEntry;
-                        resultEntry[arg1.second.first] = result;
-                        resultEntry[arg2.second.first] = result;
-                        clauseResult.emplace_back(resultEntry);
+                        if (singleSynonym) {
+                            resultEntry.emplace_back(result);
+                        } else {
+                            resultEntry.emplace_back(result);
+                            resultEntry.emplace_back(result);
+                        }
+                        clauseResult.rows.emplace_back(resultEntry);
                     }
                 }
 
@@ -278,16 +331,15 @@ namespace PQL {
         * @return   The result of the evaluation.
         */
         ClauseResult evaluateLiteralEqual(WithClause clause) {
-            std::string arg1 = clause.getArgs().first.second.first;
-            std::string arg2 = clause.getArgs().second.second.first;
+            std::pair<Argument, Argument> args = clause.getArgs();
+            std::string arg1 = args.first.value;
+            std::string arg2 = args.second.value;
 
+            ClauseResult clauseResult;
             if (arg1 == arg2) {
-                ClauseResultEntry resultEntry;
-                resultEntry["_RESULT"] = "TRUE";
-                return { resultEntry };
-            } else {
-                return {};
+                clauseResult.trueResult = true;
             }
+            return clauseResult;
         }
 
         ClauseResult evaluateWithClause(PKB::PKB& database, WithClause clause,
