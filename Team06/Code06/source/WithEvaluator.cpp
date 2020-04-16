@@ -154,35 +154,37 @@ namespace PQL {
                 }
 
                 for (std::pair<std::string, StmtId> entry1 : result1) {
-                    auto entry2 = result2.find(entry1.first);
-                    if (entry2 != result2.end()) {
-                        ClauseResultEntry resultEntry;
-                        std::string val1, val2;
-                        if (entry1.second != 0) {
-                            val1 = std::to_string(entry1.second);
-                        } else {
-                            val1 = entry1.first;
-                        }
-                        if (entry2->second != 0) {
-                            val2 = std::to_string(entry2->second);
-                        } else {
-                            val2 = entry2->first;
-                        }
-
-                        if (singleSynonym) {
-                            if (val1 == val2) {
-                                resultEntry.emplace_back(val1);
-                            }
-                        } else {
-                            if (syn1 < syn2) {
-                                resultEntry.emplace_back(val1);
-                                resultEntry.emplace_back(val2);
+                    auto entry2Range = result2.equal_range(entry1.first);
+                    if (entry2Range.first != result2.end()) {
+                        for (auto entry2 = entry2Range.first; entry2 != entry2Range.second; entry2++) {
+                            ClauseResultEntry resultEntry;
+                            std::string val1, val2;
+                            if (entry1.second != 0) {
+                                val1 = std::to_string(entry1.second);
                             } else {
-                                resultEntry.emplace_back(val2);
-                                resultEntry.emplace_back(val1);
+                                val1 = entry1.first;
                             }
+                            if (entry2->second != 0) {
+                                val2 = std::to_string(entry2->second);
+                            } else {
+                                val2 = entry2->first;
+                            }
+
+                            if (singleSynonym) {
+                                if (val1 == val2) {
+                                    resultEntry.emplace_back(val1);
+                                }
+                            } else {
+                                if (syn1 < syn2) {
+                                    resultEntry.emplace_back(val1);
+                                    resultEntry.emplace_back(val2);
+                                } else {
+                                    resultEntry.emplace_back(val2);
+                                    resultEntry.emplace_back(val1);
+                                }
+                            }
+                            clauseResult.rows.emplace_back(resultEntry);
                         }
-                        clauseResult.rows.emplace_back(resultEntry);
                     }
                 }
 
