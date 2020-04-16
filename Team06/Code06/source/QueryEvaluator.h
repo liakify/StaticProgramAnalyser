@@ -82,11 +82,11 @@ namespace PQL {
         *
         * @param    entry1  The first result entry.
         * @param    entry2  The second result entry.
-        * @param    commonSynonyms  The synonyms that are common between the two entries.
+        * @param    combStruct  The combined structure of the two result entries.
         * @return   The combined result entries.
         */
         ClauseResultEntry combineTwoClauseResultEntries(ClauseResultEntry& entry1, ClauseResultEntry& entry2,
-            std::unordered_set<Synonym>& commonSynonyms);
+            std::vector<std::pair<int, int> >& combStruct);
 
         /**
         * Checks if two clause result entries have identical values for all common synonyms.
@@ -97,7 +97,7 @@ namespace PQL {
         * @return   True if all all common synonyms have identical values, false otherwise.
         */
         bool checkCommonSynonyms(ClauseResultEntry& entry1, ClauseResultEntry& entry2,
-            std::unordered_set<Synonym>& commonSynonyms);
+            std::vector<std::pair<int, int> >& commonSynonyms);
 
         /**
         * Combines two sets of clause result entries.

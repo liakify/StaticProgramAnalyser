@@ -21,10 +21,11 @@ enum class DesignEntity {
  *  type or an argument in a with clause.
  *
  *  Note that NONE is a sentinel value used to denote a synonym is used without an
- *  attribute type.
+ *  attribute type, for arguments that may accept attributes.
  *
- *  Note that INVALID is a sentinel value used to denote an invalid attribute
- *  keyword was supplied with a synonym.
+ *  Note that for arguments that accept attributes, INVALID is a sentinel value
+ *  used to denote an invalid attribute keyword was supplied with a synonym.
+ *  Otherwise, INVALID denotes that argument does not accept an attribute.
  */
 enum class AttrType {
     INVALID, NONE, PROC_NAME, VAR_NAME, VALUE, STMT_NUM
@@ -106,12 +107,10 @@ enum class ArgType {
     INCLUSIVE_PATTERN, EXACT_PATTERN, ATTRIBUTE
 };
 
-// Additional global aliases specific to PQL (Query Processor)
-using StmtEntRef = std::string;
-using EntityRef = std::string;
-using Ref = std::pair<std::string, AttrType>;
-
 namespace PQL {
+
+    const int UNSET_SYNONYM_ID = -1;
+    const int NON_SYNONYM_ID = -2;
 
     /**
      *  All status messages in use by the Query Parser during query parsing and
@@ -286,6 +285,33 @@ namespace PQL {
     };
 
     /**
+     *  Struct representing a return type of a query. Contains the synonym to be returned,
+     *  an integer string to identify the synonym, and the parsed attribute type if any
+     *  (otherwise set to AttrType::NONE).
+     */
+    struct ReturnType {
+        std::string synonym;
+        int synonymId;
+        AttrType attrType;
+        bool operator==(const ReturnType& other) const;
+        bool operator<(const ReturnType& other) const;
+    };
+
+    /**
+     *  Struct representing an argument to a clause. Contains the parsed argument type,
+     *  argument value (excluding attribute, if any), an integer string to identify synonym
+     *  arguments (otherwise set to NON_SYNONYM_ID), and the parsed attribute type for
+     *  attribute arguments (set to AttrType::INVALID for arguments not accepting attributes).
+     */
+    struct Argument {
+        ArgType type;
+        std::string value;
+        int synonymId;
+        AttrType attrType;
+        bool operator==(const Argument& other) const;
+    };
+
+    /**
      *  Class representing a parsed clause of any type in a PQL query. Contains the
      *  clause string and the clause type.
      */
@@ -325,17 +351,16 @@ namespace PQL {
 
     /**
      *  Class representing a parsed relation clause in a PQL query. Contains the
-     *  clause string, relation type and method to retrieve its arguments. Arguments
-     *  are returned as pairs of ArgType and the argument string.
+     *  clause string, relation type and a method to retrieve its arguments.
      */
     class RelationClause : public Clause {
      public:
         /**
          *  Constructs a new RelationClause instance with its input string, relation type
-         *  and two positional argument pairs.
+         *  and two positional arguments.
          */
         RelationClause(std::string clause, RelationType type,
-            std::pair<ArgType, StmtEntRef> firstArg, std::pair<ArgType, StmtEntRef> secondArg);
+            Argument firstArg, Argument secondArg);
 
         /**
          *  Compares this RelationClause instance to another RelationClause instance and
@@ -346,15 +371,35 @@ namespace PQL {
         bool operator==(const RelationClause& other) const;
 
         /**
-         *  Modifies the relation type of this RelationClause instance to the procedure variant,
-         *  if its relation type possesses multiple variants, i.e. Uses and Modifies relations.
-         *  Additionally updates the positional argument pairs to satisfy this new relation type.
-         *  Returns true if the modification was successful, otherwise returns false without
-         *  modifying the relation type.
+         *  Modifies the relation type of this RelationClause instance to the procedure
+         *  variant, if its relation type possesses multiple variants, i.e. Uses and Modifies
+         *  relations. Additionally updates the positional argument instances to satisfy this
+         *  new relation type. Returns true if the modification was successful, otherwise
+         *  returns false without modifying the relation type.
          *
          *  @return     true if the relation type was modified to its procedure variant.
          */
         bool setProcedureVariant();
+
+        /**
+         *  Sets the synonym ID of the first argument of this RelationClause instance to a
+         *  non-negative integer, if the first argument is a synonym and its ID has not been
+         *  previously set. Returns true if the update was successful, otherwise returns false
+         *  without modifying the synonym ID.
+         *
+         *  @return     true if the synonym ID of the first argument was updated.
+         */
+        bool setFirstSynonymId(int synonymId);
+
+        /**
+         *  Sets the synonym ID of the second argument of this RelationClause instance to a
+         *  non-negative integer, if the second argument is a synonym and its ID has not been
+         *  previously set. Returns true if the update was successful, otherwise returns false
+         *  without modifying the synonym ID.
+         *
+         *  @return     true if the synonym ID of the second argument was updated.
+         */
+        bool setSecondSynonymId(int synonymId);
 
         /**
          *  Returns the relation type of this RelationClause instance.
@@ -364,34 +409,31 @@ namespace PQL {
         RelationType getRelationType();
 
         /**
-         *  Returns a pair containing the two valid arguments for the relation type of this
-         *  RelationClause instance.
+         *  Returns a pair containing the two positional arguments of this RelationClause
+         *  instance.
          *
-         *  @return     pair of valid argument pairs for the relation type of this clause.
+         *  @return     pair of the first and second arguments of this clause.
          */
-        std::pair<std::pair<ArgType, StmtEntRef>, std::pair<ArgType, StmtEntRef>> getArgs();
+        std::pair<Argument, Argument> getArgs();
      private:
         RelationType type;
-        // StatementRef, EntityRef are just strings
-        // Use ArgType to determine how to interpret them
-        std::pair<ArgType, StmtEntRef> firstArg;
-        std::pair<ArgType, StmtEntRef> secondArg;
+        Argument firstArg;
+        Argument secondArg;
     };
 
     /**
      *  Class representing a parsed pattern clause in a PQL query. Contains the
-     *  clause string, pattern type, synonym and method to retrieve its arguments.
-     *  Arguments are returned as pairs of ArgType and the argument string.
+     *  clause string, pattern type, pattern synonym argument and a method to
+     *  retrieve its arguments.
      */
     class PatternClause : public Clause {
      public:
         /**
          *  Constructs a new PatternClause instance with its input string, pattern type,
-         *  pattern synonym, an argument pair for entities, and another argument pair for
-         *  the pattern string.
+         *  pattern synonym argument, entity argument and pattenr argument.
          */
-        PatternClause(std::string clause, PatternType type, std::string synonym,
-            std::pair<ArgType, EntityRef> targetArg, std::pair<ArgType, Pattern> patternArg);
+        PatternClause(std::string clause, PatternType type, Argument synonymArg,
+            Argument targetArg, Argument patternArg);
 
         /**
          *  Compares this PatternClause instance to another PatternClause instance and
@@ -402,6 +444,25 @@ namespace PQL {
         bool operator==(const PatternClause& other) const;
 
         /**
+         *  Sets the synonym ID of the pattern synonym argument of this PatternClause instance
+         *  to a non-negative integer, if it has not been previously set. Returns true if the
+         *  update was successful, otherwise returns false without modifying the synonym ID.
+         *
+         *  @return     true if the synonym ID of the pattern synonym argument was updated.
+         */
+        bool setPatternSynonymId(int synonymId);
+
+        /**
+         *  Sets the synonym ID of the first argument of this PatternClause instance to a
+         *  non-negative integer, if the first argument is a synonym and its ID has not been
+         *  previously set. Returns true if the update was successful, otherwise returns false
+         *  without modifying the synonym ID.
+         *
+         *  @return     true if the synonym ID of the first argument was updated.
+         */
+        bool setFirstSynonymId(int synonymId);
+
+        /**
          *  Returns the pattern type of this PatternClause instance.
          *
          *  @return     PatternType enum value describing the relation type of this clause.
@@ -409,31 +470,29 @@ namespace PQL {
         PatternType getPatternType();
 
         /**
-         *  Returns the synonym argument of this RelationClause instance.
+         *  Returns the pattern synonym argument of this RelationClause instance.
          *
-         *  @return     string containing the synonym argument of this clause.
+         *  @return     pattern synonym argument of this clause.
          */
-        std::string getSynonym();
+        Argument getSynonym();
 
         /**
-         *  Returns a pair containing the entity argument pair and the pattern argument pair
-         *  of this PatternClause instance.
+         *  Returns a pair containing the entity argument and the pattern argument of this
+         *  PatternClause instance.
          *
-         *  @return     pair of valid argument pairs for the pattern type of this clause.
+         *  @return     pair of the entity and pattern arguments of this clause.
          */
-        std::pair<std::pair<ArgType, EntityRef>, std::pair<ArgType, Pattern>> getArgs();
+        std::pair<Argument, Argument> getArgs();
      private:
         PatternType type;
-        std::string synonym;
-        std::pair<ArgType, EntityRef> targetArg;
-        std::pair<ArgType, Pattern> patternArg;
+        Argument synonymArg;
+        Argument targetArg;
+        Argument patternArg;
     };
 
     /**
-     *  Class representing a parsed with clause in a PQL query. Contains the
-     *  clause string, equality type and method to retrieve its arguments. Arguments
-     *  are returned as pairs with the first element the ArgType and the second
-     *  element a pair comprising the argument string and an optional attribute type.
+     *  Class representing a parsed with clause in a PQL query. Contains the clause
+     *  string, equality type and a method to retrieve its arguments.
      *
      *  Note that for non-ATTRIBUTE arguments, the optional attribute type is set to
      *  the default value NONE.
@@ -442,10 +501,9 @@ namespace PQL {
      public:
         /**
          *  Constructs a new WithClause instance with its input string, equality type and
-         *  two positional argument pairs, one for each of the left and right arguments.
+         *  two positional arguments, one for each of the left and right arguments.
          */
-        WithClause(std::string clause, WithType type,
-            std::pair<ArgType, Ref> leftArg, std::pair<ArgType, Ref> rightArg);
+        WithClause(std::string clause, WithType type, Argument leftArg, Argument rightArg);
 
         /**
          *  Compares this WithClause instance to another WithClause instance and returns
@@ -465,6 +523,26 @@ namespace PQL {
         bool setWithType(WithType type);
 
         /**
+         *  Sets the synonym ID of the left argument of this WithClause instance to a
+         *  non-negative integer, if the left argument is a synonym or attribute and its ID
+         *  has not been previously set. Returns true if the update was successful, otherwise
+         *  returns false without modifying the synonym ID.
+         *
+         *  @return     true if the synonym ID of the left argument was updated.
+         */
+        bool setLeftSynonymId(int synonymId);
+
+        /**
+         *  Sets the synonym ID of the right argument of this WithClause instance to a
+         *  non-negative integer, if the right argument is a synonym or attribute and its ID
+         *  has not been previously set. Returns true if the update was successful, otherwise
+         *  returns false without modifying the synonym ID.
+         *
+         *  @return     true if the synonym ID of the right argument was updated.
+         */
+        bool setRightSynonymId(int synonymId);
+
+        /**
          *  Returns the equality type of this WithClause instance.
          *
          *  @return     WithType enum value describing the equality type of this clause.
@@ -472,16 +550,16 @@ namespace PQL {
         WithType getWithType();
 
         /**
-         *  Returns a pair containing the left and right argument pairs of this WithClause
+         *  Returns a pair containing the left and right arguments of this WithClause
          *  instance.
          *
-         *  @return     pair of valid argument pairs for the pattern type of this clause.
+         *  @return     pair of the left and right arguments of this clause.
          */
-        std::pair<std::pair<ArgType, Ref>, std::pair<ArgType, Ref>> getArgs();
+        std::pair<Argument, Argument> getArgs();
      private:
         WithType type;
-        std::pair<ArgType, Ref> leftArg;
-        std::pair<ArgType, Ref> rightArg;
+        Argument leftArg;
+        Argument rightArg;
     };
 
     /**
@@ -490,22 +568,43 @@ namespace PQL {
      *  - status:           status message from evaluation by the Query Parser.
      *  - queryString:      the full query string.
      *  - returnsBool:      boolean describing if this query returns a BOOLEAN.
-     *  - targetEntities:   vector of return types for the query, each a pair
-     *                      comprising the synonym and an optional attribute.
+     *  - targetEntities:   vector of parsed return types for this query.
      *  - synonymTable:     a mapping of declared synonyms to design entities.
      *  - relations:        a vector of parsed relation clauses.
      *  - patterns:         a vector of parsed pattern clauses.
+     *  - equalities:       a vector of parsed with (equality) clauses.
      */
     struct Query {
         std::string status;
         std::string queryString;
         bool returnsBool;
-        std::vector<Ref> targetEntities;
+        std::vector<ReturnType> targetEntities;
         std::unordered_map<std::string, DesignEntity> synonymTable;
         std::vector<RelationClause> relations;
         std::vector<PatternClause> patterns;
         std::vector<WithClause> equalities;
         bool operator==(const Query& other) const;
+    };
+
+    /**
+     * Struct representing an optimised PQL query.
+     *
+     * - clauses:           the clauses in the order in which they should be evaluated.
+     * - group:             the group that each clause belongs to (numbered starting from 0).
+     * - last:              the index of the last clause in each group.
+     */
+    struct OptimisedQuery {
+        std::vector<Clause*> clauses;
+        std::vector<int> groups;
+        std::vector<int> last;
+    };
+
+    using ClauseResultEntry = std::vector<std::string>;
+
+    struct ClauseResult {
+        bool trueResult = false;
+        std::vector<Synonym> syns;
+        std::vector<ClauseResultEntry> rows;
     };
 
 }
