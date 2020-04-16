@@ -57,10 +57,14 @@ enum class ClauseType {
  *
  *  Note that USESP, MODIFIESP are procedure-variable relations, and thus the first
  *  argument is restricted to the PROCEDURE design entity.
+ *
+ *  Note that CONTAINS is a procedure-statement relation, hence the first argument
+ *  is restricted to the PROCEDURE design entity and the second argument is
+ *  restricted to the STATEMENT design entity or its sub-types.
  */
 enum class RelationType {
     FOLLOWS, FOLLOWST, PARENT, PARENTT, USESS, USESP, MODIFIESS, MODIFIESP,
-    CALLS, CALLST, NEXT, NEXTT, AFFECTS, AFFECTST
+    CALLS, CALLST, NEXT, NEXTT, AFFECTS, AFFECTST, CONTAINS
 };
 
 /**
@@ -131,22 +135,24 @@ namespace PQL {
     const std::string SYNTAX_ERR_MISSING_OR_MALFORMED_PATTERN_ARG = "syntax error: pattern clause has missing or malformed argument";
     const std::string SYNTAX_ERR_INVALID_CLAUSES_IN_QUERY_BODY = "syntax error: compound clauses in query body violate query body syntax";
     const std::string SYNTAX_ERR_INVALID_RELATION_KEYWORD = "syntax error: invalid relation keyword";
-    const std::string SYNTAX_ERR_RELATION_INVALID_NUM_ARGS = "syntax error: relations only accept 2 arguments";
+    const std::string SYNTAX_ERR_RELATION_INVALID_NUM_ARGS = "syntax error: relation clause does not have two arguments";
     const std::string SYNTAX_ERR_FOLLOWS_PARENTS_INVALID_STMT_REF = "syntax error: invalid statement reference in Follows(*)/Parent(*) clause";
     const std::string SYNTAX_ERR_USES_MODIFIES_INVALID_SECOND_ENT_REF = "syntax error: invalid entity reference as second arg in Uses/Modifies clause";
     const std::string SYNTAX_ERR_USES_MODIFIES_INVALID_FIRST_ARG = "syntax error: invalid first arg in Uses/Modifies clause";
     const std::string SYNTAX_ERR_CALLS_INVALID_ENT_REF = "syntax error: invalid entity reference in Calls(*) clause";
     const std::string SYNTAX_ERR_NEXT_INVALID_LINE_REF = "syntax error: invalid line reference in Next(*) clause";
     const std::string SYNTAX_ERR_AFFECTS_INVALID_STMT_REF = "syntax error: invalid statement reference in Affects(*) clause";
+    const std::string SYNTAX_ERR_CONTAINS_INVALID_ENT_REF = "syntax error: invalid entity reference in Contains clause";
+    const std::string SYNTAX_ERR_CONTAINS_INVALID_STMT_REF = "syntax error: invalid statement reference in Contains clause";
     const std::string FATAL_MISSING_RELATION_HANDLER = "internal error: failed to match relation type";
     const std::string SEMANTIC_ERR_UNDECLARED_PATTERN_TYPE_SYNONYM = "semantic error: undeclared synonym for type of pattern clause";
     const std::string SYNTAX_ERR_PATTERN_INVALID_ENT_REF = "syntax error: invalid entity reference as first arg in pattern clause";
     const std::string SYNTAX_ERR_ASSIGN_PATTERN_INVALID_NUM_ARGS = "syntax error: assign pattern does not have two arguments";
     const std::string SYNTAX_ERR_ASSIGN_PATTERN_INVALID_PATTERN = "syntax error: assign pattern has invalid pattern string";
     const std::string SYNTAX_ERR_WHILE_PATTERN_INVALID_NUM_ARGS = "syntax error: while pattern does not have two arguments";
-    const std::string SYNTAX_ERR_WHILE_PATTERN_INVALID_SECOND_ARG = "syntax error: while pattern only supports '_' as second argument";
+    const std::string SYNTAX_ERR_WHILE_PATTERN_INVALID_SECOND_ARG = "syntax error: while pattern only supports '_' as second arg";
     const std::string SYNTAX_ERR_IF_PATTERN_INVALID_NUM_ARGS = "syntax error: if pattern does not have three arguments";
-    const std::string SYNTAX_ERR_IF_PATTERN_INVALID_SECOND_THIRD_ARG = "syntax error: if pattern only supports '_' for last two arguments";
+    const std::string SYNTAX_ERR_IF_PATTERN_INVALID_SECOND_THIRD_ARG = "syntax error: if pattern only supports '_' for last two args";
     const std::string SYNTAX_ERR_INVALID_PATTERN_TYPE = "syntax error: pattern clauses only defined for assign, if, while";
     const std::string SYNTAX_ERR_WITH_CLAUSE_INVALID_REF_ARG = "syntax error: invalid reference arg in with (equality) clause";
     const std::string SYNTAX_ERR_WITH_CLAUSE_INVALID_ATTRIBUTE_KEYWORD = "syntax error: invalid attribute keyword in attrRef arg in with (equality) clause";
@@ -159,18 +165,24 @@ namespace PQL {
     const std::string SEMANTIC_ERR_MODIFIES_INVALID_FIRST_SYNONYM = "semantic error: relation not defined for synonym as first arg in Modifies clause";
     const std::string SEMANTIC_ERR_USES_MODIFIES_UNDECLARED_SECOND_SYNONYM = "semantic error: undeclared synonym as second arg in Uses/Modifies clause";
     const std::string SEMANTIC_ERR_USES_MODIFIES_NON_VARIABLE_SECOND_SYNONYM = "semantic error: synonym as second arg in Uses/Modifies clause not a VARIABLE";
-    const std::string SEMANTIC_ERR_CALLS_UNDECLARED_SYNONYM = "semantic error: undeclared synonym in Calls(*) clause";
-    const std::string SEMANTIC_ERR_CALLS_NON_PROCEDURE_SYNONYM = "semantic error: synonym in Calls(*) clause not a PROCEDURE";
+    const std::string SEMANTIC_ERR_CALLS_UNDECLARED_SYNONYM = "semantic error: undeclared synonym as arg in Calls(*) clause";
+    const std::string SEMANTIC_ERR_CALLS_NON_PROCEDURE_SYNONYM = "semantic error: synonym as arg in Calls(*) clause not a PROCEDURE";
+    const std::string SEMANTIC_ERR_CONTAINS_UNDECLARED_FIRST_SYNONYM = "semantic error: undeclared synonym as first arg in Contains clause";
+    const std::string SEMANTIC_ERR_CONTAINS_NON_PROCEDURE_FIRST_SYNONYM = "semantic error: synonym as first arg in Contains clause not a PROCEDURE";
+    const std::string SEMANTIC_ERR_CONTAINS_STMT_NUMBER_OVERFLOW = "semantic error: statement number in Contains clause exceeds 32-bit signed integer limit";
+    const std::string SEMANTIC_ERR_CONTAINS_NON_POSITIVE_STMT_NUMBER = "semantic error: statement number in Contains clause must be positive";
+    const std::string SEMANTIC_ERR_CONTAINS_UNDECLARED_SECOND_SYNONYM = "semantic error: undeclared synonym as second arg in Contains clause";
+    const std::string SEMANTIC_ERR_CONTAINS_NON_STATEMENT_SECOND_SYNONYM = "semantic error: synonym as second arg in Contains clause not a STATEMENT or its sub-types";
     const std::string SEMANTIC_ERR_FPNA_STMT_NUMBER_OVERFLOW = "semantic error: statement number in F(*)/P(*)/N(*)/A(*) clause exceeds 32-bit signed integer limit";
     const std::string SEMANTIC_ERR_FPNA_NON_POSITIVE_STMT_NUMBER = "semantic error: statement number in F(*)/P(*)/N(*)/A(*) clause must be positive";
-    const std::string SEMANTIC_ERR_FPNA_UNDECLARED_SYNONYM = "semantic error: undeclared synonym in F(*)/P(*)/N(*)/A(*) clause";
-    const std::string SEMANTIC_ERR_AFFECTS_NON_ASSIGN_SYNONYM = "semantic error: synonym in Affects(*) clause not an ASSIGN or its super-types";
-    const std::string SEMANTIC_ERR_FPN_NON_STMT_SYNONYM = "semantic error: synonym in F(*)/P(*)/N(*) clause not a STATEMENT or its sub-types";
+    const std::string SEMANTIC_ERR_FPNA_UNDECLARED_SYNONYM = "semantic error: undeclared synonym as arg in F(*)/P(*)/N(*)/A(*) clause";
+    const std::string SEMANTIC_ERR_AFFECTS_NON_ASSIGN_SYNONYM = "semantic error: synonym as arg in Affects(*) clause not an ASSIGN or its super-types";
+    const std::string SEMANTIC_ERR_FPN_NON_STATEMENT_SYNONYM = "semantic error: synonym as arg in F(*)/P(*)/N(*) clause not a STATEMENT or its sub-types";
     const std::string SEMANTIC_ERR_PATTERN_UNDECLARED_FIRST_SYNONYM = "semantic error: undeclared synonym as first arg in pattern clause";
     const std::string SEMANTIC_ERR_PATTERN_NON_VARIABLE_FIRST_SYNONYM = "semantic error: synonym as first arg in pattern clause not a VARIABLE";
     const std::string SEMANTIC_ERR_WITH_CLAUSE_DIFF_LITERAL_TYPE = "semantic error: literal values on both sides of with (equality) clause have different type";
     const std::string SEMANTIC_ERR_WITH_CLAUSE_UNDECLARED_SYNONYM_ARG = "semantic error: undeclared synonym as arg in with (equality) clause";
-    const std::string SEMANTIC_ERR_WITH_CLAUSE_NON_PROG_LINE_SYNONYM_ARG = "semantic error: synonym argument in with (equality) clause not a PROG_LINE";
+    const std::string SEMANTIC_ERR_WITH_CLAUSE_NON_PROG_LINE_SYNONYM_ARG = "semantic error: synonym arg in with (equality) clause not a PROG_LINE";
     const std::string SEMANTIC_ERR_WITH_CLAUSE_UNDECLARED_SYNONYM_IN_ATTRIBUTE_ARG = "semantic error: undeclared synonym part of attribute arg in with (equality) clause";
     const std::string SEMANTIC_ERR_WITH_CLAUSE_INVALID_SYNONYM_ATTRIBUTE_PAIR_ARG = "semantic error: attribute not defined for synonym part of attribute arg in with (equality) clause";
     const std::string SEMANTIC_ERR_WITH_CLAUSE_DIFF_RETURN_TYPE_OF_ARGS = "semantic error: expressions on both sides of with (equality) clause evaluate to different type";
@@ -183,16 +195,16 @@ namespace PQL {
     const std::pair<ArgType, std::string> INVALID_ARG = { ArgType::INVALID, "" };
 
     /**
-     *  Vector of invalid design entity types as arguments for the relations
-     *  Follows(*), Parent(*), Next(*).
+     *  Vector of invalid design entity types to reject as statement arguments for
+     *  the relations Follows(*), Parent(*), Next(*) and Contains.
      */
     const std::vector<DesignEntity> NON_STMTS = {
         DesignEntity::CONSTANT, DesignEntity::PROCEDURE, DesignEntity::VARIABLE
     };
 
     /**
-     *  Vector of invalid design entity types as the first argument for the
-     *  statement variant of the Uses relation.
+     *  Vector of invalid design entity types to reject as the first argument for
+     *  the statement variant of the Uses relation.
      */
     const std::vector<DesignEntity> NON_USES = {
         DesignEntity::CONSTANT, DesignEntity::PROCEDURE,
@@ -200,8 +212,8 @@ namespace PQL {
     };
 
     /**
-     *  Vector of invalid design entity types as the first argument for the
-     *  statement variant of the Modifies relation.
+     *  Vector of invalid design entity types to reject as the first argument for
+     *  the statement variant of the Modifies relation.
      */
     const std::vector<DesignEntity> NON_MODIFIES = {
         DesignEntity::CONSTANT, DesignEntity::PRINT,
@@ -209,7 +221,8 @@ namespace PQL {
     };
 
     /**
-     *  Vector of invalid design entity types as arguments for the Affects(*) relation.
+     *  Vector of invalid design entity types to reject as arguments for the
+     *  Affects(*) relation.
      */
     const std::vector<DesignEntity> NON_AFFECTS = {
         DesignEntity::CALL, DesignEntity::CONSTANT, DesignEntity::IF,
@@ -282,7 +295,8 @@ namespace PQL {
         { "Next", RelationType::NEXT },
         { "Next*", RelationType::NEXTT },
         { "Affects", RelationType::AFFECTS },
-        { "Affects*", RelationType::AFFECTST }
+        { "Affects*", RelationType::AFFECTST },
+        { "Contains", RelationType::CONTAINS }
     };
 
     /**

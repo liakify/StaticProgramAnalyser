@@ -91,6 +91,12 @@ $list_of_test_files = @(
   'given_1'
   'given_2'
 
+  '..\extension_contains_tests\contains_0'
+  '..\extension_contains_tests\contains_invalidArgs'
+  '..\extension_contains_tests\contains_multi'
+  '..\extension_contains_tests\contains_pattern'
+  '..\extension_contains_tests\contains_with'
+
   # STAGED TESTS
   '..\mixed_0'
   '..\performance600_single'

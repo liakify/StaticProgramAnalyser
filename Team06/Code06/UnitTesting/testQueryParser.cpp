@@ -58,10 +58,13 @@ namespace UnitTesting {
         string CHAINED_NO_WHITESPACE_QUERY = "assign a1,a2;while w;variable v;call cl;print pn;Select<a1,w,v,pn>pattern a1(v,_)and w(v,_)with pn.varName=cl.procName and pn.stmt#=69 pattern a2(_,_\"f*x+f*(x-dx)+dx*dy\"_)such that Next*(a1,a2)with \"xyz\"=\"xyz\" such that Uses(a1,v)and Modifies(w,v)";
         string CHAINED_EXTRA_WHITESPACE_QUERY = "\nprocedure  p\v;\rwhile\tw ;assign\va\r;  variable\fv1,  v2\n;\tcall\ncl\t;\vprog_line\rl\f;\nSelect\f<\vp. procName\r,\tw\n,  cl\f,\ncl\t.\rprocName\v,\fa >\n pattern\ta(  v1,\r_\"\t69-\v 420\"_ )\nwith\t\"i\"  =\r\"i\"\vand  17\r=w\t.  stmt#  and\fl\n=\tcl\r.\vstmt#\nsuch  that\fModifies\r(p\t,v1)\fand\rUses(\tw\v,  v1\n)  pattern\tw  (v2, _\v\f) such\t\tthat  Next*\f (\ta, w\v)\rand\tFollows(\na\r,\fcl  )\vwith p\n.\fprocName\r=\n\" function\t\"  and\rcl\v.\fprocName\n=  v2  .\tvarName\n";
         string PROJECT_REPORT_SAMPLE_QUERY = "assign a1, a2; constant c; prog_line l; while w; if ifs; read rd; print pn; procedure p; variable v1, v2; Select <a1, w.stmt#, rd.varName, pn, p> such that Modifies(a1, v1) and Uses(pn, v1) and Parent*(w, a1) with v2.varName = \"input\" pattern w(\"i\", _) and a1(_, _\"i + 1 + x / 2 + y - (3 * z)\"_) such that Calls(\"driver\", _) and Uses(p, \"j\") and Affects*(1, 64) with c.value = l and rd.varName = v2.varName and 3203 = 3230 pattern ifs(v2, _, _)";
+        string EXT_SIMPLE_CONTAINS_QUERY = "procedure p; assign a; Select BOOLEAN such that Contains(p, a)";
+        string EXT_CHAINED_CONTAINS_QUERY = "procedure p, q; assign a; print pn; if ifs; Select <p, q> such that Contains(\"main\", 1) such that Contains(p, a) and Contains(p, pn) such that Contains(_, ifs) and Contains(q, _)";
         string EXT_SIMPLE_NOT_QUERY = "assign a; constant c; while w; variable v; Select <a, w, v> such that not Parent*(w, a) pattern a(v, _) with not a.stmt# = c.value pattern not w(v, _) with not \"taiwan\" = \"china\" such that Uses(w, v) with c.value = w.stmt#";
         string EXT_CHAINED_NOT_QUERY = "constant c; if ifs; while w; call cl; read rd; print pn; variable v1, v2; Select <v1, v2> such that Uses(pn, v1) and not Next*(rd, pn) with not cl.procName = v1.varName and v2.varName = cl.procName and not 2019 = 2020 pattern w(v1, _) and not ifs(v1, _, _) such that not Next*(pn, rd) and Modifies(rd, v2) pattern not w(v2, _) and ifs(v2, _, _) with w.stmt# = c.value and not c.value = ifs.stmt#";
         string EXT_CONFUSING_NOT_QUERY = "assign not; constant c; variable v; Select not pattern not(\"x\", _) and not not(_, \"0\") with not not.stmt# = 1 and not.stmt# = c.value such that not Affects(not, _) and Modifies(not, v) pattern not(_, _\"0\"_)";
         string EXT_CONFUSING_NOT_AND_QUERY = "assign and; procedure pattern; prog_line not; variable with; Select and with not not = 1337 and not and.stmt# = 62353535 pattern and(with, _) with not = and.stmt# and not with.varName = pattern.procName and and.stmt# = not and not \"not\" = pattern.procName";
+        string EXT_CHAINED_CONTAINS_NOT_QUERY = "procedure p, q; read rd; print pn; call cl; assign a; variable v; Select <p, q, rd.varName> such that Next*(rd, cl) and Contains(p, cl) with cl.procName = q.procName pattern a(v, _) such that not Contains(p, a) and Modifies(rd, v) with rd.varName = pn.varName such that Contains(q, pn) and not Contains(q, a)";
 
         // Invalid queries that fail in validateQuerySyntax
         string EMPTY_QUERY = "";
@@ -94,14 +97,20 @@ namespace UnitTesting {
         string MODIFIESP_LITERAL_NON_VARIABLE_ARG_QUERY = "if ifs; Select BOOLEAN such that Modifies(\"func\", ifs)";
         string CALLS_MISSING_SYNONYM_QUERY = "Select BOOLEAN such that Calls(p, _)";
         string CALLS_NON_PROCEDURE_ARG_QUERY = "call cl; Select cl such that Calls*(\"main\", cl)";
-        string INVALID_STMT_NUMBER_OVERFLOW_QUERY = "Select BOOLEAN such that Next*(2147483648, _)";
-        string INVALID_STMT_NUMBER_QUERY = "stmt s; Select s such that Follows(0, s)";
-        string INVALID_PROG_LINE_QUERY = "prog_line l; Select l such that Next*(0, l)";
-        string FOLLOWS_MISSING_SYNONYM_QUERY = "print pn; Select pn such that Follows(rd, pn)";
-        string NEXT_MISSING_SYNONYM_QUERY = "prog_line l1; Select l1 such that Next(l1, l2)";
+        string CONTAINS_MISSING_FIRST_SYNONYM_QUERY = "read rd; Select BOOLEAN such that Contains(p, rd)";
+        string CONTAINS_NON_PROCEDURE_ARG_QUERY = "assign a; if ifs; Select a such that Contains(ifs, a)";
+        string CONTAINS_STMT_NUMBER_OVERFLOW_QUERY = "procedure p; Select BOOLEAN such that Contains(p, 2147483648)";
+        string CONTAINS_INVALID_STMT_NUMBER_QUERY = "Select BOOLEAN such that Contains(_, 0000)";
+        string CONTAINS_MISSING_SECOND_SYNONYM_QUERY = "procedure p; Select p such that Contains(p, cl)";
+        string CONTAINS_NON_STATEMENT_ARG = "procedure p; constant c; Select c such that Contains(p, c)";
+        string FPNA_STMT_NUMBER_OVERFLOW_QUERY = "Select BOOLEAN such that Next*(2147483648, _)";
+        string FPNA_INVALID_STMT_NUMBER_QUERY = "stmt s; Select s such that Follows(0, s)";
+        string FPNA_INVALID_PROG_LINE_QUERY = "prog_line l; Select l such that Next*(0, l)";
+        string FOLLOWS_MISSING_FIRST_SYNONYM_QUERY = "print pn; Select pn such that Follows(rd, pn)";
+        string NEXT_MISSING_SECOND_SYNONYM_QUERY = "prog_line l1; Select l1 such that Next(l1, l2)";
         string AFFECTS_NON_ASSIGN_ARG_QUERY = "read rd; Select rd such that Affects*(rd, 69)";
-        string PARENT_NON_STMT_ARG_QUERY = "variable v; Select BOOLEAN such that Parent*(_, v)";
-        string NEXT_NON_STMT_ARG_QUERY = "constant c; Select c such that Next(c, 42)";
+        string PARENT_NON_STATEMENT_ARG_QUERY = "variable v; Select BOOLEAN such that Parent*(_, v)";
+        string NEXT_NON_STATEMENT_ARG_QUERY = "constant c; Select c such that Next(c, 42)";
         string PATTERN_MISSING_SYNONYM_QUERY = "assign a; Select a pattern a(v, \"x\")";
         string PATTERN_NON_VARIABLE_ARG_QUERY = "call cl; assign a; Select cl pattern a(cl, _)";
         string WITH_DIFFERING_LITERAL_ARG_TYPE_QUERY = "Select BOOLEAN with 1 = \"one\"";
@@ -177,6 +186,8 @@ namespace UnitTesting {
         string CALLS_NON_ENTITY_REF_ARG_QUERY = "procedure p; Select p such that Calls*(p, __)";
         string NEXT_NON_LINE_REF_ARG_QUERY = "Select BOOLEAN such that Next(1231, \"tough\")";
         string AFFECTS_NON_STMT_REF_QUERY = "assign a; Select a such that Affects*(a, 1_024)";
+        string CONTAINS_NON_ENT_REF_QUERY = "call cl; Select BOOLEAN such that Contains(\"1\", cl)";
+        string CONTAINS_NON_STMT_REF_QUERY = "procedure p; Select p such that Contains(p, \"737\")";
 
         // Invalid queries that fail in parsePatternClauses
         string PATTERN_UNDECLARED_SYNONYM_QUERY = "variable v; Select v pattern a(v, _)";
@@ -1118,6 +1129,48 @@ namespace UnitTesting {
             }
         };
 
+        Query EXT_SIMPLE_CONTAINS_QUERY_RESULT = {
+            STATUS_SUCCESS, EXT_SIMPLE_CONTAINS_QUERY, true,
+            { },
+            {
+                { "p", DesignEntity::PROCEDURE },
+                { "a", DesignEntity::ASSIGN }
+            },
+            {
+                { "Contains(p, a)", false, RelationType::CONTAINS,
+                    { ArgType::SYNONYM, "p" }, { ArgType::SYNONYM, "a" } }
+            },
+            { }, { }
+        };
+
+        Query EXT_CHAINED_CONTAINS_QUERY_RESULT = {
+            STATUS_SUCCESS, EXT_CHAINED_CONTAINS_QUERY, false,
+            {
+                { "p", AttrType::NONE },
+                { "q", AttrType::NONE }
+            },
+            {
+                { "p", DesignEntity::PROCEDURE },
+                { "q", DesignEntity::PROCEDURE },
+                { "a", DesignEntity::ASSIGN },
+                { "pn", DesignEntity::PRINT },
+                { "ifs", DesignEntity::IF }
+            },
+            {
+                { "Contains(\"main\", 1)", false, RelationType::CONTAINS,
+                    { ArgType::IDENTIFIER, "main" }, { ArgType::INTEGER, "1" } },
+                { "Contains(p, a)", false, RelationType::CONTAINS,
+                    { ArgType::SYNONYM, "p" }, { ArgType::SYNONYM, "a" } },
+                { "Contains(p, pn)", false, RelationType::CONTAINS,
+                    { ArgType::SYNONYM, "p" }, { ArgType::SYNONYM, "pn" } },
+                { "Contains(_, ifs)", false, RelationType::CONTAINS,
+                    { ArgType::WILDCARD, "_" }, { ArgType::SYNONYM, "ifs" } },
+                { "Contains(q, _)", false, RelationType::CONTAINS,
+                    { ArgType::SYNONYM, "q" }, { ArgType::WILDCARD, "_" } }
+            },
+            { }, { }
+        };
+
         Query EXT_SIMPLE_NOT_QUERY_RESULT = {
             STATUS_SUCCESS, EXT_SIMPLE_NOT_QUERY, false,
             {
@@ -1268,6 +1321,48 @@ namespace UnitTesting {
             }
         };
 
+        Query EXT_CHAINED_CONTAINS_NOT_QUERY_RESULT = {
+            STATUS_SUCCESS, EXT_CHAINED_CONTAINS_NOT_QUERY, false,
+            {
+                { "p", AttrType::NONE },
+                { "q", AttrType::NONE },
+                { "rd", AttrType::VAR_NAME }
+            },
+            {
+                { "p", DesignEntity::PROCEDURE },
+                { "q", DesignEntity::PROCEDURE },
+                { "rd", DesignEntity::READ },
+                { "pn", DesignEntity::PRINT },
+                { "cl", DesignEntity::CALL },
+                { "a", DesignEntity::ASSIGN },
+                { "v", DesignEntity::VARIABLE }
+            },
+            {
+                { "Next*(rd, cl)", false, RelationType::NEXTT,
+                    { ArgType::SYNONYM, "rd" }, { ArgType::SYNONYM, "cl" } },
+                { "Contains(p, cl)", false, RelationType::CONTAINS,
+                    { ArgType::SYNONYM, "p" }, { ArgType::SYNONYM, "cl" } },
+                { "not Contains(p, a)", true, RelationType::CONTAINS,
+                    { ArgType::SYNONYM, "p" }, { ArgType::SYNONYM, "a" } },
+                { "Modifies(rd, v)", false, RelationType::MODIFIESS,
+                    { ArgType::SYNONYM, "rd" }, { ArgType::SYNONYM, "v" } },
+                { "Contains(q, pn)", false, RelationType::CONTAINS,
+                    { ArgType::SYNONYM, "q" }, { ArgType::SYNONYM, "pn" } },
+                { "not Contains(q, a)", true, RelationType::CONTAINS,
+                    { ArgType::SYNONYM, "q" }, { ArgType::SYNONYM, "a" } }
+            },
+            {
+                { "a(v, _)", false, PatternType::ASSIGN_PATTERN, "a",
+                    { ArgType::SYNONYM, "v" }, { ArgType::WILDCARD, "_" } }
+            },
+            {
+                { "cl.procName = q.procName", false, WithType::IDENTIFIER_EQUAL,
+                    { ArgType::ATTRIBUTE, { "cl", AttrType::PROC_NAME } }, { ArgType::ATTRIBUTE, { "q", AttrType::PROC_NAME } } },
+                { "rd.varName = pn.varName", false, WithType::IDENTIFIER_EQUAL,
+                    { ArgType::ATTRIBUTE, { "rd", AttrType::VAR_NAME } }, { ArgType::ATTRIBUTE, { "pn", AttrType::VAR_NAME } } }
+            }
+        };
+
         // Array containing all positive testcases, each a pair comprising a valid query and the
         // expected Query object produced by the Query Parser after parsing and validation
         vector<pair<string, Query>> VALID_QUERY_TESTCASES = {
@@ -1313,10 +1408,13 @@ namespace UnitTesting {
             { CHAINED_NO_WHITESPACE_QUERY, CHAINED_NO_WHITESPACE_QUERY_RESULT },
             { CHAINED_EXTRA_WHITESPACE_QUERY, CHAINED_EXTRA_WHITESPACE_QUERY_RESULT },
             { PROJECT_REPORT_SAMPLE_QUERY, PROJECT_REPORT_SAMPLE_QUERY_RESULT },
+            { EXT_SIMPLE_CONTAINS_QUERY, EXT_SIMPLE_CONTAINS_QUERY_RESULT },
+            { EXT_CHAINED_CONTAINS_QUERY, EXT_CHAINED_CONTAINS_QUERY_RESULT },
             { EXT_SIMPLE_NOT_QUERY, EXT_SIMPLE_NOT_QUERY_RESULT },
             { EXT_CHAINED_NOT_QUERY, EXT_CHAINED_NOT_QUERY_RESULT },
             { EXT_CONFUSING_NOT_QUERY, EXT_CONFUSING_NOT_QUERY_RESULT },
-            { EXT_CONFUSING_NOT_AND_QUERY, EXT_CONFUSING_NOT_AND_QUERY_RESULT }
+            { EXT_CONFUSING_NOT_AND_QUERY, EXT_CONFUSING_NOT_AND_QUERY_RESULT },
+            { EXT_CHAINED_CONTAINS_NOT_QUERY, EXT_CHAINED_CONTAINS_NOT_QUERY_RESULT }
         };
 
         // Array containing all negative testcases, each comprising an invalid query with a single
@@ -1352,14 +1450,20 @@ namespace UnitTesting {
             { MODIFIESP_LITERAL_NON_VARIABLE_ARG_QUERY, SEMANTIC_ERR_USES_MODIFIES_NON_VARIABLE_SECOND_SYNONYM },
             { CALLS_MISSING_SYNONYM_QUERY, SEMANTIC_ERR_CALLS_UNDECLARED_SYNONYM },
             { CALLS_NON_PROCEDURE_ARG_QUERY, SEMANTIC_ERR_CALLS_NON_PROCEDURE_SYNONYM },
-            { INVALID_STMT_NUMBER_OVERFLOW_QUERY, SEMANTIC_ERR_FPNA_STMT_NUMBER_OVERFLOW },
-            { INVALID_STMT_NUMBER_QUERY, SEMANTIC_ERR_FPNA_NON_POSITIVE_STMT_NUMBER },
-            { INVALID_PROG_LINE_QUERY, SEMANTIC_ERR_FPNA_NON_POSITIVE_STMT_NUMBER },
-            { FOLLOWS_MISSING_SYNONYM_QUERY, SEMANTIC_ERR_FPNA_UNDECLARED_SYNONYM },
-            { NEXT_MISSING_SYNONYM_QUERY, SEMANTIC_ERR_FPNA_UNDECLARED_SYNONYM },
+            { CONTAINS_MISSING_FIRST_SYNONYM_QUERY, SEMANTIC_ERR_CONTAINS_UNDECLARED_FIRST_SYNONYM },
+            { CONTAINS_NON_PROCEDURE_ARG_QUERY, SEMANTIC_ERR_CONTAINS_NON_PROCEDURE_FIRST_SYNONYM },
+            { CONTAINS_STMT_NUMBER_OVERFLOW_QUERY, SEMANTIC_ERR_CONTAINS_STMT_NUMBER_OVERFLOW },
+            { CONTAINS_INVALID_STMT_NUMBER_QUERY, SEMANTIC_ERR_CONTAINS_NON_POSITIVE_STMT_NUMBER },
+            { CONTAINS_MISSING_SECOND_SYNONYM_QUERY, SEMANTIC_ERR_CONTAINS_UNDECLARED_SECOND_SYNONYM },
+            { CONTAINS_NON_STATEMENT_ARG, SEMANTIC_ERR_CONTAINS_NON_STATEMENT_SECOND_SYNONYM },
+            { FPNA_STMT_NUMBER_OVERFLOW_QUERY, SEMANTIC_ERR_FPNA_STMT_NUMBER_OVERFLOW },
+            { FPNA_INVALID_STMT_NUMBER_QUERY, SEMANTIC_ERR_FPNA_NON_POSITIVE_STMT_NUMBER },
+            { FPNA_INVALID_PROG_LINE_QUERY, SEMANTIC_ERR_FPNA_NON_POSITIVE_STMT_NUMBER },
+            { FOLLOWS_MISSING_FIRST_SYNONYM_QUERY, SEMANTIC_ERR_FPNA_UNDECLARED_SYNONYM },
+            { NEXT_MISSING_SECOND_SYNONYM_QUERY, SEMANTIC_ERR_FPNA_UNDECLARED_SYNONYM },
             { AFFECTS_NON_ASSIGN_ARG_QUERY, SEMANTIC_ERR_AFFECTS_NON_ASSIGN_SYNONYM },
-            { PARENT_NON_STMT_ARG_QUERY, SEMANTIC_ERR_FPN_NON_STMT_SYNONYM },
-            { NEXT_NON_STMT_ARG_QUERY, SEMANTIC_ERR_FPN_NON_STMT_SYNONYM },
+            { PARENT_NON_STATEMENT_ARG_QUERY, SEMANTIC_ERR_FPN_NON_STATEMENT_SYNONYM },
+            { NEXT_NON_STATEMENT_ARG_QUERY, SEMANTIC_ERR_FPN_NON_STATEMENT_SYNONYM },
             { PATTERN_MISSING_SYNONYM_QUERY, SEMANTIC_ERR_PATTERN_UNDECLARED_FIRST_SYNONYM },
             { PATTERN_NON_VARIABLE_ARG_QUERY, SEMANTIC_ERR_PATTERN_NON_VARIABLE_FIRST_SYNONYM },
             { WITH_DIFFERING_LITERAL_ARG_TYPE_QUERY, SEMANTIC_ERR_WITH_CLAUSE_DIFF_LITERAL_TYPE },
@@ -1431,6 +1535,8 @@ namespace UnitTesting {
             { CALLS_NON_ENTITY_REF_ARG_QUERY, SYNTAX_ERR_CALLS_INVALID_ENT_REF },
             { NEXT_NON_LINE_REF_ARG_QUERY, SYNTAX_ERR_NEXT_INVALID_LINE_REF },
             { AFFECTS_NON_STMT_REF_QUERY, SYNTAX_ERR_AFFECTS_INVALID_STMT_REF },
+            { CONTAINS_NON_ENT_REF_QUERY, SYNTAX_ERR_CONTAINS_INVALID_ENT_REF },
+            { CONTAINS_NON_STMT_REF_QUERY, SYNTAX_ERR_CONTAINS_INVALID_STMT_REF },
             // parsePatternClauses
             { PATTERN_UNDECLARED_SYNONYM_QUERY, SEMANTIC_ERR_UNDECLARED_PATTERN_TYPE_SYNONYM },
             { PATTERN_NON_ENTITY_REF_ARG_QUERY, SYNTAX_ERR_PATTERN_INVALID_ENT_REF },
