@@ -19,12 +19,6 @@ $list_of_test_files = @(
   # 'affects_singleStmt'
   # 'affectsStar_singleStmt'
   '..\mixed_0'
-
-  '..\contains_0'
-  '..\contains_invalidArgs'
-  '..\contains_multi'
-  '..\contains_pattern'
-  '..\contains_with'
 )
 
 $list_of_no_xml_tests = @(
