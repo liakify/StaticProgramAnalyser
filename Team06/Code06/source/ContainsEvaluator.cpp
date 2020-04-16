@@ -192,15 +192,26 @@ namespace PQL {
             Synonym arg2 = args.second.value;
 
             ClauseResult clauseResult = {};
-            clauseResult.syns.emplace_back(arg1);
-            clauseResult.syns.emplace_back(arg2);
+            if (arg1 < arg2) {
+                clauseResult.syns.emplace_back(arg1);
+                clauseResult.syns.emplace_back(arg2);
+            } else {
+                clauseResult.syns.emplace_back(arg2);
+                clauseResult.syns.emplace_back(arg1);
+            }
+
             for (ProcId i = 1; i <= database.procTable.size(); i++) {
                 std::unordered_set<StmtId> stmts = database.containsKB.getAllContains(i);
                 for (StmtId stmt : stmts) {
                     if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(stmt)->getType(), synonymTable[arg2])) {
                         ClauseResultEntry resultEntry;
-                        resultEntry.emplace_back(database.procTable.get(i).getName());
-                        resultEntry.emplace_back(std::to_string(stmt));
+                        if (arg1 < arg2) {
+                            resultEntry.emplace_back(database.procTable.get(i).getName());
+                            resultEntry.emplace_back(std::to_string(stmt));
+                        } else {
+                            resultEntry.emplace_back(std::to_string(stmt));
+                            resultEntry.emplace_back(database.procTable.get(i).getName());
+                        }
                         clauseResult.rows.emplace_back(resultEntry);
                     }
                 }

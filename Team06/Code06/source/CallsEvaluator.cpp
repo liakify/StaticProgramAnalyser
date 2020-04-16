@@ -184,15 +184,14 @@ namespace PQL {
             if (arg1 == arg2) {
                 // In SIMPLE, a procedure should not be able to call itself.
                 return clauseResult;
-            }
-
-            if (arg1 < arg2) {
+            } else if (arg1 < arg2) {
                 clauseResult.syns.emplace_back(arg1);
                 clauseResult.syns.emplace_back(arg2);
             } else {
                 clauseResult.syns.emplace_back(arg2);
                 clauseResult.syns.emplace_back(arg1);
             }
+
             for (ProcId caller = 1; caller <= database.procTable.size(); caller++) {
                 std::unordered_set<ProcId> callees = database.callsKB.getDirectNodes(caller, NodeType::SUCCESSOR);
                 for (ProcId callee : callees) {
@@ -204,7 +203,6 @@ namespace PQL {
                         resultEntry.emplace_back(database.procTable.get(callee).getName());
                         resultEntry.emplace_back(database.procTable.get(caller).getName());
                     }
-
                     clauseResult.rows.emplace_back(resultEntry);
                 }
             }

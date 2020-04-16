@@ -211,7 +211,6 @@ namespace PQL {
                     clauseResult.syns.emplace_back(arg2);
                     clauseResult.syns.emplace_back(arg1);
                 }
-
             }
 
             for (StmtId i : database.stmtTable.getStmtsByType(StmtType::ASSIGN)) {
