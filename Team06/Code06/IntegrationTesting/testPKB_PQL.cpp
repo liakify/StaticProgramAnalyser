@@ -181,147 +181,147 @@ namespace IntegrationTesting {
 
     TEST_METHOD(evaluateQuery) {
         pql.evaluateQuery(query_selectDesignEntity_STMT, results);
-        Assert::IsTrue(results == std::list<string>({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }));
+        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }).begin()));
         results.clear();
 
         pql.evaluateQuery(query_selectDesignEntity_READ, results);
-        Assert::IsTrue(results == std::list<string>({ "1" }));
+        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "1" }).begin()));
         results.clear();
 
         pql.evaluateQuery(query_selectDesignEntity_PRINT, results);
-        Assert::IsTrue(results == std::list<string>({ "2" }));
+        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "2" }).begin()));
         results.clear();
 
         pql.evaluateQuery(query_selectDesignEntity_CALL, results);
-        Assert::IsTrue(results == std::list<string>({ "5" }));
+        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "5" }).begin()));
         results.clear();
 
         pql.evaluateQuery(query_selectDesignEntity_WHILE, results);
-        Assert::IsTrue(results == std::list<string>({ "7" }));
+        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "7" }).begin()));
         results.clear();
 
         pql.evaluateQuery(query_selectDesignEntity_IF, results);
-        Assert::IsTrue(results == std::list<string>({ "3" }));
+        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "3" }).begin()));
         results.clear();
 
         pql.evaluateQuery(query_selectDesignEntity_ASSIGN, results);
-        Assert::IsTrue(results == std::list<string>({ "4", "6", "8", "9" }));
+        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "4", "6", "8", "9" }).begin()));
         results.clear();
 
         pql.evaluateQuery(query_selectDesignEntity_VAR, results);
-        Assert::IsTrue(results == std::list<string>({ "x", "y", "a", "z" }));
+        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "x", "y", "a", "z" }).begin()));
         results.clear();
 
         pql.evaluateQuery(query_selectDesignEntity_CONST, results);
-        Assert::IsTrue(results == std::list<string>({ "5", "3", "0" }));
+        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "0", "3", "5" }).begin()));
         results.clear();
 
         pql.evaluateQuery(query_selectDesignEntity_PROGLINE, results);
-        Assert::IsTrue(results == std::list<string>({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }));
+        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }).begin()));
         results.clear();
 
         pql.evaluateQuery(query_selectDesignEntity_PROC, results);
-        Assert::IsTrue(results == std::list<string>({ "p2", "p"}));
+        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "p", "p2"}).begin()));
         results.clear();
 
         pql.evaluateQuery(query_selectAttrRef_p_procName, results);
-        Assert::IsTrue(results == std::list<string>({ "p2", "p" }));
+        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "p", "p2" }).begin()));
         results.clear();
 
         pql.evaluateQuery(query_selectAttrRef_c_procName, results);
-        Assert::IsTrue(results == std::list<string>({ "p2" }));
+        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "p2" }).begin()));
         results.clear();
 
         pql.evaluateQuery(query_selectAttrRef_v_varName, results);
-        Assert::IsTrue(results == std::list<string>({ "x", "y", "a", "z" }));
+        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "x", "y", "a", "z" }).begin()));
         results.clear();
 
         pql.evaluateQuery(query_selectAttrRef_r_varName, results);
-        Assert::IsTrue(results == std::list<string>({ "x" }));
+        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "x" }).begin()));
         results.clear();
 
         pql.evaluateQuery(query_selectAttrRef_pn_varName, results);
-        Assert::IsTrue(results == std::list<string>({ "y" }));
+        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "y" }).begin()));
         results.clear();
 
         pql.evaluateQuery(query_selectAttrRef_cn_value, results);
-        Assert::IsTrue(results == std::list<string>({ "5", "3", "0" }));
+        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "0", "3", "5" }).begin()));
         results.clear();
 
         pql.evaluateQuery(query_selectAttrRef_s_stmt, results);
-        Assert::IsTrue(results == std::list<string>({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }));
+        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }).begin()));
         results.clear();
 
         pql.evaluateQuery(query_selectAttrRef_r_stmt, results);
-        Assert::IsTrue(results == std::list<string>({ "1" }));
+        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "1" }).begin()));
         results.clear();
 
         pql.evaluateQuery(query_selectAttrRef_pn_stmt, results);
-        Assert::IsTrue(results == std::list<string>({ "2" }));
+        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "2" }).begin()));
         results.clear();
 
         pql.evaluateQuery(query_selectAttrRef_c_stmt, results);
-        Assert::IsTrue(results == std::list<string>({ "5" }));
+        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "5" }).begin()));
         results.clear();
 
         pql.evaluateQuery(query_selectAttrRef_w_stmt, results);
-        Assert::IsTrue(results == std::list<string>({ "7" }));
+        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "7" }).begin()));
         results.clear();
 
         pql.evaluateQuery(query_selectAttrRef_if_stmt, results);
-        Assert::IsTrue(results == std::list<string>({ "3" }));
+        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "3" }).begin()));
         results.clear();
 
         pql.evaluateQuery(query_selectAttrRef_a_stmt, results);
-        Assert::IsTrue(results == std::list<string>({ "4", "6", "8", "9" }));
+        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "4", "6", "8", "9" }).begin()));
         results.clear();
 
         pql.evaluateQuery(query_relCond_ModifiesP, results);
-        Assert::IsTrue(results == std::list<string>({ "p2", "p" }));
+        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "p", "p2" }).begin()));
         results.clear();
 
         pql.evaluateQuery(query_relCond_ModifiesS, results);
-        Assert::IsTrue(results == std::list<string>({ "4", "6", "8", "9" }));
+        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "4", "6", "8", "9" }).begin()));
         results.clear();
 
         pql.evaluateQuery(query_relCond_UsesP, results);
-        Assert::IsTrue(results == std::list<string>({ "p2", "p" }));
+        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "p", "p2" }).begin()));
         results.clear();
 
         pql.evaluateQuery(query_relCond_UsesS, results);
-        Assert::IsTrue(results == std::list<string>({ "4", "8", "9" }));
+        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "4", "8", "9" }).begin()));
         results.clear();
 
         pql.evaluateQuery(query_relCond_Calls, results);
-        Assert::IsTrue(results == std::list<string>({ "p" }));
+        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "p" }).begin()));
         results.clear();
 
         pql.evaluateQuery(query_relCond_Parent, results);
-        Assert::IsTrue(results == std::list<string>({ "3", "7" }));
+        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "3", "7" }).begin()));
         results.clear();
 
         pql.evaluateQuery(query_relCond_Follows, results);
-        Assert::IsTrue(results == std::list<string>({ "1", "2", "6" }));
+        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "1", "2", "6" }).begin()));
         results.clear();
 
         pql.evaluateQuery(query_relCond_Next, results);
-        Assert::IsTrue(results == std::list<string>({ "1", "2", "3", "6", "7", "8" }));
+        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "1", "2", "3", "6", "7", "8" }).begin()));
         results.clear();
 
         pql.evaluateQuery(query_relCond_Affects, results);
-        Assert::IsTrue(results == std::list<string>({ "6", "8" }));
+        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "6", "8" }).begin()));
         results.clear();
 
         pql.evaluateQuery(query_patternCond_Assign, results);
-        Assert::IsTrue(results == std::list<string>({ "8" }));
+        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "8" }).begin()));
         results.clear();
 
         pql.evaluateQuery(query_patternCond_If, results);
-        Assert::IsTrue(results == std::list<string>({ "x", "y" }));
+        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "x", "y" }).begin()));
         results.clear();
 
         pql.evaluateQuery(query_patternCond_While, results);
-        Assert::IsTrue(results == std::list<string>({ "z" }));
+        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "z" }).begin()));
         results.clear();
     }
 
