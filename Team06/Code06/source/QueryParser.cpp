@@ -7,6 +7,7 @@ using std::pair;
 using std::regex;
 using std::smatch;
 using std::string;
+using std::tie;
 using std::tuple;
 using std::unordered_map;
 using std::vector;
@@ -112,14 +113,14 @@ namespace PQL {
         for (auto& target : query.targetEntities) {
             // If BOOLEAN is used in a tuple, it is treated as a synonym and hence the query is
             // semantically invalid if it has not been previously declared
-            auto targetMapping = synonymTable.find(target.first);
+            auto targetMapping = synonymTable.find(target.synonym);
             if (targetMapping == synonymTable.end()) {
                 // SEMANTIC ERROR: undeclared synonym as single return type or part of tuple return type
                 query.status = SEMANTIC_ERR_UNDECLARED_SYNONYM_IN_RETURN_TYPE;
                 return false;
-            } else if (target.second != AttrType::NONE) {
-                // Return type is an attribute reference - determine if its design entity has the attribute
-                vector<DesignEntity> validEntities = ATTRIBUTE_ENTITY_MAP.find(target.second)->second;
+            } else if (target.attrType != AttrType::NONE) {
+                // Return type is an attribute reference - determine if its design entity has that attribute
+                vector<DesignEntity> validEntities = ATTRIBUTE_ENTITY_MAP.find(target.attrType)->second;
 
                 if (find(validEntities.begin(), validEntities.end(), targetMapping->second) == validEntities.end()) {
                     // SEMANTIC ERROR: design entity not have this attribute type
@@ -130,21 +131,21 @@ namespace PQL {
         }
 
         for (auto& relation : query.relations) {
-            // Relation type and pair of first and second arguments by position
+            // Relation type and pair of first and second arguments, in that order
             RelationType relationClass = relation.getRelationType();
-            pair<pair<ArgType, string>, pair<ArgType, string>> args = relation.getArgs();
+            pair<Argument, Argument> args = relation.getArgs();
 
             if (relationClass == RelationType::USESS || relationClass == RelationType::MODIFIESS ||
                 relationClass == RelationType::USESP || relationClass == RelationType::MODIFIESP) {
                 // Validate the first argument assuming the statement variant of Uses/Modifies
-                if (args.first.first == ArgType::WILDCARD) {
+                if (args.first.type == ArgType::WILDCARD) {
                     // SEMANTIC ERROR: ill-defined wildcard argument
                     query.status = SEMANTIC_ERR_USES_MODIFIES_AMBIGUOUS_WILDCARD;
                     return false;
-                } else if (args.first.first == ArgType::SYNONYM) {
-                    // Determine if the synonym corresponds to a PROCEDURE - if yes the relation
+                } else if (args.first.type == ArgType::SYNONYM) {
+                    // Determine if the synonym corresponds to a PROCEDURE - if yes, the relation
                     // should be modified to the procedure-variable variant
-                    auto synonymMapping = synonymTable.find(args.first.second);
+                    auto synonymMapping = synonymTable.find(args.first.value);
                     if (synonymMapping == synonymTable.end()) {
                         // SEMANTIC ERROR: synonym referenced in Uses/Modifies clause is undeclared
                         query.status = SEMANTIC_ERR_USES_MODIFIES_UNDECLARED_FIRST_SYNONYM;
@@ -152,9 +153,8 @@ namespace PQL {
                     } else if (synonymMapping->second == DesignEntity::PROCEDURE) {
                         // Modify RelationClause to <RELATION>P variant and update arguments
                         assert(relation.setProcedureVariant());
-                        // Retrieve the updated relation type and arguments
+                        // Retrieve the updated relation type
                         relationClass = relation.getRelationType();
-                        args = relation.getArgs();
                     } else if (relationClass == RelationType::USESS &&
                         find(NON_USES.begin(), NON_USES.end(), synonymMapping->second) != NON_USES.end()) {
                         // SEMANTIC ERROR: design entity type error (not a STMT, ASSIGN, IF, WHILE, CALL or PRINT)
@@ -169,8 +169,8 @@ namespace PQL {
                 }
 
                 // Validate the second argument
-                if (args.second.first == ArgType::SYNONYM) {
-                    auto synonymMapping = synonymTable.find(args.second.second);
+                if (args.second.type == ArgType::SYNONYM) {
+                    auto synonymMapping = synonymTable.find(args.second.value);
                     if (synonymMapping == synonymTable.end()) {
                         // SEMANTIC ERROR: synonym referenced in Uses/Modifies clause is undeclared
                         query.status = SEMANTIC_ERR_USES_MODIFIES_UNDECLARED_SECOND_SYNONYM;
@@ -183,11 +183,11 @@ namespace PQL {
                 }
             } else if (relationClass == RelationType::CALLS || relationClass == RelationType::CALLST) {
                 // Relation is between procedures only
-                pair<ArgType, string> argArray[2] = { args.first, args.second };
+                Argument argArray[2] = { args.first, args.second };
 
                 for (auto& arg : argArray) {
-                    if (arg.first == ArgType::SYNONYM) {
-                        auto synonymMapping = synonymTable.find(arg.second);
+                    if (arg.type == ArgType::SYNONYM) {
+                        auto synonymMapping = synonymTable.find(arg.value);
                         if (synonymMapping == synonymTable.end()) {
                             // SEMANTIC ERROR: synonym referenced in Calls(*) clause is undeclared
                             query.status = SEMANTIC_ERR_CALLS_UNDECLARED_SYNONYM;
@@ -202,14 +202,14 @@ namespace PQL {
             } else {
                 // Relation is between statements: FOLLOWS, FOLLOWST, PARENT, PARENTT, AFFECTS, AFFECTST
                 // Or relation is between program lines: NEXT, NEXTT (program line equivalent to stmt number)
-                pair<ArgType, string> argArray[2] = { args.first, args.second };
+                Argument argArray[2] = { args.first, args.second };
 
                 for (auto& arg : argArray) {
-                    if (arg.first == ArgType::INTEGER) {
+                    if (arg.type == ArgType::INTEGER) {
                         int lineNo;
 
                         try {
-                            lineNo = stoi(arg.second);
+                            lineNo = stoi(arg.value);
                         } catch (const out_of_range&) {
                             // SEMANTIC ERROR: statement or line number exceeds 32-bit limit
                             query.status = SEMANTIC_ERR_FPNA_STMT_NUMBER_OVERFLOW;
@@ -222,8 +222,8 @@ namespace PQL {
                             query.status = SEMANTIC_ERR_FPNA_NON_POSITIVE_STMT_NUMBER;
                             return false;
                         }
-                    } else if (arg.first == ArgType::SYNONYM) {
-                        auto synonymMapping = synonymTable.find(arg.second);
+                    } else if (arg.type == ArgType::SYNONYM) {
+                        auto synonymMapping = synonymTable.find(arg.value);
                         if (synonymMapping == synonymTable.end()) {
                             // SEMANTIC ERROR: synonym referenced in Follows(*)/Parent(*)/Next(*)/Affects(*) clause is undeclared
                             query.status = SEMANTIC_ERR_FPNA_UNDECLARED_SYNONYM;
@@ -247,10 +247,10 @@ namespace PQL {
         // of ArgType SYNONYM corresponds to a valid declared synonym
         for (auto& pattern : query.patterns) {
             // Pair of entity (variable) and pattern arguments respectively
-            pair<ArgType, string> entArg = pattern.getArgs().first;
+            Argument entArg = pattern.getArgs().first;
 
-            if (entArg.first == ArgType::SYNONYM) {
-                auto synonymMapping = synonymTable.find(entArg.second);
+            if (entArg.type == ArgType::SYNONYM) {
+                auto synonymMapping = synonymTable.find(entArg.value);
                 if (synonymMapping == synonymTable.end()) {
                     // SEMANTIC ERROR: synonym referenced in pattern clause is undeclared
                     query.status = SEMANTIC_ERR_PATTERN_UNDECLARED_FIRST_SYNONYM;
@@ -267,12 +267,12 @@ namespace PQL {
         // on both sides of the equality
         for (auto& equality : query.equalities) {
             // Pair of left and right arguments respectively
-            pair<pair<ArgType, Ref>, pair<ArgType, Ref>> args = equality.getArgs();
+            pair<Argument, Argument> args = equality.getArgs();
 
             if (equality.getWithType() == WithType::LITERAL_EQUAL) {
                 // Both sides of the equality are literal values (integers or identifiers)
                 // Check that both arguments have the same type
-                if (args.first.first != args.second.first) {
+                if (args.first.type != args.second.type) {
                     query.status = SEMANTIC_ERR_WITH_CLAUSE_DIFF_LITERAL_TYPE;
                     return false;
                 }
@@ -281,21 +281,14 @@ namespace PQL {
 
             // Equality type has not been determined since at least one argument is a synonym
             // or attribute - evaluate the type of those arguments and compare for equality
-            ArgType leftType = args.first.first;
-            ArgType rightType = args.second.first;
+            Argument argArray[2] = { args.first, args.second };
 
-            pair<ArgType, Ref> argArray[2] = {
-                { leftType, args.first.second },
-                { rightType, args.second.second }
-            };
-
-            // Evaluate the type of the result the argument on either side evaluates to
-            // For example, synonyms of type PROCEDURE evaluate to an IDENTIFIER and
-            // attributes of type VALUE evaluate to an INTEGER
+            // Evaluate type of the result each argument returns; for example, synonyms of type
+            // PROCEDURE evaluate to IDENTIFIERs and attributes of type VALUE evaluate to INTEGERs
             for (auto& arg : argArray) {
-                if (arg.first == ArgType::SYNONYM) {
+                if (arg.type == ArgType::SYNONYM) {
                     // First validate the synonym has been previously declared
-                    auto synonymMapping = synonymTable.find(arg.second.first);
+                    auto synonymMapping = synonymTable.find(arg.value);
                     if (synonymMapping == synonymTable.end()) {
                         // SEMANTIC ERROR: synonym referenced in with clause as arg is undeclared
                         query.status = SEMANTIC_ERR_WITH_CLAUSE_UNDECLARED_SYNONYM_ARG;
@@ -310,10 +303,10 @@ namespace PQL {
                     }
 
                     // Return type of prog_line design entity is an INTEGER
-                    arg.first = ArgType::INTEGER;
-                } else if (arg.first == ArgType::ATTRIBUTE) {
+                    arg.type = ArgType::INTEGER;
+                } else if (arg.type == ArgType::ATTRIBUTE) {
                     // First validate the synonym used in the attribute ref has been declared
-                    auto synonymMapping = synonymTable.find(arg.second.first);
+                    auto synonymMapping = synonymTable.find(arg.value);
                     if (synonymMapping == synonymTable.end()) {
                         // SEMANTIC ERROR: synonym appearing in attribute arg is undeclared
                         query.status = SEMANTIC_ERR_WITH_CLAUSE_UNDECLARED_SYNONYM_IN_ATTRIBUTE_ARG;
@@ -321,7 +314,7 @@ namespace PQL {
                     }
 
                     // Next, evaluate if this design entity has this attribute type
-                    AttrType attributeType = arg.second.second;
+                    AttrType attributeType = arg.attrType;
                     vector<DesignEntity> validEntities = ATTRIBUTE_ENTITY_MAP.find(attributeType)->second;
                     if (find(validEntities.begin(), validEntities.end(), synonymMapping->second) == validEntities.end()) {
                         // SEMANTIC ERROR: design entity in attribute arg does not have this attribute type
@@ -330,20 +323,20 @@ namespace PQL {
                     }
 
                     // Evaluate return type by checking attribute type of that arg
-                    arg.first = attributeType == AttrType::PROC_NAME || attributeType == AttrType::VAR_NAME
+                    arg.type = attributeType == AttrType::PROC_NAME || attributeType == AttrType::VAR_NAME
                         ? ArgType::IDENTIFIER
                         : ArgType::INTEGER;
                 }
             }
 
             // Compare the types of the return values of expressions on both sides of the equality
-            if (argArray[0].first != argArray[1].first) {
+            if (argArray[0].type != argArray[1].type) {
                 // SEMANTIC ERROR: arguments of equality evaluate to return values of different type
                 query.status = SEMANTIC_ERR_WITH_CLAUSE_DIFF_RETURN_TYPE_OF_ARGS;
                 return false;
             } else {
                 // Update the equality type of the with clause
-                WithType identifiedType = argArray[0].first == ArgType::IDENTIFIER
+                WithType identifiedType = argArray[0].type == ArgType::IDENTIFIER
                     ? WithType::IDENTIFIER_EQUAL
                     : WithType::INTEGER_EQUAL;
                 equality.setWithType(identifiedType);
@@ -489,7 +482,7 @@ namespace PQL {
 
     pair<bool, string> QueryParser::parseQueryTarget(Query& query, string queryBody) {
         vector<string> tokens;
-        vector<pair<string, AttrType>> targets;
+        vector<ReturnType> targets;
 
         string TARGET = "[A-Za-z][A-Za-z0-9]*(?:\\s*\\.\\s*[A-Za-z#]+)?";
         regex SINGLE_RETURN("^Select\\s+" + TARGET + "(?=$|\\s+(?![,.]))");
@@ -532,7 +525,7 @@ namespace PQL {
         }
 
         bool isValidTarget;
-        pair<string, AttrType> parsedTarget;
+        ReturnType parsedTarget;
 
         // Parse all string targets into their representation as pairs of synonyms
         // and an optional attribute type
@@ -716,7 +709,9 @@ namespace PQL {
                 // If it fails, then the pattern string is not a valid infix arithmetic exprresion
                 try {
                     patterns.push_back({
-                        clause, PatternType::ASSIGN_PATTERN, synonym, parseEntityRef(referenceString), parsePattern(args.at(1))
+                        clause, PatternType::ASSIGN_PATTERN,
+                        { ArgType::SYNONYM, synonym, UNSET_SYNONYM_ID, AttrType::INVALID },
+                        parseEntityRef(referenceString), parsePattern(args.at(1))
                     });
                 } catch (const invalid_argument&) {
                     // SYNTAX ERROR: pattern string is not a valid infix arithmetic expression
@@ -732,7 +727,9 @@ namespace PQL {
                     query.status = SYNTAX_ERR_WHILE_PATTERN_INVALID_SECOND_ARG;
                 } else {
                     patterns.push_back({
-                        clause, PatternType::WHILE_PATTERN, synonym, parseEntityRef(referenceString), parsePattern(args.at(1))
+                        clause, PatternType::WHILE_PATTERN,
+                        { ArgType::SYNONYM, synonym, UNSET_SYNONYM_ID, AttrType::INVALID },
+                        parseEntityRef(referenceString), parsePattern(args.at(1))
                     });
                 }
                 break;
@@ -746,7 +743,9 @@ namespace PQL {
                 } else {
                     // Pattern struct only stores first two args since third arg is fixed as '_' anyway
                     patterns.push_back({
-                        clause, PatternType::IF_PATTERN, synonym, parseEntityRef(referenceString), parsePattern(args.at(1))
+                        clause, PatternType::IF_PATTERN,
+                        { ArgType::SYNONYM, synonym, UNSET_SYNONYM_ID, AttrType::INVALID },
+                        parseEntityRef(referenceString), parsePattern(args.at(1))
                     });
                 }
                 break;
@@ -781,7 +780,7 @@ namespace PQL {
             }
 
             bool hasValidLHS, hasValidRHS;
-            pair<ArgType, Ref> arg1, arg2;
+            Argument arg1, arg2;
             tie(hasValidLHS, arg1) = parseRef(argString1);
             tie(hasValidRHS, arg2) = parseRef(argString2);
 
@@ -791,8 +790,8 @@ namespace PQL {
                 return false;
             }
 
-            if ((arg1.first == ArgType::INTEGER || arg1.first == ArgType::IDENTIFIER) &&
-                (arg2.first == ArgType::INTEGER || arg2.first == ArgType::IDENTIFIER)) {
+            if ((arg1.type == ArgType::INTEGER || arg1.type == ArgType::IDENTIFIER) &&
+                (arg2.type == ArgType::INTEGER || arg2.type == ArgType::IDENTIFIER)) {
                 equalities.push_back({
                     clause, WithType::LITERAL_EQUAL, arg1, arg2
                 });
@@ -809,79 +808,91 @@ namespace PQL {
         return true;
     }
 
-    pair<bool, pair<string, AttrType>> QueryParser::parseReturnType(string arg) {
+    pair<bool, ReturnType> QueryParser::parseReturnType(string arg) {
         if (QueryUtils::isValidAttrRef(arg)) {
             // Return type string contains only one . - interpret as an attribute reference
-            return parseAttrRef(arg);
+            bool hasValidAttributeType;
+            pair<string, AttrType> attribute;
+            tie(hasValidAttributeType, attribute) = parseAttribute(arg);
+
+            if (!hasValidAttributeType) {
+                return { false, { attribute.first, NON_SYNONYM_ID, attribute.second} };
+            } else {
+                return { true, { attribute.first, UNSET_SYNONYM_ID, attribute.second } };
+            }
         } else {
             // Regex rejects all return types that are not synonyms or attribute references
             // Hence return type here is just the synonym identifier itself
             assert(QueryUtils::isValidIdentifier(arg));
-            return { true, { arg, AttrType::NONE } };
+            return { true, { arg, UNSET_SYNONYM_ID, AttrType::NONE } };
         }
     }
 
-    pair<ArgType, StmtEntRef> QueryParser::parseStmtRef(string arg) {
+    Argument QueryParser::parseStmtRef(string arg) {
         if (arg == "_") {
-            return { ArgType::WILDCARD, arg };
+            return { ArgType::WILDCARD, arg, NON_SYNONYM_ID, AttrType::INVALID };
         } else if (QueryUtils::isValidInteger(arg)) {
-            return { ArgType::INTEGER, arg };
+            return { ArgType::INTEGER, arg, NON_SYNONYM_ID, AttrType::INVALID };
         } else {
-            return { ArgType::SYNONYM, arg };
+            return { ArgType::SYNONYM, arg, UNSET_SYNONYM_ID, AttrType::INVALID };
         }
     }
 
-    pair<ArgType, EntityRef> QueryParser::parseEntityRef(string arg) {
+    Argument QueryParser::parseEntityRef(string arg) {
         if (arg == "_") {
-            return { ArgType::WILDCARD, arg };
+            return { ArgType::WILDCARD, arg, NON_SYNONYM_ID, AttrType::INVALID };
         } else if (arg.find('\"') != string::npos) {
             // An identifier - strip leading and trailing "
             arg.pop_back();
-            return { ArgType::IDENTIFIER, QueryUtils::trimString(arg.erase(0, 1)) };
+            return { ArgType::IDENTIFIER, QueryUtils::trimString(arg.erase(0, 1)),
+                NON_SYNONYM_ID, AttrType::INVALID };
         } else {
-            return { ArgType::SYNONYM, arg };
+            return { ArgType::SYNONYM, arg, UNSET_SYNONYM_ID, AttrType::INVALID };
         }
     }
 
-    pair<ArgType, Pattern> QueryParser::parsePattern(string arg) {
+    Argument QueryParser::parsePattern(string arg) {
         if (arg == "_") {
-            return { ArgType::WILDCARD, arg };
+            return { ArgType::WILDCARD, arg, NON_SYNONYM_ID, AttrType::INVALID };
         }
 
         string strippedPattern = QueryUtils::stripPattern(arg);
         if (arg.at(0) == '_') {
             // Inclusive pattern string - remove leading and trailing underscore
             strippedPattern = strippedPattern.substr(1, strippedPattern.length() - 2);
-            return { ArgType::INCLUSIVE_PATTERN, "_" + FrontEnd::Parser().parseExpression(strippedPattern) + "_" };
+            return { ArgType::INCLUSIVE_PATTERN, "_" + FrontEnd::Parser().parseExpression(strippedPattern) + "_",
+                NON_SYNONYM_ID, AttrType::INVALID };
         } else {
             // Exact pattern string
-            return { ArgType::EXACT_PATTERN, FrontEnd::Parser().parseExpression(strippedPattern) };
+            return { ArgType::EXACT_PATTERN, FrontEnd::Parser().parseExpression(strippedPattern),
+                NON_SYNONYM_ID, AttrType::INVALID };
         }
     }
 
-    pair<bool, pair<ArgType, Ref>> QueryParser::parseRef(string arg) {
+    pair<bool, Argument> QueryParser::parseRef(string arg) {
         if (QueryUtils::isValidInteger(arg)) {
-            return { true, { ArgType::INTEGER, { arg, AttrType::NONE } } };
+            return { true, { ArgType::INTEGER, arg, NON_SYNONYM_ID, AttrType::NONE } };
         } else if (QueryUtils::isValidIdentifier(arg)) {
-            return { true, { ArgType::SYNONYM, { arg, AttrType::NONE } } };
+            return { true, { ArgType::SYNONYM, arg, UNSET_SYNONYM_ID, AttrType::NONE } };
         } else if (arg.find('\"') != string::npos) {
             // An identifier - strip leading and trailing "
             arg.pop_back();
-            return { true, { ArgType::IDENTIFIER, { QueryUtils::trimString(arg.erase(0, 1)), AttrType::NONE } } };
+            return { true,
+                { ArgType::IDENTIFIER, QueryUtils::trimString(arg.erase(0, 1)), NON_SYNONYM_ID,  AttrType::NONE } };
         } else {
             bool hasValidAttributeType;
-            Ref parsedAttribute;
-            tie(hasValidAttributeType, parsedAttribute) = parseAttrRef(arg);
+            pair<string, AttrType> attribute;
+            tie(hasValidAttributeType, attribute) = parseAttribute(arg);
 
             if (!hasValidAttributeType) {
                 // Attribute keyword does not correspond to a valid attribute type
-                return { false, { ArgType::INVALID, { arg, AttrType::INVALID } } };
+                return { false, { ArgType::INVALID, arg, NON_SYNONYM_ID, AttrType::INVALID } };
             }
-            return { true, { ArgType::ATTRIBUTE, parsedAttribute } };
+            return { true, { ArgType::ATTRIBUTE, attribute.first, UNSET_SYNONYM_ID, attribute.second } };
         }
     }
 
-    pair<bool, pair<string, AttrType>> QueryParser::parseAttrRef(string arg) {
+    pair<bool, pair<string, AttrType>> QueryParser::parseAttribute(string arg) {
         string prefix, suffix;
         tie(prefix, suffix) = QueryUtils::splitString(arg, '.');
 

@@ -6,6 +6,23 @@ using std::vector;
 
 namespace PQL {
 
+    bool ReturnType::operator==(const ReturnType& other) const {
+        return this->synonym == other.synonym && this->synonymId == other.synonymId &&
+            this->attrType == other.attrType;
+    }
+
+    bool ReturnType::operator<(const ReturnType& other) const {
+        // Compare two return types lexicographically by synonym, breaking ties by attribute type
+        return this->synonym != other.synonym
+            ? this->synonym < other.synonym
+            : this->attrType < other.attrType;
+    }
+
+    bool Argument::operator==(const Argument& other) const {
+        return this->type == other.type && this->value == other.value &&
+            this->synonymId == other.synonymId && this->attrType == other.attrType;
+    }
+
     Clause::Clause(string clause, ClauseType clauseType)
         : clause(clause), clauseType(clauseType) {
     }
@@ -23,7 +40,7 @@ namespace PQL {
     }
 
     RelationClause::RelationClause(string clause, RelationType type,
-        pair<ArgType, StmtEntRef> firstArg, pair<ArgType, StmtEntRef> secondArg)
+        Argument firstArg, Argument secondArg)
         : Clause(clause, ClauseType::RELATION), type(type), firstArg(firstArg), secondArg(secondArg) {
     }
 
@@ -45,40 +62,92 @@ namespace PQL {
         return true;
     }
 
+    bool RelationClause::setFirstSynonymId(int synonymId) {
+        if (synonymId < 0 || this->firstArg.type != ArgType::SYNONYM) {
+            // Synonym ID supplied is negative or argument is not a synonym => reject
+            return false;
+        } else if (this->firstArg.synonymId != UNSET_SYNONYM_ID) {
+            // Synonym ID has been previously set => reject modification
+            return false;
+        }
+
+        // Otherwise accept the modification and set this synonym argument's synonym ID
+        this->firstArg.synonymId = synonymId;
+        return true;
+    }
+
+    bool RelationClause::setSecondSynonymId(int synonymId) {
+        if (synonymId < 0 || this->secondArg.type != ArgType::SYNONYM) {
+            // Synonym ID supplied is negative or argument is not a synonym => reject
+            return false;
+        } else if (this->secondArg.synonymId != UNSET_SYNONYM_ID) {
+            // Synonym ID has been previously set => reject modification
+            return false;
+        }
+
+        // Otherwise accept the modification and set this synonym argument's synonym ID
+        this->secondArg.synonymId = synonymId;
+        return true;
+    }
+
     RelationType RelationClause::getRelationType() {
         return this->type;
     }
 
-    pair<pair<ArgType, StmtEntRef>, pair<ArgType, StmtEntRef>> RelationClause::getArgs() {
+    pair<Argument, Argument> RelationClause::getArgs() {
         return { this->firstArg, this->secondArg };
     }
 
-    PatternClause::PatternClause(string clause, PatternType type, string synonym,
-        pair<ArgType, EntityRef> targetArg, pair<ArgType, Pattern> patternArg)
-        : Clause(clause, ClauseType::PATTERN), type(type), synonym(synonym),
+    PatternClause::PatternClause(string clause, PatternType type, Argument synonymArg,
+        Argument targetArg, Argument patternArg)
+        : Clause(clause, ClauseType::PATTERN), type(type), synonymArg(synonymArg),
             targetArg(targetArg), patternArg(patternArg) {
     }
 
     bool PatternClause::operator==(const PatternClause& other) const {
         return Clause::operator==(other) &&
-            this->type == other.type && this->synonym == other.synonym &&
+            this->type == other.type && this->synonymArg == other.synonymArg &&
             this->targetArg == other.targetArg && this->patternArg == other.patternArg;
+    }
+
+    bool PatternClause::setPatternSynonymId(int synonymId) {
+        if (synonymId < 0 || this->synonymArg.synonymId != UNSET_SYNONYM_ID) {
+            // Synonym ID supplied is negative or synonym ID has been previously set => reject
+            return false;
+        }
+
+        // Otherwise accept the modification and set this synonym argument's synonym ID
+        this->synonymArg.synonymId = synonymId;
+        return true;
+    }
+
+    bool PatternClause::setFirstSynonymId(int synonymId) {
+        if (synonymId < 0 || this->targetArg.type != ArgType::SYNONYM) {
+            // Synonym ID supplied is negative or argument is not a synonym => reject
+            return false;
+        } else if (this->targetArg.synonymId != UNSET_SYNONYM_ID) {
+            // Synonym ID has been previously set => reject modification
+            return false;
+        }
+
+        // Otherwise accept the modification and set this synonym argument's synonym ID
+        this->targetArg.synonymId = synonymId;
+        return true;
     }
 
     PatternType PatternClause::getPatternType() {
         return this->type;
     }
 
-    string PatternClause::getSynonym() {
-        return this->synonym;
+    Argument PatternClause::getSynonym() {
+        return this->synonymArg;
     }
 
-    pair<pair<ArgType, EntityRef>, pair<ArgType, Pattern>> PatternClause::getArgs() {
+    pair<Argument, Argument> PatternClause::getArgs() {
         return { this->targetArg, this->patternArg };
     }
 
-    WithClause::WithClause(string clause, WithType type,
-        pair<ArgType, Ref> leftArg, pair<ArgType, Ref> rightArg)
+    WithClause::WithClause(string clause, WithType type, Argument leftArg, Argument rightArg)
         : Clause(clause, ClauseType::WITH), type(type), leftArg(leftArg), rightArg(rightArg) {
     }
 
@@ -96,11 +165,45 @@ namespace PQL {
         return true;
     }
 
+    bool WithClause::setLeftSynonymId(int synonymId) {
+        if (synonymId < 0) {
+            // Synonym ID supplied is negative => reject modification
+            return false;
+        } else if (this->leftArg.type != ArgType::SYNONYM && this->leftArg.type != ArgType::ATTRIBUTE) {
+            // Left argument is not a synonym or attribute => reject modification
+            return false;
+        } else if (this->leftArg.synonymId != UNSET_SYNONYM_ID) {
+            // Synonym ID has been previously set => reject modification
+            return false;
+        }
+
+        // Otherwise accept the modification and set this synonym argument's synonym ID
+        this->leftArg.synonymId = synonymId;
+        return true;
+    }
+
+    bool WithClause::setRightSynonymId(int synonymId) {
+        if (synonymId < 0) {
+            // Synonym ID supplied is negative => reject modification
+            return false;
+        } else if (this->rightArg.type != ArgType::SYNONYM && this->rightArg.type != ArgType::ATTRIBUTE) {
+            // Left argument is not a synonym or attribute => reject modification
+            return false;
+        } else if (this->rightArg.synonymId != UNSET_SYNONYM_ID) {
+            // Synonym ID has been previously set => reject modification
+            return false;
+        }
+
+        // Otherwise accept the modification and set this synonym argument's synonym ID
+        this->rightArg.synonymId = synonymId;
+        return true;
+    }
+
     WithType WithClause::getWithType() {
         return this->type;
     }
 
-    pair<pair<ArgType, Ref>, pair<ArgType, Ref>> WithClause::getArgs() {
+    pair<Argument, Argument> WithClause::getArgs() {
         return { this->leftArg, this->rightArg };
     }
 

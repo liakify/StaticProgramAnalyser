@@ -18,8 +18,9 @@ namespace PQL {
         * @return   The result of the evaluation.
         */
         ClauseResult evaluateAffectsStarClauseIntInt(PKB::PKB& database, RelationClause clause) {
-            StmtId arg1 = std::stoi(clause.getArgs().first.second);
-            StmtId arg2 = std::stoi(clause.getArgs().second.second);
+            std::pair<Argument, Argument> args = clause.getArgs();
+            StmtId arg1 = std::stoi(args.first.value);
+            StmtId arg2 = std::stoi(args.second.value);
 
             ClauseResult clauseResult;
             if (database.affectsStar(arg1, arg2)) {
@@ -55,16 +56,15 @@ namespace PQL {
         * @return   The result of the evaluation.
         */
         ClauseResult evaluateAffectsStarClauseIntWild(PKB::PKB& database, RelationClause clause) {
-            std::pair<std::pair<ArgType, std::string>, std::pair<ArgType, std::string>> args = clause.getArgs();
-
-            ArgType argType1 = args.first.first;
-            ArgType argType2 = args.second.first;
+            std::pair<Argument, Argument> args = clause.getArgs();
+            ArgType argType1 = args.first.type;
+            ArgType argType2 = args.second.type;
 
             ClauseResult clauseResult;
 
             if (argType1 == ArgType::INTEGER && argType2 == ArgType::WILDCARD) {
                 // Case 1: Integer, Wildcard
-                StmtId arg1 = std::stoi(clause.getArgs().first.second);
+                StmtId arg1 = std::stoi(args.first.value);
                 if (database.affectsGetDirectNodes(arg1, NodeType::SUCCESSOR).size() > 0) {
                     clauseResult.trueResult = true;
                 } else {
@@ -73,7 +73,7 @@ namespace PQL {
                 return clauseResult;
             } else {
                 // Case 2: Wildcard, Integer
-                StmtId arg2 = std::stoi(clause.getArgs().second.second);
+                StmtId arg2 = std::stoi(args.second.value);
                 if (database.affectsGetDirectNodes(arg2, NodeType::PREDECESSOR).size() > 0) {
                     clauseResult.trueResult = true;
                 } else {
@@ -94,13 +94,15 @@ namespace PQL {
         */
         ClauseResult evaluateAffectsStarClauseIntSyn(PKB::PKB& database, RelationClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable) {
-            ArgType argType1 = clause.getArgs().first.first;
-            ArgType argType2 = clause.getArgs().second.first;
+
+            std::pair<Argument, Argument> args = clause.getArgs();
+            ArgType argType1 = args.first.type;
+            ArgType argType2 = args.second.type;
 
             if (argType1 == ArgType::INTEGER && argType2 == ArgType::SYNONYM) {
                 // Case 1: Integer, Synonym
-                StmtId arg1 = std::stoi(clause.getArgs().first.second);
-                Synonym arg2 = clause.getArgs().second.second;
+                StmtId arg1 = std::stoi(args.first.value);
+                Synonym arg2 = args.second.value;
 
                 ClauseResult clauseResult;
                 clauseResult.syns.emplace_back(arg2);
@@ -114,8 +116,8 @@ namespace PQL {
                 return clauseResult;
             } else {
                 // Case 2: Synonym, Integer
-                Synonym arg1 = clause.getArgs().first.second;
-                StmtId arg2 = std::stoi(clause.getArgs().second.second);
+                Synonym arg1 = args.first.value;
+                StmtId arg2 = std::stoi(args.second.value);
 
                 ClauseResult clauseResult;
                 clauseResult.syns.emplace_back(arg1);
@@ -140,12 +142,14 @@ namespace PQL {
         */
         ClauseResult evaluateAffectsStarClauseWildSyn(PKB::PKB& database, RelationClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable) {
-            ArgType argType1 = clause.getArgs().first.first;
-            ArgType argType2 = clause.getArgs().second.first;
+
+            std::pair<Argument, Argument> args = clause.getArgs();
+            ArgType argType1 = args.first.type;
+            ArgType argType2 = args.second.type;
 
             if (argType1 == ArgType::WILDCARD && argType2 == ArgType::SYNONYM) {
                 // Case 1: Wildcard, Synonym
-                Synonym arg2 = clause.getArgs().second.second;
+                Synonym arg2 = args.second.value;
 
                 ClauseResult clauseResult;
                 clauseResult.syns.emplace_back(arg2);
@@ -161,7 +165,7 @@ namespace PQL {
                 return clauseResult;
             } else {
                 // Case 2: Synonym, Wildcard
-                Synonym arg1 = clause.getArgs().first.second;
+                Synonym arg1 = args.first.value;
 
                 ClauseResult clauseResult;
                 clauseResult.syns.emplace_back(arg1);
@@ -188,8 +192,10 @@ namespace PQL {
         */
         ClauseResult evaluateAffectsStarClauseSynSyn(PKB::PKB& database, RelationClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable) {
-            Synonym arg1 = clause.getArgs().first.second;
-            Synonym arg2 = clause.getArgs().second.second;
+
+            std::pair<Argument, Argument> args = clause.getArgs();
+            Synonym arg1 = args.first.value;
+            Synonym arg2 = args.second.value;
 
             bool singleSynonym = (arg1 == arg2);
 
@@ -236,8 +242,9 @@ namespace PQL {
         ClauseResult evaluateAffectsStarClause(PKB::PKB& database, RelationClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable) {
 
-            ArgType argType1 = clause.getArgs().first.first;
-            ArgType argType2 = clause.getArgs().second.first;
+            std::pair<Argument, Argument> args = clause.getArgs();
+            ArgType argType1 = args.first.type;
+            ArgType argType2 = args.second.type;
 
             if (argType1 == ArgType::INTEGER && argType2 == ArgType::INTEGER) {
                 // Two statement numbers supplied
