@@ -1,0 +1,15 @@
+1 - unrelated Next* 
+stmt s1, s2, s3, s4, s5, s6, s7, s8, s9, s10;
+Select <s9, s10> such that Next* (s1, s2) and Next* (s3, s4) and Next* (s5, s6) and Next* (s7, s8) and Next* (s9, s10)
+
+5000
+2 - unrelated Affects
+stmt s1, s2, s3, s4, s5, s6, s7, s8, s9, s10;
+Select <s9, s10> such that Affects(s1, s2) and Affects(s3, s4) and Affects(s5, s6) and Affects(s7, s8) and Affects(s9, s10)
+
+5000
+3 - unrelated AffectsStar
+stmt s1, s2, s3, s4, s5, s6, s7, s8, s9, s10;
+Select <s9, s10> such that Affects*(s1, s2) and Affects*(s3, s4) and Affects*(s5, s6) and Affects*(s7, s8) and Affects*(s9, s10)
+
+5000
