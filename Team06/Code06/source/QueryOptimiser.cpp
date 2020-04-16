@@ -66,14 +66,14 @@ namespace PQL {
             node.clause = &relation;
 
             // Extract all synonyms
-            std::pair<ArgType, std::string> arg1, arg2;
-            arg1 = relation.getArgs().first;
-            arg2 = relation.getArgs().second;
-            if (arg1.first == ArgType::SYNONYM) {
-                node.synonyms.emplace_back(arg1.second);
+            std::pair<Argument, Argument> args = relation.getArgs();
+            Argument arg1 = args.first;
+            Argument arg2 = args.second;
+            if (arg1.type == ArgType::SYNONYM) {
+                node.synonyms.emplace_back(arg1.value);
             }
-            if (arg2.first == ArgType::SYNONYM) {
-                node.synonyms.emplace_back(arg2.second);
+            if (arg2.type == ArgType::SYNONYM) {
+                node.synonyms.emplace_back(arg2.value);
             }
 
             // Remove duplicate synonyms
@@ -87,7 +87,7 @@ namespace PQL {
             }
 
             // Checks if clause returns boolean
-            if (arg1.first != ArgType::SYNONYM && arg2.first != ArgType::SYNONYM) {
+            if (arg1.type != ArgType::SYNONYM && arg2.type != ArgType::SYNONYM) {
                 node.booleanResult = true;
             }
 
@@ -100,15 +100,15 @@ namespace PQL {
             node.clause = &pattern;
 
             // Extract all synonyms
-            std::pair<ArgType, std::string> arg1, arg2;
-            arg1 = pattern.getArgs().first;
-            arg2 = pattern.getArgs().second;
-            node.synonyms.emplace_back(pattern.getSynonym());
-            if (arg1.first == ArgType::SYNONYM) {
-                node.synonyms.emplace_back(arg1.second);
+            std::pair<Argument, Argument> args = pattern.getArgs();
+            Argument arg1 = args.first;
+            Argument arg2 = args.second;
+            node.synonyms.emplace_back(pattern.getSynonym().value);
+            if (arg1.type == ArgType::SYNONYM) {
+                node.synonyms.emplace_back(arg1.value);
             }
-            if (arg2.first == ArgType::SYNONYM) {
-                node.synonyms.emplace_back(arg2.second);
+            if (arg2.type == ArgType::SYNONYM) {
+                node.synonyms.emplace_back(arg2.value);
             }
 
             // Remove duplicate synonyms
@@ -130,15 +130,15 @@ namespace PQL {
             node.clause = &with;
 
             // Extract all synonyms
-            std::pair<ArgType, Ref> arg1, arg2;
-            arg1 = with.getArgs().first;
-            arg2 = with.getArgs().second;
+            std::pair<Argument, Argument> args = with.getArgs();
+            Argument arg1 = args.first;
+            Argument arg2 = args.second;
 
-            if (arg1.first == ArgType::SYNONYM || arg1.first == ArgType::ATTRIBUTE) {
-                node.synonyms.emplace_back(arg1.second.first);
+            if (arg1.type == ArgType::SYNONYM || arg1.type == ArgType::ATTRIBUTE) {
+                node.synonyms.emplace_back(arg1.value);
             }
-            if (arg2.first == ArgType::SYNONYM || arg2.first == ArgType::ATTRIBUTE) {
-                node.synonyms.emplace_back(arg2.second.first);
+            if (arg2.type == ArgType::SYNONYM || arg2.type == ArgType::ATTRIBUTE) {
+                node.synonyms.emplace_back(arg2.value);
             }
 
             // Remove duplicate synonyms
@@ -169,7 +169,7 @@ namespace PQL {
             }
 
             // Label all clause nodes with an id
-            for (int i = 0; i < nodes.size(); i++) {
+            for (unsigned int i = 0; i < nodes.size(); i++) {
                 nodes[i].id = i;
             }
 
@@ -177,8 +177,8 @@ namespace PQL {
             // ClauseNodes in this adjacency list are identified by their index in the 'nodes' vector
             std::vector<std::vector<int> > graph(nodes.size(), std::vector<int>());
 
-            for (int i = 0; i < nodes.size(); i++) {
-                for (int j = 0; j < nodes.size(); j++) {
+            for (unsigned int i = 0; i < nodes.size(); i++) {
+                for (unsigned int j = 0; j < nodes.size(); j++) {
                     // Connect with bidirectional edge if the two clauses share any synonyms
                     for (Synonym synonym : nodes[i].synonyms) {
                         if (nodes[j].containsSynonym(synonym)) {
