@@ -350,7 +350,6 @@ namespace PQL {
             }
             if (clauseResults1.syns[i] == clauseResults2.syns[j]) {
                 commonSynonyms.emplace_back(std::make_pair(i, j));
-                combStruct.emplace_back(std::make_pair(i, 0));
                 j++;
             }
             combStruct.emplace_back(std::make_pair(i, 0));
