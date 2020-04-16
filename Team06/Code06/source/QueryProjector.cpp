@@ -1,5 +1,6 @@
 #include "PQLTypes.h"
 #include "QueryProjector.h"
+#include "LoggingUtils.h"
 
 namespace PQL {
 
@@ -27,6 +28,7 @@ namespace PQL {
         }
 
         for (auto itr3 = uniqueResultSet.begin(); itr3 != uniqueResultSet.end(); ++itr3) {
+            SPA::LoggingUtils::LogErrorMessage(*itr3);
             resultList.push_back(*itr3);
         }
 
