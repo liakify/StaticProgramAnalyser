@@ -93,11 +93,11 @@ $list_of_test_files = @(
 
   # STAGED TESTS
   '..\mixed_0'
+  '..\nextStar_tle'
   '..\performance600_single'
   '..\performance600_chainedNext'
   
   # TESTS BELOW CURRENTLY FAIL / TIMEOUT
-  # '..\nextStar_tle'
   # '..\performance600_runtimeCache'
   # '..\performance600_chainedNextStar'
   # '..\performance600_chainedAffects'

@@ -15,12 +15,14 @@ $output_suffix = '_out.xml'
 $regression_test_path = '.\Team06\Tests06\regression_tests\'
 
 $list_of_test_files = @(
+
+  '..\nextStar_tle'
   
   # '..\performance600_single'
   # '..\performance600_chainedNext'
+  # '..\performance600_runtimeCache'
 
   # TEST BELOW CURRENTLY FAIL / TIMEOUT
-  # '..\performance600_runtimeCache'
   # '..\performance600_chainedNextStar'
   # '..\performance600_chainedAffects'
   # '..\performance600_chainedAffectsStar'
