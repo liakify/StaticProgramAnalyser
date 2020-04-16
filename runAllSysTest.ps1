@@ -94,6 +94,12 @@ $list_of_test_files = @(
   'CallsStar_multipleCallsInOneProc'
   'mixed_0'
   
+  '..\extension_contains_tests\contains_0'
+  '..\extension_contains_tests\contains_invalidArgs'
+  '..\extension_contains_tests\contains_multi'
+  '..\extension_contains_tests\contains_pattern'
+  '..\extension_contains_tests\contains_with'
+
   # STAGED TESTS
   '..\performance600_single'
   '..\performance600_chainedNext'

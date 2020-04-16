@@ -16,12 +16,6 @@ $regression_test_path = '.\Team06\Tests06\regression_tests\'
 
 $list_of_test_files = @(
   
-  '..\contains_0'
-  '..\contains_invalidArgs'
-  '..\contains_multi'
-  '..\contains_pattern'
-  '..\contains_with'
-
   # '..\performance600_single'
   # '..\performance600_chainedNext'
 
