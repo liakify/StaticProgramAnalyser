@@ -193,7 +193,7 @@ namespace UnitTesting {
         Query TRIVIAL_SYNONYM_QUERY_RESULT = {
             STATUS_SUCCESS, TRIVIAL_SYNONYM_QUERY, false,
             {
-                { "Select", AttrType::NONE }
+                { "Select", PQL::UNSET_SYNONYM_ID, AttrType::NONE }
             },
             {
                 { "Select", DesignEntity::CONSTANT }
@@ -210,7 +210,7 @@ namespace UnitTesting {
         Query TRIVIAL_ATTRIBUTE_QUERY_RESULT = {
             STATUS_SUCCESS, TRIVIAL_ATTRIBUTE_QUERY, false,
             {
-                { "pn", AttrType::VAR_NAME }
+                { "pn", PQL::UNSET_SYNONYM_ID, AttrType::VAR_NAME }
             },
             {
                 { "pn", DesignEntity::PRINT }
@@ -221,7 +221,7 @@ namespace UnitTesting {
         Query TRIVIAL_MANY_DECLARATIONS_QUERY_RESULT = {
             STATUS_SUCCESS, TRIVIAL_MANY_DECLARATIONS_QUERY, false,
             {
-                { "variable", AttrType::NONE }
+                { "variable", PQL::UNSET_SYNONYM_ID, AttrType::NONE }
             },
             {
                 { "procedure", DesignEntity::WHILE },
@@ -237,7 +237,7 @@ namespace UnitTesting {
         Query TRIVIAL_ONE_TUPLE_QUERY_RESULT = {
             STATUS_SUCCESS, TRIVIAL_ONE_TUPLE_QUERY, false,
             {
-                { "l", AttrType::NONE }
+                { "l", PQL::UNSET_SYNONYM_ID, AttrType::NONE }
             },
             {
                 { "l", DesignEntity::PROG_LINE }
@@ -248,8 +248,8 @@ namespace UnitTesting {
         Query TRIVIAL_TUPLE_QUERY_RESULT = {
             STATUS_SUCCESS, TRIVIAL_TUPLE_QUERY, false,
             {
-                { "p", AttrType::NONE },
-                { "BOOLEAN", AttrType::NONE }
+                { "p", PQL::UNSET_SYNONYM_ID, AttrType::NONE },
+                { "BOOLEAN", PQL::UNSET_SYNONYM_ID, AttrType::NONE }
             },
             {
                 { "p", DesignEntity::PROCEDURE },
@@ -261,10 +261,10 @@ namespace UnitTesting {
         Query TRIVIAL_TUPLE_ATTRIBUTES_QUERY_RESULT = {
             STATUS_SUCCESS, TRIVIAL_TUPLE_ATTRIBUTES_QUERY, false,
             {
-                { "varName", AttrType::STMT_NUM },
-                { "value", AttrType::VAR_NAME },
-                { "stmtNum", AttrType::PROC_NAME },
-                { "procName", AttrType::VALUE }
+                { "varName", PQL::UNSET_SYNONYM_ID, AttrType::STMT_NUM },
+                { "value", PQL::UNSET_SYNONYM_ID, AttrType::VAR_NAME },
+                { "stmtNum", PQL::UNSET_SYNONYM_ID, AttrType::PROC_NAME },
+                { "procName", PQL::UNSET_SYNONYM_ID, AttrType::VALUE }
             },
             {
                 { "procName", DesignEntity::CONSTANT },
@@ -278,9 +278,9 @@ namespace UnitTesting {
         Query TRIVIAL_REDUNDANT_ATTRIBUTE_QUERY_RESULT = {
             STATUS_SUCCESS, TRIVIAL_REDUNDANT_ATTRIBUTE_QUERY, false,
             {
-                { "pn", AttrType::NONE },
-                { "pn", AttrType::STMT_NUM },
-                { "pn", AttrType::VAR_NAME }
+                { "pn", PQL::UNSET_SYNONYM_ID, AttrType::NONE },
+                { "pn", PQL::UNSET_SYNONYM_ID, AttrType::STMT_NUM },
+                { "pn", PQL::UNSET_SYNONYM_ID, AttrType::VAR_NAME }
             },
             {
                 { "pn", DesignEntity::PRINT }
@@ -291,10 +291,10 @@ namespace UnitTesting {
         Query TRIVIAL_TUPLE_MIXED_QUERY_RESULT = {
             STATUS_SUCCESS, TRIVIAL_TUPLE_MIXED_QUERY, false,
             {
-                { "cl", AttrType::NONE },
-                { "cl", AttrType::PROC_NAME },
-                { "rd", AttrType::NONE },
-                { "rd", AttrType::VAR_NAME }
+                { "cl", PQL::UNSET_SYNONYM_ID, AttrType::NONE },
+                { "cl", PQL::UNSET_SYNONYM_ID, AttrType::PROC_NAME },
+                { "rd", PQL::UNSET_SYNONYM_ID, AttrType::NONE },
+                { "rd", PQL::UNSET_SYNONYM_ID, AttrType::VAR_NAME }
             },
             {
                 { "cl", DesignEntity::CALL },
@@ -306,18 +306,21 @@ namespace UnitTesting {
         Query SIMPLE_CONSTANTS_QUERY_RESULT = {
             STATUS_SUCCESS, SIMPLE_CONSTANTS_QUERY, false,
             {
-                { "a", AttrType::NONE }
+                { "a", PQL::UNSET_SYNONYM_ID, AttrType::NONE }
             },
             {
                 { "a", DesignEntity::ASSIGN }
             },
             {
                 { "Follows*(4, 9)", RelationType::FOLLOWST,
-                    { ArgType::INTEGER, "4" }, { ArgType::INTEGER, "9" } }
+                    { ArgType::INTEGER, "4", PQL::NON_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::INTEGER, "9", PQL::NON_SYNONYM_ID, AttrType::INVALID } }
             },
             {
-                { "a(\"x\", _\"(0)\"_)", PatternType::ASSIGN_PATTERN, "a",
-                    { ArgType::IDENTIFIER, "x" }, { ArgType::INCLUSIVE_PATTERN, "_0_" } }
+                { "a(\"x\", _\"(0)\"_)", PatternType::ASSIGN_PATTERN,
+                    { ArgType::SYNONYM, "a", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::IDENTIFIER, "x", PQL::NON_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::INCLUSIVE_PATTERN, "_0_", PQL::NON_SYNONYM_ID, AttrType::INVALID } }
             },
             { }
         };
@@ -325,7 +328,7 @@ namespace UnitTesting {
         Query SIMPLE_VALID_QUERY_RESULT = {
             STATUS_SUCCESS, SIMPLE_VALID_QUERY, false,
             {
-                { "v", AttrType::NONE }
+                { "v", PQL::UNSET_SYNONYM_ID, AttrType::NONE }
             },
             {
                 { "v", DesignEntity::VARIABLE },
@@ -334,11 +337,14 @@ namespace UnitTesting {
             },
             {
                 { "Parent(ifs, a)", RelationType::PARENT,
-                    { ArgType::SYNONYM, "ifs" }, { ArgType::SYNONYM, "a" } }
+                    { ArgType::SYNONYM, "ifs", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "a", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } }
             },
             {
-                { "a(v, _)", PatternType::ASSIGN_PATTERN, "a",
-                    { ArgType::SYNONYM, "v" }, { ArgType::WILDCARD, "_" } }
+                { "a(v, _)", PatternType::ASSIGN_PATTERN,
+                    { ArgType::SYNONYM, "a", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "v", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::WILDCARD, "_", PQL::NON_SYNONYM_ID, AttrType::INVALID } }
             },
             { }
         };
@@ -352,7 +358,8 @@ namespace UnitTesting {
             },
             {
                 { "Follows*(stmt, progline)", RelationType::FOLLOWST,
-                    { ArgType::SYNONYM, "stmt" }, { ArgType::SYNONYM, "progline" } }
+                    { ArgType::SYNONYM, "stmt", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "progline", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } }
             },
             { }, { }
         };
@@ -360,9 +367,9 @@ namespace UnitTesting {
         Query SIMPLE_VALID_TUPLE_QUERY_RESULT = {
             STATUS_SUCCESS, SIMPLE_VALID_TUPLE_QUERY, false,
             {
-                { "p", AttrType::NONE },
-                { "q", AttrType::NONE },
-                { "BOOLEAN", AttrType::NONE }
+                { "p", PQL::UNSET_SYNONYM_ID, AttrType::NONE },
+                { "q", PQL::UNSET_SYNONYM_ID, AttrType::NONE },
+                { "BOOLEAN", PQL::UNSET_SYNONYM_ID, AttrType::NONE }
             },
             {
                 { "p", DesignEntity::PROCEDURE },
@@ -371,7 +378,8 @@ namespace UnitTesting {
             },
             {
                 { "Modifies(p, _)", RelationType::MODIFIESP,
-                    { ArgType::SYNONYM, "p" }, { ArgType::WILDCARD, "_" } }
+                    { ArgType::SYNONYM, "p", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::WILDCARD, "_", PQL::NON_SYNONYM_ID, AttrType::INVALID } }
             },
             { }, { }
         };
@@ -379,9 +387,9 @@ namespace UnitTesting {
         Query SIMPLE_VALID_ATTRIBUTES_QUERY_RESULT = {
             STATUS_SUCCESS, SIMPLE_VALID_ATTRIBUTES_QUERY, false,
             {
-                { "w", AttrType::STMT_NUM },
-                { "rd", AttrType::NONE },
-                { "rd", AttrType::VAR_NAME }
+                { "w", PQL::UNSET_SYNONYM_ID, AttrType::STMT_NUM },
+                { "rd", PQL::UNSET_SYNONYM_ID, AttrType::NONE },
+                { "rd", PQL::UNSET_SYNONYM_ID, AttrType::VAR_NAME }
             },
             {
                 { "w", DesignEntity::WHILE },
@@ -389,7 +397,8 @@ namespace UnitTesting {
             },
             {
                 { "Parent*(w, rd)", RelationType::PARENTT,
-                    { ArgType::SYNONYM, "w" }, { ArgType::SYNONYM, "rd" } }
+                    { ArgType::SYNONYM, "w", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "rd", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } }
             },
             { }, { }
         };
@@ -397,15 +406,17 @@ namespace UnitTesting {
         Query SIMPLE_PATTERN_STRING_QUERY_RESULT = {
             STATUS_SUCCESS, SIMPLE_PATTERN_STRING_QUERY, false,
             {
-                { "a", AttrType::NONE }
+                { "a", PQL::UNSET_SYNONYM_ID, AttrType::NONE }
             },
             {
                 { "a", DesignEntity::ASSIGN }
             },
             { },
             {
-                { "a(_, \"x + 1 - 2 * y / z % 3\")", PatternType::ASSIGN_PATTERN, "a",
-                    { ArgType::WILDCARD, "_" }, { ArgType::EXACT_PATTERN, "((x+1)-(((2*y)/z)%3))" } }
+                { "a(_, \"x + 1 - 2 * y / z % 3\")", PatternType::ASSIGN_PATTERN,
+                    { ArgType::SYNONYM, "a", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::WILDCARD, "_", PQL::NON_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::EXACT_PATTERN, "((x+1)-(((2*y)/z)%3))", PQL::NON_SYNONYM_ID, AttrType::INVALID } }
             }, { }
         };
 
@@ -415,15 +426,16 @@ namespace UnitTesting {
             { }, { },
             {
                 { "1231 = 4231", WithType::LITERAL_EQUAL,
-                    { ArgType::INTEGER, { "1231", AttrType::NONE } }, { ArgType::INTEGER, { "4231", AttrType::NONE } } }
+                    { ArgType::INTEGER, "1231", PQL::NON_SYNONYM_ID, AttrType::NONE },
+                    { ArgType::INTEGER, "4231", PQL::NON_SYNONYM_ID, AttrType::NONE } }
             }
         };
 
         Query SIMPLE_LITERAL_IDENTIFIER_EQUALITY_QUERY_RESULT = {
             STATUS_SUCCESS, SIMPLE_LITERAL_IDENTIFIER_EQUALITY_QUERY, false,
             {
-                { "c", AttrType::NONE },
-                { "v", AttrType::NONE }
+                { "c", PQL::UNSET_SYNONYM_ID, AttrType::NONE },
+                { "v", PQL::UNSET_SYNONYM_ID, AttrType::NONE }
             },
             {
                 { "c", DesignEntity::CONSTANT },
@@ -432,14 +444,15 @@ namespace UnitTesting {
             { }, { },
             {
                 { "\"bL\" = \"satan\"", WithType::LITERAL_EQUAL,
-                    { ArgType::IDENTIFIER, { "bL", AttrType::NONE } }, { ArgType::IDENTIFIER, { "satan", AttrType::NONE } } }
+                    { ArgType::IDENTIFIER, "bL", PQL::NON_SYNONYM_ID, AttrType::NONE },
+                    { ArgType::IDENTIFIER, "satan", PQL::NON_SYNONYM_ID, AttrType::NONE } }
             }
         };
 
         Query SIMPLE_MIXED_EQUALITY_QUERY_RESULT = {
             STATUS_SUCCESS, SIMPLE_MIXED_EQUALITY_QUERY, false,
             {
-                { "cl", AttrType::NONE }
+                { "cl", PQL::UNSET_SYNONYM_ID, AttrType::NONE }
             },
             {
                 { "cl", DesignEntity::CALL }
@@ -447,15 +460,16 @@ namespace UnitTesting {
             { }, { },
             {
                 { "cl.procName = \"procedure\"", WithType::IDENTIFIER_EQUAL,
-                    { ArgType::ATTRIBUTE, { "cl", AttrType::PROC_NAME } }, { ArgType::IDENTIFIER, { "procedure", AttrType::NONE } } }
+                    { ArgType::ATTRIBUTE, "cl", PQL::UNSET_SYNONYM_ID, AttrType::PROC_NAME },
+                    { ArgType::IDENTIFIER, "procedure", PQL::NON_SYNONYM_ID, AttrType::NONE } }
             }
         };
 
         Query SIMPLE_INTEGER_EQUALITY_QUERY_RESULT = {
             STATUS_SUCCESS, SIMPLE_INTEGER_EQUALITY_QUERY, false,
             {
-                { "pn", AttrType::NONE },
-                { "l", AttrType::NONE }
+                { "pn", PQL::UNSET_SYNONYM_ID, AttrType::NONE },
+                { "l", PQL::UNSET_SYNONYM_ID, AttrType::NONE }
             },
             {
                 { "pn", DesignEntity::PRINT },
@@ -464,15 +478,16 @@ namespace UnitTesting {
             { }, { },
             {
                 { "pn.stmt# = l", WithType::INTEGER_EQUAL,
-                    { ArgType::ATTRIBUTE, { "pn", AttrType::STMT_NUM } }, { ArgType::SYNONYM, { "l", AttrType::NONE } } }
+                    { ArgType::ATTRIBUTE, "pn", PQL::UNSET_SYNONYM_ID, AttrType::STMT_NUM },
+                    { ArgType::SYNONYM, "l", PQL::UNSET_SYNONYM_ID, AttrType::NONE } }
             }
         };
 
         Query SIMPLE_IDENTIFIER_EQUALITY_QUERY_RESULT = {
             STATUS_SUCCESS, SIMPLE_IDENTIFIER_EQUALITY_QUERY, false,
             {
-                { "p", AttrType::NONE },
-                { "v", AttrType::NONE }
+                { "p", PQL::UNSET_SYNONYM_ID, AttrType::NONE },
+                { "v", PQL::UNSET_SYNONYM_ID, AttrType::NONE }
             },
             {
                 { "p", DesignEntity::PROCEDURE },
@@ -481,14 +496,15 @@ namespace UnitTesting {
             { }, { },
             {
                 { "p.procName = v.varName", WithType::IDENTIFIER_EQUAL,
-                    { ArgType::ATTRIBUTE, { "p", AttrType::PROC_NAME } } , { ArgType::ATTRIBUTE, { "v", AttrType::VAR_NAME } } }
+                    { ArgType::ATTRIBUTE, "p", PQL::UNSET_SYNONYM_ID, AttrType::PROC_NAME },
+                    { ArgType::ATTRIBUTE, "v", PQL::UNSET_SYNONYM_ID, AttrType::VAR_NAME } }
             }
         };
 
         Query COMPLEX_VALID_BASIC_QUERY_RESULT = {
             STATUS_SUCCESS, COMPLEX_VALID_BASIC_QUERY, false,
             {
-                { "pattern", AttrType::NONE }
+                { "pattern", PQL::UNSET_SYNONYM_ID, AttrType::NONE }
             },
             {
                 { "pattern", DesignEntity::ASSIGN },
@@ -498,11 +514,14 @@ namespace UnitTesting {
             },
             {
                 { "Uses(Modifies, while)", RelationType::USESS,
-                    { ArgType::SYNONYM, "Modifies" }, { ArgType::SYNONYM, "while" } }
+                    { ArgType::SYNONYM, "Modifies", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "while", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } }
             },
             {
-                { "pattern(constant, _\"1\"_)", PatternType::ASSIGN_PATTERN, "pattern",
-                    { ArgType::SYNONYM, "constant" }, { ArgType::INCLUSIVE_PATTERN, "_1_" } }
+                { "pattern(constant, _\"1\"_)", PatternType::ASSIGN_PATTERN,
+                    { ArgType::SYNONYM, "pattern", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "constant", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::INCLUSIVE_PATTERN, "_1_", PQL::NON_SYNONYM_ID, AttrType::INVALID } }
             },
             { }
         };
@@ -510,10 +529,10 @@ namespace UnitTesting {
         Query COMPLEX_VALID_ATTRIBUTES_QUERY_RESULT = {
             STATUS_SUCCESS, COMPLEX_VALID_ATTRIBUTES_QUERY, false,
             {
-                { "a", AttrType::NONE },
-                { "cl", AttrType::NONE },
-                { "cl", AttrType::PROC_NAME },
-                { "v", AttrType::VAR_NAME }
+                { "a", PQL::UNSET_SYNONYM_ID, AttrType::NONE },
+                { "cl", PQL::UNSET_SYNONYM_ID, AttrType::NONE },
+                { "cl", PQL::UNSET_SYNONYM_ID, AttrType::PROC_NAME },
+                { "v", PQL::UNSET_SYNONYM_ID, AttrType::VAR_NAME }
             },
             {
                 { "a", DesignEntity::ASSIGN },
@@ -522,35 +541,39 @@ namespace UnitTesting {
             },
             {
                 { "Follows(a, cl)", RelationType::FOLLOWS,
-                    { ArgType::SYNONYM, "a" }, { ArgType::SYNONYM, "cl" } }
+                    { ArgType::SYNONYM, "a", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "cl", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } }
             },
             {
-                { "a(v, _)", PatternType::ASSIGN_PATTERN, "a",
-                    { ArgType::SYNONYM, "v" }, { ArgType::WILDCARD, "_" } }
+                { "a(v, _)", PatternType::ASSIGN_PATTERN,
+                    { ArgType::SYNONYM, "a", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "v", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::WILDCARD, "_", PQL::NON_SYNONYM_ID, AttrType::INVALID } }
             }, { }
         };
 
         Query COMPLEX_PATTERN_STRING_QUERY_RESULT = {
             STATUS_SUCCESS, COMPLEX_PATTERN_STRING_QUERY, false,
             {
-                { "a", AttrType::NONE }
+                { "a", PQL::UNSET_SYNONYM_ID, AttrType::NONE }
             },
             {
                 { "a", DesignEntity::ASSIGN }
             },
             { },
             {
-                { "a(\"var\", _\"((p) - (q / 2) % r) * 3 - ((s + t % 5) - u) + v / 7\"_)", PatternType::ASSIGN_PATTERN, "a",
-                    { ArgType::IDENTIFIER, "var" },
-                    { ArgType::INCLUSIVE_PATTERN, "_((((p-((q/2)%r))*3)-((s+(t%5))-u))+(v/7))_" } }
+                { "a(\"var\", _\"((p) - (q / 2) % r) * 3 - ((s + t % 5) - u) + v / 7\"_)", PatternType::ASSIGN_PATTERN,
+                    { ArgType::SYNONYM, "a", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::IDENTIFIER, "var", PQL::NON_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::INCLUSIVE_PATTERN, "_((((p-((q/2)%r))*3)-((s+(t%5))-u))+(v/7))_", PQL::NON_SYNONYM_ID, AttrType::INVALID } }
             }, { }
         };
 
         Query COMPLEX_VALID_ADVANCED_QUERY_RESULT = {
             STATUS_SUCCESS, COMPLEX_VALID_ADVANCED_QUERY, false,
             {
-                { "w", AttrType::NONE },
-                { "rd", AttrType::VAR_NAME }
+                { "w", PQL::UNSET_SYNONYM_ID, AttrType::NONE },
+                { "rd", PQL::UNSET_SYNONYM_ID, AttrType::VAR_NAME }
             },
             {
                 { "rd", DesignEntity::READ },
@@ -560,15 +583,19 @@ namespace UnitTesting {
             },
             {
                 { "Uses(pn, v)", RelationType::USESS,
-                    { ArgType::SYNONYM, "pn" }, { ArgType::SYNONYM, "v" } }
+                    { ArgType::SYNONYM, "pn", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "v", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } }
             },
             {
-                { "w(v, _)", PatternType::WHILE_PATTERN, "w",
-                    { ArgType::SYNONYM, "v" }, { ArgType::WILDCARD, "_" } }
+                { "w(v, _)", PatternType::WHILE_PATTERN,
+                    { ArgType::SYNONYM, "w", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "v", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::WILDCARD, "_", PQL::NON_SYNONYM_ID, AttrType::INVALID } }
             },
             {
                 { "rd.varName = v.varName", WithType::IDENTIFIER_EQUAL,
-                    { ArgType::ATTRIBUTE, { "rd", AttrType::VAR_NAME } }, { ArgType::ATTRIBUTE, { "v", AttrType::VAR_NAME } } }
+                    { ArgType::ATTRIBUTE, "rd", PQL::UNSET_SYNONYM_ID, AttrType::VAR_NAME },
+                    { ArgType::ATTRIBUTE, "v", PQL::UNSET_SYNONYM_ID, AttrType::VAR_NAME } }
             }
         };
 
@@ -578,11 +605,14 @@ namespace UnitTesting {
             { },
             {
                 { "Parent*(16, 25)", RelationType::PARENTT,
-                    { ArgType::INTEGER, "16" }, { ArgType::INTEGER, "25" } },
+                    { ArgType::INTEGER, "16", PQL::NON_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::INTEGER, "25", PQL::NON_SYNONYM_ID, AttrType::INVALID } },
                 { "Uses(16, \"i\")", RelationType::USESS,
-                    { ArgType::INTEGER, "16" }, { ArgType::IDENTIFIER, "i" } },
+                    { ArgType::INTEGER, "16", PQL::NON_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::IDENTIFIER, "i", PQL::NON_SYNONYM_ID, AttrType::INVALID } },
                 { "Modifies(25, \"i\")", RelationType::MODIFIESS,
-                    { ArgType::INTEGER, "25" }, { ArgType::IDENTIFIER, "i" } }
+                    { ArgType::INTEGER, "25", PQL::NON_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::IDENTIFIER, "i", PQL::NON_SYNONYM_ID, AttrType::INVALID } }
             },
             { }, { }
         };
@@ -590,9 +620,9 @@ namespace UnitTesting {
         Query CHAINED_BASIC_RELATIONS_QUERY_RESULT = {
             STATUS_SUCCESS, CHAINED_BASIC_RELATIONS_QUERY, false,
             {
-                { "l", AttrType::NONE },
-                { "rd", AttrType::NONE },
-                { "v", AttrType::NONE }
+                { "l", PQL::UNSET_SYNONYM_ID, AttrType::NONE },
+                { "rd", PQL::UNSET_SYNONYM_ID, AttrType::NONE },
+                { "v", PQL::UNSET_SYNONYM_ID, AttrType::NONE }
             },
             {
                 { "l", DesignEntity::PROG_LINE },
@@ -602,13 +632,17 @@ namespace UnitTesting {
             },
             {
                 { "Follows(l, ifs)", RelationType::FOLLOWS,
-                    { ArgType::SYNONYM, "l" }, { ArgType::SYNONYM, "ifs" } },
+                    { ArgType::SYNONYM, "l", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "ifs", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } },
                 { "Parent*(ifs, rd)", RelationType::PARENTT,
-                    { ArgType::SYNONYM, "ifs" }, { ArgType::SYNONYM, "rd" } },
+                    { ArgType::SYNONYM, "ifs", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "rd", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } },
                 { "Uses(ifs, v)", RelationType::USESS,
-                    { ArgType::SYNONYM, "ifs" }, { ArgType::SYNONYM, "v" } },
+                    { ArgType::SYNONYM, "ifs", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "v", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } },
                 { "Modifies(rd, v)", RelationType::MODIFIESS,
-                    { ArgType::SYNONYM, "rd" }, { ArgType::SYNONYM, "v" } }
+                    { ArgType::SYNONYM, "rd", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "v", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } }
             },
             { }, { }
         };
@@ -618,9 +652,11 @@ namespace UnitTesting {
             { }, { },
             {
                 { "Modifies(\"main\", \"argv\")", RelationType::MODIFIESP,
-                    { ArgType::IDENTIFIER, "main" }, { ArgType::IDENTIFIER, "argv" } },
+                    { ArgType::IDENTIFIER, "main", PQL::NON_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::IDENTIFIER, "argv", PQL::NON_SYNONYM_ID, AttrType::INVALID } },
                 { "Uses(\"main\", \"argv\")", RelationType::USESP,
-                    { ArgType::IDENTIFIER, "main" }, { ArgType::IDENTIFIER, "argv" } }
+                    { ArgType::IDENTIFIER, "main", PQL::NON_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::IDENTIFIER, "argv", PQL::NON_SYNONYM_ID, AttrType::INVALID } }
             },
             { }, { }
         };
@@ -628,9 +664,9 @@ namespace UnitTesting {
         Query CHAINED_MIXED_CLAUSES_QUERY_RESULT = {
             STATUS_SUCCESS, CHAINED_MIXED_CLAUSES_QUERY, false,
             {
-                { "p", AttrType::NONE },
-                { "w", AttrType::NONE },
-                { "a", AttrType::NONE }
+                { "p", PQL::UNSET_SYNONYM_ID, AttrType::NONE },
+                { "w", PQL::UNSET_SYNONYM_ID, AttrType::NONE },
+                { "a", PQL::UNSET_SYNONYM_ID, AttrType::NONE }
             },
             {
                 { "a", DesignEntity::ASSIGN },
@@ -643,21 +679,31 @@ namespace UnitTesting {
             },
             {
                 { "Follows*(a, ifs)", RelationType::FOLLOWST,
-                    { ArgType::SYNONYM, "a" }, { ArgType::SYNONYM, "ifs" } },
+                    { ArgType::SYNONYM, "a", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "ifs", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } },
                 { "Modifies(p, v2)", RelationType::MODIFIESP,
-                    { ArgType::SYNONYM, "p" }, { ArgType::SYNONYM, "v2" } },
+                    { ArgType::SYNONYM, "p", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "v2", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } },
                 { "Parent(ifs, l)", RelationType::PARENT,
-                    { ArgType::SYNONYM, "ifs" }, { ArgType::SYNONYM, "l" } },
+                    { ArgType::SYNONYM, "ifs", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "l", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } },
                 { "Uses(l, v1)", RelationType::USESS,
-                    { ArgType::SYNONYM, "l" }, { ArgType::SYNONYM, "v1" } }
+                    { ArgType::SYNONYM, "l", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "v1", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } }
             },
             {
-                { "a(v1, \"0\")", PatternType::ASSIGN_PATTERN, "a",
-                    { ArgType::SYNONYM, "v1" }, { ArgType::EXACT_PATTERN, "0" } },
-                { "w(v1, _)" , PatternType::WHILE_PATTERN, "w",
-                    { ArgType::SYNONYM, "v1" }, { ArgType::WILDCARD, "_" } },
-                { "ifs(v2, _, _)", PatternType::IF_PATTERN, "ifs",
-                    { ArgType::SYNONYM, "v2" }, { ArgType::WILDCARD, "_" } }
+                { "a(v1, \"0\")", PatternType::ASSIGN_PATTERN,
+                    { ArgType::SYNONYM, "a", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "v1", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::EXACT_PATTERN, "0", PQL::NON_SYNONYM_ID, AttrType::INVALID } },
+                { "w(v1, _)" , PatternType::WHILE_PATTERN,
+                    { ArgType::SYNONYM, "w", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "v1", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::WILDCARD, "_", PQL::NON_SYNONYM_ID, AttrType::INVALID } },
+                { "ifs(v2, _, _)", PatternType::IF_PATTERN,
+                    { ArgType::SYNONYM, "ifs", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "v2", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::WILDCARD, "_", PQL::NON_SYNONYM_ID, AttrType::INVALID } }
             },
             { }
         };
@@ -665,11 +711,11 @@ namespace UnitTesting {
         Query CHAINED_MIXED_RETURN_QUERY_RESULT = {
             STATUS_SUCCESS, CHAINED_MIXED_RETURN_QUERY, false,
             {
-                { "c", AttrType::VALUE },
-                { "cl", AttrType::STMT_NUM },
-                { "cl", AttrType::PROC_NAME },
-                { "rd", AttrType::VAR_NAME },
-                { "v", AttrType::NONE }
+                { "c", PQL::UNSET_SYNONYM_ID, AttrType::VALUE },
+                { "cl", PQL::UNSET_SYNONYM_ID, AttrType::STMT_NUM },
+                { "cl", PQL::UNSET_SYNONYM_ID, AttrType::PROC_NAME },
+                { "rd", PQL::UNSET_SYNONYM_ID, AttrType::VAR_NAME },
+                { "v", PQL::UNSET_SYNONYM_ID, AttrType::NONE }
             },
             {
                 { "c", DesignEntity::CONSTANT },
@@ -679,11 +725,14 @@ namespace UnitTesting {
             },
             {
                 { "Next*(cl, rd)", RelationType::NEXTT,
-                    { ArgType::SYNONYM, "cl" }, { ArgType::SYNONYM, "rd" } },
+                    { ArgType::SYNONYM, "cl", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "rd", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } },
                 { "Modifies(rd, v)", RelationType::MODIFIESS,
-                    { ArgType::SYNONYM, "rd" }, { ArgType::SYNONYM, "v" } },
+                    { ArgType::SYNONYM, "rd", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "v", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } },
                 { "Calls(\"init\", _)", RelationType::CALLS,
-                    { ArgType::IDENTIFIER, "init" }, { ArgType::WILDCARD, "_" } }
+                    { ArgType::IDENTIFIER, "init", PQL::NON_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::WILDCARD, "_", PQL::NON_SYNONYM_ID, AttrType::INVALID } }
             },
             { }, { }
         };
@@ -691,8 +740,8 @@ namespace UnitTesting {
         Query CHAINED_CALLS_QUERY_RESULT = {
             STATUS_SUCCESS, CHAINED_CALLS_QUERY, false,
             {
-                { "p", AttrType::NONE },
-                { "q", AttrType::NONE }
+                { "p", PQL::UNSET_SYNONYM_ID, AttrType::NONE },
+                { "q", PQL::UNSET_SYNONYM_ID, AttrType::NONE }
             },
             {
                 { "p", DesignEntity::PROCEDURE },
@@ -700,11 +749,14 @@ namespace UnitTesting {
             },
             {
                 { "Calls(\"main\", p)", RelationType::CALLS,
-                    { ArgType::IDENTIFIER, "main" }, { ArgType::SYNONYM, "p" } },
+                    { ArgType::IDENTIFIER, "main", PQL::NON_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "p", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } },
                 { "Calls*(p, q)", RelationType::CALLST,
-                    { ArgType::SYNONYM, "p" }, { ArgType::SYNONYM, "q" } },
+                    { ArgType::SYNONYM, "p", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "q", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } },
                 { "Calls(q, _)", RelationType::CALLS,
-                    { ArgType::SYNONYM, "q" }, { ArgType::WILDCARD, "_" } }
+                    { ArgType::SYNONYM, "q", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::WILDCARD, "_", PQL::NON_SYNONYM_ID, AttrType::INVALID } }
             },
             { }, { }
         };
@@ -712,8 +764,8 @@ namespace UnitTesting {
         Query CHAINED_NEXT_QUERY_RESULT = {
             STATUS_SUCCESS, CHAINED_NEXT_QUERY, false,
             {
-                { "l", AttrType::NONE },
-                { "cl", AttrType::NONE }
+                { "l", PQL::UNSET_SYNONYM_ID, AttrType::NONE },
+                { "cl", PQL::UNSET_SYNONYM_ID, AttrType::NONE }
             },
             {
                 { "l", DesignEntity::PROG_LINE },
@@ -721,13 +773,17 @@ namespace UnitTesting {
             },
             {
                 { "Next(20, 30)", RelationType::NEXT,
-                    { ArgType::INTEGER, "20" }, { ArgType::INTEGER, "30" } },
+                    { ArgType::INTEGER, "20", PQL::NON_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::INTEGER, "30", PQL::NON_SYNONYM_ID, AttrType::INVALID } },
                 { "Next*(_, l)", RelationType::NEXTT,
-                    { ArgType::WILDCARD, "_" }, { ArgType::SYNONYM, "l" } },
+                    { ArgType::WILDCARD, "_", PQL::NON_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "l", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } },
                 { "Next(l, cl)", RelationType::NEXT,
-                    { ArgType::SYNONYM, "l" }, { ArgType::SYNONYM, "cl" } },
+                    { ArgType::SYNONYM, "l", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "cl", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } },
                 { "Next*(cl, 25)", RelationType::NEXTT,
-                    { ArgType::SYNONYM, "cl" }, { ArgType::INTEGER, "25" } }
+                    { ArgType::SYNONYM, "cl", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::INTEGER, "25", PQL::NON_SYNONYM_ID, AttrType::INVALID } }
             },
             { }, { }
         };
@@ -735,8 +791,8 @@ namespace UnitTesting {
         Query CHAINED_AFFECTS_QUERY_RESULT = {
             STATUS_SUCCESS, CHAINED_AFFECTS_QUERY, false,
             {
-                { "s", AttrType::NONE },
-                { "a", AttrType::NONE }
+                { "s", PQL::UNSET_SYNONYM_ID, AttrType::NONE },
+                { "a", PQL::UNSET_SYNONYM_ID, AttrType::NONE }
             },
             {
                 { "s", DesignEntity::STATEMENT },
@@ -744,13 +800,17 @@ namespace UnitTesting {
             },
             {
                 { "Affects(20, 40)", RelationType::AFFECTS,
-                    { ArgType::INTEGER, "20" }, { ArgType::INTEGER, "40" } },
+                    { ArgType::INTEGER, "20", PQL::NON_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::INTEGER, "40", PQL::NON_SYNONYM_ID, AttrType::INVALID } },
                 { "Affects*(1, s)", RelationType::AFFECTST,
-                    { ArgType::INTEGER, "1" }, { ArgType::SYNONYM, "s" } },
+                    { ArgType::INTEGER, "1", PQL::NON_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "s", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } },
                 { "Affects*(a, s)", RelationType::AFFECTST,
-                    { ArgType::SYNONYM, "a" }, { ArgType::SYNONYM, "s" } },
+                    { ArgType::SYNONYM, "a", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "s", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } },
                 { "Affects(s, _)", RelationType::AFFECTS,
-                    { ArgType::SYNONYM, "s" }, { ArgType::WILDCARD, "_" } }
+                    { ArgType::SYNONYM, "s", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::WILDCARD, "_", PQL::NON_SYNONYM_ID, AttrType::INVALID } }
             },
             { }, { }
         };
@@ -758,8 +818,8 @@ namespace UnitTesting {
         Query CHAINED_STMT_PROG_LINE_QUERY_RESULT = {
             STATUS_SUCCESS, CHAINED_STMT_PROG_LINE_QUERY, false,
             {
-                { "l1", AttrType::NONE },
-                { "v", AttrType::NONE }
+                { "l1", PQL::UNSET_SYNONYM_ID, AttrType::NONE },
+                { "v", PQL::UNSET_SYNONYM_ID, AttrType::NONE }
             },
             {
                 { "s", DesignEntity::STATEMENT },
@@ -769,15 +829,20 @@ namespace UnitTesting {
             },
             {
                 { "Parent*(l1, s)", RelationType::PARENTT,
-                    { ArgType::SYNONYM, "l1" }, { ArgType::SYNONYM, "s" } },
+                    { ArgType::SYNONYM, "l1", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "s", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } },
                 { "Next*(s, l2)", RelationType::NEXTT,
-                    { ArgType::SYNONYM, "s" }, { ArgType::SYNONYM, "l2" } },
+                    { ArgType::SYNONYM, "s", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "l2", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } },
                 { "Affects(l2, l1)", RelationType::AFFECTS,
-                    { ArgType::SYNONYM, "l2" }, { ArgType::SYNONYM, "l1" } },
+                    { ArgType::SYNONYM, "l2", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "l1", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } },
                 { "Uses(l1, v)", RelationType::USESS,
-                    { ArgType::SYNONYM, "l1" }, { ArgType::SYNONYM, "v" } },
+                    { ArgType::SYNONYM, "l1", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "v", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } },
                 { "Modifies(l1, _)", RelationType::MODIFIESS,
-                    { ArgType::SYNONYM, "l1" }, { ArgType::WILDCARD, "_" } }
+                    { ArgType::SYNONYM, "l1", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::WILDCARD, "_", PQL::NON_SYNONYM_ID, AttrType::INVALID } }
             },
             { }, { }
         };
@@ -785,9 +850,9 @@ namespace UnitTesting {
         Query CHAINED_ADV_RELATIONS_QUERY_RESULT = {
             STATUS_SUCCESS, CHAINED_ADV_RELATIONS_QUERY, false,
             {
-                { "l", AttrType::NONE },
-                { "a", AttrType::NONE },
-                { "v", AttrType::NONE }
+                { "l", PQL::UNSET_SYNONYM_ID, AttrType::NONE },
+                { "a", PQL::UNSET_SYNONYM_ID, AttrType::NONE },
+                { "v", PQL::UNSET_SYNONYM_ID, AttrType::NONE }
             },
             {
                 { "l", DesignEntity::PROG_LINE },
@@ -797,15 +862,20 @@ namespace UnitTesting {
             },
             {
                 { "Uses(\"error\", v)", RelationType::USESP,
-                    { ArgType::IDENTIFIER, "error" }, { ArgType::SYNONYM, "v" } },
+                    { ArgType::IDENTIFIER, "error", PQL::NON_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "v", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } },
                 { "Modifies(a, v)", RelationType::MODIFIESS,
-                    { ArgType::SYNONYM, "a" }, { ArgType::SYNONYM, "v" } },
+                    { ArgType::SYNONYM, "a", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "v", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } },
                 { "Affects(l, a)", RelationType::AFFECTS,
-                    { ArgType::SYNONYM, "l" }, { ArgType::SYNONYM, "a" } },
+                    { ArgType::SYNONYM, "l", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "a", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } },
                 { "Next*(a, cl)", RelationType::NEXTT,
-                    { ArgType::SYNONYM, "a" }, { ArgType::SYNONYM, "cl" } },
+                    { ArgType::SYNONYM, "a", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "cl", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } },
                 { "Calls*(_, \"error\")", RelationType::CALLST,
-                    { ArgType::WILDCARD, "_" }, { ArgType::IDENTIFIER, "error"} }
+                    { ArgType::WILDCARD, "_", PQL::NON_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::IDENTIFIER, "error", PQL::NON_SYNONYM_ID, AttrType::INVALID} }
             },
             { }, { }
         };
@@ -813,9 +883,9 @@ namespace UnitTesting {
         Query CHAINED_EQUALITIES_QUERY_RESULT = {
             STATUS_SUCCESS, CHAINED_EQUALITIES_QUERY, false,
             {
-                { "c", AttrType::NONE },
-                { "v", AttrType::NONE },
-                { "p", AttrType::NONE }
+                { "c", PQL::UNSET_SYNONYM_ID, AttrType::NONE },
+                { "v", PQL::UNSET_SYNONYM_ID, AttrType::NONE },
+                { "p", PQL::UNSET_SYNONYM_ID, AttrType::NONE }
             },
             {
                 { "c", DesignEntity::CONSTANT },
@@ -828,13 +898,17 @@ namespace UnitTesting {
             { }, { },
             {
                 { "p.procName = \"lambda\"", WithType::IDENTIFIER_EQUAL,
-                    { ArgType::ATTRIBUTE, { "p", AttrType::PROC_NAME } }, { ArgType::IDENTIFIER, { "lambda", AttrType::NONE } } },
+                    { ArgType::ATTRIBUTE, "p", PQL::UNSET_SYNONYM_ID, AttrType::PROC_NAME },
+                    { ArgType::IDENTIFIER, "lambda", PQL::NON_SYNONYM_ID, AttrType::NONE } },
                 { "ifs.stmt# = 8", WithType::INTEGER_EQUAL,
-                    { ArgType::ATTRIBUTE, { "ifs", AttrType::STMT_NUM } }, { ArgType::INTEGER, { "8", AttrType::NONE } } },
+                    { ArgType::ATTRIBUTE, "ifs", PQL::UNSET_SYNONYM_ID, AttrType::STMT_NUM },
+                    { ArgType::INTEGER, "8", PQL::NON_SYNONYM_ID, AttrType::NONE } },
                 { "v.varName = pn.varName", WithType::IDENTIFIER_EQUAL,
-                    { ArgType::ATTRIBUTE, { "v", AttrType::VAR_NAME } }, { ArgType::ATTRIBUTE, { "pn", AttrType::VAR_NAME } } },
+                    { ArgType::ATTRIBUTE, "v", PQL::UNSET_SYNONYM_ID, AttrType::VAR_NAME },
+                    { ArgType::ATTRIBUTE, "pn", PQL::UNSET_SYNONYM_ID, AttrType::VAR_NAME } },
                 { "l = c.value", WithType::INTEGER_EQUAL,
-                    { ArgType::SYNONYM, { "l", AttrType::NONE } }, { ArgType::ATTRIBUTE, { "c", AttrType::VALUE } } }
+                    { ArgType::SYNONYM, "l", PQL::UNSET_SYNONYM_ID, AttrType::NONE },
+                    { ArgType::ATTRIBUTE, "c", PQL::UNSET_SYNONYM_ID, AttrType::VALUE } }
             }
         };
 
@@ -848,29 +922,36 @@ namespace UnitTesting {
             },
             {
                 { "Next(operand, and)", RelationType::NEXT,
-                    { ArgType::SYNONYM, "operand" }, { ArgType::SYNONYM, "and" } },
+                    { ArgType::SYNONYM, "operand", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "and", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } },
                 { "Affects*(and, and)", RelationType::AFFECTST,
-                    { ArgType::SYNONYM, "and" }, { ArgType::SYNONYM, "and" } }
+                    { ArgType::SYNONYM, "and", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "and", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } }
             },
             {
-                { "a(_, \"and\")", PatternType::ASSIGN_PATTERN, "a",
-                    { ArgType::WILDCARD, "_" }, { ArgType::EXACT_PATTERN, "and" } }
+                { "a(_, \"and\")", PatternType::ASSIGN_PATTERN,
+                    { ArgType::SYNONYM, "a", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::WILDCARD, "_", PQL::NON_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::EXACT_PATTERN, "and", PQL::NON_SYNONYM_ID, AttrType::INVALID } }
             },
             {
                 { "19 = and", WithType::INTEGER_EQUAL,
-                    { ArgType::INTEGER, { "19", AttrType::NONE } }, { ArgType::SYNONYM, { "and", AttrType::NONE } } },
+                    { ArgType::INTEGER, "19", PQL::NON_SYNONYM_ID, AttrType::NONE },
+                    { ArgType::SYNONYM, "and", PQL::UNSET_SYNONYM_ID, AttrType::NONE } },
                 { "20 = operand", WithType::INTEGER_EQUAL,
-                    { ArgType::INTEGER, { "20", AttrType::NONE } }, { ArgType::SYNONYM, { "operand", AttrType::NONE } } },
+                    { ArgType::INTEGER, "20", PQL::NON_SYNONYM_ID, AttrType::NONE },
+                    { ArgType::SYNONYM, "operand", PQL::UNSET_SYNONYM_ID, AttrType::NONE } },
                 { "operand = and", WithType::INTEGER_EQUAL,
-                    { ArgType::SYNONYM, { "operand", AttrType::NONE } }, { ArgType::SYNONYM, { "and", AttrType::NONE } } }
+                    { ArgType::SYNONYM, "operand", PQL::UNSET_SYNONYM_ID, AttrType::NONE },
+                    { ArgType::SYNONYM, "and", PQL::UNSET_SYNONYM_ID, AttrType::NONE } }
             }
         };
 
         Query CHAINED_ALL_RELATIONS_QUERY_RESULT = {
             STATUS_SUCCESS, CHAINED_ALL_RELATIONS_QUERY, false,
             {
-                { "p", AttrType::NONE },
-                { "v", AttrType::NONE }
+                { "p", PQL::UNSET_SYNONYM_ID, AttrType::NONE },
+                { "v", PQL::UNSET_SYNONYM_ID, AttrType::NONE }
             },
             {
                 { "p", DesignEntity::PROCEDURE },
@@ -882,21 +963,29 @@ namespace UnitTesting {
             },
             {
                 { "Modifies(\"procedure\", v)", RelationType::MODIFIESP,
-                    { ArgType::IDENTIFIER, "procedure" }, { ArgType::SYNONYM, "v" } },
+                    { ArgType::IDENTIFIER, "procedure", PQL::NON_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "v", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } },
                 { "Calls(_, p)", RelationType::CALLS,
-                    { ArgType::WILDCARD, "_" }, { ArgType::SYNONYM, "p" } },
+                    { ArgType::WILDCARD, "_", PQL::NON_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "p", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } },
                 { "Uses(p, v)", RelationType::USESP,
-                    { ArgType::SYNONYM, "p" }, { ArgType::SYNONYM, "v" } },
+                    { ArgType::SYNONYM, "p", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "v", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } },
                 { "Parent(s, cl)", RelationType::PARENT,
-                    { ArgType::SYNONYM, "s" }, { ArgType::SYNONYM, "cl" } },
+                    { ArgType::SYNONYM, "s", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "cl", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } },
                 { "Modifies(cl, v)", RelationType::MODIFIESS,
-                    { ArgType::SYNONYM, "cl" }, { ArgType::SYNONYM, "v" } },
+                    { ArgType::SYNONYM, "cl", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "v", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } },
                 { "Follows*(cl, l)", RelationType::FOLLOWST,
-                    { ArgType::SYNONYM, "cl" }, { ArgType::SYNONYM, "l" } },
+                    { ArgType::SYNONYM, "cl", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "l", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } },
                 { "Next(l, a)", RelationType::NEXT,
-                    { ArgType::SYNONYM, "l" }, { ArgType::SYNONYM, "a" } },
+                    { ArgType::SYNONYM, "l", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "a", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } },
                 { "Affects*(a, a)", RelationType::AFFECTST,
-                    { ArgType::SYNONYM, "a" }, { ArgType::SYNONYM, "a" } }
+                    { ArgType::SYNONYM, "a", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "a", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } }
             },
             { }, { }
         };
@@ -904,9 +993,9 @@ namespace UnitTesting {
         Query CHAINED_ALL_PATTERNS_QUERY_RESULT = {
             STATUS_SUCCESS, CHAINED_ALL_PATTERNS_QUERY, false,
             {
-                { "a1", AttrType::NONE },
-                { "a2", AttrType::NONE },
-                { "v", AttrType::NONE }
+                { "a1", PQL::UNSET_SYNONYM_ID, AttrType::NONE },
+                { "a2", PQL::UNSET_SYNONYM_ID, AttrType::NONE },
+                { "v", PQL::UNSET_SYNONYM_ID, AttrType::NONE }
             },
             {
                 { "w1", DesignEntity::WHILE },
@@ -918,16 +1007,26 @@ namespace UnitTesting {
             },
             { },
             {
-                { "w1(v, _)", PatternType::WHILE_PATTERN, "w1",
-                    { ArgType::SYNONYM, "v" }, { ArgType::WILDCARD, "_" } },
-                { "ifs(v, _, _)", PatternType::IF_PATTERN, "ifs",
-                    { ArgType::SYNONYM, "v"}, { ArgType::WILDCARD, "_" } },
-                { "a1(\"x\", _\"b * b - (4 * a * c) / 2\"_)", PatternType::ASSIGN_PATTERN, "a1",
-                    { ArgType::IDENTIFIER, "x" }, { ArgType::INCLUSIVE_PATTERN, "_((b*b)-(((4*a)*c)/2))_" } },
-                { "a2(v, \"x0 + y0 + x * x - y * y\")", PatternType::ASSIGN_PATTERN, "a2",
-                    { ArgType::SYNONYM, "v" }, { ArgType::EXACT_PATTERN, "(((x0+y0)+(x*x))-(y*y))" } },
-                { "w2(\"x0\", _)", PatternType::WHILE_PATTERN, "w2",
-                    { ArgType::IDENTIFIER, "x0" }, { ArgType::WILDCARD, "_" } }
+                { "w1(v, _)", PatternType::WHILE_PATTERN,
+                    { ArgType::SYNONYM, "w1", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "v", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::WILDCARD, "_", PQL::NON_SYNONYM_ID, AttrType::INVALID } },
+                { "ifs(v, _, _)", PatternType::IF_PATTERN,
+                    { ArgType::SYNONYM, "ifs", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "v", PQL::UNSET_SYNONYM_ID, AttrType::INVALID},
+                    { ArgType::WILDCARD, "_", PQL::NON_SYNONYM_ID, AttrType::INVALID } },
+                { "a1(\"x\", _\"b * b - (4 * a * c) / 2\"_)", PatternType::ASSIGN_PATTERN,
+                    { ArgType::SYNONYM, "a1", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::IDENTIFIER, "x", PQL::NON_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::INCLUSIVE_PATTERN, "_((b*b)-(((4*a)*c)/2))_", PQL::NON_SYNONYM_ID, AttrType::INVALID } },
+                { "a2(v, \"x0 + y0 + x * x - y * y\")", PatternType::ASSIGN_PATTERN,
+                    { ArgType::SYNONYM, "a2", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "v", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::EXACT_PATTERN, "(((x0+y0)+(x*x))-(y*y))", PQL::NON_SYNONYM_ID, AttrType::INVALID } },
+                { "w2(\"x0\", _)", PatternType::WHILE_PATTERN,
+                    { ArgType::SYNONYM, "w2", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::IDENTIFIER, "x0", PQL::NON_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::WILDCARD, "_", PQL::NON_SYNONYM_ID, AttrType::INVALID } }
             },
             { }
         };
@@ -948,29 +1047,36 @@ namespace UnitTesting {
             { }, { },
             {
                 { "l3 = 420", WithType::INTEGER_EQUAL,
-                    { ArgType::SYNONYM, { "l3", AttrType::NONE } }, { ArgType::INTEGER, { "420", AttrType::NONE } } },
+                    { ArgType::SYNONYM, "l3", PQL::UNSET_SYNONYM_ID, AttrType::NONE },
+                    { ArgType::INTEGER, "420", PQL::NON_SYNONYM_ID, AttrType::NONE } },
                 { "rd.varName = pn.varName", WithType::IDENTIFIER_EQUAL,
-                    { ArgType::ATTRIBUTE, { "rd", AttrType::VAR_NAME } }, { ArgType::ATTRIBUTE, { "pn", AttrType::VAR_NAME } } },
+                    { ArgType::ATTRIBUTE, "rd", PQL::UNSET_SYNONYM_ID, AttrType::VAR_NAME },
+                    { ArgType::ATTRIBUTE, "pn", PQL::UNSET_SYNONYM_ID, AttrType::VAR_NAME } },
                 { "l1 = l2", WithType::INTEGER_EQUAL,
-                    { ArgType::SYNONYM, { "l1", AttrType::NONE } }, { ArgType::SYNONYM, { "l2", AttrType::NONE } } },
+                    { ArgType::SYNONYM, "l1", PQL::UNSET_SYNONYM_ID, AttrType::NONE },
+                    { ArgType::SYNONYM, "l2", PQL::UNSET_SYNONYM_ID, AttrType::NONE } },
                 { "cl.procName = \"lambda\"", WithType::IDENTIFIER_EQUAL,
-                    { ArgType::ATTRIBUTE, { "cl", AttrType::PROC_NAME } }, { ArgType::IDENTIFIER, { "lambda", AttrType::NONE } } },
+                    { ArgType::ATTRIBUTE, "cl", PQL::UNSET_SYNONYM_ID, AttrType::PROC_NAME },
+                    { ArgType::IDENTIFIER, "lambda", PQL::NON_SYNONYM_ID, AttrType::NONE } },
                 { "l1 = rd.stmt#", WithType::INTEGER_EQUAL,
-                    { ArgType::SYNONYM, { "l1", AttrType::NONE } }, { ArgType::ATTRIBUTE, { "rd", AttrType::STMT_NUM } } },
+                    { ArgType::SYNONYM, "l1", PQL::UNSET_SYNONYM_ID, AttrType::NONE },
+                    { ArgType::ATTRIBUTE, "rd", PQL::UNSET_SYNONYM_ID, AttrType::STMT_NUM } },
                 { "pn.stmt# = c1.value", WithType::INTEGER_EQUAL,
-                    { ArgType::ATTRIBUTE, { "pn", AttrType::STMT_NUM } }, { ArgType::ATTRIBUTE, { "c1", AttrType::VALUE } } },
+                    { ArgType::ATTRIBUTE, "pn", PQL::UNSET_SYNONYM_ID, AttrType::STMT_NUM },
+                    { ArgType::ATTRIBUTE, "c1", PQL::UNSET_SYNONYM_ID, AttrType::VALUE } },
                 { "c2.value = 666", WithType::INTEGER_EQUAL,
-                    { ArgType::ATTRIBUTE, { "c2", AttrType::VALUE } }, { ArgType::INTEGER, { "666", AttrType::NONE } } }
+                    { ArgType::ATTRIBUTE, "c2", PQL::UNSET_SYNONYM_ID, AttrType::VALUE },
+                    { ArgType::INTEGER, "666", PQL::NON_SYNONYM_ID, AttrType::NONE } }
             }
         };
 
         Query CHAINED_NO_WHITESPACE_QUERY_RESULT = {
             STATUS_SUCCESS, CHAINED_NO_WHITESPACE_QUERY, false,
             {
-                { "a1", AttrType::NONE },
-                { "w", AttrType::NONE },
-                { "v", AttrType::NONE },
-                { "pn", AttrType::NONE }
+                { "a1", PQL::UNSET_SYNONYM_ID, AttrType::NONE },
+                { "w", PQL::UNSET_SYNONYM_ID, AttrType::NONE },
+                { "v", PQL::UNSET_SYNONYM_ID, AttrType::NONE },
+                { "pn", PQL::UNSET_SYNONYM_ID, AttrType::NONE }
             },
             {
                 { "a1", DesignEntity::ASSIGN },
@@ -982,38 +1088,50 @@ namespace UnitTesting {
             },
             {
                 { "Next*(a1,a2)", RelationType::NEXTT,
-                    { ArgType::SYNONYM, "a1" }, { ArgType::SYNONYM, "a2" } },
+                    { ArgType::SYNONYM, "a1", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "a2", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } },
                 { "Uses(a1,v)", RelationType::USESS,
-                    { ArgType::SYNONYM, "a1" }, { ArgType::SYNONYM, "v" } },
+                    { ArgType::SYNONYM, "a1", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "v", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } },
                 { "Modifies(w,v)", RelationType::MODIFIESS,
-                    { ArgType::SYNONYM, "w" }, { ArgType::SYNONYM, "v" } }
+                    { ArgType::SYNONYM, "w", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "v", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } }
             },
             {
-                { "a1(v,_)", PatternType::ASSIGN_PATTERN, "a1",
-                    { ArgType::SYNONYM, "v" }, { ArgType::WILDCARD, "_" } },
-                { "w(v,_)", PatternType::WHILE_PATTERN, "w",
-                    { ArgType::SYNONYM, "v" }, { ArgType::WILDCARD, "_" } },
-                { "a2(_,_\"f*x+f*(x-dx)+dx*dy\"_)", PatternType::ASSIGN_PATTERN, "a2",
-                    { ArgType::WILDCARD, "_" }, { ArgType::INCLUSIVE_PATTERN, "_(((f*x)+(f*(x-dx)))+(dx*dy))_" } }
+                { "a1(v,_)", PatternType::ASSIGN_PATTERN,
+                    { ArgType::SYNONYM, "a1", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "v", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::WILDCARD, "_", PQL::NON_SYNONYM_ID, AttrType::INVALID } },
+                { "w(v,_)", PatternType::WHILE_PATTERN,
+                    { ArgType::SYNONYM, "w", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "v", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::WILDCARD, "_", PQL::NON_SYNONYM_ID, AttrType::INVALID } },
+                { "a2(_,_\"f*x+f*(x-dx)+dx*dy\"_)", PatternType::ASSIGN_PATTERN,
+                    { ArgType::SYNONYM, "a2", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::WILDCARD, "_", PQL::NON_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::INCLUSIVE_PATTERN, "_(((f*x)+(f*(x-dx)))+(dx*dy))_", PQL::NON_SYNONYM_ID, AttrType::INVALID } }
             },
             {
                 { "pn.varName=cl.procName", WithType::IDENTIFIER_EQUAL,
-                    { ArgType::ATTRIBUTE, { "pn", AttrType::VAR_NAME } }, { ArgType::ATTRIBUTE, { "cl", AttrType::PROC_NAME } } },
+                    { ArgType::ATTRIBUTE, "pn", PQL::UNSET_SYNONYM_ID, AttrType::VAR_NAME },
+                    { ArgType::ATTRIBUTE, "cl", PQL::UNSET_SYNONYM_ID, AttrType::PROC_NAME } },
                 { "pn.stmt#=69", WithType::INTEGER_EQUAL,
-                    { ArgType::ATTRIBUTE, { "pn", AttrType::STMT_NUM } }, { ArgType::INTEGER, { "69", AttrType::NONE } } },
+                    { ArgType::ATTRIBUTE, "pn", PQL::UNSET_SYNONYM_ID, AttrType::STMT_NUM },
+                    { ArgType::INTEGER, "69", PQL::NON_SYNONYM_ID, AttrType::NONE } },
                 { "\"xyz\"=\"xyz\"", WithType::LITERAL_EQUAL,
-                    { ArgType::IDENTIFIER, { "xyz", AttrType::NONE } }, { ArgType::IDENTIFIER, { "xyz", AttrType::NONE } } }
+                    { ArgType::IDENTIFIER, "xyz", PQL::NON_SYNONYM_ID, AttrType::NONE },
+                    { ArgType::IDENTIFIER, "xyz", PQL::NON_SYNONYM_ID, AttrType::NONE } }
             }
         };
 
         Query CHAINED_EXTRA_WHITESPACE_QUERY_RESULT = {
             STATUS_SUCCESS, CHAINED_EXTRA_WHITESPACE_QUERY, false,
             {
-                { "p", AttrType::PROC_NAME },
-                { "w", AttrType::NONE },
-                { "cl", AttrType::NONE },
-                { "cl", AttrType::PROC_NAME },
-                { "a", AttrType::NONE }
+                { "p", PQL::UNSET_SYNONYM_ID, AttrType::PROC_NAME },
+                { "w", PQL::UNSET_SYNONYM_ID, AttrType::NONE },
+                { "cl", PQL::UNSET_SYNONYM_ID, AttrType::NONE },
+                { "cl", PQL::UNSET_SYNONYM_ID, AttrType::PROC_NAME },
+                { "a", PQL::UNSET_SYNONYM_ID, AttrType::NONE }
             },
             {
                 { "p", DesignEntity::PROCEDURE },
@@ -1026,42 +1144,55 @@ namespace UnitTesting {
             },
             {
                 { "Modifies\r(p\t,v1)", RelationType::MODIFIESP,
-                    { ArgType::SYNONYM, "p" }, { ArgType::SYNONYM, "v1" } },
+                    { ArgType::SYNONYM, "p", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "v1", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } },
                 { "Uses(\tw\v,  v1\n)", RelationType::USESS,
-                    { ArgType::SYNONYM, "w" }, { ArgType::SYNONYM, "v1" } },
+                    { ArgType::SYNONYM, "w", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "v1", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } },
                 { "Next*\f (\ta, w\v)", RelationType::NEXTT,
-                    { ArgType::SYNONYM, "a" }, { ArgType::SYNONYM, "w" } },
+                    { ArgType::SYNONYM, "a", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "w", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } },
                 { "Follows(\na\r,\fcl  )", RelationType::FOLLOWS,
-                    { ArgType::SYNONYM, "a" }, { ArgType::SYNONYM, "cl" } }
+                    { ArgType::SYNONYM, "a", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "cl", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } }
             },
             {
-                { "a(  v1,\r_\"\t69-\v 420\"_ )", PatternType::ASSIGN_PATTERN, "a",
-                    { ArgType::SYNONYM, "v1" }, { ArgType::INCLUSIVE_PATTERN, "_(69-420)_" } },
-                { "w  (v2, _\v\f)", PatternType::WHILE_PATTERN, "w",
-                    { ArgType::SYNONYM, "v2" }, { ArgType::WILDCARD, "_" } }
+                { "a(  v1,\r_\"\t69-\v 420\"_ )", PatternType::ASSIGN_PATTERN,
+                    { ArgType::SYNONYM, "a", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "v1", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::INCLUSIVE_PATTERN, "_(69-420)_", PQL::NON_SYNONYM_ID, AttrType::INVALID } },
+                { "w  (v2, _\v\f)", PatternType::WHILE_PATTERN,
+                    { ArgType::SYNONYM, "w", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "v2", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::WILDCARD, "_", PQL::NON_SYNONYM_ID, AttrType::INVALID } }
             },
             {
                 { "\"i\"  =\r\"i\"", WithType::LITERAL_EQUAL,
-                    { ArgType::IDENTIFIER, { "i", AttrType::NONE } }, { ArgType::IDENTIFIER, { "i", AttrType::NONE } } },
+                    { ArgType::IDENTIFIER, "i", PQL::NON_SYNONYM_ID, AttrType::NONE },
+                    { ArgType::IDENTIFIER, "i", PQL::NON_SYNONYM_ID, AttrType::NONE } },
                 { "17\r=w\t.  stmt#", WithType::INTEGER_EQUAL,
-                    { ArgType::INTEGER, { "17", AttrType::NONE } }, { ArgType::ATTRIBUTE, { "w", AttrType::STMT_NUM } } },
+                    { ArgType::INTEGER, "17", PQL::NON_SYNONYM_ID, AttrType::NONE },
+                    { ArgType::ATTRIBUTE, "w", PQL::UNSET_SYNONYM_ID, AttrType::STMT_NUM } },
                 { "l\n=\tcl\r.\vstmt#", WithType::INTEGER_EQUAL,
-                    { ArgType::SYNONYM, { "l", AttrType::NONE } }, { ArgType::ATTRIBUTE, { "cl", AttrType::STMT_NUM } } },
+                    { ArgType::SYNONYM, "l", PQL::UNSET_SYNONYM_ID, AttrType::NONE },
+                    { ArgType::ATTRIBUTE, "cl", PQL::UNSET_SYNONYM_ID, AttrType::STMT_NUM } },
                 { "p\n.\fprocName\r=\n\" function\t\"", WithType::IDENTIFIER_EQUAL,
-                    { ArgType::ATTRIBUTE, { "p", AttrType::PROC_NAME } }, { ArgType::IDENTIFIER, { "function", AttrType::NONE } } },
+                    { ArgType::ATTRIBUTE, "p", PQL::UNSET_SYNONYM_ID, AttrType::PROC_NAME },
+                    { ArgType::IDENTIFIER, "function", PQL::NON_SYNONYM_ID, AttrType::NONE } },
                 { "cl\v.\fprocName\n=  v2  .\tvarName", WithType::IDENTIFIER_EQUAL,
-                    { ArgType::ATTRIBUTE, { "cl", AttrType::PROC_NAME } }, { ArgType::ATTRIBUTE, { "v2", AttrType::VAR_NAME } } }
+                    { ArgType::ATTRIBUTE, "cl", PQL::UNSET_SYNONYM_ID, AttrType::PROC_NAME },
+                    { ArgType::ATTRIBUTE, "v2", PQL::UNSET_SYNONYM_ID, AttrType::VAR_NAME } }
             }
         };
 
         Query PROJECT_REPORT_SAMPLE_QUERY_RESULT = {
             STATUS_SUCCESS, PROJECT_REPORT_SAMPLE_QUERY, false,
             {
-                { "a1", AttrType::NONE },
-                { "w", AttrType::STMT_NUM },
-                { "rd", AttrType::VAR_NAME },
-                { "pn", AttrType::NONE },
-                { "p", AttrType::NONE }
+                { "a1", PQL::UNSET_SYNONYM_ID, AttrType::NONE },
+                { "w", PQL::UNSET_SYNONYM_ID, AttrType::STMT_NUM },
+                { "rd", PQL::UNSET_SYNONYM_ID, AttrType::VAR_NAME },
+                { "pn", PQL::UNSET_SYNONYM_ID, AttrType::NONE },
+                { "p", PQL::UNSET_SYNONYM_ID, AttrType::NONE }
             },
             {
                 { "a1", DesignEntity::ASSIGN },
@@ -1078,35 +1209,51 @@ namespace UnitTesting {
             },
             {
                 { "Modifies(a1, v1)", RelationType::MODIFIESS,
-                    { ArgType::SYNONYM, "a1" }, { ArgType::SYNONYM, "v1" } },
+                    { ArgType::SYNONYM, "a1", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "v1", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } },
                 { "Uses(pn, v1)", RelationType::USESS,
-                    { ArgType::SYNONYM, "pn" }, { ArgType::SYNONYM, "v1" } },
+                    { ArgType::SYNONYM, "pn", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "v1", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } },
                 { "Parent*(w, a1)", RelationType::PARENTT,
-                    { ArgType::SYNONYM, "w" }, { ArgType::SYNONYM, "a1" } },
+                    { ArgType::SYNONYM, "w", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "a1", PQL::UNSET_SYNONYM_ID, AttrType::INVALID } },
                 { "Calls(\"driver\", _)", RelationType::CALLS,
-                    { ArgType::IDENTIFIER, "driver" }, { ArgType::WILDCARD, "_" } },
+                    { ArgType::IDENTIFIER, "driver", PQL::NON_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::WILDCARD, "_", PQL::NON_SYNONYM_ID, AttrType::INVALID } },
                 { "Uses(p, \"j\")", RelationType::USESP,
-                    { ArgType::SYNONYM, "p" }, { ArgType::IDENTIFIER, "j" } },
+                    { ArgType::SYNONYM, "p", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::IDENTIFIER, "j", PQL::NON_SYNONYM_ID, AttrType::INVALID } },
                 { "Affects*(1, 64)", RelationType::AFFECTST,
-                    { ArgType::INTEGER, "1" }, { ArgType::INTEGER, "64" } }
+                    { ArgType::INTEGER, "1", PQL::NON_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::INTEGER, "64", PQL::NON_SYNONYM_ID, AttrType::INVALID } }
             },
             {
-                { "w(\"i\", _)", PatternType::WHILE_PATTERN, "w",
-                    { ArgType::IDENTIFIER, "i" }, { ArgType::WILDCARD, "_" } },
-                { "a1(_, _\"i + 1 + x / 2 + y - (3 * z)\"_)", PatternType::ASSIGN_PATTERN, "a1",
-                    { ArgType::WILDCARD, "_" }, { ArgType::INCLUSIVE_PATTERN, "_((((i+1)+(x/2))+y)-(3*z))_" } },
-                { "ifs(v2, _, _)", PatternType::IF_PATTERN, "ifs",
-                    { ArgType::SYNONYM, "v2" }, { ArgType::WILDCARD, "_" } }
+                { "w(\"i\", _)", PatternType::WHILE_PATTERN,
+                    { ArgType::SYNONYM, "w", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::IDENTIFIER, "i", PQL::NON_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::WILDCARD, "_", PQL::NON_SYNONYM_ID, AttrType::INVALID } },
+                { "a1(_, _\"i + 1 + x / 2 + y - (3 * z)\"_)", PatternType::ASSIGN_PATTERN,
+                    { ArgType::SYNONYM, "a1", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::WILDCARD, "_", PQL::NON_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::INCLUSIVE_PATTERN, "_((((i+1)+(x/2))+y)-(3*z))_", PQL::NON_SYNONYM_ID, AttrType::INVALID } },
+                { "ifs(v2, _, _)", PatternType::IF_PATTERN,
+                    { ArgType::SYNONYM, "ifs", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::SYNONYM, "v2", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
+                    { ArgType::WILDCARD, "_", PQL::NON_SYNONYM_ID, AttrType::INVALID } }
             },
             {
                 { "v2.varName = \"input\"", WithType::IDENTIFIER_EQUAL,
-                    { ArgType::ATTRIBUTE, { "v2", AttrType::VAR_NAME } }, { ArgType::IDENTIFIER, { "input", AttrType::NONE } } },
+                    { ArgType::ATTRIBUTE, "v2", PQL::UNSET_SYNONYM_ID, AttrType::VAR_NAME },
+                    { ArgType::IDENTIFIER, "input", PQL::NON_SYNONYM_ID, AttrType::NONE } },
                 { "c.value = l", WithType::INTEGER_EQUAL,
-                    { ArgType::ATTRIBUTE, { "c", AttrType::VALUE } }, { ArgType::SYNONYM, { "l", AttrType::NONE } } },
+                    { ArgType::ATTRIBUTE, "c", PQL::UNSET_SYNONYM_ID, AttrType::VALUE },
+                    { ArgType::SYNONYM, "l", PQL::UNSET_SYNONYM_ID, AttrType::NONE } },
                 { "rd.varName = v2.varName", WithType::IDENTIFIER_EQUAL,
-                    { ArgType::ATTRIBUTE, { "rd", AttrType::VAR_NAME } }, { ArgType::ATTRIBUTE, { "v2", AttrType::VAR_NAME } } },
+                    { ArgType::ATTRIBUTE, "rd", PQL::UNSET_SYNONYM_ID, AttrType::VAR_NAME },
+                    { ArgType::ATTRIBUTE, "v2", PQL::UNSET_SYNONYM_ID, AttrType::VAR_NAME } },
                 { "3203 = 3230", WithType::LITERAL_EQUAL,
-                    { ArgType::INTEGER, { "3203", AttrType::NONE } }, { ArgType::INTEGER, { "3230", AttrType::NONE } } }
+                    { ArgType::INTEGER, "3203", PQL::NON_SYNONYM_ID, AttrType::NONE },
+                    { ArgType::INTEGER, "3230", PQL::NON_SYNONYM_ID, AttrType::NONE } }
             }
         };
 
