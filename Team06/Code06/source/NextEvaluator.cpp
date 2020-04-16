@@ -21,13 +21,11 @@ namespace PQL {
             StmtId arg1 = std::stoi(clause.getArgs().first.second);
             StmtId arg2 = std::stoi(clause.getArgs().second.second);
 
+            ClauseResult clauseResult;
             if (database.next(arg1, arg2)) {
-                ClauseResultEntry resultEntry;
-                resultEntry["_RESULT"] = "TRUE";
-                return { resultEntry };
-            } else {
-                return {};
+                clauseResult.trueResult = true;
             }
+            return clauseResult;
         }
 
         /**
@@ -37,13 +35,11 @@ namespace PQL {
         * @return   The result of the evaluation.
         */
         ClauseResult evaluateNextClauseWildWild(PKB::PKB& database) {
+            ClauseResult clauseResult;
             if (database.hasNextRelation()) {
-                ClauseResultEntry resultEntry;
-                resultEntry["_RESULT"] = "TRUE";
-                return { resultEntry };
-            } else {
-                return {};
+                clauseResult.trueResult = true;
             }
+            return clauseResult;
         }
 
         /**
@@ -62,23 +58,19 @@ namespace PQL {
             if (argType1 == ArgType::INTEGER && argType2 == ArgType::WILDCARD) {
                 // Case 1: Integer, Wildcard
                 StmtId arg1 = std::stoi(clause.getArgs().first.second);
+                ClauseResult clauseResult;
                 if (database.hasNext(arg1)) {
-                    ClauseResultEntry resultEntry;
-                    resultEntry["_RESULT"] = "TRUE";
-                    return { resultEntry };
-                } else {
-                    return {};
+                    clauseResult.trueResult = true;
                 }
+                return clauseResult;
             } else {
                 // Case 2: Wildcard, Integer
                 StmtId arg2 = std::stoi(clause.getArgs().second.second);
+                ClauseResult clauseResult;
                 if (database.hasPrev(arg2)) {
-                    ClauseResultEntry resultEntry;
-                    resultEntry["_RESULT"] = "TRUE";
-                    return { resultEntry };
-                } else {
-                    return {};
+                    clauseResult.trueResult = true;
                 }
+                return clauseResult;
             }
         }
 
@@ -100,13 +92,14 @@ namespace PQL {
                 StmtId arg1 = std::stoi(clause.getArgs().first.second);
                 Synonym arg2 = clause.getArgs().second.second;
 
-                std::unordered_set<StmtId> stmts = database.nextStarGetDirectNodes(arg1, NodeType::SUCCESSOR);
+                std::unordered_set<StmtId> stmts = database.nextGetDirectNodes(arg1, NodeType::SUCCESSOR);
                 ClauseResult clauseResult;
+                clauseResult.syns.emplace_back(arg2);
                 for (StmtId stmt : stmts) {
                     if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(stmt)->getType(), synonymTable[arg2])) {
                         ClauseResultEntry resultEntry;
-                        resultEntry[arg2] = std::to_string(stmt);
-                        clauseResult.emplace_back(resultEntry);
+                        resultEntry.emplace_back(std::to_string(stmt));
+                        clauseResult.rows.emplace_back(resultEntry);
                     }
                 }
                 return clauseResult;
@@ -115,13 +108,14 @@ namespace PQL {
                 Synonym arg1 = clause.getArgs().first.second;
                 StmtId arg2 = std::stoi(clause.getArgs().second.second);
 
-                std::unordered_set<StmtId> stmts = database.nextStarGetDirectNodes(arg2, NodeType::PREDECESSOR);
+                std::unordered_set<StmtId> stmts = database.nextGetDirectNodes(arg2, NodeType::PREDECESSOR);
                 ClauseResult clauseResult;
+                clauseResult.syns.emplace_back(arg1);
                 for (StmtId stmt : stmts) {
                     if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(stmt)->getType(), synonymTable[arg1])) {
                         ClauseResultEntry resultEntry;
-                        resultEntry[arg1] = std::to_string(stmt);
-                        clauseResult.emplace_back(resultEntry);
+                        resultEntry.emplace_back(std::to_string(stmt));
+                        clauseResult.rows.emplace_back(resultEntry);
                     }
                 }
                 return clauseResult;
@@ -146,12 +140,13 @@ namespace PQL {
                 Synonym arg2 = clause.getArgs().second.second;
 
                 ClauseResult clauseResult;
+                clauseResult.syns.emplace_back(arg2);
                 for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
                     if (database.hasPrev(i)) {
                         if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i)->getType(), synonymTable[arg2])) {
                             ClauseResultEntry resultEntry;
-                            resultEntry[arg2] = std::to_string(i);
-                            clauseResult.emplace_back(resultEntry);
+                            resultEntry.emplace_back(std::to_string(i));
+                            clauseResult.rows.emplace_back(resultEntry);
                         }
                     }
                 }
@@ -161,12 +156,13 @@ namespace PQL {
                 Synonym arg1 = clause.getArgs().first.second;
 
                 ClauseResult clauseResult;
+                clauseResult.syns.emplace_back(arg1);
                 for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
                     if (database.hasNext(i)) {
                         if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i)->getType(), synonymTable[arg1])) {
                             ClauseResultEntry resultEntry;
-                            resultEntry[arg1] = std::to_string(i);
-                            clauseResult.emplace_back(resultEntry);
+                            resultEntry.emplace_back(std::to_string(i));
+                            clauseResult.rows.emplace_back(resultEntry);
                         }
                     }
                 }
@@ -190,21 +186,36 @@ namespace PQL {
             bool singleSynonym = (arg1 == arg2);
 
             ClauseResult clauseResult;
+            if (singleSynonym) {
+                clauseResult.syns.emplace_back(arg1);
+            } else if (arg1 < arg2) {
+                clauseResult.syns.emplace_back(arg1);
+                clauseResult.syns.emplace_back(arg2);
+            } else {
+                clauseResult.syns.emplace_back(arg2);
+                clauseResult.syns.emplace_back(arg1);
+            }
+
             for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
-                std::unordered_set<StmtId> nextStmts = database.nextStarGetDirectNodes(i, NodeType::SUCCESSOR);
+                std::unordered_set<StmtId> nextStmts = database.nextGetDirectNodes(i, NodeType::SUCCESSOR);
                 for (StmtId nextStmt : nextStmts) {
                     if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i)->getType(), synonymTable[arg1]) &&
                         SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(nextStmt)->getType(), synonymTable[arg2])) {
                         if (!singleSynonym) {
                             ClauseResultEntry resultEntry;
-                            resultEntry[arg1] = std::to_string(i);
-                            resultEntry[arg2] = std::to_string(nextStmt);
-                            clauseResult.emplace_back(resultEntry);
+                            if (arg1 < arg2) {
+                                resultEntry.emplace_back(std::to_string(i));
+                                resultEntry.emplace_back(std::to_string(nextStmt));
+                            } else {
+                                resultEntry.emplace_back(std::to_string(nextStmt));
+                                resultEntry.emplace_back(std::to_string(i));
+                            }
+                            clauseResult.rows.emplace_back(resultEntry);
                         } else {
                             if (i == nextStmt) {
                                 ClauseResultEntry resultEntry;
-                                resultEntry[arg1] = std::to_string(i);
-                                clauseResult.emplace_back(resultEntry);
+                                resultEntry.emplace_back(std::to_string(i));
+                                clauseResult.rows.emplace_back(resultEntry);
                             }
                         }
                     }
