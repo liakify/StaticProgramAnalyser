@@ -64,7 +64,7 @@ Select BOOLEAN such that Contains (_, 17)
 FALSE
 5000
 14 - Contains (_, s)
-
+stmt s;
 Select BOOLEAN such that Contains (_, s)
 TRUE
 5000
