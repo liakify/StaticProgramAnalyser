@@ -227,47 +227,90 @@ namespace PQL {
 
             bool singleSynonym = (arg1 == arg2);
 
-            ClauseResult clauseResult;
-            if (singleSynonym) {
-                clauseResult.syns.emplace_back(arg1);
-            } else if (arg1 < arg2) {
-                clauseResult.syns.emplace_back(arg1);
-                clauseResult.syns.emplace_back(arg2);
-            } else {
-                clauseResult.syns.emplace_back(arg2);
-                clauseResult.syns.emplace_back(arg1);
-            }
+            bool foundSyn1 = (std::find(intResult.syns.begin(), intResult.syns.end(), arg1) == intResult.syns.end());
+            bool foundSyn2 = (std::find(intResult.syns.begin(), intResult.syns.end(), arg2) == intResult.syns.end());
 
-            for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
-                std::unordered_set<StmtId> nextStarStmts = database.nextStarGetAllNodes(i, NodeType::SUCCESSOR);
-                for (StmtId nextStarStmt : nextStarStmts) {
-                    if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i)->getType(), synonymTable[arg1]) &&
-                        SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(nextStarStmt)->getType(), synonymTable[arg2])) {
-                        if (!singleSynonym) {
-                            ClauseResultEntry resultEntry;
-                            if (arg1 < arg2) {
-                                resultEntry.emplace_back(std::to_string(i));
-                                resultEntry.emplace_back(std::to_string(nextStarStmt));
-                            } else {
-                                resultEntry.emplace_back(std::to_string(nextStarStmt));
-                                resultEntry.emplace_back(std::to_string(i));
-                            }
-                            clauseResult.rows.emplace_back(resultEntry);
-                        } else {
-                            if (i == nextStarStmt) {
+            if (!foundSyn1 && !foundSyn2) {
+                if (singleSynonym) {
+                    intResult.syns.emplace_back(arg1);
+                } else if (arg1 < arg2) {
+                    intResult.syns.emplace_back(arg1);
+                    intResult.syns.emplace_back(arg2);
+                } else {
+                    intResult.syns.emplace_back(arg2);
+                    intResult.syns.emplace_back(arg1);
+                }
+
+                for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
+                    std::unordered_set<StmtId> nextStarStmts = database.nextStarGetAllNodes(i, NodeType::SUCCESSOR);
+                    for (StmtId nextStarStmt : nextStarStmts) {
+                        if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i)->getType(), synonymTable[arg1]) &&
+                            SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(nextStarStmt)->getType(), synonymTable[arg2])) {
+                            if (!singleSynonym) {
                                 ClauseResultEntry resultEntry;
-                                resultEntry.emplace_back(std::to_string(i));
-                                clauseResult.rows.emplace_back(resultEntry);
+                                if (arg1 < arg2) {
+                                    resultEntry.emplace_back(std::to_string(i));
+                                    resultEntry.emplace_back(std::to_string(nextStarStmt));
+                                } else {
+                                    resultEntry.emplace_back(std::to_string(nextStarStmt));
+                                    resultEntry.emplace_back(std::to_string(i));
+                                }
+                                intResult.rows.emplace_back(resultEntry);
+                            } else {
+                                if (i == nextStarStmt) {
+                                    ClauseResultEntry resultEntry;
+                                    resultEntry.emplace_back(std::to_string(i));
+                                    intResult.rows.emplace_back(resultEntry);
+                                }
                             }
                         }
                     }
+                    if (!nextStarStmts.empty()) {
+                        database.nextStarSetProcessedAll(i, NodeType::PREDECESSOR);
+                    }
                 }
-                if (!nextStarStmts.empty()) {
-                    database.nextStarSetProcessedAll(i, NodeType::PREDECESSOR);
+
+            } else if (foundSyn1 && !foundSyn2) {
+                int index1 = std::find(intResult.syns.begin(), intResult.syns.end(), arg1) - intResult.syns.begin();
+                intResult.syns.emplace_back(arg2);
+                std::sort(intResult.syns.begin(), intResult.syns.end());
+                int index2 = std::find(intResult.syns.begin(), intResult.syns.end(), arg2) - intResult.syns.begin();
+                std::vector<ClauseResultEntry> updatedResult;
+                for (ClauseResultEntry& resultEntry : intResult.rows) {
+                    std::unordered_set<StmtId> stmts = database.nextStarGetAllNodes(std::stoi(resultEntry[index1]), NodeType::SUCCESSOR);
+                    for (StmtId stmt : stmts) {
+                        ClauseResultEntry newResultEntry(resultEntry);
+                        newResultEntry.insert(newResultEntry.begin() + index2, std::to_string(stmt));
+                        updatedResult.emplace_back(newResultEntry);
+                    }
                 }
+                intResult.rows = updatedResult;
+            } else if (!foundSyn1 && foundSyn2) {
+                int index2 = std::find(intResult.syns.begin(), intResult.syns.end(), arg2) - intResult.syns.begin();
+                intResult.syns.emplace_back(arg1);
+                std::sort(intResult.syns.begin(), intResult.syns.end());
+                int index1 = std::find(intResult.syns.begin(), intResult.syns.end(), arg1) - intResult.syns.begin();
+                std::vector<ClauseResultEntry> updatedResult;
+                for (ClauseResultEntry& resultEntry : intResult.rows) {
+                    std::unordered_set<StmtId> stmts = database.nextStarGetAllNodes(std::stoi(resultEntry[index2]), NodeType::PREDECESSOR);
+                    for (StmtId stmt : stmts) {
+                        ClauseResultEntry newResultEntry(resultEntry);
+                        newResultEntry.insert(newResultEntry.begin() + index1, std::to_string(stmt));
+                        updatedResult.emplace_back(newResultEntry);
+                    }
+                }
+                intResult.rows = updatedResult;
+            } else if (foundSyn1 && foundSyn2) {
+                int index1 = std::find(intResult.syns.begin(), intResult.syns.end(), arg1) - intResult.syns.begin();
+                int index2 = std::find(intResult.syns.begin(), intResult.syns.end(), arg2) - intResult.syns.begin();
+                std::vector<ClauseResultEntry> updatedResult;
+                for (ClauseResultEntry& resultEntry : intResult.rows) {
+                    if (database.nextStar(std::stoi(resultEntry[index1]), std::stoi(resultEntry[index2]))) {
+                        updatedResult.emplace_back(resultEntry);
+                    }
+                }
+                intResult.rows = updatedResult;
             }
-
-
         }
 
         void evaluateNextStarClause(PKB::PKB& database, RelationClause clause,
@@ -282,7 +325,7 @@ namespace PQL {
                 evaluateNextStarClauseIntInt(database, clause, intResult);
             } else if (argType1 == ArgType::WILDCARD && argType2 == ArgType::WILDCARD) {
                 // Two wildcards supplied
-                evaluateNextStarClauseWildWild(database);
+                evaluateNextStarClauseWildWild(database, intResult);
             } else if (argType1 == ArgType::INTEGER && argType2 == ArgType::WILDCARD ||
                 argType1 == ArgType::WILDCARD && argType2 == ArgType::INTEGER) {
                 // One statement number, one wildcard supplied
