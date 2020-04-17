@@ -156,26 +156,46 @@ namespace PQL {
                 Synonym arg2 = args.second.value;
 
                 // Case 1: Wildcard, Synonym
-                ClauseResult clauseResult;
-                clauseResult.syns.emplace_back(arg2);
-                std::unordered_set<ProcId> callees = database.callsKB.getAllCallees();
-                for (ProcId callee : callees) {
-                    ClauseResultEntry resultEntry;
-                    resultEntry.emplace_back(database.procTable.get(callee).getName());
-                    clauseResult.rows.emplace_back(resultEntry);
+                if (std::find(intResult.syns.begin(), intResult.syns.end(), arg2) == intResult.syns.end()) {
+                    intResult.syns.emplace_back(arg2);
+                    std::unordered_set<ProcId> callees = database.callsKB.getAllCallees();
+                    for (ProcId callee : callees) {
+                        ClauseResultEntry resultEntry;
+                        resultEntry.emplace_back(database.procTable.get(callee).getName());
+                        intResult.rows.emplace_back(resultEntry);
+                    }
+                } else {
+                    int index = std::find(intResult.syns.begin(), intResult.syns.end(), arg2) - intResult.syns.begin();
+                    std::vector<ClauseResultEntry> updatedResult;
+                    for (ClauseResultEntry& resultEntry : intResult.rows) {
+                        if (database.callsKB.hasCaller(std::stoi(resultEntry[index]))) {
+                            updatedResult.emplace_back(resultEntry);
+                        }
+                    }
+                    intResult.rows = updatedResult;
                 }
     
             } else {
                 Synonym arg1 = args.first.value;
 
                 // Case 2: Synonym, Wildcard
-                ClauseResult clauseResult;
-                clauseResult.syns.emplace_back(arg1);
-                std::unordered_set<ProcId> callers = database.callsKB.getAllCallers();
-                for (ProcId caller : callers) {
-                    ClauseResultEntry resultEntry;
-                    resultEntry.emplace_back(database.procTable.get(caller).getName());
-                    clauseResult.rows.emplace_back(resultEntry);
+                if (std::find(intResult.syns.begin(), intResult.syns.end(), arg1) == intResult.syns.end()) {
+                    intResult.syns.emplace_back(arg1);
+                    std::unordered_set<ProcId> callers = database.callsKB.getAllCallers();
+                    for (ProcId caller : callers) {
+                        ClauseResultEntry resultEntry;
+                        resultEntry.emplace_back(database.procTable.get(caller).getName());
+                        intResult.rows.emplace_back(resultEntry);
+                    }
+                } else {
+                    int index = std::find(intResult.syns.begin(), intResult.syns.end(), arg1) - intResult.syns.begin();
+                    std::vector<ClauseResultEntry> updatedResult;
+                    for (ClauseResultEntry& resultEntry : intResult.rows) {
+                        if (database.callsKB.hasCallee(std::stoi(resultEntry[index]))) {
+                            updatedResult.emplace_back(resultEntry);
+                        }
+                    }
+                    intResult.rows = updatedResult;
                 }
     
             }

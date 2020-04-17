@@ -162,36 +162,56 @@ namespace PQL {
                 // Case 1: Wildcard, Synonym
                 Synonym arg2 = args.second.value;
 
-                ClauseResult clauseResult;
-                clauseResult.syns.emplace_back(arg2);
+                if (std::find(intResult.syns.begin(), intResult.syns.end(), arg2) == intResult.syns.end()) {
+                    intResult.syns.emplace_back(arg2);
 
-                for (StmtId i : database.stmtTable.getStmtsByType(StmtType::ASSIGN)) {
-                    if (database.affectsGetDirectNodes(i, NodeType::PREDECESSOR).size() > 0) {
-                        ClauseResultEntry resultEntry;
-                        resultEntry.emplace_back(std::to_string(i));
-                        clauseResult.rows.emplace_back(resultEntry);
+                    for (StmtId i : database.stmtTable.getStmtsByType(StmtType::ASSIGN)) {
+                        if (database.affectsGetDirectNodes(i, NodeType::PREDECESSOR).size() > 0) {
+                            ClauseResultEntry resultEntry;
+                            resultEntry.emplace_back(std::to_string(i));
+                            intResult.rows.emplace_back(resultEntry);
+                        }
+
+                        database.affectsSetProcessedDirect(i, NodeType::SUCCESSOR);
                     }
-
-                    database.affectsSetProcessedDirect(i, NodeType::SUCCESSOR);
+                    database.setAffectsFullyComputed();
+                } else {
+                    int index = std::find(intResult.syns.begin(), intResult.syns.end(), arg2) - intResult.syns.begin();
+                    std::vector<ClauseResultEntry> updatedResult;
+                    for (ClauseResultEntry& resultEntry : intResult.rows) {
+                        if (database.affectsGetDirectNodes(std::stoi(resultEntry[index]), NodeType::PREDECESSOR).size() > 0) {
+                            updatedResult.emplace_back(resultEntry);
+                        }
+                    }
+                    intResult.rows = updatedResult;
                 }
-                database.setAffectsFullyComputed();
     
             } else {
                 // Case 2: Synonym, Wildcard
                 Synonym arg1 = args.first.value;
 
-                ClauseResult clauseResult;
-                clauseResult.syns.emplace_back(arg1);
+                if (std::find(intResult.syns.begin(), intResult.syns.end(), arg1) == intResult.syns.end()) {
+                    intResult.syns.emplace_back(arg1);
 
-                for (StmtId i : database.stmtTable.getStmtsByType(StmtType::ASSIGN)) {
-                    if (database.affectsGetDirectNodes(i, NodeType::SUCCESSOR).size() > 0) {
-                        ClauseResultEntry resultEntry;
-                        resultEntry.emplace_back(std::to_string(i));
-                        clauseResult.rows.emplace_back(resultEntry);
+                    for (StmtId i : database.stmtTable.getStmtsByType(StmtType::ASSIGN)) {
+                        if (database.affectsGetDirectNodes(i, NodeType::SUCCESSOR).size() > 0) {
+                            ClauseResultEntry resultEntry;
+                            resultEntry.emplace_back(std::to_string(i));
+                            intResult.rows.emplace_back(resultEntry);
+                        }
+                        database.affectsSetProcessedDirect(i, NodeType::PREDECESSOR);
                     }
-                    database.affectsSetProcessedDirect(i, NodeType::PREDECESSOR);
+                    database.setAffectsFullyComputed();
+                } else {
+                    int index = std::find(intResult.syns.begin(), intResult.syns.end(), arg1) - intResult.syns.begin();
+                    std::vector<ClauseResultEntry> updatedResult;
+                    for (ClauseResultEntry& resultEntry : intResult.rows) {
+                        if (database.affectsGetDirectNodes(std::stoi(resultEntry[index]), NodeType::SUCCESSOR).size() > 0) {
+                            updatedResult.emplace_back(resultEntry);
+                        }
+                    }
+                    intResult.rows = updatedResult;
                 }
-                database.setAffectsFullyComputed();
     
             }
         }
