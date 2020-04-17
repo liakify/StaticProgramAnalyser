@@ -1,0 +1,55 @@
+- 
+constant cn;
+Select cn
+0, 1, 2, 3, 5, 6
+5000
+- 
+constant cn; if ifs; stmt s;
+Select s with cn.value = s.stmt# and s.stmt# = ifs.stmt#
+3, 5
+5000
+- 
+constant cn; if ifs; stmt s, s2; variable v; read r;
+Select <s, v> with cn.value = s.stmt# and s.stmt# = ifs.stmt# pattern ifs (v, _, _) such that Parent(ifs, s2) and Modifies(s2, v) and Next(ifs, r) with r.varName = "y"
+5 y
+5000
+- 
+stmt s1, s2, s3; while w; if ifs;
+Select w such that Parent*(s1, s2) and Parent(s2, w) with s2.stmt# = ifs.stmt# pattern ifs ("x", _, _) pattern w ("y", _)
+21, 70
+5000
+- 
+procedure p, q; call c;
+Select <c, q> such that Calls(p, q) with c.procName = q.procName
+124 procC, 43 procC, 57 procB, 60 procC, 98 procB
+5000
+- 
+procedure p, q; call c; while w;
+Select <c, q> such that Calls(p, q) with c.procName = q.procName such that Next*(c, c) and Follows* (w, c)
+124 procC
+5000
+-
+while w1, w2, w3; if ifs1, ifs2;
+Select w1 such that Parent (ifs1, ifs2) and Follows* (ifs1, w1)
+46, 86, 99
+5000
+-
+while w1, w2, w3; if ifs1, ifs2; read r;
+Select w1 such that Parent (ifs1, ifs2) and Follows* (ifs1, w1) and Parent* (w2, w1) such that Next (r, w2)
+99
+5000
+-
+stmt s1, s2; assign a;
+Select <s1, s2> such that Affects(s1, s2) and Next(s1, a) pattern a ("x", _)
+24 26
+5000
+-
+stmt s1, s2; assign a; print pn;
+Select <s1, s2> such that Affects(s1, s2) and Next(s1, a) and Next* (59, s2) and Next* (pn, s1) and Uses (s1, "x")
+91 93
+5000
+-
+stmt s1, s2; assign a; print pn;
+Select s1 such that Affects*(s1, s2) and Next(s1, pn) and Next* (s2, s1) with s1.stmt# = s2.stmt#
+68
+5000

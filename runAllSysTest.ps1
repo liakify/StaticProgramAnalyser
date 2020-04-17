@@ -99,6 +99,7 @@ $list_of_test_files = @(
   '..\performance600_chainedNext'
   '..\intergroup_0'
   '..\intragroup_0'
+  '..\intragroup_1'
   
   # TESTS BELOW CURRENTLY FAIL / TIMEOUT
   # '..\performance600_runtimeCache'

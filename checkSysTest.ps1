@@ -18,6 +18,7 @@ $list_of_test_files = @(
   
   # '..\intergroup_0'
   # '..\intragroup_0'
+  '..\intragroup_1'
 
   # TEST BELOW CURRENTLY FAIL / TIMEOUT
   # '..\performance600_runtimeCache'
@@ -25,7 +26,7 @@ $list_of_test_files = @(
   # '..\performance600_chainedAffects'
   # '..\performance600_chainedAffectsStar'
   # '..\performance600_nextStar+AffectsStar+Tuple'
-  )
+    )
 
 $list_of_no_xml_tests = @(
 )
