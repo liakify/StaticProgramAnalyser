@@ -43,6 +43,9 @@ namespace IntegrationTesting {
         string query_selectAttrRef_w_stmt = "while w; Select w.stmt#";
         string query_selectAttrRef_if_stmt = "if ifs; Select ifs.stmt#";
         string query_selectAttrRef_a_stmt = "assign a; Select a.stmt#";
+
+        //query to test withEvaluator
+        string query_selectWith = "assign a; Select a with a.stmt# = 4";
         
         //Star relationships not tested because DE is not used in this test.
         string query_relCond_ModifiesP = "variable v; procedure p; Select p such that Modifies(p,v)";
@@ -274,6 +277,10 @@ namespace IntegrationTesting {
 
         pql.evaluateQuery(query_selectAttrRef_a_stmt, results);
         Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "4", "6", "8", "9" }).begin()));
+        results.clear();
+
+        pql.evaluateQuery(query_selectWith, results);
+        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "4" }).begin()));
         results.clear();
 
         pql.evaluateQuery(query_relCond_ModifiesP, results);
