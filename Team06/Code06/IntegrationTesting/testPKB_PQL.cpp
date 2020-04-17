@@ -57,15 +57,11 @@ namespace IntegrationTesting {
         string query_relCond_Next = "prog_line n1, n2; Select n1 such that Next(n1, n2)";
         string query_relCond_Affects = "assign a1, a2; Select a1 such that Affects(a1, a2)";
 
-        // string query_relCond_ModifiesP = "variable v; procedure p; Select p such that Modifies(p,v)";
-        // string query_relCond_ModifiesS = "variable v; assign a; Select a such that Modifies(a,v)";
-        // string query_relCond_UsesP = "variable v; procedure p; Select p such that Uses(p,v)";
-        // string query_relCond_UsesS = "variable v; assign a; Select a such that Uses(a,v)";
-        // string query_relCond_Calls = "procedure p1, p2; Select p1 such that Calls(p1, p2)";
-        // string query_relCond_Parent = "stmt s1, s2; Select s1 such that Parent(s1, s2)";
+        string query_relCond_CallsStar = "procedure p; Select p such that Calls*(1, p)";
+        string query_relCond_ParentStar = "stmt s; Select s such that Parent*(3, s)";
         string query_relCond_FollowsStar = "stmt s; Select s such that Follows*(1, s)";
-        // string query_relCond_Next = "prog_line n1, n2; Select n1 such that Next(n1, n2)";
-        // string query_relCond_Affects = "assign a1, a2; Select a1 such that Affects(a1, a2)";
+        string query_relCond_NextStar = "prog_line n; Select n such that Next*(7, n)";
+        string query_relCond_AffectsStar = "assign a; Select a such that Affects*(6, a)";
 
         string query_patternCond_Assign = "assign a; Select a pattern a (_, _\"a\"_)";
         string query_patternCond_If = "if ifs; variable v; Select v pattern ifs (v, _, _)";
@@ -129,6 +125,11 @@ namespace IntegrationTesting {
         pkb.parentKB.addParent(3, 4);
         pkb.parentKB.addParent(3, 5);
         pkb.parentKB.addParent(7, 8);
+        pkb.parentKB.setAllChildren(3, std::unordered_set<StmtId>({ 4, 5 }));
+        pkb.parentKB.setAllChildren(7, std::unordered_set<StmtId>({ 8 }));
+        pkb.parentKB.setAllParents(4, std::unordered_set<StmtId>({ 3 }));
+        pkb.parentKB.setAllParents(5, std::unordered_set<StmtId>({ 3 }));
+        pkb.parentKB.setAllParents(8, std::unordered_set<StmtId>({ 7 }));
 
         pkb.usesKB.addStmtUses(2, 2);
         pkb.usesKB.addStmtUses(3, 1);
@@ -173,11 +174,49 @@ namespace IntegrationTesting {
         pkb.addNext(7, 8);
         pkb.addNext(7, 9);
         pkb.addNext(8, 7);
+        pkb.nextStarAddToAll(1, 2, NodeType::SUCCESSOR);
+        pkb.nextStarAddToAll(1, 3, NodeType::SUCCESSOR);
+        pkb.nextStarAddToAll(1, 4, NodeType::SUCCESSOR);
+        pkb.nextStarAddToAll(1, 5, NodeType::SUCCESSOR);
+        pkb.nextStarAddToAll(2, 1, NodeType::PREDECESSOR);
+        pkb.nextStarAddToAll(2, 3, NodeType::SUCCESSOR);
+        pkb.nextStarAddToAll(2, 4, NodeType::SUCCESSOR);
+        pkb.nextStarAddToAll(2, 5, NodeType::SUCCESSOR);
+        pkb.nextStarAddToAll(3, 1, NodeType::PREDECESSOR);
+        pkb.nextStarAddToAll(3, 2, NodeType::PREDECESSOR);
+        pkb.nextStarAddToAll(3, 4, NodeType::SUCCESSOR);
+        pkb.nextStarAddToAll(3, 5, NodeType::SUCCESSOR);
+        pkb.nextStarAddToAll(4, 1, NodeType::PREDECESSOR);
+        pkb.nextStarAddToAll(4, 2, NodeType::PREDECESSOR);
+        pkb.nextStarAddToAll(4, 3, NodeType::PREDECESSOR);
+        pkb.nextStarAddToAll(5, 1, NodeType::PREDECESSOR);
+        pkb.nextStarAddToAll(5, 2, NodeType::PREDECESSOR);
+        pkb.nextStarAddToAll(5, 3, NodeType::PREDECESSOR);
+        pkb.nextStarAddToAll(6, 7, NodeType::SUCCESSOR);
+        pkb.nextStarAddToAll(6, 8, NodeType::SUCCESSOR);
+        pkb.nextStarAddToAll(6, 9, NodeType::SUCCESSOR);
+        pkb.nextStarAddToAll(7, 6, NodeType::PREDECESSOR);
+        pkb.nextStarAddToAll(7, 7, NodeType::SUCCESSOR);
+        pkb.nextStarAddToAll(7, 8, NodeType::SUCCESSOR);
+        pkb.nextStarAddToAll(7, 9, NodeType::SUCCESSOR);
+        pkb.nextStarAddToAll(8, 6, NodeType::PREDECESSOR);
+        pkb.nextStarAddToAll(8, 7, NodeType::PREDECESSOR);
+        pkb.nextStarAddToAll(8, 8, NodeType::PREDECESSOR);
+        pkb.nextStarAddToAll(8, 7, NodeType::SUCCESSOR);
+        pkb.nextStarAddToAll(8, 8, NodeType::SUCCESSOR);
+        pkb.nextStarAddToAll(8, 9, NodeType::SUCCESSOR);
+        pkb.nextStarAddToAll(9, 6, NodeType::PREDECESSOR);
+        pkb.nextStarAddToAll(9, 7, NodeType::PREDECESSOR);
+        pkb.nextStarAddToAll(9, 8, NodeType::PREDECESSOR);
 
         pkb.addAffects(6, 9);
         pkb.addAffects(8, 9);
+        pkb.addAffectsStar(6, 9);
+        pkb.addAffectsStar(8, 9);
 
         pkb.callsKB.addCalls(1, 2);
+        pkb.callsKB.addToAll(1, std::unordered_set<ProcId>({ 2 }), NodeType::SUCCESSOR);
+        pkb.callsKB.addToAll(2, std::unordered_set<ProcId>({ 1 }), NodeType::PREDECESSOR);
 
         pkb.patternKB.addAssignPattern(expr_y_plus_5.getStr(), 4);
         pkb.patternKB.addAssignPattern("(y+5)", 4);
@@ -339,8 +378,24 @@ namespace IntegrationTesting {
         Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "6", "8" }).begin()));
         results.clear();
 
+        pql.evaluateQuery(query_relCond_CallsStar, results);
+        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "2" }).begin()));
+        results.clear();
+
+        pql.evaluateQuery(query_relCond_ParentStar, results);
+        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "4", "5" }).begin()));
+        results.clear();
+
         pql.evaluateQuery(query_relCond_FollowsStar, results);
         Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "2", "3" }).begin()));
+        results.clear();
+
+        pql.evaluateQuery(query_relCond_NextStar, results);
+        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "7", "8", "9" }).begin()));
+        results.clear();
+
+        pql.evaluateQuery(query_relCond_AffectsStar, results);
+        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "9" }).begin()));
         results.clear();
     }
 
