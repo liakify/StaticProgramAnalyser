@@ -47,7 +47,6 @@ namespace IntegrationTesting {
         //query to test withEvaluator
         string query_selectWith = "assign a; Select a with a.stmt# = 4";
         
-        //Star relationships not tested because DE is not used in this test.
         string query_relCond_ModifiesP = "variable v; procedure p; Select p such that Modifies(p,v)";
         string query_relCond_ModifiesS = "variable v; assign a; Select a such that Modifies(a,v)";
         string query_relCond_UsesP = "variable v; procedure p; Select p such that Uses(p,v)";
@@ -57,6 +56,16 @@ namespace IntegrationTesting {
         string query_relCond_Follows = "stmt s1, s2; Select s1 such that Follows(s1, s2)";
         string query_relCond_Next = "prog_line n1, n2; Select n1 such that Next(n1, n2)";
         string query_relCond_Affects = "assign a1, a2; Select a1 such that Affects(a1, a2)";
+
+        // string query_relCond_ModifiesP = "variable v; procedure p; Select p such that Modifies(p,v)";
+        // string query_relCond_ModifiesS = "variable v; assign a; Select a such that Modifies(a,v)";
+        // string query_relCond_UsesP = "variable v; procedure p; Select p such that Uses(p,v)";
+        // string query_relCond_UsesS = "variable v; assign a; Select a such that Uses(a,v)";
+        // string query_relCond_Calls = "procedure p1, p2; Select p1 such that Calls(p1, p2)";
+        // string query_relCond_Parent = "stmt s1, s2; Select s1 such that Parent(s1, s2)";
+        string query_relCond_FollowsStar = "stmt s; Select s such that Follows*(1, s)";
+        // string query_relCond_Next = "prog_line n1, n2; Select n1 such that Next(n1, n2)";
+        // string query_relCond_Affects = "assign a1, a2; Select a1 such that Affects(a1, a2)";
 
         string query_patternCond_Assign = "assign a; Select a pattern a (_, _\"a\"_)";
         string query_patternCond_If = "if ifs; variable v; Select v pattern ifs (v, _, _)";
@@ -110,6 +119,12 @@ namespace IntegrationTesting {
         pkb.followsKB.addFollows(1, 2);
         pkb.followsKB.addFollows(2, 3);
         pkb.followsKB.addFollows(6, 7);
+        pkb.followsKB.setAllFollowers(1, std::unordered_set<StmtId>({ 2, 3 }));
+        pkb.followsKB.setAllFollowers(2, std::unordered_set<StmtId>({ 3 }));
+        pkb.followsKB.setAllFollowers(6, std::unordered_set<StmtId>({ 7 }));
+        pkb.followsKB.setAllFollowing(2, std::unordered_set<StmtId>({ 1 }));
+        pkb.followsKB.setAllFollowing(3, std::unordered_set<StmtId>({ 1, 2 }));
+        pkb.followsKB.setAllFollowing(7, std::unordered_set<StmtId>({ 6 }));
 
         pkb.parentKB.addParent(3, 4);
         pkb.parentKB.addParent(3, 5);
@@ -158,6 +173,9 @@ namespace IntegrationTesting {
         pkb.addNext(7, 8);
         pkb.addNext(7, 9);
         pkb.addNext(8, 7);
+
+        pkb.addAffects(6, 9);
+        pkb.addAffects(8, 9);
 
         pkb.callsKB.addCalls(1, 2);
 
@@ -282,7 +300,9 @@ namespace IntegrationTesting {
         pql.evaluateQuery(query_selectWith, results);
         Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "4" }).begin()));
         results.clear();
+    }
 
+    TEST_METHOD(evaluateQuery_relCond) {
         pql.evaluateQuery(query_relCond_ModifiesP, results);
         Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "p", "p2" }).begin()));
         results.clear();
@@ -319,6 +339,12 @@ namespace IntegrationTesting {
         Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "6", "8" }).begin()));
         results.clear();
 
+        pql.evaluateQuery(query_relCond_FollowsStar, results);
+        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "2", "3" }).begin()));
+        results.clear();
+    }
+
+    TEST_METHOD(evaluateQuery_patternCond) {
         pql.evaluateQuery(query_patternCond_Assign, results);
         Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "8" }).begin()));
         results.clear();
