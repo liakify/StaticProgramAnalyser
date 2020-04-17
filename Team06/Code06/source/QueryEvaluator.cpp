@@ -174,7 +174,7 @@ namespace PQL {
 
             if (clause->getClauseType() == ClauseType::RELATION) {
                 RelationClause* relation = static_cast<RelationClause*>(clause);
-                result = evaluateRelationClause(*relation, query.synonymTable);
+                result = evaluateRelationClause(*relation, query.synonymTable, clauseResults[optQuery.groups[i]]);
                 // Remove all present synonyms from target synonyms
                 std::pair<Argument, Argument> args = relation->getArgs();
                 Argument arg1 = args.first;
@@ -207,7 +207,7 @@ namespace PQL {
                 }
             } else if (clause->getClauseType() == ClauseType::PATTERN) {
                 PatternClause* pattern = static_cast<PatternClause*>(clause);
-                result = evaluatePatternClause(*pattern, query.synonymTable);
+                result = evaluatePatternClause(*pattern, query.synonymTable, clauseResults[optQuery.groups[i]]);
                 // Remove all present synonyms from target synonyms
                 std::pair<Argument, Argument> args = pattern->getArgs();
                 Argument arg0 = pattern->getSynonym();
@@ -252,7 +252,7 @@ namespace PQL {
                 }
             } else if (clause->getClauseType() == ClauseType::WITH) {
                 WithClause* with = static_cast<WithClause*>(clause);
-                result = evaluateWithClause(*with, query.synonymTable);
+                result = evaluateWithClause(*with, query.synonymTable, clauseResults[optQuery.groups[i]]);
                 // Remove all present synonyms from target synonyms
                 std::pair<Argument, Argument> args = with->getArgs();
                 Argument arg1 = args.first;
@@ -528,45 +528,45 @@ namespace PQL {
     }
 
     ClauseResult QueryEvaluator::evaluateRelationClause(RelationClause &relationClause,
-        std::unordered_map<std::string, DesignEntity> &synonymTable) {
+        std::unordered_map<std::string, DesignEntity> &synonymTable, ClauseResult& intResult) {
         switch (relationClause.getRelationType()) {
         case RelationType::FOLLOWS:
-            return FollowsEvaluator::evaluateFollowsClause(this->database, relationClause, synonymTable);
+            return FollowsEvaluator::evaluateFollowsClause(this->database, relationClause, synonymTable, intResult);
             break;
         case RelationType::FOLLOWST:
-            return FollowsStarEvaluator::evaluateFollowsStarClause(this->database, relationClause, synonymTable);
+            return FollowsStarEvaluator::evaluateFollowsStarClause(this->database, relationClause, synonymTable, intResult);
             break;
         case RelationType::PARENT:
-            return ParentEvaluator::evaluateParentClause(this->database, relationClause, synonymTable);
+            return ParentEvaluator::evaluateParentClause(this->database, relationClause, synonymTable, intResult);
             break;
         case RelationType::PARENTT:
-            return ParentStarEvaluator::evaluateParentStarClause(this->database, relationClause, synonymTable);
+            return ParentStarEvaluator::evaluateParentStarClause(this->database, relationClause, synonymTable, intResult);
             break;
         case RelationType::MODIFIESS:
         case RelationType::MODIFIESP:
-            return ModifiesEvaluator::evaluateModifiesClause(this->database, relationClause, synonymTable);
+            return ModifiesEvaluator::evaluateModifiesClause(this->database, relationClause, synonymTable, intResult);
             break;
         case RelationType::USESS:
         case RelationType::USESP:
-            return UsesEvaluator::evaluateUsesClause(this->database, relationClause, synonymTable);
+            return UsesEvaluator::evaluateUsesClause(this->database, relationClause, synonymTable, intResult);
             break;
         case RelationType::CALLS:
-            return CallsEvaluator::evaluateCallsClause(this->database, relationClause, synonymTable);
+            return CallsEvaluator::evaluateCallsClause(this->database, relationClause, synonymTable, intResult);
             break;
         case RelationType::CALLST:
-            return CallsStarEvaluator::evaluateCallsStarClause(this->database, relationClause, synonymTable);
+            return CallsStarEvaluator::evaluateCallsStarClause(this->database, relationClause, synonymTable, intResult);
             break;
         case RelationType::NEXT:
-            return NextEvaluator::evaluateNextClause(this->database, relationClause, synonymTable);
+            return NextEvaluator::evaluateNextClause(this->database, relationClause, synonymTable, intResult);
             break;
         case RelationType::NEXTT:
-            return NextStarEvaluator::evaluateNextStarClause(this->database, relationClause, synonymTable);
+            return NextStarEvaluator::evaluateNextStarClause(this->database, relationClause, synonymTable, intResult);
             break;
         case RelationType::AFFECTS:
-            return AffectsEvaluator::evaluateAffectsClause(this->database, relationClause, synonymTable);
+            return AffectsEvaluator::evaluateAffectsClause(this->database, relationClause, synonymTable, intResult);
             break;
         case RelationType::AFFECTST:
-            return AffectsStarEvaluator::evaluateAffectsStarClause(this->database, relationClause, synonymTable);
+            return AffectsStarEvaluator::evaluateAffectsStarClause(this->database, relationClause, synonymTable, intResult);
             break;
         default:
             SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluateRelationClause: Unknown relation type %d\n", relationClause.getRelationType());
@@ -575,17 +575,17 @@ namespace PQL {
     }
 
     ClauseResult QueryEvaluator::evaluatePatternClause(PatternClause &patternClause,
-        std::unordered_map<std::string, DesignEntity> &synonymTable) {
+        std::unordered_map<std::string, DesignEntity> &synonymTable, ClauseResult& intResult) {
 
         switch (patternClause.getPatternType()) {
         case PatternType::ASSIGN_PATTERN:
-            return AssignPatternEvaluator::evaluateAssignPatternClause(this->database, patternClause, synonymTable);
+            return AssignPatternEvaluator::evaluateAssignPatternClause(this->database, patternClause, synonymTable, intResult);
             break;
         case PatternType::IF_PATTERN:
-            return IfPatternEvaluator::evaluateIfPatternClause(this->database, patternClause, synonymTable);
+            return IfPatternEvaluator::evaluateIfPatternClause(this->database, patternClause, synonymTable, intResult);
             break;
         case PatternType::WHILE_PATTERN:
-            return WhilePatternEvaluator::evaluateWhilePatternClause(this->database, patternClause, synonymTable);
+            return WhilePatternEvaluator::evaluateWhilePatternClause(this->database, patternClause, synonymTable, intResult);
             break;
         default:
             SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluatePatternClause: Unknown pattern type %d\n", patternClause.getPatternType());
@@ -595,9 +595,9 @@ namespace PQL {
     }
 
     ClauseResult QueryEvaluator::evaluateWithClause(WithClause& withClause,
-        std::unordered_map<std::string, DesignEntity>& synonymTable) {
+        std::unordered_map<std::string, DesignEntity>& synonymTable, ClauseResult& intResult) {
 
-        return WithEvaluator::evaluateWithClause(this->database, withClause, synonymTable);
+        return WithEvaluator::evaluateWithClause(this->database, withClause, synonymTable, intResult);
 
     }
 

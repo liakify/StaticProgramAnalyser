@@ -15,32 +15,29 @@ namespace PQL {
         *
         * @param    database    The PKB to evaluate the clause on.
         * @param    clause      The clause to evaluate.
-        * @return   The result of the evaluation.
+        * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
-        ClauseResult evaluateFollowsClauseIntInt(PKB::PKB& database, RelationClause clause) {
+        void evaluateFollowsClauseIntInt(PKB::PKB& database, RelationClause clause, ClauseResult& intResult) {
             std::pair<Argument, Argument> args = clause.getArgs();
             StmtId arg1 = std::stoi(args.first.value);
             StmtId arg2 = std::stoi(args.second.value);
 
-            ClauseResult clauseResult;
-            if (database.followsKB.follows(arg1, arg2)) {
-                clauseResult.trueResult = true;
+            if (!database.followsKB.follows(arg1, arg2)) {
+                intResult.rows.clear();
             }
-            return clauseResult;
+
         }
 
         /**
         * Evaluates a single Follows clause on the given PKB where the inputs are two wildcards.
         *
         * @param    database    The PKB to evaluate the clause on.
-        * @return   The result of the evaluation.
+        * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
-        ClauseResult evaluateFollowsClauseWildWild(PKB::PKB& database) {
-            ClauseResult clauseResult;
-            if (database.followsKB.hasFollowsRelation()) {
-                clauseResult.trueResult = true;
+        void evaluateFollowsClauseWildWild(PKB::PKB& database, ClauseResult& intResult) {
+            if (!database.followsKB.hasFollowsRelation()) {
+                intResult.rows.clear();
             }
-            return clauseResult;
         }
 
         /**
@@ -48,9 +45,10 @@ namespace PQL {
         *
         * @param    database    The PKB to evaluate the clause on.
         * @param    clause      The clause to evaluate.
+        * @param    intResult   The intermediate result table for the group that the clause belongs to.
         * @return   The result of the evaluation.
         */
-        ClauseResult evaluateFollowsClauseIntWild(PKB::PKB& database, RelationClause clause) {
+        void evaluateFollowsClauseIntWild(PKB::PKB& database, RelationClause clause, ClauseResult& intResult) {
             std::pair<Argument, Argument> args = clause.getArgs();
             ArgType argType1 = args.first.type;
             ArgType argType2 = args.second.type;
@@ -58,19 +56,15 @@ namespace PQL {
             if (argType1 == ArgType::INTEGER && argType2 == ArgType::WILDCARD) {
                 // Case 1: Integer, Wildcard
                 StmtId arg1 = std::stoi(args.first.value);
-                ClauseResult clauseResult;
-                if (database.followsKB.getFollower(arg1) != 0) {
-                    clauseResult.trueResult = true;
+                if (database.followsKB.getFollower(arg1) == 0) {
+                    intResult.rows.clear();
                 }
-                return clauseResult;
             } else {
                 // Case 2: Wildcard, Integer
                 StmtId arg2 = std::stoi(args.second.value);
-                ClauseResult clauseResult;
-                if (database.followsKB.getFollowing(arg2) != 0) {
-                    clauseResult.trueResult = true;
+                if (database.followsKB.getFollowing(arg2) == 0) {
+                    intResult.rows.clear();
                 }
-                return clauseResult;
             }
         }
 
@@ -233,7 +227,7 @@ namespace PQL {
         }
 
         ClauseResult evaluateFollowsClause(PKB::PKB& database, RelationClause clause,
-            unordered_map<std::string, DesignEntity>& synonymTable) {
+            unordered_map<std::string, DesignEntity>& synonymTable, ClauseResult& intResult) {
 
             std::pair<Argument, Argument> args = clause.getArgs();
             ArgType argType1 = args.first.type;
@@ -241,14 +235,14 @@ namespace PQL {
 
             if (argType1 == ArgType::INTEGER && argType2 == ArgType::INTEGER) {
                 // Two statement numbers supplied
-                return evaluateFollowsClauseIntInt(database, clause);
+                return evaluateFollowsClauseIntInt(database, clause, intResult);
             } else if (argType1 == ArgType::WILDCARD && argType2 == ArgType::WILDCARD) {
                 // Two wildcards supplied
-                return evaluateFollowsClauseWildWild(database);
+                return evaluateFollowsClauseWildWild(database, intResult);
             } else if (argType1 == ArgType::INTEGER && argType2 == ArgType::WILDCARD ||
                 argType1 == ArgType::WILDCARD && argType2 == ArgType::INTEGER) {
                 // One statement number, one wildcard supplied
-                return evaluateFollowsClauseIntWild(database, clause);
+                return evaluateFollowsClauseIntWild(database, clause, intResult);
             } else if (argType1 == ArgType::INTEGER && argType2 == ArgType::SYNONYM ||
                 argType1 == ArgType::SYNONYM && argType2 == ArgType::INTEGER) {
                 // One statement number, one synonym
