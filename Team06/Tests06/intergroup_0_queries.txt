@@ -1,0 +1,25 @@
+1 - 2 groups with tuple, both selected
+stmt s; assign a; if ifs, ifs2; variable v; while w;
+Select <s, v> such that Affects*(s, a) and Parent (ifs, s) with a.stmt# = 6 such that Uses(ifs2, v) pattern w (v, _)
+4 c5, 4 c2
+5000
+2 - 2 groups with tuple, 1 fails, output tuple => empty
+stmt s; assign a; if ifs, ifs2; variable v; while w; read r;
+Select <s, v> such that Affects*(s, a) and Parent (ifs, s) with a.stmt# = 6 such that Uses(ifs2, v) such that Parent(ifs2, r) pattern w (v, _)
+
+5000
+3 - 2 groups, 1 fails, output successful group synoynym => empty
+stmt s; assign a; if ifs, ifs2; variable v; while w; read r;
+Select s such that Affects*(s, a) and Parent (ifs, s) with a.stmt# = 6 such that Uses(ifs2, v) such that Parent(ifs2, r) pattern w (v, _)
+
+5000
+4 - 3 groups with tuple
+variable v, v2; stmt s1, s2, s3; assign a; constant cn; procedure p, q;
+Select <s2, a, q> such that Parent(s1, s2) and Next(s1, s2) and Modifies (s2, "uses") with a.stmt# = cn.value such that Calls (p, q) and Uses (p, v2)
+8 1 Proc2, 8 1 Proc3
+5000
+4 - 3 groups with tuple, 1 fails => empty
+variable v, v2; stmt s1, s2, s3; assign a; constant cn; procedure p, q;
+Select <s2, a, q> such that Parent(s1, s2) and Next(s1, s2) and Modifies (s2, "uses") with a.stmt# = cn.value and cn.value = 3 such that Calls (p, q) and Uses (p, v2)
+
+5000

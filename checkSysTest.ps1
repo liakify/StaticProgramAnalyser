@@ -16,8 +16,8 @@ $regression_test_path = '.\Team06\Tests06\regression_tests\'
 
 $list_of_test_files = @(
   
-  # '..\performance600_single'
-  # '..\performance600_chainedNext'
+  # '..\intergroup_0'
+  # '..\intragroup_0'
 
   # TEST BELOW CURRENTLY FAIL / TIMEOUT
   # '..\performance600_runtimeCache'
