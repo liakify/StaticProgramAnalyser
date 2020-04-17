@@ -46,6 +46,10 @@ namespace IntegrationTesting {
 
         //query to test withEvaluator
         string query_selectWith = "assign a; Select a with a.stmt# = 4";
+
+        string query_patternCond_Assign = "assign a; Select a pattern a (_, _\"a\"_)";
+        string query_patternCond_If = "if ifs; variable v; Select v pattern ifs (v, _, _)";
+        string query_patternCond_While = "while w; variable v; Select v pattern w (v, _)";
         
         string query_relCond_ModifiesP = "variable v; procedure p; Select p such that Modifies(p,v)";
         string query_relCond_ModifiesS = "variable v; assign a; Select a such that Modifies(a,v)";
@@ -63,9 +67,14 @@ namespace IntegrationTesting {
         string query_relCond_NextStar = "prog_line n; Select n such that Next*(7, n)";
         string query_relCond_AffectsStar = "assign a; Select a such that Affects*(6, a)";
 
-        string query_patternCond_Assign = "assign a; Select a pattern a (_, _\"a\"_)";
-        string query_patternCond_If = "if ifs; variable v; Select v pattern ifs (v, _, _)";
-        string query_patternCond_While = "while w; variable v; Select v pattern w (v, _)";
+        //queries with different variations - INTSYN and SYNSYN is already covered
+        string query_relCond_INTINT = "Select BOOLEAN such that Affects(6, 9)";
+        string query_relCond_INTWILD = "Select BOOLEAN such that Next(1, _)";
+        string query_relCond_SYNINT = "stmt s; Select s such that Parent(s, 4)";
+        string query_relCond_SYNWILD = "assign a; Select a such that Uses(a, _)";
+        string query_relCond_WILDSYN = "prog_line n; Select n such that Next*(_, n)";
+        string query_relCond_WILDINT = "Select BOOLEAN such that Follows(_, 3)";
+        string query_relCond_WILDWILD = "Select BOOLEAN such that Calls(_, _)";
 
     TEST_CLASS_INITIALIZE(setup) {
         PKB::PKB pkb = PKB::PKB();
@@ -339,6 +348,18 @@ namespace IntegrationTesting {
         pql.evaluateQuery(query_selectWith, results);
         Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "4" }).begin()));
         results.clear();
+
+        pql.evaluateQuery(query_patternCond_Assign, results);
+        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "8" }).begin()));
+        results.clear();
+
+        pql.evaluateQuery(query_patternCond_If, results);
+        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "x", "y" }).begin()));
+        results.clear();
+
+        pql.evaluateQuery(query_patternCond_While, results);
+        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "z" }).begin()));
+        results.clear();
     }
 
     TEST_METHOD(evaluateQuery_relCond) {
@@ -397,19 +418,33 @@ namespace IntegrationTesting {
         pql.evaluateQuery(query_relCond_AffectsStar, results);
         Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "9" }).begin()));
         results.clear();
-    }
 
-    TEST_METHOD(evaluateQuery_patternCond) {
-        pql.evaluateQuery(query_patternCond_Assign, results);
-        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "8" }).begin()));
+        pql.evaluateQuery(query_relCond_INTINT, results);
+        Assert::IsTrue(results == std::list<string>({ "TRUE" }));
         results.clear();
 
-        pql.evaluateQuery(query_patternCond_If, results);
-        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "x", "y" }).begin()));
+        pql.evaluateQuery(query_relCond_INTWILD, results);
+        Assert::IsTrue(results == std::list<string>({ "TRUE" }));
         results.clear();
 
-        pql.evaluateQuery(query_patternCond_While, results);
-        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "z" }).begin()));
+        pql.evaluateQuery(query_relCond_SYNINT, results);
+        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "3" }).begin()));
+        results.clear();
+
+        pql.evaluateQuery(query_relCond_SYNWILD, results);
+        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "4", "8", "9" }).begin()));
+        results.clear();
+
+        pql.evaluateQuery(query_relCond_WILDSYN, results);
+        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "2", "3", "4", "5", "7", "8", "9" }).begin()));
+        results.clear();
+
+        pql.evaluateQuery(query_relCond_WILDINT, results);
+        Assert::IsTrue(results == std::list<string>({ "TRUE" }));
+        results.clear();
+
+        pql.evaluateQuery(query_relCond_WILDWILD, results);
+        Assert::IsTrue(results == std::list<string>({ "TRUE" }));
         results.clear();
     }
 
