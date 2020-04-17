@@ -26,7 +26,7 @@ namespace PQL {
             if (database.parentKB.parentStar(arg1, arg2)) {
                 clauseResult.trueResult = true;
             }
-            return clauseResult;
+
         }
 
         /**
@@ -40,7 +40,7 @@ namespace PQL {
             if (database.parentKB.hasParentRelation()) {
                 clauseResult.trueResult = true;
             }
-            return clauseResult;
+
         }
 
         /**
@@ -62,7 +62,7 @@ namespace PQL {
                 if (database.parentKB.getDirectChildren(arg1).size() > 0) {
                     clauseResult.trueResult = true;
                 }
-                return clauseResult;
+    
             } else {
                 // Case 2: Wildcard, Integer
                 StmtId arg2 = std::stoi(args.second.value);
@@ -70,7 +70,7 @@ namespace PQL {
                 if (database.parentKB.getParent(arg2) != 0) {
                     clauseResult.trueResult = true;
                 }
-                return clauseResult;
+    
             }
         }
 
@@ -105,7 +105,7 @@ namespace PQL {
                     }
                 }
 
-                return clauseResult;
+    
             } else {
                 // Case 2: Synonym, Integer
                 Synonym arg1 = args.first.value;
@@ -122,7 +122,7 @@ namespace PQL {
                     }
                 }
 
-                return clauseResult;
+    
             }
         }
 
@@ -156,7 +156,7 @@ namespace PQL {
                         }
                     }
                 }
-                return clauseResult;
+    
             } else {
                 Synonym arg1 = args.first.value;
                 // Case 2: Synonym, Wildcard
@@ -171,7 +171,7 @@ namespace PQL {
                         }
                     }
                 }
-                return clauseResult;
+    
             }
         }
 
@@ -228,7 +228,7 @@ namespace PQL {
                     }
                 }
             }
-            return clauseResult;
+
         }
 
         void evaluateParentStarClause(PKB::PKB& database, RelationClause clause,

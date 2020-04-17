@@ -27,7 +27,7 @@ namespace PQL {
                 clauseResult.trueResult = true;
             }
 
-            return clauseResult;
+
         }
 
         /**
@@ -42,10 +42,10 @@ namespace PQL {
             for (StmtId i : database.stmtTable.getStmtsByType(StmtType::ASSIGN)) {
                 if (database.affectsGetDirectNodes(i, NodeType::SUCCESSOR).size() > 0) {
                     clauseResult.trueResult = true;
-                    return clauseResult;
+        
                 }
             }
-            return clauseResult;
+
         }
 
         /**
@@ -68,7 +68,7 @@ namespace PQL {
                 if (database.affectsGetDirectNodes(arg1, NodeType::SUCCESSOR).size() > 0) {
                     clauseResult.trueResult = true;
                 }
-                return clauseResult;
+    
             } else {
                 // Case 2: Wildcard, Integer
                 StmtId arg2 = std::stoi(args.second.value);
@@ -77,7 +77,7 @@ namespace PQL {
                 }
             }
 
-            return clauseResult;
+
         }
 
         /**
@@ -110,7 +110,7 @@ namespace PQL {
                     clauseResult.rows.emplace_back(resultEntry);
                 }
 
-                return clauseResult;
+    
             } else {
                 // Case 2: Synonym, Integer
                 Synonym arg1 = args.first.value;
@@ -126,7 +126,7 @@ namespace PQL {
                     clauseResult.rows.emplace_back(resultEntry);
                 }
 
-                return clauseResult;
+    
             }
         }
 
@@ -162,7 +162,7 @@ namespace PQL {
                     database.affectsSetProcessedDirect(i, NodeType::SUCCESSOR);
                 }
                 database.setAffectsFullyComputed();
-                return clauseResult;
+    
             } else {
                 // Case 2: Synonym, Wildcard
                 Synonym arg1 = args.first.value;
@@ -179,7 +179,7 @@ namespace PQL {
                     database.affectsSetProcessedDirect(i, NodeType::PREDECESSOR);
                 }
                 database.setAffectsFullyComputed();
-                return clauseResult;
+    
             }
         }
 
@@ -238,7 +238,7 @@ namespace PQL {
                 database.affectsSetProcessedDirect(i, NodeType::PREDECESSOR);
             }
             database.setAffectsFullyComputed();
-            return clauseResult;
+
         }
 
         void evaluateAffectsClause(PKB::PKB& database, RelationClause clause,

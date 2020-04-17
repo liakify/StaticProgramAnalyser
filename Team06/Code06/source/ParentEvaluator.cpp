@@ -26,7 +26,7 @@ namespace PQL {
             if (database.parentKB.parent(arg1, arg2)) {
                 clauseResult.trueResult = true;
             }
-            return clauseResult;
+
         }
 
         /**
@@ -40,7 +40,7 @@ namespace PQL {
             if (database.parentKB.hasParentRelation()) {
                 clauseResult.trueResult = true;
             }
-            return clauseResult;
+
         }
 
         /**
@@ -62,7 +62,7 @@ namespace PQL {
                 if (database.parentKB.getDirectChildren(arg1).size() > 0) {
                     clauseResult.trueResult = true;
                 }
-                return clauseResult;
+    
             } else {
                 // Case 2: Wildcard, Integer
                 StmtId arg2 = std::stoi(args.second.value);
@@ -70,7 +70,7 @@ namespace PQL {
                 if (database.parentKB.getParent(arg2) != 0) {
                     clauseResult.trueResult = true;
                 }
-                return clauseResult;
+    
             }
         }
 
@@ -104,7 +104,7 @@ namespace PQL {
                         clauseResult.rows.emplace_back(resultEntry);
                     }
                 }
-                return clauseResult;
+    
             } else {
                 // Case 2: Synonym, Integer
                 Synonym arg1 = args.first.value;
@@ -113,7 +113,7 @@ namespace PQL {
                 StmtId parent = database.parentKB.getParent(arg2);
                 ClauseResult clauseResult;
                 if (parent == 0) {
-                    return clauseResult;
+        
                 } else {
                     clauseResult.syns.emplace_back(arg1);
                     if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(parent)->getType(), synonymTable[arg1])) {
@@ -121,7 +121,7 @@ namespace PQL {
                         resultEntry.emplace_back(std::to_string(parent));
                         clauseResult.rows.emplace_back(resultEntry);
                     }
-                    return clauseResult;
+        
                 }
             }
         }
@@ -155,7 +155,7 @@ namespace PQL {
                         clauseResult.rows.emplace_back(resultEntry);
                     }
                 }
-                return clauseResult;
+    
             } else {
                 Synonym arg1 = args.first.value;
                 // Case 2: Synonym, Wildcard
@@ -169,7 +169,7 @@ namespace PQL {
                         clauseResult.rows.emplace_back(resultEntry);
                     }
                 }
-                return clauseResult;
+    
             }
         }
 
@@ -226,7 +226,7 @@ namespace PQL {
                     }
                 }
             }
-            return clauseResult;
+
         }
 
         void evaluateParentClause(PKB::PKB& database, RelationClause clause,

@@ -26,7 +26,7 @@ namespace PQL {
             if (database.nextStar(arg1, arg2)) {
                 clauseResult.trueResult = true;
             }
-            return clauseResult;
+
         }
 
         /**
@@ -40,7 +40,7 @@ namespace PQL {
             if (database.hasNextRelation()) {
                 clauseResult.trueResult = true;
             }
-            return clauseResult;
+
         }
 
         /**
@@ -62,7 +62,7 @@ namespace PQL {
                 if (database.hasNext(arg1)) {
                     clauseResult.trueResult = true;
                 }
-                return clauseResult;
+    
             } else {
                 // Case 2: Wildcard, Integer
                 StmtId arg2 = std::stoi(args.second.value);
@@ -70,7 +70,7 @@ namespace PQL {
                 if (database.hasPrev(arg2)) {
                     clauseResult.trueResult = true;
                 }
-                return clauseResult;
+    
             }
         }
 
@@ -104,7 +104,7 @@ namespace PQL {
                         clauseResult.rows.emplace_back(resultEntry);
                     }
                 }
-                return clauseResult;
+    
             } else {
                 // Case 2: Synonym, Integer
                 Synonym arg1 = args.first.value;
@@ -120,7 +120,7 @@ namespace PQL {
                         clauseResult.rows.emplace_back(resultEntry);
                     }
                 }
-                return clauseResult;
+    
             }
         }
 
@@ -154,7 +154,7 @@ namespace PQL {
                         }
                     }
                 }
-                return clauseResult;
+    
             } else {
                 // Case 2: Synonym, Wildcard
                 Synonym arg1 = args.first.value;
@@ -170,7 +170,7 @@ namespace PQL {
                         }
                     }
                 }
-                return clauseResult;
+    
             }
         }
 
@@ -231,7 +231,7 @@ namespace PQL {
                 }
             }
 
-            return clauseResult;
+
         }
 
         void evaluateNextStarClause(PKB::PKB& database, RelationClause clause,

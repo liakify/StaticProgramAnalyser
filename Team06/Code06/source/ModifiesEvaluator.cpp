@@ -30,7 +30,7 @@ namespace PQL {
                 if (database.modifiesKB.stmtModifies(arg1, arg2)) {
                     clauseResult.trueResult = true;
                 }
-                return clauseResult;
+    
             } else {
                 // Case 2: Procedure name provided
                 ProcId arg1 = database.procTable.getProcId(args.first.value);
@@ -40,7 +40,7 @@ namespace PQL {
                 if (database.modifiesKB.procModifies(arg1, arg2)) {
                     clauseResult.trueResult = true;
                 }
-                return clauseResult;
+    
             }
 
         }
@@ -63,7 +63,7 @@ namespace PQL {
                 if (database.modifiesKB.getAllVarsModifiedByStmt(arg1).size() > 0) {
                     clauseResult.trueResult = true;
                 }
-                return clauseResult;
+    
             } else {
                 // Case 2: Procedure name provided
                 ProcId arg1 = database.procTable.getProcId(args.first.value);
@@ -71,7 +71,7 @@ namespace PQL {
                 if (database.modifiesKB.getAllVarsModifiedByProc(arg1).size() > 0) {
                     clauseResult.trueResult = true;
                 }
-                return clauseResult;
+    
             }
         }
 
@@ -102,7 +102,7 @@ namespace PQL {
                     resultEntry.emplace_back(database.varTable.get(var));
                     clauseResult.rows.emplace_back(resultEntry);
                 }
-                return clauseResult;
+    
             } else {
                 // Case 2: Procedure name
                 ProcId arg1 = database.procTable.getProcId(args.first.value);
@@ -117,7 +117,7 @@ namespace PQL {
                     clauseResult.rows.emplace_back(resultEntry);
                 }
 
-                return clauseResult;
+    
             }
         }
 
@@ -146,7 +146,7 @@ namespace PQL {
                     resultEntry.emplace_back(database.procTable.get(proc).getName());
                     clauseResult.rows.emplace_back(resultEntry);
                 }
-                return clauseResult;
+    
             } else {
                 // Case 2: Synonym is a statement
                 ClauseResult clauseResult;
@@ -159,7 +159,7 @@ namespace PQL {
                         clauseResult.rows.emplace_back(resultEntry);
                     }
                 }
-                return clauseResult;
+    
             }
         }
 
@@ -187,7 +187,7 @@ namespace PQL {
                         clauseResult.rows.emplace_back(resultEntry);
                     }
                 }
-                return clauseResult;
+    
             } else {
                 // Case 2: Synonym is a statement
                 ClauseResult clauseResult;
@@ -201,7 +201,7 @@ namespace PQL {
                         }
                     }
                 }
-                return clauseResult;
+    
             }
         }
 
@@ -243,7 +243,7 @@ namespace PQL {
                         clauseResult.rows.emplace_back(resultEntry);
                     }
                 }
-                return clauseResult;
+    
             } else {
                 for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
                     if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i)->getType(), synonymTable[arg1])) {
@@ -261,7 +261,7 @@ namespace PQL {
                         }
                     }
                 }
-                return clauseResult;
+    
             }
         }
 

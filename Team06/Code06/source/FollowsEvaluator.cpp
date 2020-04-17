@@ -90,7 +90,7 @@ namespace PQL {
                 ClauseResult clauseResult;
                 StmtId follower = database.followsKB.getFollower(arg1);
                 if (follower == 0) {
-                    return clauseResult;
+        
                 } else {
                     clauseResult.syns.emplace_back(arg2);
                     if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(follower)->getType(), synonymTable[arg2])) {
@@ -98,7 +98,7 @@ namespace PQL {
                         resultEntry.emplace_back(std::to_string(follower));
                         clauseResult.rows.emplace_back(resultEntry);
                     }
-                    return clauseResult;
+        
                 }
             } else {
                 // Case 2: Synonym, Integer
@@ -108,7 +108,7 @@ namespace PQL {
                 ClauseResult clauseResult;
                 StmtId following = database.followsKB.getFollowing(arg2);
                 if (following == 0) {
-                    return clauseResult;
+        
                 } else {
                     clauseResult.syns.emplace_back(arg1);
                     if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(following)->getType(), synonymTable[arg1])) {
@@ -116,7 +116,7 @@ namespace PQL {
                         resultEntry.emplace_back(std::to_string(following));
                         clauseResult.rows.emplace_back(resultEntry);
                     }
-                    return clauseResult;
+        
                 }
             }
         }
@@ -150,7 +150,7 @@ namespace PQL {
                         clauseResult.rows.emplace_back(resultEntry);
                     }
                 }
-                return clauseResult;
+    
             } else {
                 Synonym arg1 = args.first.value;
 
@@ -165,7 +165,7 @@ namespace PQL {
                         clauseResult.rows.emplace_back(resultEntry);
                     }
                 }
-                return clauseResult;
+    
             }
         }
 
@@ -222,7 +222,7 @@ namespace PQL {
                     }
                 }
             }
-            return clauseResult;
+
         }
 
         void evaluateFollowsClause(PKB::PKB& database, RelationClause clause,

@@ -27,7 +27,7 @@ namespace PQL {
                 clauseResult.trueResult = true;
             }
 
-            return clauseResult;
+
         }
 
         /**
@@ -42,10 +42,10 @@ namespace PQL {
             for (StmtId i : database.stmtTable.getStmtsByType(StmtType::ASSIGN)) {
                 if (database.affectsGetDirectNodes(i, NodeType::SUCCESSOR).size() > 0) {
                     clauseResult.trueResult = true;
-                    return clauseResult;
+        
                 }
             }
-            return clauseResult;
+
         }
 
         /**
@@ -70,7 +70,7 @@ namespace PQL {
                 } else {
                     clauseResult.trueResult = false;
                 }
-                return clauseResult;
+    
             } else {
                 // Case 2: Wildcard, Integer
                 StmtId arg2 = std::stoi(args.second.value);
@@ -81,7 +81,7 @@ namespace PQL {
                 }
             }
 
-            return clauseResult;
+
         }
 
         /**
@@ -113,7 +113,7 @@ namespace PQL {
                     resultEntry.emplace_back(std::to_string(stmt));
                     clauseResult.rows.emplace_back(resultEntry);
                 }
-                return clauseResult;
+    
             } else {
                 // Case 2: Synonym, Integer
                 Synonym arg1 = args.first.value;
@@ -128,7 +128,7 @@ namespace PQL {
                     resultEntry.emplace_back(std::to_string(stmt));
                     clauseResult.rows.emplace_back(resultEntry);
                 }
-                return clauseResult;
+    
             }
         }
 
@@ -162,7 +162,7 @@ namespace PQL {
                     }
                     database.affectsStarSetProcessedAll(i, NodeType::SUCCESSOR);
                 }
-                return clauseResult;
+    
             } else {
                 // Case 2: Synonym, Wildcard
                 Synonym arg1 = args.first.value;
@@ -178,7 +178,7 @@ namespace PQL {
                     }
                     database.affectsStarSetProcessedAll(i, NodeType::PREDECESSOR);
                 }
-                return clauseResult;
+    
             }
         }
 
@@ -236,7 +236,7 @@ namespace PQL {
                 }
                 database.affectsStarSetProcessedAll(i, NodeType::PREDECESSOR);
             }
-            return clauseResult;
+
         }
 
         ClauseResult evaluateAffectsStarClause(PKB::PKB& database, RelationClause clause,

@@ -26,7 +26,7 @@ namespace PQL {
                 resultEntry.emplace_back(std::to_string(stmt));
                 clauseResult.rows.emplace_back(resultEntry);
             }
-            return clauseResult;
+
         }
 
         /**
@@ -52,7 +52,7 @@ namespace PQL {
                 resultEntry.emplace_back(std::to_string(stmt));
                 clauseResult.rows.emplace_back(resultEntry);
             }
-            return clauseResult;
+
         }
 
         /**
@@ -95,7 +95,7 @@ namespace PQL {
                 }
             }
 
-            return clauseResult;
+
         }
 
         void evaluateWhilePatternClause(PKB::PKB& database, PatternClause clause,

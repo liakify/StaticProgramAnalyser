@@ -26,7 +26,7 @@ namespace PQL {
             if (database.callsKB.calls(arg1, arg2)) {
                 clauseResult.trueResult = true;
             }
-            return clauseResult;
+
         }
 
         /**
@@ -41,7 +41,7 @@ namespace PQL {
             if (database.callsKB.hasCallsRelation()) {
                 clauseResult.trueResult = true;
             }
-            return clauseResult;
+
         }
 
         /**
@@ -63,7 +63,7 @@ namespace PQL {
                 if (database.callsKB.hasCallee(arg1)) {
                     clauseResult.trueResult = true;
                 }
-                return clauseResult;
+    
             } else {
                 // Case 2: Wildcard, Identifier
                 ProcId arg2 = database.procTable.getProcId(args.second.value);
@@ -71,7 +71,7 @@ namespace PQL {
                 if (database.callsKB.hasCaller(arg2)) {
                     clauseResult.trueResult = true;
                 }
-                return clauseResult;
+    
             }
         }
 
@@ -103,7 +103,7 @@ namespace PQL {
                     resultEntry.emplace_back(database.procTable.get(callee).getName());
                     clauseResult.rows.emplace_back(resultEntry);
                 }
-                return clauseResult;
+    
             } else {
                 // Case 2: Synonym, Integer
                 Synonym arg1 = args.first.value;
@@ -117,7 +117,7 @@ namespace PQL {
                     resultEntry.emplace_back(database.procTable.get(caller).getName());
                     clauseResult.rows.emplace_back(resultEntry);
                 }
-                return clauseResult;
+    
             }
         }
 
@@ -148,7 +148,7 @@ namespace PQL {
                     resultEntry.emplace_back(database.procTable.get(callee).getName());
                     clauseResult.rows.emplace_back(resultEntry);
                 }
-                return clauseResult;
+    
             } else {
                 Synonym arg1 = args.first.value;
 
@@ -161,7 +161,7 @@ namespace PQL {
                     resultEntry.emplace_back(database.procTable.get(caller).getName());
                     clauseResult.rows.emplace_back(resultEntry);
                 }
-                return clauseResult;
+    
             }
         }
 
@@ -183,7 +183,7 @@ namespace PQL {
             ClauseResult clauseResult;
             if (arg1 == arg2) {
                 // In SIMPLE, a procedure should not be able to call itself.
-                return clauseResult;
+    
             }
 
             if (arg1 < arg2) {
@@ -208,7 +208,7 @@ namespace PQL {
                     clauseResult.rows.emplace_back(resultEntry);
                 }
             }
-            return clauseResult;
+
         }
 
         void evaluateCallsClause(PKB::PKB& database, RelationClause clause,

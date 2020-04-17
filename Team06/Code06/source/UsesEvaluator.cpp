@@ -30,7 +30,7 @@ namespace PQL {
                 if (database.usesKB.stmtUses(arg1, arg2)) {
                     clauseResult.trueResult = true;
                 }
-                return clauseResult;
+    
             } else {
                 // Case 2: Procedure name provided
                 ProcId arg1 = database.procTable.getProcId(args.first.value);
@@ -40,7 +40,7 @@ namespace PQL {
                 if (database.usesKB.procUses(arg1, arg2)) {
                     clauseResult.trueResult = true;
                 }
-                return clauseResult;
+    
             }
         }
 
@@ -62,7 +62,7 @@ namespace PQL {
                 if (database.usesKB.getAllVarsUsedByStmt(arg1).size() > 0) {
                     clauseResult.trueResult = true;
                 }
-                return clauseResult;
+    
             } else {
                 // Case 2: Procedure name provided
                 ProcId arg1 = database.procTable.getProcId(args.first.value);
@@ -70,7 +70,7 @@ namespace PQL {
                 if (database.usesKB.getAllVarsUsedByProc(arg1).size() > 0) {
                     clauseResult.trueResult = true;
                 }
-                return clauseResult;
+    
             }
         }
 
@@ -102,7 +102,7 @@ namespace PQL {
                     clauseResult.rows.emplace_back(resultEntry);
                 }
 
-                return clauseResult;
+    
             } else {
                 // Case 2: Procedure name provided
                 ProcId arg1 = database.procTable.getProcId(args.first.value);
@@ -117,7 +117,7 @@ namespace PQL {
                     clauseResult.rows.emplace_back(resultEntry);
                 }
 
-                return clauseResult;
+    
             }
         }
 
@@ -146,7 +146,7 @@ namespace PQL {
                     resultEntry.emplace_back(database.procTable.get(proc).getName());
                     clauseResult.rows.emplace_back(resultEntry);
                 }
-                return clauseResult;
+    
             } else {
                 // Case 2: Synonym is a statement
                 std::unordered_set<StmtId> usingStmts = database.usesKB.getAllStmtsUsingVar(arg2);
@@ -159,7 +159,7 @@ namespace PQL {
                         clauseResult.rows.emplace_back(resultEntry);
                     }
                 }
-                return clauseResult;
+    
             }
         }
 
@@ -187,7 +187,7 @@ namespace PQL {
                         clauseResult.rows.emplace_back(resultEntry);
                     }
                 }
-                return clauseResult;
+    
             } else {
                 // Case 2: Synonym is a statement
                 ClauseResult clauseResult;
@@ -201,7 +201,7 @@ namespace PQL {
                         }
                     }
                 }
-                return clauseResult;
+    
             }
         }
 
@@ -243,7 +243,7 @@ namespace PQL {
                         clauseResult.rows.emplace_back(resultEntry);
                     }
                 }
-                return clauseResult;
+    
             } else {
                 for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
                     if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i)->getType(), synonymTable[arg1])) {
@@ -261,7 +261,7 @@ namespace PQL {
                         }
                     }
                 }
-                return clauseResult;
+    
             }
         }
 

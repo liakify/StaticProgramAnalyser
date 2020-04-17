@@ -86,7 +86,7 @@ namespace PQL {
                             clauseResult.rows.emplace_back(resultEntry);
                         }
                     }
-                    return clauseResult;
+        
 
                 } else if (synonymTable[syn1] == DesignEntity::PROCEDURE) {
                     ClauseResult clauseResult;
@@ -96,7 +96,7 @@ namespace PQL {
                         resultEntry.emplace_back(arg2.value);
                         clauseResult.rows.emplace_back(resultEntry);
                     }
-                    return clauseResult;
+        
                 } else if (synonymTable[syn1] == DesignEntity::VARIABLE) {
                     ClauseResult clauseResult;
                     clauseResult.syns.emplace_back(syn1);
@@ -105,7 +105,7 @@ namespace PQL {
                         resultEntry.emplace_back(arg2.value);
                         clauseResult.rows.emplace_back(resultEntry);
                     }
-                    return clauseResult;
+        
                 }
 
             } else if (argType1 == ArgType::ATTRIBUTE && argType2 == ArgType::ATTRIBUTE) {
@@ -188,7 +188,7 @@ namespace PQL {
                     }
                 }
 
-                return clauseResult;
+    
 
             } else {
                 SPA::LoggingUtils::LogErrorMessage("WithEvaluator::evaluateIdentifierEqual: Invalid ArgTypes for identifier With clause. argType1 = %d, argType2 = %d\n", argType1, argType2);
@@ -233,7 +233,7 @@ namespace PQL {
                         resultEntry.emplace_back(arg2.value);
                         clauseResult.rows.emplace_back(resultEntry);
                     }
-                    return clauseResult;
+        
                 } else if (synonymTable[syn1] == DesignEntity::STATEMENT || synonymTable[syn1] == DesignEntity::PROG_LINE) {
                     StmtId stmtNumber = std::stoi(arg2.value);
                     if (1 <= stmtNumber && stmtNumber <= database.stmtTable.size()) {
@@ -241,7 +241,7 @@ namespace PQL {
                         resultEntry.emplace_back(arg2.value);
                         clauseResult.rows.emplace_back(resultEntry);
                     }
-                    return clauseResult;
+        
                 } else {
                     std::unordered_set<StmtId> stmts = database.stmtTable.getStmtsByType(SPA::TypeUtils::getStmtTypeFromDesignEntity(synonymTable[syn1]));
                     if (stmts.find(std::stoi(arg2.value)) != stmts.end()) {
@@ -249,7 +249,7 @@ namespace PQL {
                         resultEntry.emplace_back(arg2.value);
                         clauseResult.rows.emplace_back(resultEntry);
                     }
-                    return clauseResult;
+        
                 }
 
             } else if ((argType1 == ArgType::ATTRIBUTE || argType1 == ArgType::SYNONYM) && (argType2 == ArgType::ATTRIBUTE || argType2 == ArgType::SYNONYM)) {
@@ -317,7 +317,7 @@ namespace PQL {
                     }
                 }
 
-                return clauseResult;
+    
             } else {
                 SPA::LoggingUtils::LogErrorMessage("WithEvaluator::evaluateIntegerEqual: Invalid ArgTypes for integer With clause. argType1 = %d, argType2 = %d\n", argType1, argType2);
                 return {};
@@ -339,7 +339,7 @@ namespace PQL {
             if (arg1 == arg2) {
                 clauseResult.trueResult = true;
             }
-            return clauseResult;
+
         }
 
         void evaluateWithClause(PKB::PKB& database, WithClause clause,
