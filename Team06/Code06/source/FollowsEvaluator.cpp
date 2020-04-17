@@ -46,7 +46,6 @@ namespace PQL {
         * @param    database    The PKB to evaluate the clause on.
         * @param    clause      The clause to evaluate.
         * @param    intResult   The intermediate result table for the group that the clause belongs to.
-        * @return   The result of the evaluation.
         */
         void evaluateFollowsClauseIntWild(PKB::PKB& database, RelationClause clause, ClauseResult& intResult) {
             std::pair<Argument, Argument> args = clause.getArgs();
@@ -74,7 +73,7 @@ namespace PQL {
         * @param    database    The PKB to evaluate the clause on.
         * @param    clause      The clause to evaluate.
         * @param    synonymTable    The synonym table associated with the query containing the clause.
-        * @return   The result of the evaluation.
+        * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
         ClauseResult evaluateFollowsClauseIntSyn(PKB::PKB& database, RelationClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable) {
@@ -226,7 +225,7 @@ namespace PQL {
             return clauseResult;
         }
 
-        ClauseResult evaluateFollowsClause(PKB::PKB& database, RelationClause clause,
+        void evaluateFollowsClause(PKB::PKB& database, RelationClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable, ClauseResult& intResult) {
 
             std::pair<Argument, Argument> args = clause.getArgs();
@@ -246,17 +245,16 @@ namespace PQL {
             } else if (argType1 == ArgType::INTEGER && argType2 == ArgType::SYNONYM ||
                 argType1 == ArgType::SYNONYM && argType2 == ArgType::INTEGER) {
                 // One statement number, one synonym
-                return evaluateFollowsClauseIntSyn(database, clause, synonymTable);
+                evaluateFollowsClauseIntSyn(database, clause, synonymTable, intResult);
             } else if (argType1 == ArgType::WILDCARD && argType2 == ArgType::SYNONYM ||
                 argType1 == ArgType::SYNONYM && argType2 == ArgType::WILDCARD) {
                 // One synonym, one wildcard
-                return evaluateFollowsClauseWildSyn(database, clause, synonymTable);
+                evaluateFollowsClauseWildSyn(database, clause, synonymTable, intResult);
             } else if (argType1 == ArgType::SYNONYM && argType2 == ArgType::SYNONYM) {
                 // Two synonyms
-                return evaluateFollowsClauseSynSyn(database, clause, synonymTable);
+                evaluateFollowsClauseSynSyn(database, clause, synonymTable, intResult);
             } else {
                 SPA::LoggingUtils::LogErrorMessage("FollowsEvaluator::evaluateFollowsClause: Invalid ArgTypes for Follows clause. argType1 = %d, argType2 = %d\n", argType1, argType2);
-                return {};
             }
         }
 

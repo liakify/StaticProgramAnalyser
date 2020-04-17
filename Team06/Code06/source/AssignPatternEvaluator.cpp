@@ -14,7 +14,7 @@ namespace PQL {
         *
         * @param    database    The PKB to evaluate the clause on.
         * @param    clause      The clause to evaluate.
-        * @return   The result of the evaluation.
+        * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
         ClauseResult evaluateAssignPatternClauseWildWild(PKB::PKB& database, PatternClause &clause) {
 
@@ -38,7 +38,7 @@ namespace PQL {
         *
         * @param    database    The PKB to evaluate the clause on.
         * @param    clause      The clause to evaluate.
-        * @return   The result of the evaluation.
+        * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
         ClauseResult evaluateAssignPatternClauseWildPtn(PKB::PKB& database, PatternClause &clause) {
             Synonym arg0 = clause.getSynonym().value;
@@ -63,7 +63,7 @@ namespace PQL {
         *
         * @param    database    The PKB to evaluate the clause on.
         * @param    clause      The clause to evaluate.
-        * @return   The result of the evaluation.
+        * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
         ClauseResult evaluateAssignPatternClauseIdWild(PKB::PKB& database, PatternClause& clause) {
             Synonym arg0 = clause.getSynonym().value;
@@ -89,7 +89,7 @@ namespace PQL {
         *
         * @param    database    The PKB to evaluate the clause on.
         * @param    clause      The clause to evaluate.
-        * @return   The result of the evaluation.
+        * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
         ClauseResult evaluateAssignPatternClauseIdPtn(PKB::PKB& database, PatternClause& clause) {
             Synonym arg0 = clause.getSynonym().value;
@@ -129,7 +129,7 @@ namespace PQL {
         * @param    database    The PKB to evaluate the clause on.
         * @param    clause      The clause to evaluate.
         * @param    synonymTable    The synonym table associated with the query containing the clause.
-        * @return   The result of the evaluation.
+        * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
         ClauseResult evaluateAssignPatternClauseSynWild(PKB::PKB& database, PatternClause& clause,
             std::unordered_map<std::string, DesignEntity>& synonymTable) {
@@ -173,7 +173,7 @@ namespace PQL {
         * @param    database    The PKB to evaluate the clause on.
         * @param    clause      The clause to evaluate.
         * @param    synonymTable    The synonym table associated with the query containing the clause.
-        * @return   The result of the evaluation.
+        * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
         ClauseResult evaluateAssignPatternClauseSynPtn(PKB::PKB& database, PatternClause& clause,
             std::unordered_map<std::string, DesignEntity>& synonymTable) {

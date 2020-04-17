@@ -15,7 +15,7 @@ namespace PQL {
         *
         * @param    database    The PKB to evaluate the clause on.
         * @param    clause      The clause to evaluate.
-        * @return   The result of the evaluation.
+        * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
         ClauseResult evaluateParentStarClauseIntInt(PKB::PKB& database, RelationClause clause) {
             std::pair<Argument, Argument> args = clause.getArgs();
@@ -33,7 +33,7 @@ namespace PQL {
         * Evaluates a single Parent* clause on the given PKB where the inputs are two wildcards.
         *
         * @param    database    The PKB to evaluate the clause on.
-        * @return   The result of the evaluation.
+        * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
         ClauseResult evaluateParentStarClauseWildWild(PKB::PKB& database) {
             ClauseResult clauseResult;
@@ -48,7 +48,7 @@ namespace PQL {
         *
         * @param    database    The PKB to evaluate the clause on.
         * @param    clause      The clause to evaluate.
-        * @return   The result of the evaluation.
+        * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
         ClauseResult evaluateParentStarClauseIntWild(PKB::PKB& database, RelationClause clause) {
             std::pair<Argument, Argument> args = clause.getArgs();
@@ -80,7 +80,7 @@ namespace PQL {
         * @param    database    The PKB to evaluate the clause on.
         * @param    clause      The clause to evaluate.
         * @param    synonymTable    The synonym table associated with the query containing the clause.
-        * @return   The result of the evaluation.
+        * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
         ClauseResult evaluateParentStarClauseIntSyn(PKB::PKB& database, RelationClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable) {
@@ -132,7 +132,7 @@ namespace PQL {
         * @param    database    The PKB to evaluate the clause on.
         * @param    clause      The clause to evaluate.
         * @param    synonymTable    The synonym table associated with the query containing the clause.
-        * @return   The result of the evaluation.
+        * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
         ClauseResult evaluateParentStarClauseWildSyn(PKB::PKB& database, RelationClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable) {
@@ -181,7 +181,7 @@ namespace PQL {
         * @param    database    The PKB to evaluate the clause on.
         * @param    clause      The clause to evaluate.
         * @param    synonymTable    The synonym table associated with the query containing the clause.
-        * @return   The result of the evaluation.
+        * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
         ClauseResult evaluateParentStarClauseSynSyn(PKB::PKB& database, RelationClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable) {

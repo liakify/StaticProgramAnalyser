@@ -16,9 +16,8 @@ namespace PQL {
         * @param    database    The PKB to evaluate the clause on.
         * @param    clause      The clause to evaluate.
         * @param    intResult   The intermediate result table for the group that the clause belongs to.
-        * @return   The result of the evaluation.
         */
-        ClauseResult evaluateAffectsClauseIntInt(PKB::PKB& database, RelationClause clause) {
+        void evaluateAffectsClauseIntInt(PKB::PKB& database, RelationClause clause, ClauseResult& intResult) {
             std::pair<Argument, Argument> args = clause.getArgs();
             StmtId arg1 = std::stoi(args.first.value);
             StmtId arg2 = std::stoi(args.second.value);
@@ -36,9 +35,8 @@ namespace PQL {
         *
         * @param    database    The PKB to evaluate the clause on.
         * @param    intResult   The intermediate result table for the group that the clause belongs to.
-        * @return   The result of the evaluation.
         */
-        ClauseResult evaluateAffectsClauseWildWild(PKB::PKB& database) {
+        void evaluateAffectsClauseWildWild(PKB::PKB& database, ClauseResult& intResult) {
 
             ClauseResult clauseResult;
             for (StmtId i : database.stmtTable.getStmtsByType(StmtType::ASSIGN)) {
@@ -56,9 +54,8 @@ namespace PQL {
         * @param    database    The PKB to evaluate the clause on.
         * @param    clause      The clause to evaluate.
         * @param    intResult   The intermediate result table for the group that the clause belongs to.
-        * @return   The result of the evaluation.
         */
-        ClauseResult evaluateAffectsClauseIntWild(PKB::PKB& database, RelationClause clause) {
+        void evaluateAffectsClauseIntWild(PKB::PKB& database, RelationClause clause, ClauseResult& intResult) {
             std::pair<Argument, Argument> args = clause.getArgs();
             ArgType argType1 = args.first.type;
             ArgType argType2 = args.second.type;
@@ -89,10 +86,10 @@ namespace PQL {
         * @param    database    The PKB to evaluate the clause on.
         * @param    clause      The clause to evaluate.
         * @param    synonymTable    The synonym table associated with the query containing the clause.
-        * @return   The result of the evaluation.
+        * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
-        ClauseResult evaluateAffectsClauseIntSyn(PKB::PKB& database, RelationClause clause,
-            unordered_map<std::string, DesignEntity>& synonymTable) {
+        void evaluateAffectsClauseIntSyn(PKB::PKB& database, RelationClause clause,
+            unordered_map<std::string, DesignEntity>& synonymTable, ClauseResult& intResult) {
 
             std::pair<Argument, Argument> args = clause.getArgs();
             ArgType argType1 = args.first.type;
@@ -139,10 +136,10 @@ namespace PQL {
         * @param    database    The PKB to evaluate the clause on.
         * @param    clause      The clause to evaluate.
         * @param    synonymTable    The synonym table associated with the query containing the clause.
-        * @return   The result of the evaluation.
+        * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
-        ClauseResult evaluateAffectsClauseWildSyn(PKB::PKB& database, RelationClause clause,
-            unordered_map<std::string, DesignEntity>& synonymTable) {
+        void evaluateAffectsClauseWildSyn(PKB::PKB& database, RelationClause clause,
+            unordered_map<std::string, DesignEntity>& synonymTable, ClauseResult& intResult) {
 
             std::pair<Argument, Argument> args = clause.getArgs();
             ArgType argType1 = args.first.type;
@@ -192,10 +189,10 @@ namespace PQL {
         * @param    database    The PKB to evaluate the clause on.
         * @param    clause      The clause to evaluate.
         * @param    synonymTable    The synonym table associated with the query containing the clause.
-        * @return   The result of the evaluation.
+        * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
-        ClauseResult evaluateAffectsClauseSynSyn(PKB::PKB& database, RelationClause clause,
-            unordered_map<std::string, DesignEntity>& synonymTable) {
+        void evaluateAffectsClauseSynSyn(PKB::PKB& database, RelationClause clause,
+            unordered_map<std::string, DesignEntity>& synonymTable, ClauseResult& intResult) {
 
             std::pair<Argument, Argument> args = clause.getArgs();
             Synonym arg1 = args.first.value;
@@ -244,7 +241,7 @@ namespace PQL {
             return clauseResult;
         }
 
-        ClauseResult evaluateAffectsClause(PKB::PKB& database, RelationClause clause,
+        void evaluateAffectsClause(PKB::PKB& database, RelationClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable, ClauseResult& intResult) {
 
             std::pair<Argument, Argument> args = clause.getArgs();
@@ -253,28 +250,27 @@ namespace PQL {
 
             if (argType1 == ArgType::INTEGER && argType2 == ArgType::INTEGER) {
                 // Two statement numbers supplied
-                return evaluateAffectsClauseIntInt(database, clause, intResult);
+                evaluateAffectsClauseIntInt(database, clause, intResult);
             } else if (argType1 == ArgType::WILDCARD && argType2 == ArgType::WILDCARD) {
                 // Two wildcards supplied
-                return evaluateAffectsClauseWildWild(database, intResult);
+                evaluateAffectsClauseWildWild(database, intResult);
             } else if (argType1 == ArgType::INTEGER && argType2 == ArgType::WILDCARD ||
                 argType1 == ArgType::WILDCARD && argType2 == ArgType::INTEGER) {
                 // One statement number, one wildcard supplied
-                return evaluateAffectsClauseIntWild(database, clause, intResult);
+                evaluateAffectsClauseIntWild(database, clause, intResult);
             } else if (argType1 == ArgType::INTEGER && argType2 == ArgType::SYNONYM ||
                 argType1 == ArgType::SYNONYM && argType2 == ArgType::INTEGER) {
                 // One statement number, one synonym
-                return evaluateAffectsClauseIntSyn(database, clause, synonymTable);
+                evaluateAffectsClauseIntSyn(database, clause, synonymTable, intResult);
             } else if (argType1 == ArgType::WILDCARD && argType2 == ArgType::SYNONYM ||
                 argType1 == ArgType::SYNONYM && argType2 == ArgType::WILDCARD) {
                 // One synonym, one wildcard
-                return evaluateAffectsClauseWildSyn(database, clause, synonymTable);
+                evaluateAffectsClauseWildSyn(database, clause, synonymTable, intResult);
             } else if (argType1 == ArgType::SYNONYM && argType2 == ArgType::SYNONYM) {
                 // Two synonyms
-                return evaluateAffectsClauseSynSyn(database, clause, synonymTable);
+                evaluateAffectsClauseSynSyn(database, clause, synonymTable, intResult);
             } else {
                 SPA::LoggingUtils::LogErrorMessage("AffectsEvaluator::evaluateAffectsClause: Invalid ArgTypes for Affects clause. argType1 = %d, argType2 = %d\n", argType1, argType2);
-                return {};
             }
         }
 

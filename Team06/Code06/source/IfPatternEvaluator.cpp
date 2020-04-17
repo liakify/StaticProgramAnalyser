@@ -13,7 +13,7 @@ namespace PQL {
         *
         * @param    database    The PKB to evaluate the clause on.
         * @param    clause      The clause to evaluate.
-        * @return   The result of the evaluation.
+        * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
         ClauseResult evaluateIfPatternClauseWild(PKB::PKB& database, PatternClause& clause) {
             std::unordered_set<StmtId> stmts = database.patternKB.getAllIfStmtsWithCtrlVars();
@@ -36,7 +36,7 @@ namespace PQL {
         * @param    database    The PKB to evaluate the clause on.
         * @param    clause      The clause to evaluate.
         * @param    synonymTable    The synonym table associated with the query containing the clause.
-        * @return   The result of the evaluation.
+        * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
         ClauseResult evaluateIfPatternClauseId(PKB::PKB& database, PatternClause& clause,
             std::unordered_map<std::string, DesignEntity>& synonymTable) {
@@ -62,7 +62,7 @@ namespace PQL {
         * @param    database    The PKB to evaluate the clause on.
         * @param    clause      The clause to evaluate.
         * @param    synonymTable    The synonym table associated with the query containing the clause.
-        * @return   The result of the evaluation.
+        * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
         ClauseResult evaluateIfPatternClauseSyn(PKB::PKB& database, PatternClause& clause,
             std::unordered_map<std::string, DesignEntity>& synonymTable) {

@@ -12,7 +12,7 @@ namespace PQL {
         * Evaluates a single while pattern clause on the given PKB where the inputs is one wildcard.
         *
         * @param    database    The PKB to evaluate the clause on.
-        * @return   The result of the evaluation.
+        * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
         ClauseResult evaluateWhilePatternClauseWild(PKB::PKB& database, PatternClause& clause) {
             std::unordered_set<StmtId> stmts = database.patternKB.getAllWhileStmtsWithCtrlVars();
@@ -35,7 +35,7 @@ namespace PQL {
         * @param    database    The PKB to evaluate the clause on.
         * @param    clause      The clause to evaluate.
         * @param    synonymTable    The synonym table associated with the query containing the clause.
-        * @return   The result of the evaluation.
+        * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
         ClauseResult evaluateWhilePatternClauseId(PKB::PKB& database, PatternClause &clause,
             std::unordered_map<std::string, DesignEntity>& synonymTable) {
@@ -61,7 +61,7 @@ namespace PQL {
         * @param    database    The PKB to evaluate the clause on.
         * @param    clause      The clause to evaluate.
         * @param    synonymTable    The synonym table associated with the query containing the clause.
-        * @return   The result of the evaluation.
+        * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
         ClauseResult evaluateWhilePatternClauseSyn(PKB::PKB& database, PatternClause& clause,
             std::unordered_map<std::string, DesignEntity>& synonymTable) {

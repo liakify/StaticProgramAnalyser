@@ -15,7 +15,7 @@ namespace PQL {
         *
         * @param    database    The PKB to evaluate the clause on.
         * @param    clause      The clause to evaluate.
-        * @return   The result of the evaluation.
+        * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
         ClauseResult evaluateCallsClauseIdId(PKB::PKB& database, RelationClause clause) {
             std::pair<Argument, Argument> args = clause.getArgs();
@@ -33,7 +33,7 @@ namespace PQL {
         * Evaluates a single Calls clause on the given PKB where the inputs are two wildcards.
         *
         * @param    database    The PKB to evaluate the clause on.
-        * @return   The result of the evaluation.
+        * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
         ClauseResult evaluateCallsClauseWildWild(PKB::PKB& database) {
 
@@ -49,7 +49,7 @@ namespace PQL {
         *
         * @param    database    The PKB to evaluate the clause on.
         * @param    clause      The clause to evaluate.
-        * @return   The result of the evaluation.
+        * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
         ClauseResult evaluateCallsClauseIdWild(PKB::PKB& database, RelationClause clause) {
             std::pair<Argument, Argument> args = clause.getArgs();
@@ -81,7 +81,7 @@ namespace PQL {
         * @param    database    The PKB to evaluate the clause on.
         * @param    clause      The clause to evaluate.
         * @param    synonymTable    The synonym table associated with the query containing the clause.
-        * @return   The result of the evaluation.
+        * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
         ClauseResult evaluateCallsClauseIdSyn(PKB::PKB& database, RelationClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable) {
@@ -127,7 +127,7 @@ namespace PQL {
         * @param    database    The PKB to evaluate the clause on.
         * @param    clause      The clause to evaluate.
         * @param    synonymTable    The synonym table associated with the query containing the clause.
-        * @return   The result of the evaluation.
+        * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
         ClauseResult evaluateCallsClauseWildSyn(PKB::PKB& database, RelationClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable) {
@@ -171,7 +171,7 @@ namespace PQL {
         * @param    database    The PKB to evaluate the clause on.
         * @param    clause      The clause to evaluate.
         * @param    synonymTable    The synonym table associated with the query containing the clause.
-        * @return   The result of the evaluation.
+        * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
         ClauseResult evaluateCallsClauseSynSyn(PKB::PKB& database, RelationClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable) {
