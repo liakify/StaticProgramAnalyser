@@ -175,13 +175,6 @@ namespace PQL {
     const std::string SEMANTIC_ERR_WITH_CLAUSE_DIFF_RETURN_TYPE_OF_ARGS = "semantic error: expressions on both sides of with (equality) clause evaluate to different type";
 
     /**
-     *  Sentinel argument pair that should never be returned by getArgs() method
-     *  of a RelationClause or PatternClause instance. Used to denote an argument
-     *  that does not apply to that relation or pattern type.
-     */
-    const std::pair<ArgType, std::string> INVALID_ARG = { ArgType::INVALID, "" };
-
-    /**
      *  Vector of invalid design entity types as arguments for the relations
      *  Follows(*), Parent(*), Next(*).
      */
@@ -587,11 +580,11 @@ namespace PQL {
     };
 
     /**
-     * Struct representing an optimised PQL query.
+     *  Struct representing an optimised PQL query.
      *
-     * - clauses:           the clauses in the order in which they should be evaluated.
-     * - group:             the group that each clause belongs to (numbered starting from 0).
-     * - last:              the index of the last clause in each group.
+     *  - clauses:          the clauses in the order in which they should be evaluated.
+     *  - group:            the group that each clause belongs to (numbered starting from 0).
+     *  - last:             the index of the last clause in each group.
      */
     struct OptimisedQuery {
         std::vector<Clause*> clauses;
