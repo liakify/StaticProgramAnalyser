@@ -30,7 +30,7 @@ namespace PQL {
                 clauseResult.rows.emplace_back(resultEntry);
             }
 
-            return clauseResult;
+
         }
 
         /**
@@ -55,7 +55,7 @@ namespace PQL {
                     clauseResult.rows.emplace_back(resultEntry);
                 }
             }
-            return clauseResult;
+
         }
 
         /**
@@ -81,7 +81,7 @@ namespace PQL {
                 }
             }
 
-            return clauseResult;
+
         }
 
         /**
@@ -120,7 +120,7 @@ namespace PQL {
                 }
             }
 
-            return clauseResult;
+
         }
 
         /**
@@ -164,7 +164,7 @@ namespace PQL {
                 }
             }
 
-            return clauseResult;
+
         }
 
         /**
@@ -219,7 +219,7 @@ namespace PQL {
                 }
             }
 
-            return clauseResult;
+
         }
 
         void evaluateAssignPatternClause(PKB::PKB& database, PatternClause clause,
