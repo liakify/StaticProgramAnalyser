@@ -17,7 +17,7 @@ namespace PQL {
         * @param    clause      The clause to evaluate.
         * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
-        void evaluateUsesClauseIntIdId(PKB::PKB& database, RelationClause clause) {
+        void evaluateUsesClauseIntIdId(PKB::PKB& database, RelationClause clause, ClauseResult& intResult) {
             std::pair<Argument, Argument> args = clause.getArgs();
             ArgType argType1 = args.first.type;
 
@@ -51,7 +51,7 @@ namespace PQL {
         * @param    clause      The clause to evaluate.
         * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
-        void evaluateUsesClauseIntIdWild(PKB::PKB& database, RelationClause clause) {
+        void evaluateUsesClauseIntIdWild(PKB::PKB& database, RelationClause clause, ClauseResult& intResult) {
             std::pair<Argument, Argument> args = clause.getArgs();
             ArgType argType1 = args.first.type;
 
@@ -83,7 +83,7 @@ namespace PQL {
         * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
         void evaluateUsesClauseIntIdSyn(PKB::PKB& database, RelationClause clause,
-            unordered_map<std::string, DesignEntity>& synonymTable) {
+            unordered_map<std::string, DesignEntity>& synonymTable, ClauseResult& intResult) {
 
             std::pair<Argument, Argument> args = clause.getArgs();
             ArgType argType1 = args.first.type;
@@ -130,7 +130,7 @@ namespace PQL {
         * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
         void evaluateUsesClauseSynId(PKB::PKB& database, RelationClause clause,
-            unordered_map<std::string, DesignEntity>& synonymTable) {
+            unordered_map<std::string, DesignEntity>& synonymTable, ClauseResult& intResult) {
 
             std::pair<Argument, Argument> args = clause.getArgs();
             Synonym arg1 = args.first.value;
@@ -172,7 +172,7 @@ namespace PQL {
         * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
         void evaluateUsesClauseSynWild(PKB::PKB& database, RelationClause clause,
-            unordered_map<std::string, DesignEntity>& synonymTable) {
+            unordered_map<std::string, DesignEntity>& synonymTable, ClauseResult& intResult) {
 
             Synonym arg1 = clause.getArgs().first.value;
 
@@ -214,7 +214,7 @@ namespace PQL {
         * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
         void evaluateUsesClauseSynSyn(PKB::PKB& database, RelationClause clause,
-            unordered_map<std::string, DesignEntity>& synonymTable) {
+            unordered_map<std::string, DesignEntity>& synonymTable, ClauseResult& intResult) {
 
             std::pair<Argument, Argument> args = clause.getArgs();
             Synonym arg1 = args.first.value;
@@ -266,7 +266,7 @@ namespace PQL {
         }
 
         void evaluateUsesClause(PKB::PKB& database, RelationClause clause,
-            unordered_map<std::string, DesignEntity>& synonymTable) {
+            unordered_map<std::string, DesignEntity>& synonymTable, ClauseResult& intResult) {
 
             std::pair<Argument, Argument> args = clause.getArgs();
             ArgType argType1 = args.first.type;
@@ -274,25 +274,25 @@ namespace PQL {
 
             if ((argType1 == ArgType::INTEGER || argType1 == ArgType::IDENTIFIER) && argType2 == ArgType::IDENTIFIER) {
                 // One statement number/procedure name, one identifier supplied
-                evaluateUsesClauseIntIdId(database, clause);
+                evaluateUsesClauseIntIdId(database, clause, intResult);
             } else if ((argType1 == ArgType::INTEGER || argType1 == ArgType::IDENTIFIER) && argType2 == ArgType::WILDCARD) {
                 // One statement number/procedure name, one wildcard supplied
-                evaluateUsesClauseIntIdWild(database, clause);
+                evaluateUsesClauseIntIdWild(database, clause, intResult);
             } else if ((argType1 == ArgType::INTEGER || argType1 == ArgType::IDENTIFIER) && argType2 == ArgType::SYNONYM) {
                 // One statement number/procedure name, one synonym
-                evaluateUsesClauseIntIdSyn(database, clause, synonymTable);
+                evaluateUsesClauseIntIdSyn(database, clause, synonymTable, intResult);
             } else if (argType1 == ArgType::SYNONYM && argType2 == ArgType::IDENTIFIER) {
                 // One synonym, one identifier
-                evaluateUsesClauseSynId(database, clause, synonymTable);
+                evaluateUsesClauseSynId(database, clause, synonymTable, intResult);
             } else if (argType1 == ArgType::SYNONYM && argType2 == ArgType::WILDCARD) {
                 // One synonym, one wildcard
-                evaluateUsesClauseSynWild(database, clause, synonymTable);
+                evaluateUsesClauseSynWild(database, clause, synonymTable, intResult);
             } else if (argType1 == ArgType::SYNONYM && argType2 == ArgType::SYNONYM) {
                 // Two synonyms
-                evaluateUsesClauseSynSyn(database, clause, synonymTable);
+                evaluateUsesClauseSynSyn(database, clause, synonymTable, intResult);
             } else {
                 SPA::LoggingUtils::LogErrorMessage("UsesEvaluator::evaluateUsesClause: Invalid ArgTypes for Uses clause. argType1 = %d, argType2 = %d\n", argType1, argType2);
-                return {};
+
             }
         }
 

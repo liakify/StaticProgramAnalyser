@@ -17,7 +17,7 @@ namespace PQL {
         * @param    clause      The clause to evaluate.
         * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
-        void evaluateParentClauseIntInt(PKB::PKB& database, RelationClause clause) {
+        void evaluateParentClauseIntInt(PKB::PKB& database, RelationClause clause, ClauseResult& intResult) {
             std::pair<Argument, Argument> args = clause.getArgs();
             StmtId arg1 = std::stoi(args.first.value);
             StmtId arg2 = std::stoi(args.second.value);
@@ -35,7 +35,7 @@ namespace PQL {
         * @param    database    The PKB to evaluate the clause on.
         * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
-        void evaluateParentClauseWildWild(PKB::PKB& database) {
+        void evaluateParentClauseWildWild(PKB::PKB& database, ClauseResult& intResult) {
             ClauseResult clauseResult;
             if (database.parentKB.hasParentRelation()) {
                 clauseResult.trueResult = true;
@@ -50,7 +50,7 @@ namespace PQL {
         * @param    clause      The clause to evaluate.
         * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
-        void evaluateParentClauseIntWild(PKB::PKB& database, RelationClause clause) {
+        void evaluateParentClauseIntWild(PKB::PKB& database, RelationClause clause, ClauseResult& intResult) {
             std::pair<Argument, Argument> args = clause.getArgs();
             ArgType argType1 = args.first.type;
             ArgType argType2 = args.second.type;
@@ -83,7 +83,7 @@ namespace PQL {
         * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
         void evaluateParentClauseIntSyn(PKB::PKB& database, RelationClause clause,
-            unordered_map<std::string, DesignEntity>& synonymTable) {
+            unordered_map<std::string, DesignEntity>& synonymTable, ClauseResult& intResult) {
 
             std::pair<Argument, Argument> args = clause.getArgs();
             ArgType argType1 = args.first.type;
@@ -135,7 +135,7 @@ namespace PQL {
         * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
         void evaluateParentClauseWildSyn(PKB::PKB& database, RelationClause clause,
-            unordered_map<std::string, DesignEntity>& synonymTable) {
+            unordered_map<std::string, DesignEntity>& synonymTable, ClauseResult& intResult) {
 
             std::pair<Argument, Argument> args = clause.getArgs();
             ArgType argType1 = args.first.type;
@@ -182,7 +182,7 @@ namespace PQL {
         * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
         void evaluateParentClauseSynSyn(PKB::PKB& database, RelationClause clause,
-            unordered_map<std::string, DesignEntity>& synonymTable) {
+            unordered_map<std::string, DesignEntity>& synonymTable, ClauseResult& intResult) {
 
             std::pair<Argument, Argument> args = clause.getArgs();
             Synonym arg1 = args.first.value;
@@ -230,7 +230,7 @@ namespace PQL {
         }
 
         void evaluateParentClause(PKB::PKB& database, RelationClause clause,
-            unordered_map<std::string, DesignEntity>& synonymTable) {
+            unordered_map<std::string, DesignEntity>& synonymTable, ClauseResult& intResult) {
 
             std::pair<Argument, Argument> args = clause.getArgs();
             ArgType argType1 = args.first.type;
@@ -238,28 +238,28 @@ namespace PQL {
 
             if (argType1 == ArgType::INTEGER && argType2 == ArgType::INTEGER) {
                 // Two statement numbers supplied
-                evaluateParentClauseIntInt(database, clause);
+                evaluateParentClauseIntInt(database, clause, intResult);
             } else if (argType1 == ArgType::WILDCARD && argType2 == ArgType::WILDCARD) {
                 // Two wildcards supplied
                 evaluateParentClauseWildWild(database);
             } else if (argType1 == ArgType::INTEGER && argType2 == ArgType::WILDCARD ||
                 argType1 == ArgType::WILDCARD && argType2 == ArgType::INTEGER) {
                 // One statement number, one wildcard supplied
-                evaluateParentClauseIntWild(database, clause);
+                evaluateParentClauseIntWild(database, clause, intResult);
             } else if (argType1 == ArgType::INTEGER && argType2 == ArgType::SYNONYM ||
                 argType1 == ArgType::SYNONYM && argType2 == ArgType::INTEGER) {
                 // One statement number, one synonym
-                evaluateParentClauseIntSyn(database, clause, synonymTable);
+                evaluateParentClauseIntSyn(database, clause, synonymTable, intResult);
             } else if (argType1 == ArgType::WILDCARD && argType2 == ArgType::SYNONYM ||
                 argType1 == ArgType::SYNONYM && argType2 == ArgType::WILDCARD) {
                 // One synonym, one wildcard
-                evaluateParentClauseWildSyn(database, clause, synonymTable);
+                evaluateParentClauseWildSyn(database, clause, synonymTable, intResult);
             } else if (argType1 == ArgType::SYNONYM && argType2 == ArgType::SYNONYM) {
                 // Two synonyms
-                evaluateParentClauseSynSyn(database, clause, synonymTable);
+                evaluateParentClauseSynSyn(database, clause, synonymTable, intResult);
             } else {
                 SPA::LoggingUtils::LogErrorMessage("ParentEvaluator::evaluateParentClause: Invalid ArgTypes for Parent clause. argType1 = %d, argType2 = %d\n", argType1, argType2);
-                return {};
+
             }
         }
 

@@ -105,16 +105,16 @@ namespace PQL {
 
             if (argType1 == ArgType::WILDCARD) {
                 // 1 wildcard
-                evaluateWhilePatternClauseWild(database, clause);
+                evaluateWhilePatternClauseWild(database, clause, intResult);
             } else if (argType1 == ArgType::IDENTIFIER) {
                 // 1 identifier
-                evaluateWhilePatternClauseId(database, clause, synonymTable);
+                evaluateWhilePatternClauseId(database, clause, synonymTable, intResult);
             } else if (argType1 == ArgType::SYNONYM) {
                 // 1 synonym
-                evaluateWhilePatternClauseSyn(database, clause, synonymTable);
+                evaluateWhilePatternClauseSyn(database, clause, synonymTable, intResult);
             } else {
                 SPA::LoggingUtils::LogErrorMessage("WhilePatternEvaluator::evaluateWhilePatternClause: Invalid ArgTypes for While Pattern clause. argType1 = %d\n", argType1);
-                return {};
+
             }
         }
 

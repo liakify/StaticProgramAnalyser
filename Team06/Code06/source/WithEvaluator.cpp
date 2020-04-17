@@ -42,7 +42,7 @@ namespace PQL {
                 }
                 return result;
             } else {
-                return {};
+
             }
         }
 
@@ -55,7 +55,7 @@ namespace PQL {
         * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
         void evaluateIdentifierEqual(PKB::PKB& database, WithClause clause,
-            unordered_map<std::string, DesignEntity>& synonymTable) {
+            unordered_map<std::string, DesignEntity>& synonymTable, ClauseResult& intResult) {
 
             std::pair<Argument, Argument> args = clause.getArgs();
             Argument arg1 = args.first;
@@ -192,7 +192,7 @@ namespace PQL {
 
             } else {
                 SPA::LoggingUtils::LogErrorMessage("WithEvaluator::evaluateIdentifierEqual: Invalid ArgTypes for identifier With clause. argType1 = %d, argType2 = %d\n", argType1, argType2);
-                return {};
+
             }
 
             return {};
@@ -207,7 +207,7 @@ namespace PQL {
         * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
         void evaluateIntegerEqual(PKB::PKB& database, WithClause clause,
-            unordered_map<std::string, DesignEntity>& synonymTable) {
+            unordered_map<std::string, DesignEntity>& synonymTable, ClauseResult& intResult) {
 
             std::pair<Argument, Argument> args = clause.getArgs();
             Argument arg1 = args.first;
@@ -320,7 +320,7 @@ namespace PQL {
     
             } else {
                 SPA::LoggingUtils::LogErrorMessage("WithEvaluator::evaluateIntegerEqual: Invalid ArgTypes for integer With clause. argType1 = %d, argType2 = %d\n", argType1, argType2);
-                return {};
+
             }
         }
 
@@ -343,14 +343,14 @@ namespace PQL {
         }
 
         void evaluateWithClause(PKB::PKB& database, WithClause clause,
-            unordered_map<std::string, DesignEntity>& synonymTable) {
+            unordered_map<std::string, DesignEntity>& synonymTable, ClauseResult& intResult) {
 
             switch (clause.getWithType()) {
             case WithType::IDENTIFIER_EQUAL:
-                evaluateIdentifierEqual(database, clause, synonymTable);
+                evaluateIdentifierEqual(database, clause, synonymTable, intResult);
                 break;
             case WithType::INTEGER_EQUAL:
-                evaluateIntegerEqual(database, clause, synonymTable);
+                evaluateIntegerEqual(database, clause, synonymTable, intResult);
                 break;
             case WithType::LITERAL_EQUAL:
                 evaluateLiteralEqual(clause);

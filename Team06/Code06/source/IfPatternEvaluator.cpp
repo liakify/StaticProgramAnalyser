@@ -106,16 +106,16 @@ namespace PQL {
 
             if (argType1 == ArgType::WILDCARD) {
                 // 1 wildcard
-                return evaluateIfPatternClauseWild(database, clause);
+                return evaluateIfPatternClauseWild(database, clause, intResult);
             } else if (argType1 == ArgType::IDENTIFIER) {
                 // 1 identifier
-                return evaluateIfPatternClauseId(database, clause, synonymTable);
+                return evaluateIfPatternClauseId(database, clause, synonymTable, intResult);
             } else if (argType1 == ArgType::SYNONYM) {
                 // 1 synonym
-                return evaluateIfPatternClauseSyn(database, clause, synonymTable);
+                return evaluateIfPatternClauseSyn(database, clause, synonymTable, intResult);
             } else {
                 SPA::LoggingUtils::LogErrorMessage("IfPatternEvaluator::evaluateIfPatternClause: Invalid ArgTypes for If Pattern clause. argType1 = %d\n", argType1);
-                return {};
+
             }
         }
 
