@@ -178,7 +178,7 @@ namespace PQL {
             std::vector<std::vector<int> > graph(nodes.size(), std::vector<int>());
 
             for (unsigned int i = 0; i < nodes.size(); i++) {
-                for (unsigned int j = 0; j < nodes.size(); j++) {
+                for (unsigned int j = 0; j < i; j++) {
                     // Connect with bidirectional edge if the two clauses share any synonyms
                     for (Synonym synonym : nodes[i].synonyms) {
                         if (nodes[j].containsSynonym(synonym)) {
