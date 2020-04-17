@@ -16,7 +16,7 @@ namespace PQL {
         * @param    clause      The clause to evaluate.
         * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
-        ClauseResult evaluateAssignPatternClauseWildWild(PKB::PKB& database, PatternClause &clause) {
+        void evaluateAssignPatternClauseWildWild(PKB::PKB& database, PatternClause &clause) {
 
             Synonym arg0 = clause.getSynonym().value;
 
@@ -40,7 +40,7 @@ namespace PQL {
         * @param    clause      The clause to evaluate.
         * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
-        ClauseResult evaluateAssignPatternClauseWildPtn(PKB::PKB& database, PatternClause &clause) {
+        void evaluateAssignPatternClauseWildPtn(PKB::PKB& database, PatternClause &clause) {
             Synonym arg0 = clause.getSynonym().value;
             Pattern arg2 = clause.getArgs().second.value;
 
@@ -65,7 +65,7 @@ namespace PQL {
         * @param    clause      The clause to evaluate.
         * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
-        ClauseResult evaluateAssignPatternClauseIdWild(PKB::PKB& database, PatternClause& clause) {
+        void evaluateAssignPatternClauseIdWild(PKB::PKB& database, PatternClause& clause) {
             Synonym arg0 = clause.getSynonym().value;
             VarName arg1 = clause.getArgs().first.value;
             VarId arg1Id = database.varTable.getVarId(arg1);
@@ -91,7 +91,7 @@ namespace PQL {
         * @param    clause      The clause to evaluate.
         * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
-        ClauseResult evaluateAssignPatternClauseIdPtn(PKB::PKB& database, PatternClause& clause) {
+        void evaluateAssignPatternClauseIdPtn(PKB::PKB& database, PatternClause& clause) {
             Synonym arg0 = clause.getSynonym().value;
 
             std::pair<Argument, Argument> args = clause.getArgs();
@@ -131,7 +131,7 @@ namespace PQL {
         * @param    synonymTable    The synonym table associated with the query containing the clause.
         * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
-        ClauseResult evaluateAssignPatternClauseSynWild(PKB::PKB& database, PatternClause& clause,
+        void evaluateAssignPatternClauseSynWild(PKB::PKB& database, PatternClause& clause,
             std::unordered_map<std::string, DesignEntity>& synonymTable) {
             Synonym arg0 = clause.getSynonym().value;
             Synonym arg1 = clause.getArgs().first.value;
@@ -175,7 +175,7 @@ namespace PQL {
         * @param    synonymTable    The synonym table associated with the query containing the clause.
         * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
-        ClauseResult evaluateAssignPatternClauseSynPtn(PKB::PKB& database, PatternClause& clause,
+        void evaluateAssignPatternClauseSynPtn(PKB::PKB& database, PatternClause& clause,
             std::unordered_map<std::string, DesignEntity>& synonymTable) {
             Synonym arg0 = clause.getSynonym().value;
 
@@ -222,7 +222,7 @@ namespace PQL {
             return clauseResult;
         }
 
-        ClauseResult evaluateAssignPatternClause(PKB::PKB& database, PatternClause clause,
+        void evaluateAssignPatternClause(PKB::PKB& database, PatternClause clause,
             std::unordered_map<std::string, DesignEntity>& synonymTable) {
 
             std::pair<Argument, Argument> args = clause.getArgs();

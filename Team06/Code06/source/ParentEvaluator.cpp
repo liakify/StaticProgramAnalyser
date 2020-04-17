@@ -17,7 +17,7 @@ namespace PQL {
         * @param    clause      The clause to evaluate.
         * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
-        ClauseResult evaluateParentClauseIntInt(PKB::PKB& database, RelationClause clause) {
+        void evaluateParentClauseIntInt(PKB::PKB& database, RelationClause clause) {
             std::pair<Argument, Argument> args = clause.getArgs();
             StmtId arg1 = std::stoi(args.first.value);
             StmtId arg2 = std::stoi(args.second.value);
@@ -35,7 +35,7 @@ namespace PQL {
         * @param    database    The PKB to evaluate the clause on.
         * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
-        ClauseResult evaluateParentClauseWildWild(PKB::PKB& database) {
+        void evaluateParentClauseWildWild(PKB::PKB& database) {
             ClauseResult clauseResult;
             if (database.parentKB.hasParentRelation()) {
                 clauseResult.trueResult = true;
@@ -50,7 +50,7 @@ namespace PQL {
         * @param    clause      The clause to evaluate.
         * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
-        ClauseResult evaluateParentClauseIntWild(PKB::PKB& database, RelationClause clause) {
+        void evaluateParentClauseIntWild(PKB::PKB& database, RelationClause clause) {
             std::pair<Argument, Argument> args = clause.getArgs();
             ArgType argType1 = args.first.type;
             ArgType argType2 = args.second.type;
@@ -82,7 +82,7 @@ namespace PQL {
         * @param    synonymTable    The synonym table associated with the query containing the clause.
         * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
-        ClauseResult evaluateParentClauseIntSyn(PKB::PKB& database, RelationClause clause,
+        void evaluateParentClauseIntSyn(PKB::PKB& database, RelationClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable) {
 
             std::pair<Argument, Argument> args = clause.getArgs();
@@ -134,7 +134,7 @@ namespace PQL {
         * @param    synonymTable    The synonym table associated with the query containing the clause.
         * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
-        ClauseResult evaluateParentClauseWildSyn(PKB::PKB& database, RelationClause clause,
+        void evaluateParentClauseWildSyn(PKB::PKB& database, RelationClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable) {
 
             std::pair<Argument, Argument> args = clause.getArgs();
@@ -181,7 +181,7 @@ namespace PQL {
         * @param    synonymTable    The synonym table associated with the query containing the clause.
         * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
-        ClauseResult evaluateParentClauseSynSyn(PKB::PKB& database, RelationClause clause,
+        void evaluateParentClauseSynSyn(PKB::PKB& database, RelationClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable) {
 
             std::pair<Argument, Argument> args = clause.getArgs();
@@ -229,7 +229,7 @@ namespace PQL {
             return clauseResult;
         }
 
-        ClauseResult evaluateParentClause(PKB::PKB& database, RelationClause clause,
+        void evaluateParentClause(PKB::PKB& database, RelationClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable) {
 
             std::pair<Argument, Argument> args = clause.getArgs();

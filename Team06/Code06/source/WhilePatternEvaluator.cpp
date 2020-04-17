@@ -14,7 +14,7 @@ namespace PQL {
         * @param    database    The PKB to evaluate the clause on.
         * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
-        ClauseResult evaluateWhilePatternClauseWild(PKB::PKB& database, PatternClause& clause) {
+        void evaluateWhilePatternClauseWild(PKB::PKB& database, PatternClause& clause) {
             std::unordered_set<StmtId> stmts = database.patternKB.getAllWhileStmtsWithCtrlVars();
 
             Synonym arg0 = clause.getSynonym().value;
@@ -37,7 +37,7 @@ namespace PQL {
         * @param    synonymTable    The synonym table associated with the query containing the clause.
         * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
-        ClauseResult evaluateWhilePatternClauseId(PKB::PKB& database, PatternClause &clause,
+        void evaluateWhilePatternClauseId(PKB::PKB& database, PatternClause &clause,
             std::unordered_map<std::string, DesignEntity>& synonymTable) {
 
             Synonym arg0 = clause.getSynonym().value;
@@ -63,7 +63,7 @@ namespace PQL {
         * @param    synonymTable    The synonym table associated with the query containing the clause.
         * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
-        ClauseResult evaluateWhilePatternClauseSyn(PKB::PKB& database, PatternClause& clause,
+        void evaluateWhilePatternClauseSyn(PKB::PKB& database, PatternClause& clause,
             std::unordered_map<std::string, DesignEntity>& synonymTable) {
 
             Synonym arg0 = clause.getSynonym().value;
@@ -98,7 +98,7 @@ namespace PQL {
             return clauseResult;
         }
 
-        ClauseResult evaluateWhilePatternClause(PKB::PKB& database, PatternClause clause,
+        void evaluateWhilePatternClause(PKB::PKB& database, PatternClause clause,
             std::unordered_map<std::string, DesignEntity>& synonymTable) {
 
             ArgType argType1 = clause.getArgs().first.type;

@@ -17,7 +17,7 @@ namespace PQL {
         * @param    clause      The clause to evaluate.
         * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
-        ClauseResult evaluateFollowsStarClauseIntInt(PKB::PKB& database, RelationClause clause) {
+        void evaluateFollowsStarClauseIntInt(PKB::PKB& database, RelationClause clause) {
             std::pair<Argument, Argument> args = clause.getArgs();
             StmtId arg1 = std::stoi(args.first.value);
             StmtId arg2 = std::stoi(args.second.value);
@@ -35,7 +35,7 @@ namespace PQL {
         * @param    database    The PKB to evaluate the clause on.
         * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
-        ClauseResult evaluateFollowsStarClauseWildWild(PKB::PKB& database) {
+        void evaluateFollowsStarClauseWildWild(PKB::PKB& database) {
             ClauseResult clauseResult;
             if (database.followsKB.hasFollowsRelation()) {
                 clauseResult.trueResult = true;
@@ -50,7 +50,7 @@ namespace PQL {
         * @param    clause      The clause to evaluate.
         * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
-        ClauseResult evaluateFollowsStarClauseIntWild(PKB::PKB& database, RelationClause clause) {
+        void evaluateFollowsStarClauseIntWild(PKB::PKB& database, RelationClause clause) {
             std::pair<Argument, Argument> args = clause.getArgs();
             ArgType argType1 = args.first.type;
             ArgType argType2 = args.second.type;
@@ -82,7 +82,7 @@ namespace PQL {
         * @param    synonymTable    The synonym table associated with the query containing the clause.
         * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
-        ClauseResult evaluateFollowsStarClauseIntSyn(PKB::PKB& database, RelationClause clause,
+        void evaluateFollowsStarClauseIntSyn(PKB::PKB& database, RelationClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable) {
 
             std::pair<Argument, Argument> args = clause.getArgs();
@@ -132,7 +132,7 @@ namespace PQL {
         * @param    synonymTable    The synonym table associated with the query containing the clause.
         * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
-        ClauseResult evaluateFollowsStarClauseWildSyn(PKB::PKB& database, RelationClause clause,
+        void evaluateFollowsStarClauseWildSyn(PKB::PKB& database, RelationClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable) {
 
             std::pair<Argument, Argument> args = clause.getArgs();
@@ -182,7 +182,7 @@ namespace PQL {
         * @param    synonymTable    The synonym table associated with the query containing the clause.
         * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
-        ClauseResult evaluateFollowsStarClauseSynSyn(PKB::PKB& database, RelationClause clause,
+        void evaluateFollowsStarClauseSynSyn(PKB::PKB& database, RelationClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable) {
 
             std::pair<Argument, Argument> args = clause.getArgs();
@@ -232,7 +232,7 @@ namespace PQL {
             return clauseResult;
         }
 
-        ClauseResult evaluateFollowsStarClause(PKB::PKB& database, RelationClause clause,
+        void evaluateFollowsStarClause(PKB::PKB& database, RelationClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable) {
 
             std::pair<Argument, Argument> args = clause.getArgs();

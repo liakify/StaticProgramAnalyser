@@ -54,7 +54,7 @@ namespace PQL {
         * @param    synonymTable    The synonym table associated with the query containing the clause.
         * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
-        ClauseResult evaluateIdentifierEqual(PKB::PKB& database, WithClause clause,
+        void evaluateIdentifierEqual(PKB::PKB& database, WithClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable) {
 
             std::pair<Argument, Argument> args = clause.getArgs();
@@ -206,7 +206,7 @@ namespace PQL {
         * @param    synonymTable    The synonym table associated with the query containing the clause.
         * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
-        ClauseResult evaluateIntegerEqual(PKB::PKB& database, WithClause clause,
+        void evaluateIntegerEqual(PKB::PKB& database, WithClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable) {
 
             std::pair<Argument, Argument> args = clause.getArgs();
@@ -330,7 +330,7 @@ namespace PQL {
         * @param    clause          The clause to evaluate.
         * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
-        ClauseResult evaluateLiteralEqual(WithClause clause) {
+        void evaluateLiteralEqual(WithClause clause) {
             std::pair<Argument, Argument> args = clause.getArgs();
             std::string arg1 = args.first.value;
             std::string arg2 = args.second.value;
@@ -342,7 +342,7 @@ namespace PQL {
             return clauseResult;
         }
 
-        ClauseResult evaluateWithClause(PKB::PKB& database, WithClause clause,
+        void evaluateWithClause(PKB::PKB& database, WithClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable) {
 
             switch (clause.getWithType()) {
