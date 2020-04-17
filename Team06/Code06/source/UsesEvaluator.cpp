@@ -28,6 +28,7 @@ namespace PQL {
 
                 if (!database.usesKB.stmtUses(arg1, arg2)) {
                     intResult.rows.clear();
+                    intResult.trueResult = false;
                 }
     
             } else {
@@ -37,6 +38,7 @@ namespace PQL {
 
                 if (!database.usesKB.procUses(arg1, arg2)) {
                     intResult.rows.clear();
+                    intResult.trueResult = false;
                 }
     
             }
@@ -58,6 +60,7 @@ namespace PQL {
                 StmtId arg1 = std::stoi(args.first.value);
                 if (database.usesKB.getAllVarsUsedByStmt(arg1).size() <= 0) {
                     intResult.rows.clear();
+                    intResult.trueResult = false;
                 }
     
             } else {
@@ -66,6 +69,7 @@ namespace PQL {
                 ClauseResult clauseResult;
                 if (database.usesKB.getAllVarsUsedByProc(arg1).size() <= 0) {
                     intResult.rows.clear();
+                    intResult.trueResult = false;
                 }
     
             }

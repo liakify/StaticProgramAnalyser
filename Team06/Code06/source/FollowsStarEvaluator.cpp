@@ -24,6 +24,7 @@ namespace PQL {
 
             if (!database.followsKB.followStar(arg1, arg2)) {
                 intResult.rows.clear();
+                intResult.trueResult = false;
             }
 
         }
@@ -37,6 +38,7 @@ namespace PQL {
         void evaluateFollowsStarClauseWildWild(PKB::PKB& database, ClauseResult& intResult) {
             if (database.followsKB.hasFollowsRelation()) {
                 intResult.rows.clear();
+                intResult.trueResult = false;
             }
 
         }
@@ -58,6 +60,7 @@ namespace PQL {
                 StmtId arg1 = std::stoi(args.first.value);
                 if (database.followsKB.getFollower(arg1) == 0) {
                     intResult.rows.clear();
+                    intResult.trueResult = false;
                 }
     
             } else {
@@ -65,6 +68,7 @@ namespace PQL {
                 StmtId arg2 = std::stoi(args.second.value);
                 if (database.followsKB.getFollowing(arg2) == 0) {
                     intResult.rows.clear();
+                    intResult.trueResult = false;
                 }
     
             }

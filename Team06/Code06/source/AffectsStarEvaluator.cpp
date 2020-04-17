@@ -24,6 +24,7 @@ namespace PQL {
 
             if (!database.affectsStar(arg1, arg2)) {
                 intResult.rows.clear();
+                intResult.trueResult = false;
             }
 
 
@@ -46,6 +47,7 @@ namespace PQL {
             }
             if (!success) {
                 intResult.rows.clear();
+                intResult.trueResult = false;
             }
 
         }
@@ -67,6 +69,7 @@ namespace PQL {
                 StmtId arg1 = std::stoi(args.first.value);
                 if (database.affectsGetDirectNodes(arg1, NodeType::SUCCESSOR).size() <= 0) {
                     intResult.rows.clear();
+                    intResult.trueResult = false;
                 }
     
             } else {
@@ -74,6 +77,7 @@ namespace PQL {
                 StmtId arg2 = std::stoi(args.second.value);
                 if (database.affectsGetDirectNodes(arg2, NodeType::PREDECESSOR).size() <= 0) {
                     intResult.rows.clear();
+                    intResult.trueResult = false;
                 }
             }
 

@@ -527,7 +527,7 @@ namespace PQL {
         return combinedResults;
     }
 
-    ClauseResult QueryEvaluator::evaluateRelationClause(RelationClause &relationClause,
+    void QueryEvaluator::evaluateRelationClause(RelationClause &relationClause,
         std::unordered_map<std::string, DesignEntity> &synonymTable, ClauseResult& intResult) {
         switch (relationClause.getRelationType()) {
         case RelationType::FOLLOWS:
@@ -570,11 +570,10 @@ namespace PQL {
             break;
         default:
             SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluateRelationClause: Unknown relation type %d\n", relationClause.getRelationType());
-            return {};
         }
     }
 
-    ClauseResult QueryEvaluator::evaluatePatternClause(PatternClause &patternClause,
+    void QueryEvaluator::evaluatePatternClause(PatternClause &patternClause,
         std::unordered_map<std::string, DesignEntity> &synonymTable, ClauseResult& intResult) {
 
         switch (patternClause.getPatternType()) {
@@ -589,12 +588,11 @@ namespace PQL {
             break;
         default:
             SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluatePatternClause: Unknown pattern type %d\n", patternClause.getPatternType());
-            return {};
         }
 
     }
 
-    ClauseResult QueryEvaluator::evaluateWithClause(WithClause& withClause,
+    void QueryEvaluator::evaluateWithClause(WithClause& withClause,
         std::unordered_map<std::string, DesignEntity>& synonymTable, ClauseResult& intResult) {
 
         return WithEvaluator::evaluateWithClause(this->database, withClause, synonymTable, intResult);

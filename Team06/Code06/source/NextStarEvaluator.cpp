@@ -24,6 +24,7 @@ namespace PQL {
 
             if (!database.nextStar(arg1, arg2)) {
                 intResult.rows.clear();
+                intResult.trueResult = false;
             }
 
         }
@@ -38,6 +39,7 @@ namespace PQL {
 
             if (database.hasNextRelation()) {
                 intResult.rows.clear();
+                intResult.trueResult = false;
             }
 
         }
@@ -59,6 +61,7 @@ namespace PQL {
                 StmtId arg1 = std::stoi(args.first.value);
                 if (!database.hasNext(arg1)) {
                     intResult.rows.clear();
+                    intResult.trueResult = false;
                 }
     
             } else {
@@ -66,6 +69,7 @@ namespace PQL {
                 StmtId arg2 = std::stoi(args.second.value);
                 if (!database.hasPrev(arg2)) {
                     intResult.rows.clear();
+                    intResult.trueResult = false;
                 }
     
             }

@@ -24,6 +24,7 @@ namespace PQL {
 
             if (!database.parentKB.parent(arg1, arg2)) {
                 intResult.rows.clear();
+                intResult.trueResult = false;
             }
 
         }
@@ -37,6 +38,7 @@ namespace PQL {
         void evaluateParentClauseWildWild(PKB::PKB& database, ClauseResult& intResult) {
             if (!database.parentKB.hasParentRelation()) {
                 intResult.rows.clear();
+                intResult.trueResult = false;
             }
 
         }
@@ -58,6 +60,7 @@ namespace PQL {
                 StmtId arg1 = std::stoi(args.first.value);
                 if (database.parentKB.getDirectChildren(arg1).size() <= 0) {
                     intResult.rows.clear();
+                    intResult.trueResult = false;
                 }
     
             } else {
@@ -65,6 +68,7 @@ namespace PQL {
                 StmtId arg2 = std::stoi(args.second.value);
                 if (database.parentKB.getParent(arg2) == 0) {
                     intResult.rows.clear();
+                    intResult.trueResult = false;
                 }
     
             }
@@ -120,6 +124,8 @@ namespace PQL {
                     StmtId parent = database.parentKB.getParent(arg2);
                     if (parent == 0) {
                         intResult.rows.clear();
+                        intResult.trueResult = false;
+                        return;
                     } else {
                         intResult.syns.emplace_back(arg1);
                         if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(parent)->getType(), synonymTable[arg1])) {

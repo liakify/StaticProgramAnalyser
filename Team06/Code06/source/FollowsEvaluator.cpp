@@ -24,6 +24,7 @@ namespace PQL {
 
             if (!database.followsKB.follows(arg1, arg2)) {
                 intResult.rows.clear();
+                intResult.trueResult = false;
             }
 
         }
@@ -37,6 +38,7 @@ namespace PQL {
         void evaluateFollowsClauseWildWild(PKB::PKB& database, ClauseResult& intResult) {
             if (!database.followsKB.hasFollowsRelation()) {
                 intResult.rows.clear();
+                intResult.trueResult = false;
             }
         }
 
@@ -57,12 +59,14 @@ namespace PQL {
                 StmtId arg1 = std::stoi(args.first.value);
                 if (database.followsKB.getFollower(arg1) == 0) {
                     intResult.rows.clear();
+                    intResult.trueResult = false;
                 }
             } else {
                 // Case 2: Wildcard, Integer
                 StmtId arg2 = std::stoi(args.second.value);
                 if (database.followsKB.getFollowing(arg2) == 0) {
                     intResult.rows.clear();
+                    intResult.trueResult = false;
                 }
             }
         }
@@ -91,6 +95,8 @@ namespace PQL {
                     StmtId follower = database.followsKB.getFollower(arg1);
                     if (follower == 0) {
                         intResult.rows.clear();
+                        intResult.trueResult = false;
+                        return;
                     } else {
                         intResult.syns.emplace_back(arg2);
                         if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(follower)->getType(), synonymTable[arg2])) {
@@ -118,6 +124,8 @@ namespace PQL {
                     StmtId following = database.followsKB.getFollowing(arg2);
                     if (following == 0) {
                         intResult.rows.clear();
+                        intResult.trueResult = false;
+                        return;
                     } else {
                         intResult.syns.emplace_back(arg1);
                         if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(following)->getType(), synonymTable[arg1])) {

@@ -444,6 +444,7 @@ namespace PQL {
             ClauseResult clauseResult;
             if (arg1 != arg2) {
                 intResult.rows.clear();
+                intResult.trueResult = false;
             }
 
         }

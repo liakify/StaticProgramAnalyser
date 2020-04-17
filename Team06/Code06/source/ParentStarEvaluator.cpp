@@ -24,6 +24,7 @@ namespace PQL {
 
             if (!database.parentKB.parentStar(arg1, arg2)) {
                 intResult.rows.clear();
+                intResult.trueResult = false;
             }
 
         }
@@ -37,6 +38,7 @@ namespace PQL {
         void evaluateParentStarClauseWildWild(PKB::PKB& database, ClauseResult& intResult) {
             if (!database.parentKB.hasParentRelation()) {
                 intResult.rows.clear();
+                intResult.trueResult = false;
             }
 
         }
@@ -58,6 +60,7 @@ namespace PQL {
                 StmtId arg1 = std::stoi(args.first.value);
                 if (database.parentKB.getDirectChildren(arg1).size() <= 0) {
                     intResult.rows.clear();
+                    intResult.trueResult = false;
                 }
     
             } else {
@@ -66,6 +69,7 @@ namespace PQL {
                 ClauseResult clauseResult;
                 if (database.parentKB.getParent(arg2) == 0) {
                     intResult.rows.clear();
+                    intResult.trueResult = false;
                 }
     
             }

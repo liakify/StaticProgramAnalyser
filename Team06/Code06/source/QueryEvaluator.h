@@ -44,9 +44,8 @@ namespace PQL {
         * @param    relationClause  The relation clause to evaluate
         * @param    synonymTable    The synonym table associated with the query.
         * @param    intResult       The intermediate result table for the group.
-        * @return   The results of the evaluation
         */
-        ClauseResult evaluateRelationClause(RelationClause &relationClause,
+        void evaluateRelationClause(RelationClause &relationClause,
             std::unordered_map<std::string, DesignEntity> &synonymTable,
             ClauseResult& intResult);
 
@@ -56,9 +55,8 @@ namespace PQL {
         * @param    patternClause   The pattern clause to evaluate
         * @param    synonymTable    The synonym table associated with the query.
         * @param    intResult       The intermediate result table for the group.
-        * @return   The results of the evaluation
         */
-        ClauseResult evaluatePatternClause(PatternClause &patternClause,
+        void evaluatePatternClause(PatternClause &patternClause,
             std::unordered_map<std::string, DesignEntity> &synonymTable,
             ClauseResult& intResult);
 
@@ -68,9 +66,8 @@ namespace PQL {
         * @param    withClause      The with clause to evaluate
         * @param    synonymTable    The synonym table associated with the query.
         * @param    intResult       The intermediate result table for the group.
-        * @return   The results of the evaluation
         */
-        ClauseResult evaluateWithClause(WithClause& withClause,
+        void evaluateWithClause(WithClause& withClause,
             std::unordered_map<std::string, DesignEntity>& synonymTable,
             ClauseResult& intResult);
 

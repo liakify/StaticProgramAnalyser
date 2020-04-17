@@ -28,6 +28,7 @@ namespace PQL {
 
                 if (!database.modifiesKB.stmtModifies(arg1, arg2)) {
                     intResult.rows.clear();
+                    intResult.trueResult = false;
                 }
     
             } else {
@@ -37,6 +38,7 @@ namespace PQL {
 
                 if (!database.modifiesKB.procModifies(arg1, arg2)) {
                     intResult.rows.clear();
+                    intResult.trueResult = false;
                 }
     
             }
@@ -59,6 +61,7 @@ namespace PQL {
                 StmtId arg1 = std::stoi(args.first.value);
                 if (database.modifiesKB.getAllVarsModifiedByStmt(arg1).size() <= 0) {
                     intResult.rows.clear();
+                    intResult.trueResult = false;
                 }
     
             } else {
@@ -66,6 +69,7 @@ namespace PQL {
                 ProcId arg1 = database.procTable.getProcId(args.first.value);
                 if (database.modifiesKB.getAllVarsModifiedByProc(arg1).size() <= 0) {
                     intResult.rows.clear();
+                    intResult.trueResult = false;
                 }
     
             }
