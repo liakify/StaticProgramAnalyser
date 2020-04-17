@@ -17,9 +17,8 @@ namespace PQL {
         * @param    clause      The clause to evaluate.
         * @param    synonymTable    The synonym table associated with the query containing the clause.
         * @param    intResult       The intermediate result table.
-        * @return   The result of the evaluation.
         */
-        ClauseResult evaluateFollowsStarClause(PKB::PKB& database, RelationClause clause,
+        void evaluateFollowsStarClause(PKB::PKB& database, RelationClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable, ClauseResult& intResult);
 
     }

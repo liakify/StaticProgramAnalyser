@@ -235,14 +235,14 @@ namespace PQL {
 
             if (argType1 == ArgType::INTEGER && argType2 == ArgType::INTEGER) {
                 // Two statement numbers supplied
-                return evaluateFollowsClauseIntInt(database, clause, intResult);
+                evaluateFollowsClauseIntInt(database, clause, intResult);
             } else if (argType1 == ArgType::WILDCARD && argType2 == ArgType::WILDCARD) {
                 // Two wildcards supplied
-                return evaluateFollowsClauseWildWild(database, intResult);
+                evaluateFollowsClauseWildWild(database, intResult);
             } else if (argType1 == ArgType::INTEGER && argType2 == ArgType::WILDCARD ||
                 argType1 == ArgType::WILDCARD && argType2 == ArgType::INTEGER) {
                 // One statement number, one wildcard supplied
-                return evaluateFollowsClauseIntWild(database, clause, intResult);
+                evaluateFollowsClauseIntWild(database, clause, intResult);
             } else if (argType1 == ArgType::INTEGER && argType2 == ArgType::SYNONYM ||
                 argType1 == ArgType::SYNONYM && argType2 == ArgType::INTEGER) {
                 // One statement number, one synonym

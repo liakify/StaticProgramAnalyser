@@ -15,6 +15,7 @@ namespace PQL {
         *
         * @param    database    The PKB to evaluate the clause on.
         * @param    clause      The clause to evaluate.
+        * @param    intResult   The intermediate result table for the group that the clause belongs to.
         * @return   The result of the evaluation.
         */
         ClauseResult evaluateAffectsClauseIntInt(PKB::PKB& database, RelationClause clause) {
@@ -34,6 +35,7 @@ namespace PQL {
         * Evaluates a single Affects clause on the given PKB where the inputs are two wildcards.
         *
         * @param    database    The PKB to evaluate the clause on.
+        * @param    intResult   The intermediate result table for the group that the clause belongs to.
         * @return   The result of the evaluation.
         */
         ClauseResult evaluateAffectsClauseWildWild(PKB::PKB& database) {
@@ -53,6 +55,7 @@ namespace PQL {
         *
         * @param    database    The PKB to evaluate the clause on.
         * @param    clause      The clause to evaluate.
+        * @param    intResult   The intermediate result table for the group that the clause belongs to.
         * @return   The result of the evaluation.
         */
         ClauseResult evaluateAffectsClauseIntWild(PKB::PKB& database, RelationClause clause) {
@@ -242,7 +245,7 @@ namespace PQL {
         }
 
         ClauseResult evaluateAffectsClause(PKB::PKB& database, RelationClause clause,
-            unordered_map<std::string, DesignEntity>& synonymTable) {
+            unordered_map<std::string, DesignEntity>& synonymTable, ClauseResult& intResult) {
 
             std::pair<Argument, Argument> args = clause.getArgs();
             ArgType argType1 = args.first.type;
@@ -250,14 +253,14 @@ namespace PQL {
 
             if (argType1 == ArgType::INTEGER && argType2 == ArgType::INTEGER) {
                 // Two statement numbers supplied
-                return evaluateAffectsClauseIntInt(database, clause);
+                return evaluateAffectsClauseIntInt(database, clause, intResult);
             } else if (argType1 == ArgType::WILDCARD && argType2 == ArgType::WILDCARD) {
                 // Two wildcards supplied
-                return evaluateAffectsClauseWildWild(database);
+                return evaluateAffectsClauseWildWild(database, intResult);
             } else if (argType1 == ArgType::INTEGER && argType2 == ArgType::WILDCARD ||
                 argType1 == ArgType::WILDCARD && argType2 == ArgType::INTEGER) {
                 // One statement number, one wildcard supplied
-                return evaluateAffectsClauseIntWild(database, clause);
+                return evaluateAffectsClauseIntWild(database, clause, intResult);
             } else if (argType1 == ArgType::INTEGER && argType2 == ArgType::SYNONYM ||
                 argType1 == ArgType::SYNONYM && argType2 == ArgType::INTEGER) {
                 // One statement number, one synonym
