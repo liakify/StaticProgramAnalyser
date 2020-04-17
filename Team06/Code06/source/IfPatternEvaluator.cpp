@@ -15,7 +15,7 @@ namespace PQL {
         * @param    clause      The clause to evaluate.
         * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
-        ClauseResult evaluateIfPatternClauseWild(PKB::PKB& database, PatternClause& clause) {
+        void evaluateIfPatternClauseWild(PKB::PKB& database, PatternClause& clause) {
             std::unordered_set<StmtId> stmts = database.patternKB.getAllIfStmtsWithCtrlVars();
 
             Synonym arg0 = clause.getSynonym().value;
@@ -38,7 +38,7 @@ namespace PQL {
         * @param    synonymTable    The synonym table associated with the query containing the clause.
         * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
-        ClauseResult evaluateIfPatternClauseId(PKB::PKB& database, PatternClause& clause,
+        void evaluateIfPatternClauseId(PKB::PKB& database, PatternClause& clause,
             std::unordered_map<std::string, DesignEntity>& synonymTable) {
 
             Synonym arg0 = clause.getSynonym().value;
@@ -64,7 +64,7 @@ namespace PQL {
         * @param    synonymTable    The synonym table associated with the query containing the clause.
         * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
-        ClauseResult evaluateIfPatternClauseSyn(PKB::PKB& database, PatternClause& clause,
+        void evaluateIfPatternClauseSyn(PKB::PKB& database, PatternClause& clause,
             std::unordered_map<std::string, DesignEntity>& synonymTable) {
 
             Synonym arg0 = clause.getSynonym().value;
@@ -99,7 +99,7 @@ namespace PQL {
             return clauseResult;
         }
 
-        ClauseResult evaluateIfPatternClause(PKB::PKB& database, PatternClause clause,
+        void evaluateIfPatternClause(PKB::PKB& database, PatternClause clause,
             std::unordered_map<std::string, DesignEntity>& synonymTable) {
 
             ArgType argType1 = clause.getArgs().first.type;
