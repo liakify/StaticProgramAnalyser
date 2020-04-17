@@ -87,36 +87,54 @@ namespace PQL {
                 StmtId arg1 = std::stoi(args.first.value);
                 Synonym arg2 = args.second.value;
 
-                ClauseResult clauseResult;
-                StmtId follower = database.followsKB.getFollower(arg1);
-                if (follower == 0) {
-        
-                } else {
-                    clauseResult.syns.emplace_back(arg2);
-                    if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(follower)->getType(), synonymTable[arg2])) {
-                        ClauseResultEntry resultEntry;
-                        resultEntry.emplace_back(std::to_string(follower));
-                        clauseResult.rows.emplace_back(resultEntry);
+                if (std::find(intResult.syns.begin(), intResult.syns.end(), arg2) == intResult.syns.end()) {
+                    StmtId follower = database.followsKB.getFollower(arg1);
+                    if (follower == 0) {
+                        intResult.rows.clear();
+                    } else {
+                        intResult.syns.emplace_back(arg2);
+                        if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(follower)->getType(), synonymTable[arg2])) {
+                            ClauseResultEntry resultEntry;
+                            resultEntry.emplace_back(std::to_string(follower));
+                            intResult.rows.emplace_back(resultEntry);
+                        }
                     }
-        
+                } else {
+                    int index = std::find(intResult.syns.begin(), intResult.syns.end(), arg2) - intResult.syns.begin();
+                    std::vector<ClauseResultEntry> updatedResult;
+                    for (ClauseResultEntry& resultEntry : intResult.rows) {
+                        if (database.followsKB.follows(arg1, std::stoi(resultEntry[index]))) {
+                            updatedResult.emplace_back(resultEntry);
+                        }
+                    }
+                    intResult.rows = updatedResult;
                 }
             } else {
                 // Case 2: Synonym, Integer
                 Synonym arg1 = args.first.value;
                 StmtId arg2 = std::stoi(args.second.value);
 
-                ClauseResult clauseResult;
-                StmtId following = database.followsKB.getFollowing(arg2);
-                if (following == 0) {
-        
-                } else {
-                    clauseResult.syns.emplace_back(arg1);
-                    if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(following)->getType(), synonymTable[arg1])) {
-                        ClauseResultEntry resultEntry;
-                        resultEntry.emplace_back(std::to_string(following));
-                        clauseResult.rows.emplace_back(resultEntry);
+                if (std::find(intResult.syns.begin(), intResult.syns.end(), arg1) == intResult.syns.end()) {
+                    StmtId following = database.followsKB.getFollowing(arg2);
+                    if (following == 0) {
+                        intResult.rows.clear();
+                    } else {
+                        intResult.syns.emplace_back(arg1);
+                        if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(following)->getType(), synonymTable[arg1])) {
+                            ClauseResultEntry resultEntry;
+                            resultEntry.emplace_back(std::to_string(following));
+                            intResult.rows.emplace_back(resultEntry);
+                        }
                     }
-        
+                } else {
+                    int index = std::find(intResult.syns.begin(), intResult.syns.end(), arg1) - intResult.syns.begin();
+                    std::vector<ClauseResultEntry> updatedResult;
+                    for (ClauseResultEntry& resultEntry : intResult.rows) {
+                        if (database.followsKB.follows(std::stoi(resultEntry[index]), arg2)) {
+                            updatedResult.emplace_back(resultEntry);
+                        }
+                    }
+                    intResult.rows = updatedResult;
                 }
             }
         }

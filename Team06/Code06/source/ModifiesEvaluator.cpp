@@ -90,13 +90,23 @@ namespace PQL {
                 StmtId arg1 = std::stoi(args.first.value);
                 Synonym arg2 = args.second.value;
 
-                ClauseResult clauseResult;
-                clauseResult.syns.emplace_back(arg2);
-                std::unordered_set<VarId> modifiedVars = database.modifiesKB.getAllVarsModifiedByStmt(arg1);
-                for (VarId var : modifiedVars) {
-                    ClauseResultEntry resultEntry;
-                    resultEntry.emplace_back(database.varTable.get(var));
-                    clauseResult.rows.emplace_back(resultEntry);
+                if (std::find(intResult.syns.begin(), intResult.syns.end(), arg2) == intResult.syns.end()) {
+                    intResult.syns.emplace_back(arg2);
+                    std::unordered_set<VarId> modifiedVars = database.modifiesKB.getAllVarsModifiedByStmt(arg1);
+                    for (VarId var : modifiedVars) {
+                        ClauseResultEntry resultEntry;
+                        resultEntry.emplace_back(database.varTable.get(var));
+                        intResult.rows.emplace_back(resultEntry);
+                    }
+                } else {
+                    int index = std::find(intResult.syns.begin(), intResult.syns.end(), arg2) - intResult.syns.begin();
+                    std::vector<ClauseResultEntry> updatedResult;
+                    for (ClauseResultEntry& resultEntry : intResult.rows) {
+                        if (database.modifiesKB.stmtModifies(arg1, std::stoi(resultEntry[index]))) {
+                            updatedResult.emplace_back(resultEntry);
+                        }
+                    }
+                    intResult.rows = updatedResult;
                 }
     
             } else {
@@ -104,16 +114,24 @@ namespace PQL {
                 ProcId arg1 = database.procTable.getProcId(args.first.value);
                 Synonym arg2 = args.second.value;
 
-                ClauseResult clauseResult;
-                clauseResult.syns.emplace_back(arg2);
-                std::unordered_set<VarId> modifiedVars = database.modifiesKB.getAllVarsModifiedByProc(arg1);
-                for (VarId var : modifiedVars) {
-                    ClauseResultEntry resultEntry;
-                    resultEntry.emplace_back(database.varTable.get(var));
-                    clauseResult.rows.emplace_back(resultEntry);
+                if (std::find(intResult.syns.begin(), intResult.syns.end(), arg2) == intResult.syns.end()) {
+                    intResult.syns.emplace_back(arg2);
+                    std::unordered_set<VarId> modifiedVars = database.modifiesKB.getAllVarsModifiedByProc(arg1);
+                    for (VarId var : modifiedVars) {
+                        ClauseResultEntry resultEntry;
+                        resultEntry.emplace_back(database.varTable.get(var));
+                        intResult.rows.emplace_back(resultEntry);
+                    }
+                } else {
+                    int index = std::find(intResult.syns.begin(), intResult.syns.end(), arg2) - intResult.syns.begin();
+                    std::vector<ClauseResultEntry> updatedResult;
+                    for (ClauseResultEntry& resultEntry : intResult.rows) {
+                        if (database.modifiesKB.procModifies(arg1, std::stoi(resultEntry[index]))) {
+                            updatedResult.emplace_back(resultEntry);
+                        }
+                    }
+                    intResult.rows = updatedResult;
                 }
-
-    
             }
         }
 
@@ -134,28 +152,47 @@ namespace PQL {
 
             if (synonymTable[arg1] == DesignEntity::PROCEDURE) {
                 // Case 1: Synonym is a procedure
-                ClauseResult clauseResult;
-                clauseResult.syns.emplace_back(arg1);
-                std::unordered_set<StmtId> modifyingProcs = database.modifiesKB.getAllProcModifyVar(arg2);
-                for (ProcId proc : modifyingProcs) {
-                    ClauseResultEntry resultEntry;
-                    resultEntry.emplace_back(database.procTable.get(proc).getName());
-                    clauseResult.rows.emplace_back(resultEntry);
+                if (std::find(intResult.syns.begin(), intResult.syns.end(), arg1) == intResult.syns.end()) {
+                    intResult.syns.emplace_back(arg1);
+                    std::unordered_set<StmtId> modifyingProcs = database.modifiesKB.getAllProcModifyVar(arg2);
+                    for (ProcId proc : modifyingProcs) {
+                        ClauseResultEntry resultEntry;
+                        resultEntry.emplace_back(database.procTable.get(proc).getName());
+                        intResult.rows.emplace_back(resultEntry);
+                    }
+                } else {
+                    int index = std::find(intResult.syns.begin(), intResult.syns.end(), arg1) - intResult.syns.begin();
+                    std::vector<ClauseResultEntry> updatedResult;
+                    for (ClauseResultEntry& resultEntry : intResult.rows) {
+                        if (database.modifiesKB.procModifies(std::stoi(resultEntry[index]), arg2)) {
+                            updatedResult.emplace_back(resultEntry);
+                        }
+                    }
+                    intResult.rows = updatedResult;
                 }
     
             } else {
                 // Case 2: Synonym is a statement
-                ClauseResult clauseResult;
-                clauseResult.syns.emplace_back(arg1);
-                std::unordered_set<StmtId> modifyingStmts = database.modifiesKB.getAllStmtsModifyVar(arg2);
-                for (StmtId stmt : modifyingStmts) {
-                    if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(stmt)->getType(), synonymTable[arg1])) {
-                        ClauseResultEntry resultEntry;
-                        resultEntry.emplace_back(std::to_string(stmt));
-                        clauseResult.rows.emplace_back(resultEntry);
+                if (std::find(intResult.syns.begin(), intResult.syns.end(), arg1) == intResult.syns.end()) {
+                    intResult.syns.emplace_back(arg1);
+                    std::unordered_set<StmtId> modifyingStmts = database.modifiesKB.getAllStmtsModifyVar(arg2);
+                    for (StmtId stmt : modifyingStmts) {
+                        if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(stmt)->getType(), synonymTable[arg1])) {
+                            ClauseResultEntry resultEntry;
+                            resultEntry.emplace_back(std::to_string(stmt));
+                            intResult.rows.emplace_back(resultEntry);
+                        }
                     }
+                } else {
+                    int index = std::find(intResult.syns.begin(), intResult.syns.end(), arg1) - intResult.syns.begin();
+                    std::vector<ClauseResultEntry> updatedResult;
+                    for (ClauseResultEntry& resultEntry : intResult.rows) {
+                        if (database.modifiesKB.stmtModifies(std::stoi(resultEntry[index]), arg2)) {
+                            updatedResult.emplace_back(resultEntry);
+                        }
+                    }
+                    intResult.rows = updatedResult;
                 }
-    
             }
         }
 

@@ -90,15 +90,25 @@ namespace PQL {
                 StmtId arg1 = std::stoi(args.first.value);
                 Synonym arg2 = args.second.value;
 
-                std::unordered_set<StmtId> stmts = database.nextGetDirectNodes(arg1, NodeType::SUCCESSOR);
-                ClauseResult clauseResult;
-                clauseResult.syns.emplace_back(arg2);
-                for (StmtId stmt : stmts) {
-                    if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(stmt)->getType(), synonymTable[arg2])) {
-                        ClauseResultEntry resultEntry;
-                        resultEntry.emplace_back(std::to_string(stmt));
-                        clauseResult.rows.emplace_back(resultEntry);
+                if (std::find(intResult.syns.begin(), intResult.syns.end(), arg2) == intResult.syns.end()) {
+                    std::unordered_set<StmtId> stmts = database.nextGetDirectNodes(arg1, NodeType::SUCCESSOR);
+                    intResult.syns.emplace_back(arg2);
+                    for (StmtId stmt : stmts) {
+                        if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(stmt)->getType(), synonymTable[arg2])) {
+                            ClauseResultEntry resultEntry;
+                            resultEntry.emplace_back(std::to_string(stmt));
+                            intResult.rows.emplace_back(resultEntry);
+                        }
                     }
+                } else {
+                    int index = std::find(intResult.syns.begin(), intResult.syns.end(), arg2) - intResult.syns.begin();
+                    std::vector<ClauseResultEntry> updatedResult;
+                    for (ClauseResultEntry& resultEntry : intResult.rows) {
+                        if (database.next(arg1, std::stoi(resultEntry[index]))) {
+                            updatedResult.emplace_back(resultEntry);
+                        }
+                    }
+                    intResult.rows = updatedResult;
                 }
     
             } else {
@@ -106,15 +116,25 @@ namespace PQL {
                 Synonym arg1 = args.first.value;
                 StmtId arg2 = std::stoi(args.second.value);
 
-                std::unordered_set<StmtId> stmts = database.nextGetDirectNodes(arg2, NodeType::PREDECESSOR);
-                ClauseResult clauseResult;
-                clauseResult.syns.emplace_back(arg1);
-                for (StmtId stmt : stmts) {
-                    if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(stmt)->getType(), synonymTable[arg1])) {
-                        ClauseResultEntry resultEntry;
-                        resultEntry.emplace_back(std::to_string(stmt));
-                        clauseResult.rows.emplace_back(resultEntry);
+                if (std::find(intResult.syns.begin(), intResult.syns.end(), arg1) == intResult.syns.end()) {
+                    std::unordered_set<StmtId> stmts = database.nextGetDirectNodes(arg2, NodeType::PREDECESSOR);
+                    intResult.syns.emplace_back(arg1);
+                    for (StmtId stmt : stmts) {
+                        if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(stmt)->getType(), synonymTable[arg1])) {
+                            ClauseResultEntry resultEntry;
+                            resultEntry.emplace_back(std::to_string(stmt));
+                            intResult.rows.emplace_back(resultEntry);
+                        }
                     }
+                } else {
+                    int index = std::find(intResult.syns.begin(), intResult.syns.end(), arg1) - intResult.syns.begin();
+                    std::vector<ClauseResultEntry> updatedResult;
+                    for (ClauseResultEntry& resultEntry : intResult.rows) {
+                        if (database.next(std::stoi(resultEntry[index]), arg2)) {
+                            updatedResult.emplace_back(resultEntry);
+                        }
+                    }
+                    intResult.rows = updatedResult;
                 }
     
             }

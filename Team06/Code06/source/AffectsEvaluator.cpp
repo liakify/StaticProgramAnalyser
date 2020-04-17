@@ -96,33 +96,50 @@ namespace PQL {
                 StmtId arg1 = std::stoi(args.first.value);
                 Synonym arg2 = args.second.value;
 
-                ClauseResult clauseResult;
-                clauseResult.syns.emplace_back(arg2);
+                if (std::find(intResult.syns.begin(), intResult.syns.end(), arg2) == intResult.syns.end()) {
+                    intResult.syns.emplace_back(arg2);
 
-                std::unordered_set<StmtId> stmts = database.affectsGetDirectNodes(arg1, NodeType::SUCCESSOR);
-                for (StmtId stmt : stmts) {
-                    ClauseResultEntry resultEntry;
-                    resultEntry.emplace_back(std::to_string(stmt));
-                    clauseResult.rows.emplace_back(resultEntry);
+                    std::unordered_set<StmtId> stmts = database.affectsGetDirectNodes(arg1, NodeType::SUCCESSOR);
+                    for (StmtId stmt : stmts) {
+                        ClauseResultEntry resultEntry;
+                        resultEntry.emplace_back(std::to_string(stmt));
+                        intResult.rows.emplace_back(resultEntry);
+                    }
+                } else {
+                    int index = std::find(intResult.syns.begin(), intResult.syns.end(), arg2) - intResult.syns.begin();
+                    std::vector<ClauseResultEntry> updatedResult;
+                    for (ClauseResultEntry& resultEntry : intResult.rows) {
+                        if (database.affects(arg1, std::stoi(resultEntry[index]))) {
+                            updatedResult.emplace_back(resultEntry);
+                        }
+                    }
+                    intResult.rows = updatedResult;
                 }
-
     
             } else {
                 // Case 2: Synonym, Integer
                 Synonym arg1 = args.first.value;
                 StmtId arg2 = std::stoi(args.second.value);
 
-                ClauseResult clauseResult;
-                clauseResult.syns.emplace_back(arg1);
+                if (std::find(intResult.syns.begin(), intResult.syns.end(), arg1) == intResult.syns.end()) {
+                    intResult.syns.emplace_back(arg1);
 
-                std::unordered_set<StmtId> stmts = database.affectsGetDirectNodes(arg2, NodeType::PREDECESSOR);
-                for (StmtId stmt : stmts) {
-                    ClauseResultEntry resultEntry;
-                    resultEntry.emplace_back(std::to_string(stmt));
-                    clauseResult.rows.emplace_back(resultEntry);
+                    std::unordered_set<StmtId> stmts = database.affectsGetDirectNodes(arg2, NodeType::PREDECESSOR);
+                    for (StmtId stmt : stmts) {
+                        ClauseResultEntry resultEntry;
+                        resultEntry.emplace_back(std::to_string(stmt));
+                        intResult.rows.emplace_back(resultEntry);
+                    }
+                } else {
+                    int index = std::find(intResult.syns.begin(), intResult.syns.end(), arg1) - intResult.syns.begin();
+                    std::vector<ClauseResultEntry> updatedResult;
+                    for (ClauseResultEntry& resultEntry : intResult.rows) {
+                        if (database.affects(std::stoi(resultEntry[index]), arg2)) {
+                            updatedResult.emplace_back(resultEntry);
+                        }
+                    }
+                    intResult.rows = updatedResult;
                 }
-
-    
             }
         }
 

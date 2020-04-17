@@ -90,15 +90,25 @@ namespace PQL {
                 StmtId arg1 = std::stoi(args.first.value);
                 Synonym arg2 = args.second.value;
 
-                std::unordered_set<StmtId> directChildren = database.parentKB.getDirectChildren(arg1);
-                ClauseResult clauseResult;
-                clauseResult.syns.emplace_back(arg2);
-                for (StmtId child : directChildren) {
-                    if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(child)->getType(), synonymTable[arg2])) {
-                        ClauseResultEntry resultEntry;
-                        resultEntry.emplace_back(std::to_string(child));
-                        clauseResult.rows.emplace_back(resultEntry);
+                if (std::find(intResult.syns.begin(), intResult.syns.end(), arg2) == intResult.syns.end()) {
+                    std::unordered_set<StmtId> directChildren = database.parentKB.getDirectChildren(arg1);
+                    intResult.syns.emplace_back(arg2);
+                    for (StmtId child : directChildren) {
+                        if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(child)->getType(), synonymTable[arg2])) {
+                            ClauseResultEntry resultEntry;
+                            resultEntry.emplace_back(std::to_string(child));
+                            intResult.rows.emplace_back(resultEntry);
+                        }
                     }
+                } else {
+                    int index = std::find(intResult.syns.begin(), intResult.syns.end(), arg2) - intResult.syns.begin();
+                    std::vector<ClauseResultEntry> updatedResult;
+                    for (ClauseResultEntry& resultEntry : intResult.rows) {
+                        if (database.parentKB.parent(arg1, std::stoi(resultEntry[index]))) {
+                            updatedResult.emplace_back(resultEntry);
+                        }
+                    }
+                    intResult.rows = updatedResult;
                 }
     
             } else {
@@ -106,18 +116,28 @@ namespace PQL {
                 Synonym arg1 = args.first.value;
                 StmtId arg2 = std::stoi(args.second.value);
 
-                StmtId parent = database.parentKB.getParent(arg2);
-                ClauseResult clauseResult;
-                if (parent == 0) {
-        
-                } else {
-                    clauseResult.syns.emplace_back(arg1);
-                    if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(parent)->getType(), synonymTable[arg1])) {
-                        ClauseResultEntry resultEntry;
-                        resultEntry.emplace_back(std::to_string(parent));
-                        clauseResult.rows.emplace_back(resultEntry);
+                if (std::find(intResult.syns.begin(), intResult.syns.end(), arg1) == intResult.syns.end()) {
+                    StmtId parent = database.parentKB.getParent(arg2);
+                    if (parent == 0) {
+                        intResult.rows.clear();
+                    } else {
+                        intResult.syns.emplace_back(arg1);
+                        if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(parent)->getType(), synonymTable[arg1])) {
+                            ClauseResultEntry resultEntry;
+                            resultEntry.emplace_back(std::to_string(parent));
+                            intResult.rows.emplace_back(resultEntry);
+                        }
+
                     }
-        
+                } else {
+                    int index = std::find(intResult.syns.begin(), intResult.syns.end(), arg1) - intResult.syns.begin();
+                    std::vector<ClauseResultEntry> updatedResult;
+                    for (ClauseResultEntry& resultEntry : intResult.rows) {
+                        if (database.parentKB.parent(std::stoi(resultEntry[index]), arg2)) {
+                            updatedResult.emplace_back(resultEntry);
+                        }
+                    }
+                    intResult.rows = updatedResult;
                 }
             }
         }
