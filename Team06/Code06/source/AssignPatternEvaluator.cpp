@@ -231,25 +231,25 @@ namespace PQL {
 
             if (argType1 == ArgType::WILDCARD && argType2 == ArgType::WILDCARD) {
                 // 2 wildcards
-                return evaluateAssignPatternClauseWildWild(database, clause);
+                evaluateAssignPatternClauseWildWild(database, clause);
             } else if (argType1 == ArgType::WILDCARD &&
                 (argType2 == ArgType::EXACT_PATTERN || argType2 == ArgType::INCLUSIVE_PATTERN)) {
                 // 1 wildcard, 1 pattern
-                return evaluateAssignPatternClauseWildPtn(database, clause);
+                evaluateAssignPatternClauseWildPtn(database, clause);
             } else if (argType1 == ArgType::IDENTIFIER && argType2 == ArgType::WILDCARD) {
                 // 1 identifier, 1 wildcard
-                return evaluateAssignPatternClauseIdWild(database, clause);
+                evaluateAssignPatternClauseIdWild(database, clause);
             } else if (argType1 == ArgType::IDENTIFIER &&
                 (argType2 == ArgType::EXACT_PATTERN || argType2 == ArgType::INCLUSIVE_PATTERN)) {
                 // 1 identifier, 1 pattern
-                return evaluateAssignPatternClauseIdPtn(database, clause);
+                evaluateAssignPatternClauseIdPtn(database, clause);
             } else if (argType1 == ArgType::SYNONYM && argType2 == ArgType::WILDCARD) {
                 // 1 synonym, 1 wildcard
-                return evaluateAssignPatternClauseSynWild(database, clause, synonymTable);
+                evaluateAssignPatternClauseSynWild(database, clause, synonymTable);
             } else if (argType1 == ArgType::SYNONYM &&
                 (argType2 == ArgType::EXACT_PATTERN || argType2 == ArgType::INCLUSIVE_PATTERN)) {
                 // 1 synonym, 1 pattern
-                return evaluateAssignPatternClauseSynPtn(database, clause, synonymTable);
+                evaluateAssignPatternClauseSynPtn(database, clause, synonymTable);
             } else {
                 SPA::LoggingUtils::LogErrorMessage("AssignPatternEvaluator::evaluateAssignPatternClause: Invalid ArgTypes for Assign Pattern clause. argType1 = %d, argType2 = %d\n", argType1, argType2);
                 return {};

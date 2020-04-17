@@ -240,25 +240,25 @@ namespace PQL {
 
             if (argType1 == ArgType::INTEGER && argType2 == ArgType::INTEGER) {
                 // Two statement numbers supplied
-                return evaluateParentStarClauseIntInt(database, clause);
+                evaluateParentStarClauseIntInt(database, clause);
             } else if (argType1 == ArgType::WILDCARD && argType2 == ArgType::WILDCARD) {
                 // Two wildcards supplied
-                return evaluateParentStarClauseWildWild(database);
+                evaluateParentStarClauseWildWild(database);
             } else if (argType1 == ArgType::INTEGER && argType2 == ArgType::WILDCARD ||
                 argType1 == ArgType::WILDCARD && argType2 == ArgType::INTEGER) {
                 // One statement number, one wildcard supplied
-                return evaluateParentStarClauseIntWild(database, clause);
+                evaluateParentStarClauseIntWild(database, clause);
             } else if (argType1 == ArgType::INTEGER && argType2 == ArgType::SYNONYM ||
                 argType1 == ArgType::SYNONYM && argType2 == ArgType::INTEGER) {
                 // One statement number, one synonym
-                return evaluateParentStarClauseIntSyn(database, clause, synonymTable);
+                evaluateParentStarClauseIntSyn(database, clause, synonymTable);
             } else if (argType1 == ArgType::WILDCARD && argType2 == ArgType::SYNONYM ||
                 argType1 == ArgType::SYNONYM && argType2 == ArgType::WILDCARD) {
                 // One synonym, one wildcard
-                return evaluateParentStarClauseWildSyn(database, clause, synonymTable);
+                evaluateParentStarClauseWildSyn(database, clause, synonymTable);
             } else if (argType1 == ArgType::SYNONYM && argType2 == ArgType::SYNONYM) {
                 // Two synonyms
-                return evaluateParentStarClauseSynSyn(database, clause, synonymTable);
+                evaluateParentStarClauseSynSyn(database, clause, synonymTable);
             } else {
                 SPA::LoggingUtils::LogErrorMessage("ParentEvaluator::evaluateParentStarClause: Invalid ArgTypes for Parent* clause. argType1 = %d, argType2 = %d\n", argType1, argType2);
                 return {};

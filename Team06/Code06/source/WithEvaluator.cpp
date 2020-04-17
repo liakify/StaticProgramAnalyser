@@ -347,13 +347,13 @@ namespace PQL {
 
             switch (clause.getWithType()) {
             case WithType::IDENTIFIER_EQUAL:
-                return evaluateIdentifierEqual(database, clause, synonymTable);
+                evaluateIdentifierEqual(database, clause, synonymTable);
                 break;
             case WithType::INTEGER_EQUAL:
-                return evaluateIntegerEqual(database, clause, synonymTable);
+                evaluateIntegerEqual(database, clause, synonymTable);
                 break;
             case WithType::LITERAL_EQUAL:
-                return evaluateLiteralEqual(clause);
+                evaluateLiteralEqual(clause);
                 break;
             }
             return {};

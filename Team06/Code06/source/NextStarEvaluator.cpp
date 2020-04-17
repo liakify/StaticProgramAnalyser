@@ -243,25 +243,25 @@ namespace PQL {
 
             if (argType1 == ArgType::INTEGER && argType2 == ArgType::INTEGER) {
                 // Two statement numbers supplied
-                return evaluateNextStarClauseIntInt(database, clause);
+                evaluateNextStarClauseIntInt(database, clause);
             } else if (argType1 == ArgType::WILDCARD && argType2 == ArgType::WILDCARD) {
                 // Two wildcards supplied
-                return evaluateNextStarClauseWildWild(database);
+                evaluateNextStarClauseWildWild(database);
             } else if (argType1 == ArgType::INTEGER && argType2 == ArgType::WILDCARD ||
                 argType1 == ArgType::WILDCARD && argType2 == ArgType::INTEGER) {
                 // One statement number, one wildcard supplied
-                return evaluateNextStarClauseIntWild(database, clause);
+                evaluateNextStarClauseIntWild(database, clause);
             } else if (argType1 == ArgType::INTEGER && argType2 == ArgType::SYNONYM ||
                 argType1 == ArgType::SYNONYM && argType2 == ArgType::INTEGER) {
                 // One statement number, one synonym
-                return evaluateNextStarClauseIntSyn(database, clause, synonymTable);
+                evaluateNextStarClauseIntSyn(database, clause, synonymTable);
             } else if (argType1 == ArgType::WILDCARD && argType2 == ArgType::SYNONYM ||
                 argType1 == ArgType::SYNONYM && argType2 == ArgType::WILDCARD) {
                 // One synonym, one wildcard
-                return evaluateNextStarClauseWildSyn(database, clause, synonymTable);
+                evaluateNextStarClauseWildSyn(database, clause, synonymTable);
             } else if (argType1 == ArgType::SYNONYM && argType2 == ArgType::SYNONYM) {
                 // Two synonyms
-                return evaluateNextStarClauseSynSyn(database, clause, synonymTable);
+                evaluateNextStarClauseSynSyn(database, clause, synonymTable);
             } else {
                 SPA::LoggingUtils::LogErrorMessage("NextEvaluator::evaluateNextClause: Invalid ArgTypes for Next clause. argType1 = %d, argType2 = %d\n", argType1, argType2);
                 return {};

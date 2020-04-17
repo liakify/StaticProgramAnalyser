@@ -274,22 +274,22 @@ namespace PQL {
 
             if ((argType1 == ArgType::INTEGER || argType1 == ArgType::IDENTIFIER) && argType2 == ArgType::IDENTIFIER) {
                 // One statement number/procedure name, one identifier supplied
-                return evaluateUsesClauseIntIdId(database, clause);
+                evaluateUsesClauseIntIdId(database, clause);
             } else if ((argType1 == ArgType::INTEGER || argType1 == ArgType::IDENTIFIER) && argType2 == ArgType::WILDCARD) {
                 // One statement number/procedure name, one wildcard supplied
-                return evaluateUsesClauseIntIdWild(database, clause);
+                evaluateUsesClauseIntIdWild(database, clause);
             } else if ((argType1 == ArgType::INTEGER || argType1 == ArgType::IDENTIFIER) && argType2 == ArgType::SYNONYM) {
                 // One statement number/procedure name, one synonym
-                return evaluateUsesClauseIntIdSyn(database, clause, synonymTable);
+                evaluateUsesClauseIntIdSyn(database, clause, synonymTable);
             } else if (argType1 == ArgType::SYNONYM && argType2 == ArgType::IDENTIFIER) {
                 // One synonym, one identifier
-                return evaluateUsesClauseSynId(database, clause, synonymTable);
+                evaluateUsesClauseSynId(database, clause, synonymTable);
             } else if (argType1 == ArgType::SYNONYM && argType2 == ArgType::WILDCARD) {
                 // One synonym, one wildcard
-                return evaluateUsesClauseSynWild(database, clause, synonymTable);
+                evaluateUsesClauseSynWild(database, clause, synonymTable);
             } else if (argType1 == ArgType::SYNONYM && argType2 == ArgType::SYNONYM) {
                 // Two synonyms
-                return evaluateUsesClauseSynSyn(database, clause, synonymTable);
+                evaluateUsesClauseSynSyn(database, clause, synonymTable);
             } else {
                 SPA::LoggingUtils::LogErrorMessage("UsesEvaluator::evaluateUsesClause: Invalid ArgTypes for Uses clause. argType1 = %d, argType2 = %d\n", argType1, argType2);
                 return {};

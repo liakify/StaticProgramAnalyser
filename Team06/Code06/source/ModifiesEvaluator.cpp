@@ -274,22 +274,22 @@ namespace PQL {
 
             if ((argType1 == ArgType::INTEGER || argType1 == ArgType::IDENTIFIER) && argType2 == ArgType::IDENTIFIER) {
                 // One statement number/procedure name, one identifier supplied
-                return evaluateModifiesClauseIntIdId(database, clause);
+                evaluateModifiesClauseIntIdId(database, clause);
             } else if ((argType1 == ArgType::INTEGER || argType1 == ArgType::IDENTIFIER) && argType2 == ArgType::WILDCARD) {
                 // One statement number/procedure name, one wildcard supplied
-                return evaluateModifiesClauseIntIdWild(database, clause);
+                evaluateModifiesClauseIntIdWild(database, clause);
             } else if ((argType1 == ArgType::INTEGER || argType1 == ArgType::IDENTIFIER) && argType2 == ArgType::SYNONYM) {
                 // One statement number/procedure name, one synonym
-                return evaluateModifiesClauseIntIdSyn(database, clause, synonymTable);
+                evaluateModifiesClauseIntIdSyn(database, clause, synonymTable);
             } else if (argType1 == ArgType::SYNONYM && argType2 == ArgType::IDENTIFIER) {
                 // One synonym, one identifier
-                return evaluateModifiesClauseSynId(database, clause, synonymTable);
+                evaluateModifiesClauseSynId(database, clause, synonymTable);
             } else if (argType1 == ArgType::SYNONYM && argType2 == ArgType::WILDCARD) {
                 // One synonym, one wildcard
-                return evaluateModifiesClauseSynWild(database, clause, synonymTable);
+                evaluateModifiesClauseSynWild(database, clause, synonymTable);
             } else if (argType1 == ArgType::SYNONYM && argType2 == ArgType::SYNONYM) {
                 // Two synonyms
-                return evaluateModifiesClauseSynSyn(database, clause, synonymTable);
+                evaluateModifiesClauseSynSyn(database, clause, synonymTable);
             } else {
                 SPA::LoggingUtils::LogErrorMessage("ModifiesEvaluator::evaluateModifiesClause: Invalid ArgTypes for Modifies clause. argType1 = %d, argType2 = %d\n", argType1, argType2);
                 return {};
