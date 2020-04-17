@@ -22,9 +22,8 @@ namespace PQL {
             StmtId arg1 = std::stoi(args.first.value);
             StmtId arg2 = std::stoi(args.second.value);
 
-            ClauseResult clauseResult;
-            if (database.parentKB.parent(arg1, arg2)) {
-                clauseResult.trueResult = true;
+            if (!database.parentKB.parent(arg1, arg2)) {
+                intResult.rows.clear();
             }
 
         }
@@ -36,9 +35,8 @@ namespace PQL {
         * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
         void evaluateParentClauseWildWild(PKB::PKB& database, ClauseResult& intResult) {
-            ClauseResult clauseResult;
-            if (database.parentKB.hasParentRelation()) {
-                clauseResult.trueResult = true;
+            if (!database.parentKB.hasParentRelation()) {
+                intResult.rows.clear();
             }
 
         }
@@ -58,17 +56,15 @@ namespace PQL {
             if (argType1 == ArgType::INTEGER && argType2 == ArgType::WILDCARD) {
                 // Case 1: Integer, Wildcard
                 StmtId arg1 = std::stoi(args.first.value);
-                ClauseResult clauseResult;
-                if (database.parentKB.getDirectChildren(arg1).size() > 0) {
-                    clauseResult.trueResult = true;
+                if (database.parentKB.getDirectChildren(arg1).size() <= 0) {
+                    intResult.rows.clear();
                 }
     
             } else {
                 // Case 2: Wildcard, Integer
                 StmtId arg2 = std::stoi(args.second.value);
-                ClauseResult clauseResult;
-                if (database.parentKB.getParent(arg2) != 0) {
-                    clauseResult.trueResult = true;
+                if (database.parentKB.getParent(arg2) == 0) {
+                    intResult.rows.clear();
                 }
     
             }

@@ -22,12 +22,9 @@ namespace PQL {
             StmtId arg1 = std::stoi(args.first.value);
             StmtId arg2 = std::stoi(args.second.value);
 
-            ClauseResult clauseResult;
-            if (database.affects(arg1, arg2)) {
-                clauseResult.trueResult = true;
+            if (!database.affects(arg1, arg2)) {
+                intResult.rows.clear();
             }
-
-
         }
 
         /**
@@ -38,12 +35,15 @@ namespace PQL {
         */
         void evaluateAffectsClauseWildWild(PKB::PKB& database, ClauseResult& intResult) {
 
-            ClauseResult clauseResult;
+            bool success = false;
             for (StmtId i : database.stmtTable.getStmtsByType(StmtType::ASSIGN)) {
                 if (database.affectsGetDirectNodes(i, NodeType::SUCCESSOR).size() > 0) {
-                    clauseResult.trueResult = true;
-        
+                    success = true;
+                    break;
                 }
+            }
+            if (!success) {
+                intResult.rows.clear();
             }
 
         }
@@ -60,24 +60,20 @@ namespace PQL {
             ArgType argType1 = args.first.type;
             ArgType argType2 = args.second.type;
 
-            ClauseResult clauseResult;
-
             if (argType1 == ArgType::INTEGER && argType2 == ArgType::WILDCARD) {
                 // Case 1: Integer, Wildcard
                 StmtId arg1 = std::stoi(args.first.value);
-                if (database.affectsGetDirectNodes(arg1, NodeType::SUCCESSOR).size() > 0) {
-                    clauseResult.trueResult = true;
+                if (database.affectsGetDirectNodes(arg1, NodeType::SUCCESSOR).size() <= 0) {
+                    intResult.rows.clear();
                 }
     
             } else {
                 // Case 2: Wildcard, Integer
                 StmtId arg2 = std::stoi(args.second.value);
-                if (database.affectsGetDirectNodes(arg2, NodeType::PREDECESSOR).size() > 0) {
-                    clauseResult.trueResult = true;
+                if (database.affectsGetDirectNodes(arg2, NodeType::PREDECESSOR).size() <= 0) {
+                    intResult.rows.clear();
                 }
             }
-
-
         }
 
         /**

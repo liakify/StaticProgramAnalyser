@@ -22,9 +22,8 @@ namespace PQL {
             ProcId arg1 = database.procTable.getProcId(args.first.value);
             ProcId arg2 = database.procTable.getProcId(args.second.value);
 
-            ClauseResult clauseResult;
-            if (database.callsKB.calls(arg1, arg2)) {
-                clauseResult.trueResult = true;
+            if (!database.callsKB.calls(arg1, arg2)) {
+                intResult.rows.clear();
             }
 
         }
@@ -37,9 +36,8 @@ namespace PQL {
         */
         void evaluateCallsClauseWildWild(PKB::PKB& database, ClauseResult& intResult) {
 
-            ClauseResult clauseResult;
-            if (database.callsKB.hasCallsRelation()) {
-                clauseResult.trueResult = true;
+            if (!database.callsKB.hasCallsRelation()) {
+                intResult.rows.clear();
             }
 
         }
@@ -59,17 +57,15 @@ namespace PQL {
             if (argType1 == ArgType::IDENTIFIER && argType2 == ArgType::WILDCARD) {
                 // Case 1: Identifier, Wildcard
                 ProcId arg1 = database.procTable.getProcId(args.first.value);
-                ClauseResult clauseResult;
-                if (database.callsKB.hasCallee(arg1)) {
-                    clauseResult.trueResult = true;
+                if (!database.callsKB.hasCallee(arg1)) {
+                    intResult.rows.clear();
                 }
     
             } else {
                 // Case 2: Wildcard, Identifier
                 ProcId arg2 = database.procTable.getProcId(args.second.value);
-                ClauseResult clauseResult;
-                if (database.callsKB.hasCaller(arg2)) {
-                    clauseResult.trueResult = true;
+                if (!database.callsKB.hasCaller(arg2)) {
+                    intResult.rows.clear();
                 }
     
             }

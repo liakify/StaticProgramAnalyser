@@ -26,9 +26,8 @@ namespace PQL {
                 StmtId arg1 = std::stoi(args.first.value);
                 VarId arg2 = database.varTable.getVarId(args.second.value);
 
-                ClauseResult clauseResult;
-                if (database.usesKB.stmtUses(arg1, arg2)) {
-                    clauseResult.trueResult = true;
+                if (!database.usesKB.stmtUses(arg1, arg2)) {
+                    intResult.rows.clear();
                 }
     
             } else {
@@ -36,9 +35,8 @@ namespace PQL {
                 ProcId arg1 = database.procTable.getProcId(args.first.value);
                 VarId arg2 = database.varTable.getVarId(args.second.value);
 
-                ClauseResult clauseResult;
-                if (database.usesKB.procUses(arg1, arg2)) {
-                    clauseResult.trueResult = true;
+                if (!database.usesKB.procUses(arg1, arg2)) {
+                    intResult.rows.clear();
                 }
     
             }
@@ -58,17 +56,16 @@ namespace PQL {
             if (argType1 == ArgType::INTEGER) {
                 // Case 1: Statement number provided
                 StmtId arg1 = std::stoi(args.first.value);
-                ClauseResult clauseResult;
-                if (database.usesKB.getAllVarsUsedByStmt(arg1).size() > 0) {
-                    clauseResult.trueResult = true;
+                if (database.usesKB.getAllVarsUsedByStmt(arg1).size() <= 0) {
+                    intResult.rows.clear();
                 }
     
             } else {
                 // Case 2: Procedure name provided
                 ProcId arg1 = database.procTable.getProcId(args.first.value);
                 ClauseResult clauseResult;
-                if (database.usesKB.getAllVarsUsedByProc(arg1).size() > 0) {
-                    clauseResult.trueResult = true;
+                if (database.usesKB.getAllVarsUsedByProc(arg1).size() <= 0) {
+                    intResult.rows.clear();
                 }
     
             }

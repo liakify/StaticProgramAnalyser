@@ -26,9 +26,8 @@ namespace PQL {
                 StmtId arg1 = std::stoi(args.first.value);
                 VarId arg2 = database.varTable.getVarId(args.second.value);
 
-                ClauseResult clauseResult;
-                if (database.modifiesKB.stmtModifies(arg1, arg2)) {
-                    clauseResult.trueResult = true;
+                if (!database.modifiesKB.stmtModifies(arg1, arg2)) {
+                    intResult.rows.clear();
                 }
     
             } else {
@@ -36,9 +35,8 @@ namespace PQL {
                 ProcId arg1 = database.procTable.getProcId(args.first.value);
                 VarId arg2 = database.varTable.getVarId(args.second.value);
 
-                ClauseResult clauseResult;
-                if (database.modifiesKB.procModifies(arg1, arg2)) {
-                    clauseResult.trueResult = true;
+                if (!database.modifiesKB.procModifies(arg1, arg2)) {
+                    intResult.rows.clear();
                 }
     
             }
@@ -59,17 +57,15 @@ namespace PQL {
             if (argType1 == ArgType::INTEGER) {
                 // Case 1: Statement number provided
                 StmtId arg1 = std::stoi(args.first.value);
-                ClauseResult clauseResult;
-                if (database.modifiesKB.getAllVarsModifiedByStmt(arg1).size() > 0) {
-                    clauseResult.trueResult = true;
+                if (database.modifiesKB.getAllVarsModifiedByStmt(arg1).size() <= 0) {
+                    intResult.rows.clear();
                 }
     
             } else {
                 // Case 2: Procedure name provided
                 ProcId arg1 = database.procTable.getProcId(args.first.value);
-                ClauseResult clauseResult;
-                if (database.modifiesKB.getAllVarsModifiedByProc(arg1).size() > 0) {
-                    clauseResult.trueResult = true;
+                if (database.modifiesKB.getAllVarsModifiedByProc(arg1).size() <= 0) {
+                    intResult.rows.clear();
                 }
     
             }

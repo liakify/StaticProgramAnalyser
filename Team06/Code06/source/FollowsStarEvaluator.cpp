@@ -22,9 +22,8 @@ namespace PQL {
             StmtId arg1 = std::stoi(args.first.value);
             StmtId arg2 = std::stoi(args.second.value);
 
-            ClauseResult clauseResult;
-            if (database.followsKB.followStar(arg1, arg2)) {
-                clauseResult.trueResult = true;
+            if (!database.followsKB.followStar(arg1, arg2)) {
+                intResult.rows.clear();
             }
 
         }
@@ -36,9 +35,8 @@ namespace PQL {
         * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
         void evaluateFollowsStarClauseWildWild(PKB::PKB& database, ClauseResult& intResult) {
-            ClauseResult clauseResult;
             if (database.followsKB.hasFollowsRelation()) {
-                clauseResult.trueResult = true;
+                intResult.rows.clear();
             }
 
         }
@@ -58,17 +56,15 @@ namespace PQL {
             if (argType1 == ArgType::INTEGER && argType2 == ArgType::WILDCARD) {
                 // Case 1: Integer, Wildcard
                 StmtId arg1 = std::stoi(args.first.value);
-                ClauseResult clauseResult;
-                if (database.followsKB.getFollower(arg1) != 0) {
-                    clauseResult.trueResult = true;
+                if (database.followsKB.getFollower(arg1) == 0) {
+                    intResult.rows.clear();
                 }
     
             } else {
                 // Case 2: Wildcard, Integer
                 StmtId arg2 = std::stoi(args.second.value);
-                ClauseResult clauseResult;
-                if (database.followsKB.getFollowing(arg2) != 0) {
-                    clauseResult.trueResult = true;
+                if (database.followsKB.getFollowing(arg2) == 0) {
+                    intResult.rows.clear();
                 }
     
             }
