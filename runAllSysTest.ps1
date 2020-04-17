@@ -90,7 +90,10 @@ $list_of_test_files = @(
   'given_0'
   'given_1'
   'given_2'
-
+  'nextStar_tle'
+  'CallsStar_multipleCallsInOneProc'
+  'mixed_0'
+  
   '..\extension_contains_tests\contains_0'
   '..\extension_contains_tests\contains_invalidArgs'
   '..\extension_contains_tests\contains_multi'
@@ -98,12 +101,11 @@ $list_of_test_files = @(
   '..\extension_contains_tests\contains_with'
 
   # STAGED TESTS
-  '..\mixed_0'
   '..\performance600_single'
   '..\performance600_chainedNext'
   
   # TESTS BELOW CURRENTLY FAIL / TIMEOUT
-  # '..\nextStar_tle'
+  # '..\performance600_runtimeCache'
   # '..\performance600_chainedNextStar'
   # '..\performance600_chainedAffects'
   # '..\performance600_chainedAffectsStar'

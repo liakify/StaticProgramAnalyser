@@ -1,0 +1,15 @@
+1 -
+procedure p, q; call c; 
+Select <p, q> such that Calls*(p, q) 
+A D, A I, B D, B I, D I
+5000
+2 - 
+procedure p, q; call c; 
+Select <c, p> with p.procName = c.procName
+1 D, 3 D, 4 D, 5 D, 6 D, 7 D, 2 I, 8 I
+5000
+3 - testing double calls in 1 procedure
+procedure p, q; call c; 
+Select <c, p, q> with p.procName = c.procName such that Calls*(p, q) 
+1 D I, 3 D I, 4 D I, 5 D I, 6 D I, 7 D I
+5000

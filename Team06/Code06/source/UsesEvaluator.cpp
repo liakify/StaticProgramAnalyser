@@ -1,6 +1,7 @@
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
+#include <utility>
 
 #include "UsesEvaluator.h"
 #include "LoggingUtils.h"
@@ -17,12 +18,13 @@ namespace PQL {
         * @return   The result of the evaluation.
         */
         ClauseResult evaluateUsesClauseIntIdId(PKB::PKB& database, RelationClause clause) {
-            ArgType argType1 = clause.getArgs().first.first;
+            std::pair<Argument, Argument> args = clause.getArgs();
+            ArgType argType1 = args.first.type;
 
             if (argType1 == ArgType::INTEGER) {
                 // Case 1: Statement number provided
-                StmtId arg1 = std::stoi(clause.getArgs().first.second);
-                VarId arg2 = database.varTable.getVarId(clause.getArgs().second.second);
+                StmtId arg1 = std::stoi(args.first.value);
+                VarId arg2 = database.varTable.getVarId(args.second.value);
 
                 ClauseResult clauseResult;
                 if (database.usesKB.stmtUses(arg1, arg2)) {
@@ -31,8 +33,8 @@ namespace PQL {
                 return clauseResult;
             } else {
                 // Case 2: Procedure name provided
-                ProcId arg1 = database.procTable.getProcId(clause.getArgs().first.second);
-                VarId arg2 = database.varTable.getVarId(clause.getArgs().second.second);
+                ProcId arg1 = database.procTable.getProcId(args.first.value);
+                VarId arg2 = database.varTable.getVarId(args.second.value);
 
                 ClauseResult clauseResult;
                 if (database.usesKB.procUses(arg1, arg2)) {
@@ -50,11 +52,12 @@ namespace PQL {
         * @return   The result of the evaluation.
         */
         ClauseResult evaluateUsesClauseIntIdWild(PKB::PKB& database, RelationClause clause) {
-            ArgType argType1 = clause.getArgs().first.first;
+            std::pair<Argument, Argument> args = clause.getArgs();
+            ArgType argType1 = args.first.type;
 
             if (argType1 == ArgType::INTEGER) {
                 // Case 1: Statement number provided
-                StmtId arg1 = std::stoi(clause.getArgs().first.second);
+                StmtId arg1 = std::stoi(args.first.value);
                 ClauseResult clauseResult;
                 if (database.usesKB.getAllVarsUsedByStmt(arg1).size() > 0) {
                     clauseResult.trueResult = true;
@@ -62,7 +65,7 @@ namespace PQL {
                 return clauseResult;
             } else {
                 // Case 2: Procedure name provided
-                ProcId arg1 = database.procTable.getProcId(clause.getArgs().first.second);
+                ProcId arg1 = database.procTable.getProcId(args.first.value);
                 ClauseResult clauseResult;
                 if (database.usesKB.getAllVarsUsedByProc(arg1).size() > 0) {
                     clauseResult.trueResult = true;
@@ -81,12 +84,14 @@ namespace PQL {
         */
         ClauseResult evaluateUsesClauseIntIdSyn(PKB::PKB& database, RelationClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable) {
-            ArgType argType1 = clause.getArgs().first.first;
+
+            std::pair<Argument, Argument> args = clause.getArgs();
+            ArgType argType1 = args.first.type;
 
             if (argType1 == ArgType::INTEGER) {
                 // Case 1: Statement number provided
-                StmtId arg1 = std::stoi(clause.getArgs().first.second);
-                Synonym arg2 = clause.getArgs().second.second;
+                StmtId arg1 = std::stoi(args.first.value);
+                Synonym arg2 = args.second.value;
 
                 std::unordered_set<VarId> usedVars = database.usesKB.getAllVarsUsedByStmt(arg1);
                 ClauseResult clauseResult;
@@ -100,8 +105,8 @@ namespace PQL {
                 return clauseResult;
             } else {
                 // Case 2: Procedure name provided
-                ProcId arg1 = database.procTable.getProcId(clause.getArgs().first.second);
-                Synonym arg2 = clause.getArgs().second.second;
+                ProcId arg1 = database.procTable.getProcId(args.first.value);
+                Synonym arg2 = args.second.value;
 
                 std::unordered_set<VarId> usedVars = database.usesKB.getAllVarsUsedByProc(arg1);
                 ClauseResult clauseResult;
@@ -127,8 +132,9 @@ namespace PQL {
         ClauseResult evaluateUsesClauseSynId(PKB::PKB& database, RelationClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable) {
 
-            Synonym arg1 = clause.getArgs().first.second;
-            VarId arg2 = database.varTable.getVarId(clause.getArgs().second.second);
+            std::pair<Argument, Argument> args = clause.getArgs();
+            Synonym arg1 = args.first.value;
+            VarId arg2 = database.varTable.getVarId(args.second.value);
 
             if (synonymTable[arg1] == DesignEntity::PROCEDURE) {
                 // Case 1: Synonym is a procedure
@@ -168,7 +174,7 @@ namespace PQL {
         ClauseResult evaluateUsesClauseSynWild(PKB::PKB& database, RelationClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable) {
 
-            Synonym arg1 = clause.getArgs().first.second;
+            Synonym arg1 = clause.getArgs().first.value;
 
             if (synonymTable[arg1] == DesignEntity::PROCEDURE) {
                 // Case 1: Synonym is a procedure
@@ -209,8 +215,10 @@ namespace PQL {
         */
         ClauseResult evaluateUsesClauseSynSyn(PKB::PKB& database, RelationClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable) {
-            Synonym arg1 = clause.getArgs().first.second;
-            Synonym arg2 = clause.getArgs().second.second;
+
+            std::pair<Argument, Argument> args = clause.getArgs();
+            Synonym arg1 = args.first.value;
+            Synonym arg2 = args.second.value;
 
             ClauseResult clauseResult;
             if (arg1 < arg2) {
@@ -220,6 +228,7 @@ namespace PQL {
                 clauseResult.syns.emplace_back(arg2);
                 clauseResult.syns.emplace_back(arg1);
             }
+
             if (synonymTable[arg1] == DesignEntity::PROCEDURE) {
                 for (StmtId i = 1; i <= database.procTable.size(); i++) {
                     std::unordered_set<VarId> usedVars = database.usesKB.getAllVarsUsedByProc(i);
@@ -260,8 +269,9 @@ namespace PQL {
         ClauseResult evaluateUsesClause(PKB::PKB& database, RelationClause clause,
             unordered_map<std::string, DesignEntity>& synonymTable) {
 
-            ArgType argType1 = clause.getArgs().first.first;
-            ArgType argType2 = clause.getArgs().second.first;
+            std::pair<Argument, Argument> args = clause.getArgs();
+            ArgType argType1 = args.first.type;
+            ArgType argType2 = args.second.type;
 
             if ((argType1 == ArgType::INTEGER || argType1 == ArgType::IDENTIFIER) && argType2 == ArgType::IDENTIFIER) {
                 // One statement number/procedure name, one identifier supplied
