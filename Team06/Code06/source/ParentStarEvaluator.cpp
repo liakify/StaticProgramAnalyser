@@ -159,31 +159,51 @@ namespace PQL {
                 Synonym arg2 = args.second.value;
 
                 // Case 1: Wildcard, Synonym
-                ClauseResult clauseResult;
-                clauseResult.syns.emplace_back(arg2);
-                for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
-                    if (database.parentKB.getParent(i) != 0) {
-                        if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i)->getType(), synonymTable[arg2])) {
-                            ClauseResultEntry resultEntry;
-                            resultEntry.emplace_back(std::to_string(i));
-                            clauseResult.rows.emplace_back(resultEntry);
+                if (std::find(intResult.syns.begin(), intResult.syns.end(), arg2) == intResult.syns.end()) {
+                    intResult.syns.emplace_back(arg2);
+                    for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
+                        if (database.parentKB.getParent(i) != 0) {
+                            if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i)->getType(), synonymTable[arg2])) {
+                                ClauseResultEntry resultEntry;
+                                resultEntry.emplace_back(std::to_string(i));
+                                intResult.rows.emplace_back(resultEntry);
+                            }
                         }
                     }
+                } else {
+                    int index = std::find(intResult.syns.begin(), intResult.syns.end(), arg2) - intResult.syns.begin();
+                    std::vector<ClauseResultEntry> updatedResult;
+                    for (ClauseResultEntry& resultEntry : intResult.rows) {
+                        if (database.parentKB.hasParent(std::stoi(resultEntry[index]))) {
+                            updatedResult.emplace_back(resultEntry);
+                        }
+                    }
+                    intResult.rows = updatedResult;
                 }
     
             } else {
                 Synonym arg1 = args.first.value;
                 // Case 2: Synonym, Wildcard
-                ClauseResult clauseResult;
-                clauseResult.syns.emplace_back(arg1);
-                for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
-                    if (database.parentKB.getDirectChildren(i).size() > 0) {
-                        if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i)->getType(), synonymTable[arg1])) {
-                            ClauseResultEntry resultEntry;
-                            resultEntry.emplace_back(std::to_string(i));
-                            clauseResult.rows.emplace_back(resultEntry);
+                if (std::find(intResult.syns.begin(), intResult.syns.end(), arg1) == intResult.syns.end()) {
+                    intResult.syns.emplace_back(arg1);
+                    for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
+                        if (database.parentKB.getDirectChildren(i).size() > 0) {
+                            if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i)->getType(), synonymTable[arg1])) {
+                                ClauseResultEntry resultEntry;
+                                resultEntry.emplace_back(std::to_string(i));
+                                intResult.rows.emplace_back(resultEntry);
+                            }
                         }
                     }
+                } else {
+                    int index = std::find(intResult.syns.begin(), intResult.syns.end(), arg1) - intResult.syns.begin();
+                    std::vector<ClauseResultEntry> updatedResult;
+                    for (ClauseResultEntry& resultEntry : intResult.rows) {
+                        if (database.parentKB.hasDirectChildren(std::stoi(resultEntry[index]))) {
+                            updatedResult.emplace_back(resultEntry);
+                        }
+                    }
+                    intResult.rows = updatedResult;
                 }
     
             }

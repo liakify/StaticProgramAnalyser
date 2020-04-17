@@ -212,28 +212,48 @@ namespace PQL {
 
             if (synonymTable[arg1] == DesignEntity::PROCEDURE) {
                 // Case 1: Synonym is a procedure
-                ClauseResult clauseResult;
-                clauseResult.syns.emplace_back(arg1);
-                for (ProcId i = 1; i <= database.procTable.size(); i++) {
-                    if (database.usesKB.getAllVarsUsedByProc(i).size() > 0) {
-                        ClauseResultEntry resultEntry;
-                        resultEntry.emplace_back(database.procTable.get(i).getName());
-                        clauseResult.rows.emplace_back(resultEntry);
+                if (std::find(intResult.syns.begin(), intResult.syns.end(), arg1) == intResult.syns.end()) {
+                    intResult.syns.emplace_back(arg1);
+                    for (ProcId i = 1; i <= database.procTable.size(); i++) {
+                        if (database.usesKB.getAllVarsUsedByProc(i).size() > 0) {
+                            ClauseResultEntry resultEntry;
+                            resultEntry.emplace_back(database.procTable.get(i).getName());
+                            intResult.rows.emplace_back(resultEntry);
+                        }
                     }
+                } else {
+                    int index = std::find(intResult.syns.begin(), intResult.syns.end(), arg1) - intResult.syns.begin();
+                    std::vector<ClauseResultEntry> updatedResult;
+                    for (ClauseResultEntry& resultEntry : intResult.rows) {
+                        if (database.usesKB.getAllVarsUsedByProc(std::stoi(resultEntry[index])).size() > 0) {
+                            updatedResult.emplace_back(resultEntry);
+                        }
+                    }
+                    intResult.rows = updatedResult;
                 }
     
             } else {
                 // Case 2: Synonym is a statement
-                ClauseResult clauseResult;
-                clauseResult.syns.emplace_back(arg1);
-                for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
-                    if (database.usesKB.getAllVarsUsedByStmt(i).size() > 0) {
-                        if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i)->getType(), synonymTable[arg1])) {
-                            ClauseResultEntry resultEntry;
-                            resultEntry.emplace_back(std::to_string(i));
-                            clauseResult.rows.emplace_back(resultEntry);
+                if (std::find(intResult.syns.begin(), intResult.syns.end(), arg1) == intResult.syns.end()) {
+                    intResult.syns.emplace_back(arg1);
+                    for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
+                        if (database.usesKB.getAllVarsUsedByStmt(i).size() > 0) {
+                            if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i)->getType(), synonymTable[arg1])) {
+                                ClauseResultEntry resultEntry;
+                                resultEntry.emplace_back(std::to_string(i));
+                                intResult.rows.emplace_back(resultEntry);
+                            }
                         }
                     }
+                } else {
+                    int index = std::find(intResult.syns.begin(), intResult.syns.end(), arg1) - intResult.syns.begin();
+                    std::vector<ClauseResultEntry> updatedResult;
+                    for (ClauseResultEntry& resultEntry : intResult.rows) {
+                        if (database.usesKB.getAllVarsUsedByStmt(std::stoi(resultEntry[index])).size() > 0) {
+                            updatedResult.emplace_back(resultEntry);
+                        }
+                    }
+                    intResult.rows = updatedResult;
                 }
     
             }

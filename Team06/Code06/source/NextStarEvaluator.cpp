@@ -159,32 +159,52 @@ namespace PQL {
                 // Case 1: Wildcard, Synonym
                 Synonym arg2 = args.second.value;
 
-                ClauseResult clauseResult;
-                clauseResult.syns.emplace_back(arg2);
-                for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
-                    if (database.hasPrev(i)) {
-                        if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i)->getType(), synonymTable[arg2])) {
-                            ClauseResultEntry resultEntry;
-                            resultEntry.emplace_back(std::to_string(i));
-                            clauseResult.rows.emplace_back(resultEntry);
+                if (std::find(intResult.syns.begin(), intResult.syns.end(), arg2) == intResult.syns.end()) {
+                    intResult.syns.emplace_back(arg2);
+                    for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
+                        if (database.hasPrev(i)) {
+                            if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i)->getType(), synonymTable[arg2])) {
+                                ClauseResultEntry resultEntry;
+                                resultEntry.emplace_back(std::to_string(i));
+                                intResult.rows.emplace_back(resultEntry);
+                            }
                         }
                     }
+                } else {
+                    int index = std::find(intResult.syns.begin(), intResult.syns.end(), arg2) - intResult.syns.begin();
+                    std::vector<ClauseResultEntry> updatedResult;
+                    for (ClauseResultEntry& resultEntry : intResult.rows) {
+                        if (database.hasPrev(std::stoi(resultEntry[index]))) {
+                            updatedResult.emplace_back(resultEntry);
+                        }
+                    }
+                    intResult.rows = updatedResult;
                 }
     
             } else {
                 // Case 2: Synonym, Wildcard
                 Synonym arg1 = args.first.value;
 
-                ClauseResult clauseResult;
-                clauseResult.syns.emplace_back(arg1);
-                for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
-                    if (database.hasNext(i)) {
-                        if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i)->getType(), synonymTable[arg1])) {
-                            ClauseResultEntry resultEntry;
-                            resultEntry.emplace_back(std::to_string(i));
-                            clauseResult.rows.emplace_back(resultEntry);
+                if (std::find(intResult.syns.begin(), intResult.syns.end(), arg1) == intResult.syns.end()) {
+                    intResult.syns.emplace_back(arg1);
+                    for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
+                        if (database.hasNext(i)) {
+                            if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(i)->getType(), synonymTable[arg1])) {
+                                ClauseResultEntry resultEntry;
+                                resultEntry.emplace_back(std::to_string(i));
+                                intResult.rows.emplace_back(resultEntry);
+                            }
                         }
                     }
+                } else {
+                    int index = std::find(intResult.syns.begin(), intResult.syns.end(), arg1) - intResult.syns.begin();
+                    std::vector<ClauseResultEntry> updatedResult;
+                    for (ClauseResultEntry& resultEntry : intResult.rows) {
+                        if (database.hasNext(std::stoi(resultEntry[index]))) {
+                            updatedResult.emplace_back(resultEntry);
+                        }
+                    }
+                    intResult.rows = updatedResult;
                 }
     
             }
