@@ -16,7 +16,7 @@ $regression_test_path = '.\Team06\Tests06\regression_tests\'
 
 $list_of_test_files = @(
 
-  '..\nextStar_tle'
+  '..\performance600_shortcircuit_queries'
   
   # '..\performance600_single'
   # '..\performance600_chainedNext'
