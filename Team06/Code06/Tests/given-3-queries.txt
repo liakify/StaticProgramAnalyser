@@ -1,5 +1,0 @@
-1 - 
-
-Select go such that mod(2, 3) 
-done,
-5000
