@@ -73,26 +73,29 @@ $list_of_test_files = @(
   'withSuchthat_4',
   'withSuchthat_5',
   'withSuchthat_6',
-  'affects_0'
-  'affects_1'
-  'affects_2'
-  'affects_3'
-  'affects_4'
-  'affects_singleStmt'
-  'affects_invalidArgs'
-  'affectsStar_0'
-  'affectsStar_1'
-  'affectsStar_2'
-  'affectsStar_singleStmt'
-  'affectsStar_invalidArgs'
-  'suchthatPattern_affects+Star'
-  'withSuchthat_7'
-  'given_0'
-  'given_1'
-  'given_2'
-  'nextStar_tle'
-  'CallsStar_multipleCallsInOneProc'
-  'mixed_0'
+  'affects_0',
+  'affects_1',
+  'affects_2',
+  'affects_3',
+  'affects_4',
+  'affects_singleStmt',
+  'affects_invalidArgs',
+  'affectsStar_0',
+  'affectsStar_1',
+  'affectsStar_2',
+  'affectsStar_singleStmt',
+  'affectsStar_invalidArgs',
+  'suchthatPattern_affects+Star',
+  'withSuchthat_7',
+  'given_0',
+  'given_1',
+  'given_2',
+  'given_3',
+  'given_4',
+  'nextStar_tle',
+  'CallsStar_multipleCallsInOneProc',
+  'mixed_0',
+  'invalid_chars_0'
   
   '..\extension_contains_tests\contains_0'
   '..\extension_contains_tests\contains_invalidArgs'
@@ -101,8 +104,11 @@ $list_of_test_files = @(
   '..\extension_contains_tests\contains_with'
 
   # STAGED TESTS
-  '..\performance600_single'
+  '..\performance600_single',
   '..\performance600_chainedNext'
+  '..\intergroup_0'
+  '..\intragroup_0'
+  '..\intragroup_1'
   
   # TESTS BELOW CURRENTLY FAIL / TIMEOUT
   # '..\performance600_runtimeCache'
@@ -110,6 +116,7 @@ $list_of_test_files = @(
   # '..\performance600_chainedAffects'
   # '..\performance600_chainedAffectsStar'
   # '..\performance600_nextStar+AffectsStar+Tuple'
+  # '..\performance600_shortcircuit_queries'
 )
 
 $list_of_no_xml_tests = @(

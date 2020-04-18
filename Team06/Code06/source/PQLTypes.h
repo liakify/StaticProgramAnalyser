@@ -187,13 +187,6 @@ namespace PQL {
     const std::string SEMANTIC_ERR_WITH_CLAUSE_DIFF_RETURN_TYPE_OF_ARGS = "semantic error: expressions on both sides of with (equality) clause evaluate to different type";
 
     /**
-     *  Sentinel argument pair that should never be returned by getArgs() method
-     *  of a RelationClause or PatternClause instance. Used to denote an argument
-     *  that does not apply to that relation or pattern type.
-     */
-    const std::pair<ArgType, std::string> INVALID_ARG = { ArgType::INVALID, "" };
-
-    /**
      *  Vector of invalid design entity types to reject as statement arguments for
      *  the relations Follows(*), Parent(*), Next(*) and Contains.
      */
@@ -232,7 +225,7 @@ namespace PQL {
     /**
      *  Map from attribute type to a vector of valid associated design entities.
      */
-    const std::unordered_map<AttrType, std::vector<DesignEntity>> ATTRIBUTE_ENTITY_MAP {
+    const std::unordered_map<AttrType, std::vector<DesignEntity>> ATTRIBUTE_ENTITY_MAP{
         { AttrType::PROC_NAME, { DesignEntity::PROCEDURE, DesignEntity::CALL } },
         { AttrType::VAR_NAME, { DesignEntity::VARIABLE, DesignEntity::READ, DesignEntity::PRINT } },
         { AttrType::VALUE, { DesignEntity::CONSTANT } },
@@ -250,7 +243,7 @@ namespace PQL {
     /**
      *  Map from program entity keyword to program entity enum.
      */
-    const std::unordered_map<std::string, DesignEntity> ENTITY_MAP {
+    const std::unordered_map<std::string, DesignEntity> ENTITY_MAP{
         { "stmt", DesignEntity::STATEMENT },
         { "read", DesignEntity::READ },
         { "print", DesignEntity::PRINT },
@@ -267,7 +260,7 @@ namespace PQL {
     /**
      *  Map from design entity attribute keyword to attribute type enum,
      */
-    const std::unordered_map<std::string, AttrType> ATTRIBUTE_MAP {
+    const std::unordered_map<std::string, AttrType> ATTRIBUTE_MAP{
         { "procName", AttrType::PROC_NAME },
         { "varName", AttrType::VAR_NAME },
         { "value", AttrType::VALUE },
@@ -282,7 +275,7 @@ namespace PQL {
      *  at time of semantic validation by examining the program entity types of
      *  the supplied arguments.
      */
-    const std::unordered_map<std::string, RelationType> RELATION_MAP {
+    const std::unordered_map<std::string, RelationType> RELATION_MAP{
         { "Follows", RelationType::FOLLOWS },
         { "Follows*", RelationType::FOLLOWST },
         { "Parent", RelationType::PARENT },
@@ -613,11 +606,11 @@ namespace PQL {
     };
 
     /**
-     * Struct representing an optimised PQL query.
+     *  Struct representing an optimised PQL query.
      *
-     * - clauses:           the clauses in the order in which they should be evaluated.
-     * - group:             the group that each clause belongs to (numbered starting from 0).
-     * - last:              the index of the last clause in each group.
+     *  - clauses:          the clauses in the order in which they should be evaluated.
+     *  - group:            the group that each clause belongs to (numbered starting from 0).
+     *  - last:             the index of the last clause in each group.
      */
     struct OptimisedQuery {
         std::vector<Clause*> clauses;

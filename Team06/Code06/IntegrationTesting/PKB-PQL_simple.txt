@@ -7,4 +7,5 @@ procedure p {
 procedure p2 {
     z = 3;
     while (z > 0) {
-        z = x + a; } }
+        z = x + a; } 
+    y = z; }

@@ -99,6 +99,11 @@ namespace PKB {
         bool nextStarIsCached(StmtId s1, StmtId s2);
 
         /*
+            Initialise nextStarTable entry for s with nextTable values
+        */
+        void initCacheEntry(StmtId s);
+
+        /*
             Clears the nextStarTable
         */
         void clear();
@@ -107,10 +112,5 @@ namespace PKB {
         std::unordered_map<StmtId, nextRS> nextTable;
         std::unordered_map<StmtId, nextStarRS> nextStarTable;  // Stores TRUE relations
         std::unordered_map<StmtId, std::unordered_set<StmtId>> falseNextStarTable;  // Stores FALSE relations
-
-        /*
-            Initialise nextStarTable entry for s with nextTable values
-        */
-        void initCacheEntry(StmtId s);
     };
 }

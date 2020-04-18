@@ -104,9 +104,10 @@ namespace PQL {
         * 
         * @param    clauseResults1  The first set of clause result entries.
         * @param    clauseResults2  The first set of clause result entries.
+        * @param    toDelete        Synonyms to be removed from the combined clause result.
         * @return   The combined set of clause result entries.
         */
-        ClauseResult combineTwoClauseResults(ClauseResult clauseResults1, ClauseResult clauseResults2);
+        ClauseResult combineTwoClauseResults(ClauseResult clauseResults1, ClauseResult clauseResults2, std::vector<Synonym> toDelete);
 
         /**
         * Combines a list of clause results.
