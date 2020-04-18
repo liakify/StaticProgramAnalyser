@@ -95,16 +95,17 @@ $list_of_test_files = @(
   'mixed_0'
   
   # STAGED TESTS
+  '..\performance600_intragroupShortcircuit'
   '..\performance600_single'
   '..\performance600_chainedNext'
+  '..\performance600_runtimeCache'
+  '..\performance600_chainedAffects'
+  '..\performance600_nextStar+AffectsStar+Tuple'
   
   # TESTS BELOW CURRENTLY FAIL / TIMEOUT
-  # '..\performance600_runtimeCache'
   # '..\performance600_chainedNextStar'
-  # '..\performance600_chainedAffects'
   # '..\performance600_chainedAffectsStar'
-  # '..\performance600_nextStar+AffectsStar+Tuple'
-  # '..\performance600_shortcircuit_queries'
+  # '..\performance600_intergroupShortcircuit'
 )
 
 $list_of_no_xml_tests = @(
