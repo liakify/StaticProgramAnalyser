@@ -1,0 +1,20 @@
+procedure Test {
+    affects = 1;
+    if (c1 == c2) then {
+        print c5;    } else {
+        affects = 2;
+        affected = uses + affects + 1; }
+    affected = uses + affects + 2;
+    while (c3 == c4) {
+        uses = c3;
+        uses = c4;
+        call Proc2; }
+        call Proc3;
+    while (c5 == c2) {
+        read c5; 
+        call Proc3; }
+    call Proc3;}
+procedure Proc2 {
+    read nothingGoingOn; }
+procedure Proc3 {
+    print nothingGoingOn; }
