@@ -128,5 +128,13 @@ namespace PQL {
         * @return   The construct ClauseResult structure.
         */
         ClauseResult getClauseResultWithAllValues(Synonym synonym, DesignEntity designEntity);
+
+        /**
+        * Removes specified synonyms from a ClauseResult structure
+        *
+        * @param    result          The ClauseResult to delete synonyms from
+        * @param    toDelete        The synonyms to delete
+        */
+        void deleteSynonyms(ClauseResult& result, std::vector<Synonym> toDelete);
     };
 }

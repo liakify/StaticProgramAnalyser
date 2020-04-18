@@ -166,7 +166,6 @@ namespace PQL {
 
         // Evaluate clauses
         for (unsigned int i = 0; i < optQuery.clauses.size(); i++) {
-            ClauseResult result;
             Clause* clause = optQuery.clauses[i];
             // Set of synonyms that we should delete after this clause has been evaluated
             // We delete a synonym if it is not selected and does not occur in any future clauses
@@ -174,7 +173,7 @@ namespace PQL {
 
             if (clause->getClauseType() == ClauseType::RELATION) {
                 RelationClause* relation = static_cast<RelationClause*>(clause);
-                result = evaluateRelationClause(*relation, query.synonymTable, clauseResults[optQuery.groups[i]]);
+                evaluateRelationClause(*relation, query.synonymTable, clauseResults[optQuery.groups[i]]);
                 // Remove all present synonyms from target synonyms
                 std::pair<Argument, Argument> args = relation->getArgs();
                 Argument arg1 = args.first;
@@ -207,7 +206,7 @@ namespace PQL {
                 }
             } else if (clause->getClauseType() == ClauseType::PATTERN) {
                 PatternClause* pattern = static_cast<PatternClause*>(clause);
-                result = evaluatePatternClause(*pattern, query.synonymTable, clauseResults[optQuery.groups[i]]);
+                evaluatePatternClause(*pattern, query.synonymTable, clauseResults[optQuery.groups[i]]);
                 // Remove all present synonyms from target synonyms
                 std::pair<Argument, Argument> args = pattern->getArgs();
                 Argument arg0 = pattern->getSynonym();
@@ -252,7 +251,7 @@ namespace PQL {
                 }
             } else if (clause->getClauseType() == ClauseType::WITH) {
                 WithClause* with = static_cast<WithClause*>(clause);
-                result = evaluateWithClause(*with, query.synonymTable, clauseResults[optQuery.groups[i]]);
+                evaluateWithClause(*with, query.synonymTable, clauseResults[optQuery.groups[i]]);
                 // Remove all present synonyms from target synonyms
                 std::pair<Argument, Argument> args = with->getArgs();
                 Argument arg1 = args.first;
@@ -285,20 +284,13 @@ namespace PQL {
                 }
             }
 
-            // If the result is empty, we can stop evaluation immediately
-            if (!result.trueResult && result.rows.empty()) {
-                return extractQueryResults(query, ClauseResult());
-            }
-
-            // Merge this table with the intermediate table of the corresponding group
-            // Also delete any synonyms that we don't need anymore
-            SPA::LoggingUtils::LogInfoMessage("Performing merge between tables of size %d and %d\n", result.rows.size(), clauseResults[optQuery.groups[i]].rows.size());
-            clauseResults[optQuery.groups[i]] = combineTwoClauseResults(result, clauseResults[optQuery.groups[i]], toDelete);
-
             // If the merged table is empty, stop evaluation immediately
             if (!clauseResults[optQuery.groups[i]].trueResult && clauseResults[optQuery.groups[i]].rows.empty()) {
                 return extractQueryResults(query, ClauseResult());
             }
+
+            // Delete any synonyms that we don't need anymore
+            deleteSynonyms(clauseResults[optQuery.groups[i]], toDelete);
         }
 
         // Find all groups that should participate in inter-group merging
@@ -329,6 +321,42 @@ namespace PQL {
         ClauseResult result = extractQueryResults(query, combinedResult);
 
         return result;
+    }
+
+    void QueryEvaluator::deleteSynonyms(ClauseResult& result, std::vector<Synonym> toDelete) {
+        std::vector<int> positions;
+        std::vector<Synonym> updatedSynonyms;
+        int i = 0, j = 0;
+        while (i < result.syns.size()) {
+            while (j < toDelete.size() && toDelete[j] < result.syns[i]) {
+                j++;
+            }
+            if (j >= toDelete.size()) break;
+            if (toDelete[j] == result.syns[i]) {
+                positions.emplace_back(i);
+            } else {
+                updatedSynonyms.emplace_back(result.syns[i]);
+            }
+            i++;
+        }
+        result.syns = updatedSynonyms;
+        std::vector<ClauseResultEntry> updatedEntries;
+        for (ClauseResultEntry& resultEntry : result.rows) {
+            ClauseResultEntry updatedResultEntry;
+            int j = 0;
+            for (unsigned int i = 0; i < resultEntry.size(); i++) {
+                if (j < positions.size() && positions[j] == i) {
+                    j++;
+                } else {
+                    updatedResultEntry.emplace_back(resultEntry[i]);
+                }
+            }
+            updatedEntries.emplace_back(updatedResultEntry);
+        }
+        
+        std::sort(updatedEntries.begin(), updatedEntries.end());
+        updatedEntries.resize(std::distance(updatedEntries.begin(), std::unique(updatedEntries.begin(), updatedEntries.end())));
+        result.rows = updatedEntries;
     }
 
     ClauseResult QueryEvaluator::extractQueryResults(Query &query, ClauseResult& combinedResult) {

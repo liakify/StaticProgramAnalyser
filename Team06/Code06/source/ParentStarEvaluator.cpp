@@ -142,6 +142,9 @@ namespace PQL {
                     intResult.rows = updatedResult;
                 }
             }
+            if (intResult.rows.empty()) {
+                intResult.trueResult = false;
+            }
         }
 
         /**
@@ -209,7 +212,9 @@ namespace PQL {
                     }
                     intResult.rows = updatedResult;
                 }
-    
+            }
+            if (intResult.rows.empty()) {
+                intResult.trueResult = false;
             }
         }
 
@@ -311,6 +316,9 @@ namespace PQL {
                 }
                 intResult.rows = updatedResult;
             }
+            if (intResult.rows.empty()) {
+                intResult.trueResult = false;
+            }
         }
 
         void evaluateParentStarClause(PKB::PKB& database, RelationClause clause,
@@ -325,7 +333,7 @@ namespace PQL {
                 evaluateParentStarClauseIntInt(database, clause, intResult);
             } else if (argType1 == ArgType::WILDCARD && argType2 == ArgType::WILDCARD) {
                 // Two wildcards supplied
-                evaluateParentStarClauseWildWild(database);
+                evaluateParentStarClauseWildWild(database, intResult);
             } else if (argType1 == ArgType::INTEGER && argType2 == ArgType::WILDCARD ||
                 argType1 == ArgType::WILDCARD && argType2 == ArgType::INTEGER) {
                 // One statement number, one wildcard supplied

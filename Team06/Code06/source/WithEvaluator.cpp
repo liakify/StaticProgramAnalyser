@@ -246,7 +246,9 @@ namespace PQL {
 
             } else {
                 SPA::LoggingUtils::LogErrorMessage("WithEvaluator::evaluateIdentifierEqual: Invalid ArgTypes for identifier With clause. argType1 = %d, argType2 = %d\n", argType1, argType2);
-
+            }
+            if (intResult.rows.empty()) {
+                intResult.trueResult = false;
             }
         }
 
@@ -422,11 +424,12 @@ namespace PQL {
                     }
                     intResult.rows = updatedResult;
                 }
-
-    
             } else {
                 SPA::LoggingUtils::LogErrorMessage("WithEvaluator::evaluateIntegerEqual: Invalid ArgTypes for integer With clause. argType1 = %d, argType2 = %d\n", argType1, argType2);
 
+            }
+            if (intResult.rows.empty()) {
+                intResult.trueResult = false;
             }
         }
 

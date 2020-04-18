@@ -142,6 +142,9 @@ namespace PQL {
                     intResult.rows = updatedResult;
                 }
             }
+            if (intResult.rows.empty()) {
+                intResult.trueResult = false;
+            }
         }
 
         /**
@@ -210,7 +213,9 @@ namespace PQL {
                     }
                     intResult.rows = updatedResult;
                 }
-    
+            }
+            if (intResult.rows.empty()) {
+                intResult.trueResult = false;
             }
         }
 
@@ -314,6 +319,9 @@ namespace PQL {
                     }
                 }
                 intResult.rows = updatedResult;
+            }
+            if (intResult.rows.empty()) {
+                intResult.trueResult = false;
             }
         }
 
