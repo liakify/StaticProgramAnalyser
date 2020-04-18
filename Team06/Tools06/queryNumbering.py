@@ -1,6 +1,6 @@
-import os
+import os 
 
-for (root, dirs, files) in os.walk('.'):
+for (root, dirs, files) in os.walk('..'):
   for name in files:
     pathname = os.path.join(root, name)
     if (pathname.endswith('_queries.txt')):
