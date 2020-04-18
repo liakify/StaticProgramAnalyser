@@ -1,0 +1,9 @@
+procedure modifiesVar {
+    read var; }
+procedure assignsVar {
+    var = x + (1 - 1); 
+    call assignsVar2; }
+procedure assignsVar2 {
+    var = 1 - (x + 1);
+    print modifiesVar;
+    call modifiesVar; }

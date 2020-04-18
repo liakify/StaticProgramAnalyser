@@ -26,8 +26,7 @@ $list_of_test_files = @(
   # TEST BELOW CURRENTLY FAIL / TIMEOUT
   # '..\performance600_chainedAffectsStar'
   # '..\performance600_chainedNextStar'
-  # '..\performance600_intergroupShortcircuit'
-  )
+    )
 
 $list_of_no_xml_tests = @(
 )

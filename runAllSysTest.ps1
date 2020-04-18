@@ -95,6 +95,7 @@ $list_of_test_files = @(
   'nextStar_tle',
   'CallsStar_multipleCallsInOneProc',
   'mixed_0',
+  'invalid_chars_0'
   
   # STAGED TESTS
   '..\performance600_intragroupShortcircuit'

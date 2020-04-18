@@ -16,10 +16,10 @@ namespace PQL {
         * @param    database    The PKB to evaluate the clause on.
         * @param    clause      The clause to evaluate.
         * @param    synonymTable    The synonym table associated with the query containing the clause.
-        * @return   The result of the evaluation.
+        * @param    intResult       The intermediate result table.
         */
-        ClauseResult evaluateUsesClause(PKB::PKB& database, RelationClause clause,
-            unordered_map<std::string, DesignEntity>& synonymTable);
+        void evaluateUsesClause(PKB::PKB& database, RelationClause clause,
+            unordered_map<std::string, DesignEntity>& synonymTable, ClauseResult& intResult);
 
     }
 }

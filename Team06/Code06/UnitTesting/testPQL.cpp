@@ -1,4 +1,4 @@
-#include <algorithm>
+#include <unordered_map>
 
 #include "stdafx.h"
 #include "PKB.h"
@@ -21,8 +21,7 @@ namespace UnitTesting {
 
     TEST_CLASS(TestPQL) {
     public:
-        TEST_CLASS_INITIALIZE(initPQL) {
-
+        TEST_METHOD(evaluateQuery) {
             PKB::PKB dummyPKB = PKB::PKB();
 
             /** Sample SIMPLE program to ensure valid queries return valid results:
@@ -35,7 +34,7 @@ namespace UnitTesting {
               *
               */
 
-            // Populate all entity tables (constants, variable, statements, statement lists)
+              // Populate all entity tables (constants, variable, statements, statement lists)
             ConstId zeroId = dummyPKB.constTable.insertConst("0");
             ConstId oneId = dummyPKB.constTable.insertConst("1");
             VarId xId = dummyPKB.varTable.insertVar("x");
@@ -95,16 +94,10 @@ namespace UnitTesting {
 
             evalStub = PQL::QueryEvaluator(dummyPKB);
             facade = PQL::PQLManager(parserStub, evalStub);
-        }
 
-        TEST_METHOD(PQLManager) {
-            PQL::PQLManager defaultPQL = PQL::PQLManager(PKB::PKB());
-        }
-
-        TEST_METHOD(evaluateQuery) {
             // List of test queries and corresponding expected results
             // After each query is handled by PQLManager::evaluateQuery
-            vector<pair<string, std::list<string>>> TEST_CASES = {
+            vector<pair<string, std::unordered_set<string>>> TEST_CASES = {
                 { StubQueries::EMPTY_QUERY, { } },
                 { StubQueries::BOOLEAN_VALID_QUERY, { "TRUE" } },
                 { StubQueries::BOOLEAN_INVALID_DECL_SYNTAX_QUERY, { } },
@@ -123,8 +116,7 @@ namespace UnitTesting {
                 // Compare the contents of the result list and the expected result list
                 std::list<string> output;
                 facade.evaluateQuery(testcase.first, output);
-                Assert::IsTrue(testcase.second.size() == output.size());
-                Assert::IsTrue(std::equal(testcase.second.begin(), testcase.second.end(), output.begin()));
+                Assert::IsTrue(std::unordered_set<std::string>(output.begin(), output.end()) == testcase.second);
             }
         }
 

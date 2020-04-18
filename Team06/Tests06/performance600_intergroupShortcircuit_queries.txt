@@ -3,17 +3,17 @@ stmt s1, s2, s3, s4; procedure p, q;
 Select <s1, s2, s3, s4> such that Affects*(s1, s2) and Next*(s3, s4) and Next* (s2, s3) and Affects (s1, s4) such that Calls (p, q)
 
 5000
-1 - CallsStar clause should be evaluated first and return empty
+2 - CallsStar clause should be evaluated first and return empty
 stmt s1, s2, s3, s4; procedure p, q;
 Select <s1, s2, s3, s4> such that Affects*(s1, s2) and Next*(s3, s4) and Next* (s2, s3) and Affects (s1, s4) such that Calls* (p, q)
 
 5000
-1 - Modifies clause should be evaluated first and return empty
+3 - Modifies clause should be evaluated first and return empty
 stmt s1, s2, s3, s4; procedure p, q;
 Select <s1, s2, s3, s4> such that Affects*(s1, s2) and Next*(s3, s4) and Next* (s2, s3) and Affects (s1, s4) such that Modifies (p, "notFound")
 
 5000
-1 - Uses clause should be evaluated first and return empty
+4 - Uses clause should be evaluated first and return empty
 stmt s1, s2, s3, s4; procedure p, q;
 Select <s1, s2, s3, s4> such that Affects*(s1, s2) and Next*(s3, s4) and Next* (s2, s3) and Affects (s1, s4) such that Uses (p, "notFound")
 
@@ -43,22 +43,22 @@ stmt s1, s2, s3, s4; procedure p, q;
 Select <s1, s2, s3, s4> such that Affects*(s1, s2) and Next*(s3, s4) and Next* (s2, s3) and Affects (s1, s4) such that Next (1, 0)
 
 5000
-1 - Parent clause should be evaluated first and return empty
+6 - Parent clause should be evaluated first and return empty
 stmt s1, s2, s3, s4; procedure p, q;
 Select <s1, s2, s3, s4> such that Affects*(s1, s2) and Next*(s3, s4) and Next* (s2, s3) and Affects (s1, s4) such that Parent (2, 1)
 
 5000
-1 - ParentStar clause should be evaluated first and return empty
+7 - ParentStar clause should be evaluated first and return empty
 stmt s1, s2, s3, s4; procedure p, q;
 Select <s1, s2, s3, s4> such that Affects*(s1, s2) and Next*(s3, s4) and Next* (s2, s3) and Affects (s1, s4) such that Parent* (2, 1)
 
 5000
-1 - Follows clause should be evaluated first and return empty
+8 - Follows clause should be evaluated first and return empty
 stmt s1, s2, s3, s4; procedure p, q;
 Select <s1, s2, s3, s4> such that Affects*(s1, s2) and Next*(s3, s4) and Next* (s2, s3) and Affects (s1, s4) such that Follows (1, 1)
 
 5000
-1 - FollowsStar clause should be evaluated first and return empty
+9 - FollowsStar clause should be evaluated first and return empty
 stmt s1, s2, s3, s4; procedure p, q;
 Select <s1, s2, s3, s4> such that Affects*(s1, s2) and Next*(s3, s4) and Next* (s2, s3) and Affects (s1, s4) such that Follows* (1, 1)
 
