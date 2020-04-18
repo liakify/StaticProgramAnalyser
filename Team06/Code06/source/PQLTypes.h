@@ -323,7 +323,7 @@ namespace PQL {
      *  clause string and the clause type.
      */
     class Clause {
-    public:
+     public:
         /**
          *  Compares this Clause instance to another Clause instance and returns true if
          *  the values of every attribute is equal in both instances.
@@ -370,7 +370,7 @@ namespace PQL {
      *  clause string, relation type and a method to retrieve its arguments.
      */
     class RelationClause : public Clause {
-    public:
+     public:
         /**
          *  Constructs a new RelationClause instance with its input string, relation type, two
          *  positional arguments, and a boolean flag describing if this clause is negated.
@@ -431,7 +431,7 @@ namespace PQL {
          *  @return     pair of the first and second arguments of this clause.
          */
         std::pair<Argument, Argument> getArgs();
-    private:
+     private:
         RelationType type;
         Argument firstArg;
         Argument secondArg;
@@ -443,7 +443,7 @@ namespace PQL {
      *  retrieve its arguments.
      */
     class PatternClause : public Clause {
-    public:
+     public:
         /**
          *  Constructs a new PatternClause instance with its input string, pattern type,
          *  pattern synonym argument, entity argument, pattern argument and a boolean flag
@@ -500,7 +500,7 @@ namespace PQL {
          *  @return     pair of the entity and pattern arguments of this clause.
          */
         std::pair<Argument, Argument> getArgs();
-    private:
+     private:
         PatternType type;
         Argument synonymArg;
         Argument targetArg;
@@ -515,7 +515,7 @@ namespace PQL {
      *  the default value NONE.
      */
     class WithClause : public Clause {
-    public:
+     public:
         /**
          *  Constructs a new WithClause instance with its input string, equality type, two
          *  positional arguments (one for each of the left and right arguments), and a
@@ -575,7 +575,7 @@ namespace PQL {
          *  @return     pair of the left and right arguments of this clause.
          */
         std::pair<Argument, Argument> getArgs();
-    private:
+     private:
         WithType type;
         Argument leftArg;
         Argument rightArg;
