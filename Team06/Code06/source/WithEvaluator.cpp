@@ -216,10 +216,19 @@ namespace PQL {
                         } else if (synonymTable[syn1] == DesignEntity::PRINT) {
                             value = database.varTable.get(dynamic_cast<PrintStmt*>(database.stmtTable.get(std::stoi(value)).get())->getVar());
                         }
-                        if (result2.find(value) != result2.end()) {
-                            ClauseResultEntry newResultEntry(resultEntry);
-                            newResultEntry.insert(newResultEntry.begin() + index2, value);
-                            updatedResult.emplace_back(newResultEntry);
+                        auto entry2Range = result2.equal_range(value);
+                        if (entry2Range.first != result2.end()) {
+                            for (auto entry2 = entry2Range.first; entry2 != entry2Range.second; entry2++) {
+                                std::string val2;
+                                if (entry2->second != 0) {
+                                    val2 = std::to_string(entry2->second);
+                                } else {
+                                    val2 = entry2->first;
+                                }
+                                ClauseResultEntry newResultEntry(resultEntry);
+                                newResultEntry.insert(newResultEntry.begin() + index2, val2);
+                                updatedResult.emplace_back(newResultEntry);
+                            }
                         }
                     }
                     intResult.rows = updatedResult;
@@ -238,10 +247,19 @@ namespace PQL {
                         } else if (synonymTable[syn2] == DesignEntity::PRINT) {
                             value = database.varTable.get(dynamic_cast<PrintStmt*>(database.stmtTable.get(std::stoi(value)).get())->getVar());
                         }
-                        if (result1.find(value) != result1.end()) {
-                            ClauseResultEntry newResultEntry(resultEntry);
-                            newResultEntry.insert(newResultEntry.begin() + index1, value);
-                            updatedResult.emplace_back(newResultEntry);
+                        auto entry1Range = result1.equal_range(value);
+                        if (entry1Range.first != result1.end()) {
+                            for (auto entry1 = entry1Range.first; entry1 != entry1Range.second; entry1++) {
+                                std::string val1;
+                                if (entry1->second != 0) {
+                                    val1 = std::to_string(entry1->second);
+                                } else {
+                                    val1 = entry1->first;
+                                }
+                                ClauseResultEntry newResultEntry(resultEntry);
+                                newResultEntry.insert(newResultEntry.begin() + index1, val1);
+                                updatedResult.emplace_back(newResultEntry);
+                            }
                         }
                     }
                     intResult.rows = updatedResult;
@@ -266,7 +284,7 @@ namespace PQL {
                         } else if (synonymTable[syn2] == DesignEntity::PRINT) {
                             value2 = database.varTable.get(dynamic_cast<PrintStmt*>(database.stmtTable.get(std::stoi(value2)).get())->getVar());
                         }
-                        if (resultEntry[index1] == resultEntry[index2]) {
+                        if (value1 == value2) {
                             updatedResult.emplace_back(resultEntry);
                         }
                     }
