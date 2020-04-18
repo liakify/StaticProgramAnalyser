@@ -61,7 +61,8 @@ namespace IntegrationTesting {
         string query_relCond_Next = "prog_line n1, n2; Select n1 such that Next(n1, n2)";
         string query_relCond_Affects = "assign a1, a2; Select a1 such that Affects(a1, a2)";
 
-        string query_relCond_CallsStar = "procedure p; Select p such that Calls*(1, p)";
+        string query_INVALID = "procedure p; Select p such that Calls*(1, p)";
+        string query_relCond_CallsStar = "procedure p; Select p such that Calls*(\"p\", p)";
         string query_relCond_ParentStar = "stmt s; Select s such that Parent*(3, s)";
         string query_relCond_FollowsStar = "stmt s; Select s such that Follows*(1, s)";
         string query_relCond_NextStar = "prog_line n; Select n such that Next*(7, n)";
@@ -124,12 +125,15 @@ namespace IntegrationTesting {
         pkb.followsKB.addFollows(1, 2);
         pkb.followsKB.addFollows(2, 3);
         pkb.followsKB.addFollows(6, 7);
+        pkb.followsKB.addFollows(7, 9);
         pkb.followsKB.setAllFollowers(1, std::unordered_set<StmtId>({ 2, 3 }));
         pkb.followsKB.setAllFollowers(2, std::unordered_set<StmtId>({ 3 }));
-        pkb.followsKB.setAllFollowers(6, std::unordered_set<StmtId>({ 7 }));
+        pkb.followsKB.setAllFollowers(6, std::unordered_set<StmtId>({ 7, 9 }));
+        pkb.followsKB.setAllFollowers(7, std::unordered_set<StmtId>({ 9 }));
         pkb.followsKB.setAllFollowing(2, std::unordered_set<StmtId>({ 1 }));
         pkb.followsKB.setAllFollowing(3, std::unordered_set<StmtId>({ 1, 2 }));
         pkb.followsKB.setAllFollowing(7, std::unordered_set<StmtId>({ 6 }));
+        pkb.followsKB.setAllFollowing(9, std::unordered_set<StmtId>({ 6, 7 }));
 
         pkb.parentKB.addParent(3, 4);
         pkb.parentKB.addParent(3, 5);
@@ -250,173 +254,173 @@ namespace IntegrationTesting {
 
     TEST_METHOD(evaluateQuery) {
         pql.evaluateQuery(query_selectDesignEntity_STMT, results);
-        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }).begin()));
+        Assert::IsTrue(std::unordered_set<string>(results.begin(), results.end()) == std::unordered_set<string>({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }));
         results.clear();
 
         pql.evaluateQuery(query_selectDesignEntity_READ, results);
-        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "1" }).begin()));
+        Assert::IsTrue(std::unordered_set<string>(results.begin(), results.end()) == std::unordered_set<string>({ "1" }));
         results.clear();
 
         pql.evaluateQuery(query_selectDesignEntity_PRINT, results);
-        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "2" }).begin()));
+        Assert::IsTrue(std::unordered_set<string>(results.begin(), results.end()) == std::unordered_set<string>({ "2" }));
         results.clear();
 
         pql.evaluateQuery(query_selectDesignEntity_CALL, results);
-        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "5" }).begin()));
+        Assert::IsTrue(std::unordered_set<string>(results.begin(), results.end()) == std::unordered_set<string>({ "5" }));
         results.clear();
 
         pql.evaluateQuery(query_selectDesignEntity_WHILE, results);
-        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "7" }).begin()));
+        Assert::IsTrue(std::unordered_set<string>(results.begin(), results.end()) == std::unordered_set<string>({ "7" }));
         results.clear();
 
         pql.evaluateQuery(query_selectDesignEntity_IF, results);
-        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "3" }).begin()));
+        Assert::IsTrue(std::unordered_set<string>(results.begin(), results.end()) == std::unordered_set<string>({ "3" }));
         results.clear();
 
         pql.evaluateQuery(query_selectDesignEntity_ASSIGN, results);
-        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "4", "6", "8", "9" }).begin()));
+        Assert::IsTrue(std::unordered_set<string>(results.begin(), results.end()) == std::unordered_set<string>({ "4", "6", "8", "9" }));
         results.clear();
 
         pql.evaluateQuery(query_selectDesignEntity_VAR, results);
-        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "x", "y", "a", "z" }).begin()));
+        Assert::IsTrue(std::unordered_set<string>(results.begin(), results.end()) == std::unordered_set<string>({ "x", "y", "a", "z" }));
         results.clear();
 
         pql.evaluateQuery(query_selectDesignEntity_CONST, results);
-        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "0", "3", "5" }).begin()));
+        Assert::IsTrue(std::unordered_set<string>(results.begin(), results.end()) == std::unordered_set<string>({ "0", "3", "5" }));
         results.clear();
 
         pql.evaluateQuery(query_selectDesignEntity_PROGLINE, results);
-        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }).begin()));
+        Assert::IsTrue(std::unordered_set<string>(results.begin(), results.end()) == std::unordered_set<string>({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }));
         results.clear();
 
         pql.evaluateQuery(query_selectDesignEntity_PROC, results);
-        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "p", "p2"}).begin()));
+        Assert::IsTrue(std::unordered_set<string>(results.begin(), results.end()) == std::unordered_set<string>({ "p", "p2"}));
         results.clear();
 
         pql.evaluateQuery(query_selectAttrRef_p_procName, results);
-        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "p", "p2" }).begin()));
+        Assert::IsTrue(std::unordered_set<string>(results.begin(), results.end()) == std::unordered_set<string>({ "p", "p2" }));
         results.clear();
 
         pql.evaluateQuery(query_selectAttrRef_c_procName, results);
-        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "p2" }).begin()));
+        Assert::IsTrue(std::unordered_set<string>(results.begin(), results.end()) == std::unordered_set<string>({ "p2" }));
         results.clear();
 
         pql.evaluateQuery(query_selectAttrRef_v_varName, results);
-        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "x", "y", "a", "z" }).begin()));
+        Assert::IsTrue(std::unordered_set<string>(results.begin(), results.end()) == std::unordered_set<string>({ "x", "y", "a", "z" }));
         results.clear();
 
         pql.evaluateQuery(query_selectAttrRef_r_varName, results);
-        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "x" }).begin()));
+        Assert::IsTrue(std::unordered_set<string>(results.begin(), results.end()) == std::unordered_set<string>({ "x" }));
         results.clear();
 
         pql.evaluateQuery(query_selectAttrRef_pn_varName, results);
-        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "y" }).begin()));
+        Assert::IsTrue(std::unordered_set<string>(results.begin(), results.end()) == std::unordered_set<string>({ "y" }));
         results.clear();
 
         pql.evaluateQuery(query_selectAttrRef_cn_value, results);
-        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "0", "3", "5" }).begin()));
+        Assert::IsTrue(std::unordered_set<string>(results.begin(), results.end()) == std::unordered_set<string>({ "0", "3", "5" }));
         results.clear();
 
         pql.evaluateQuery(query_selectAttrRef_s_stmt, results);
-        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }).begin()));
+        Assert::IsTrue(std::unordered_set<string>(results.begin(), results.end()) == std::unordered_set<string>({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }));
         results.clear();
 
         pql.evaluateQuery(query_selectAttrRef_r_stmt, results);
-        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "1" }).begin()));
+        Assert::IsTrue(std::unordered_set<string>(results.begin(), results.end()) == std::unordered_set<string>({ "1" }));
         results.clear();
 
         pql.evaluateQuery(query_selectAttrRef_pn_stmt, results);
-        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "2" }).begin()));
+        Assert::IsTrue(std::unordered_set<string>(results.begin(), results.end()) == std::unordered_set<string>({ "2" }));
         results.clear();
 
         pql.evaluateQuery(query_selectAttrRef_c_stmt, results);
-        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "5" }).begin()));
+        Assert::IsTrue(std::unordered_set<string>(results.begin(), results.end()) == std::unordered_set<string>({ "5" }));
         results.clear();
 
         pql.evaluateQuery(query_selectAttrRef_w_stmt, results);
-        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "7" }).begin()));
+        Assert::IsTrue(std::unordered_set<string>(results.begin(), results.end()) == std::unordered_set<string>({ "7" }));
         results.clear();
 
         pql.evaluateQuery(query_selectAttrRef_if_stmt, results);
-        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "3" }).begin()));
+        Assert::IsTrue(std::unordered_set<string>(results.begin(), results.end()) == std::unordered_set<string>({ "3" }));
         results.clear();
 
         pql.evaluateQuery(query_selectAttrRef_a_stmt, results);
-        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "4", "6", "8", "9" }).begin()));
+        Assert::IsTrue(std::unordered_set<string>(results.begin(), results.end()) == std::unordered_set<string>({ "4", "6", "8", "9" }));
         results.clear();
 
         pql.evaluateQuery(query_selectWith, results);
-        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "4" }).begin()));
+        Assert::IsTrue(std::unordered_set<string>(results.begin(), results.end()) == std::unordered_set<string>({ "4" }));
         results.clear();
 
         pql.evaluateQuery(query_patternCond_Assign, results);
-        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "8" }).begin()));
+        Assert::IsTrue(std::unordered_set<string>(results.begin(), results.end()) == std::unordered_set<string>({ "8" }));
         results.clear();
 
         pql.evaluateQuery(query_patternCond_If, results);
-        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "x", "y" }).begin()));
+        Assert::IsTrue(std::unordered_set<string>(results.begin(), results.end()) == std::unordered_set<string>({ "x", "y" }));
         results.clear();
 
         pql.evaluateQuery(query_patternCond_While, results);
-        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "z" }).begin()));
+        Assert::IsTrue(std::unordered_set<string>(results.begin(), results.end()) == std::unordered_set<string>({ "z" }));
         results.clear();
     }
 
     TEST_METHOD(evaluateQuery_relCond) {
         pql.evaluateQuery(query_relCond_ModifiesP, results);
-        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "p", "p2" }).begin()));
+        Assert::IsTrue(std::unordered_set<string>(results.begin(), results.end()) == std::unordered_set<string>({ "p", "p2" }));
         results.clear();
 
         pql.evaluateQuery(query_relCond_ModifiesS, results);
-        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "4", "6", "8", "9" }).begin()));
+        Assert::IsTrue(std::unordered_set<string>(results.begin(), results.end()) == std::unordered_set<string>({ "4", "6", "8", "9" }));
         results.clear();
 
         pql.evaluateQuery(query_relCond_UsesP, results);
-        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "p", "p2" }).begin()));
+        Assert::IsTrue(std::unordered_set<string>(results.begin(), results.end()) == std::unordered_set<string>({ "p", "p2" }));
         results.clear();
 
         pql.evaluateQuery(query_relCond_UsesS, results);
-        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "4", "8", "9" }).begin()));
+        Assert::IsTrue(std::unordered_set<string>(results.begin(), results.end()) == std::unordered_set<string>({ "4", "8", "9" }));
         results.clear();
 
         pql.evaluateQuery(query_relCond_Calls, results);
-        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "p" }).begin()));
+        Assert::IsTrue(std::unordered_set<string>(results.begin(), results.end()) == std::unordered_set<string>({ "p" }));
         results.clear();
 
         pql.evaluateQuery(query_relCond_Parent, results);
-        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "3", "7" }).begin()));
+        Assert::IsTrue(std::unordered_set<string>(results.begin(), results.end()) == std::unordered_set<string>({ "3", "7" }));
         results.clear();
 
         pql.evaluateQuery(query_relCond_Follows, results);
-        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "1", "2", "6" }).begin()));
+        Assert::IsTrue(std::unordered_set<string>(results.begin(), results.end()) == std::unordered_set<string>({ "1", "2", "6", "7" }));
         results.clear();
 
         pql.evaluateQuery(query_relCond_Next, results);
-        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "1", "2", "3", "6", "7", "8" }).begin()));
+        Assert::IsTrue(std::unordered_set<string>(results.begin(), results.end()) == std::unordered_set<string>({ "1", "2", "3", "6", "7", "8" }));
         results.clear();
 
         pql.evaluateQuery(query_relCond_Affects, results);
-        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "6", "8" }).begin()));
+        Assert::IsTrue(std::unordered_set<string>(results.begin(), results.end()) == std::unordered_set<string>({ "6", "8" }));
         results.clear();
 
         pql.evaluateQuery(query_relCond_CallsStar, results);
-        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "2" }).begin()));
+        Assert::IsTrue(std::unordered_set<string>(results.begin(), results.end()) == std::unordered_set<string>({ "p2" }));
         results.clear();
 
         pql.evaluateQuery(query_relCond_ParentStar, results);
-        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "4", "5" }).begin()));
+        Assert::IsTrue(std::unordered_set<string>(results.begin(), results.end()) == std::unordered_set<string>({ "4", "5" }));
         results.clear();
 
         pql.evaluateQuery(query_relCond_FollowsStar, results);
-        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "2", "3" }).begin()));
+        Assert::IsTrue(std::unordered_set<string>(results.begin(), results.end()) == std::unordered_set<string>({ "2", "3" }));
         results.clear();
 
         pql.evaluateQuery(query_relCond_NextStar, results);
-        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "7", "8", "9" }).begin()));
+        Assert::IsTrue(std::unordered_set<string>(results.begin(), results.end()) == std::unordered_set<string>({ "7", "8", "9" }));
         results.clear();
 
         pql.evaluateQuery(query_relCond_AffectsStar, results);
-        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "9" }).begin()));
+        Assert::IsTrue(std::unordered_set<string>(results.begin(), results.end()) == std::unordered_set<string>({ "9" }));
         results.clear();
 
         pql.evaluateQuery(query_relCond_INTINT, results);
@@ -428,15 +432,15 @@ namespace IntegrationTesting {
         results.clear();
 
         pql.evaluateQuery(query_relCond_SYNINT, results);
-        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "3" }).begin()));
+        Assert::IsTrue(std::unordered_set<string>(results.begin(), results.end()) == std::unordered_set<string>({ "3" }));
         results.clear();
 
         pql.evaluateQuery(query_relCond_SYNWILD, results);
-        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "4", "8", "9" }).begin()));
+        Assert::IsTrue(std::unordered_set<string>(results.begin(), results.end()) == std::unordered_set<string>({ "4", "8", "9" }));
         results.clear();
 
         pql.evaluateQuery(query_relCond_WILDSYN, results);
-        Assert::IsTrue(std::is_permutation(results.begin(), results.end(), std::list<string>({ "2", "3", "4", "5", "7", "8", "9" }).begin()));
+        Assert::IsTrue(std::unordered_set<string>(results.begin(), results.end()) == std::unordered_set<string>({ "2", "3", "4", "5", "7", "8", "9" }));
         results.clear();
 
         pql.evaluateQuery(query_relCond_WILDINT, results);
