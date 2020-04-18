@@ -37,7 +37,7 @@ namespace PQL {
         */
         void evaluateNextStarClauseWildWild(PKB::PKB& database, ClauseResult& intResult) {
 
-            if (database.hasNextRelation()) {
+            if (!database.hasNextRelation()) {
                 intResult.rows.clear();
                 intResult.trueResult = false;
             }
