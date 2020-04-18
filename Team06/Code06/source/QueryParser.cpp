@@ -373,7 +373,7 @@ namespace PQL {
     // Returns an array of clauses
     bool QueryParser::splitClauses(Query& query, string queryBodySuffix,
         vector<string>& relationClauses, vector<string>& patternClauses, vector<string>& withClauses) {
-        string RELATION_CLAUSE = "[A-Za-z*]+\\s*\\([\\w,\"\\s]*\\)";
+        string RELATION_CLAUSE = "[A-Za-z*]+\\s*\\(\\s*\"?\\s*[A-Za-z0-9_]+\\s*\"?\\s*?(?:,\\s*\"?\\s*[A-Za-z0-9_]+\\s*\"?\\s*?)*\\)";
         string PATTERN_CLAUSE = "[A-Za-z][A-Za-z0-9]*\\s*\\([\\w\"\\s]+(?:,\\s*(?:_|(?:(_?)\\s*\"[A-Za-z0-9\\(\\)\\+\\-\\*\\/\\%\\s]+\"\\s*\\1))\\s*)+\\)";
         string CONNECTED_PATTERN_CLAUSE = "[A-Za-z][A-Za-z0-9]*\\s*\\([\\w\"\\s]+(?:,\\s*(?:_|(?:(_?)\\s*\"[A-Za-z0-9\\(\\)\\+\\-\\*\\/\\%\\s]+\"\\s*\\2))\\s*)+\\)";
         string WITH_ARGUMENT = "[A-Za-z0-9]+(?:\\s*\\.\\s*[A-Za-z0-9#]+)?";
