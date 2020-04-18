@@ -21,14 +21,6 @@ namespace UnitTesting {
 
     TEST_CLASS(TestPQL) {
     public:
-        //TEST_CLASS_INITIALIZE(initPQL) {
-
-        //}
-
-        //TEST_METHOD(PQLManager) {
-        //    PQL::PQLManager defaultPQL = PQL::PQLManager(PKB::PKB());
-        //}
-
         TEST_METHOD(evaluateQuery) {
             PKB::PKB dummyPKB = PKB::PKB();
 
