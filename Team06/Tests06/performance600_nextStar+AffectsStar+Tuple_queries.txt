@@ -1,5 +1,5 @@
 1 - NextStar and AffectsStar
 stmt s1, s2, s3, s4;
-Select <s1, s2, s3, s4> such that Next* (s1, s2) and Affects* (s3, s4)
+Select <s1, s4> such that Next* (s1, s2) and Affects* (s3, s4)
 
 5000

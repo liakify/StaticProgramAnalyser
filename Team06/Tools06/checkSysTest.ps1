@@ -15,114 +15,21 @@ $output_suffix = '_out.xml'
 $regression_test_path = '.\Team06\Tests06\regression_tests\'
 
 $list_of_test_files = @(
-  # SAMPLE FAILED TEST CASE (to verify that this works)
-  # '..\modifies_0',
+
+  '..\performance600_shortcircuit_queries'
   
-  # DO NOT MODIFY THE FOLLOWING IN ANY COMMITS
-  'valid_simple\simple_procNameEqualVarName'
-  'select_syn',
-  'select_valid',
-  'select_invalid',
-  'select_attr',
-  'follows_0',
-  'followsStar_0',
-  'parent_0',
-  'parentStar_0',
-  'patternAssign_0',
-  'patternAssign_1',
-  'patternAssign_exactMatch'
-  'suchthatPatternAssign_0',
-  'uses_0',
-  'modifies_0',
-  'patternIf_0',
-  'patternWhile_0',
-  'patternIf_operators', 
-  'patternWhile_operators',
-  'suchthatPatternIf_0',
-  'suchthatPatternWhile_0',
-  'calls_0',
-  'callsStar_0',
-  'calls_1',
-  'callsStar_1',
-  'callsStar_twoDiamonds',
-  'callsStar_threePronged',
-  'tuples_0',
-  'tuples_invalid'
-  'next_0',
-  'next_invalidArgs',
-  'nextStar_0',
-  'nextStar_invalidArgs',
-  'suchthatPattern_1',
-  'suchthatPatternIf_next+Star',
-  'suchthatPatternWhile_next+Star',
-  'invalid_doubleClause',
-  'with_0',
-  'withPatternAssign_0',
-  'withPatternIf_0',
-  'withPatternWhile_0',
-  'andPattern_0',
-  'andPattern_invalid',
-  'andSuchthat_0',
-  'andSuchthat_invalid',
-  'andWith_0',
-  'andWith_invalid',
-  'withSuchthat_0',
-  'withSuchthat_1',
-  'withSuchthat_2',
-  'withSuchthat_3',
-  'withSuchthat_4',
-  'withSuchthat_5',
-  'withSuchthat_6',
-  'affects_0'
-  'affects_1'
-  'affects_2'
-  'affects_3'
-  'affects_4'
-  'affects_singleStmt'
-  'affects_invalidArgs'
-  'affectsStar_0'
-  'affectsStar_1'
-  'affectsStar_2'
-  'affectsStar_singleStmt'
-  'affectsStar_invalidArgs'
-  'suchthatPattern_affects+Star'
-  'withSuchthat_7'
-  'given_0'
-  'given_1'
-  'given_2'
-  'nextStar_tle'
-  'CallsStar_multipleCallsInOneProc'
-  'mixed_0'
-  'invalid_chars_0'
-  
-  # STAGED TESTS
-  '..\performance600_single'
-  '..\performance600_chainedNext'
-  '..\intergroup_0'
-  '..\intragroup_0'
-  '..\intragroup_1'
-  
-  # TESTS BELOW CURRENTLY FAIL / TIMEOUT
+  # '..\performance600_single'
+  # '..\performance600_chainedNext'
   # '..\performance600_runtimeCache'
+
+  # TEST BELOW CURRENTLY FAIL / TIMEOUT
   # '..\performance600_chainedNextStar'
   # '..\performance600_chainedAffects'
   # '..\performance600_chainedAffectsStar'
   # '..\performance600_nextStar+AffectsStar+Tuple'
-)
+    )
 
 $list_of_no_xml_tests = @(
-'invalid_simple\simple_CondAsFalse',
-'invalid_simple\simple_CondAsTrue',
-'invalid_simple\simple_cyclicCalls',
-'invalid_simple\simple_digitWithZero',
-'invalid_simple\simple_logicExprNoBracket',
-'invalid_simple\simple_logicExprNotInCond',
-'invalid_simple\simple_nonDigitConstant',
-'invalid_simple\simple_nonExistProcCall',
-'invalid_simple\simple_printTwoVariables',
-'invalid_simple\simple_printXPrintY',
-'invalid_simple\simple_procSameName',
-'invalid_simple\simple_selfCalls'
 )
 
 # Determine which build type of the AutoTester executable to test
