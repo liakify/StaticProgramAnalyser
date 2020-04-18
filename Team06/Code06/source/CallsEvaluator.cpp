@@ -97,7 +97,7 @@ namespace PQL {
 
                 if (std::find(intResult.syns.begin(), intResult.syns.end(), arg2) == intResult.syns.end()) {
                     intResult.syns.emplace_back(arg2);
-                    std::unordered_set<StmtId> directCallees = database.callsKB.getDirectNodes(arg1, NodeType::SUCCESSOR);
+                    std::unordered_set<ProcId> directCallees = database.callsKB.getDirectNodes(arg1, NodeType::SUCCESSOR);
                     for (ProcId callee : directCallees) {
                         ClauseResultEntry resultEntry;
                         resultEntry.emplace_back(database.procTable.get(callee).getName());
@@ -121,7 +121,7 @@ namespace PQL {
 
                 if (std::find(intResult.syns.begin(), intResult.syns.end(), arg1) == intResult.syns.end()) {
                     intResult.syns.emplace_back(arg1);
-                    std::unordered_set<StmtId> directCallers = database.callsKB.getDirectNodes(arg2, NodeType::PREDECESSOR);
+                    std::unordered_set<ProcId> directCallers = database.callsKB.getDirectNodes(arg2, NodeType::PREDECESSOR);
                     for (ProcId caller : directCallers) {
                         ClauseResultEntry resultEntry;
                         resultEntry.emplace_back(database.procTable.get(caller).getName());

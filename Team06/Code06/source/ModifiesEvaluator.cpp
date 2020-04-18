@@ -106,7 +106,7 @@ namespace PQL {
                     int index = std::find(intResult.syns.begin(), intResult.syns.end(), arg2) - intResult.syns.begin();
                     std::vector<ClauseResultEntry> updatedResult;
                     for (ClauseResultEntry& resultEntry : intResult.rows) {
-                        if (database.modifiesKB.stmtModifies(arg1, std::stoi(resultEntry[index]))) {
+                        if (database.modifiesKB.stmtModifies(arg1, database.varTable.getVarId(resultEntry[index]))) {
                             updatedResult.emplace_back(resultEntry);
                         }
                     }
@@ -130,7 +130,7 @@ namespace PQL {
                     int index = std::find(intResult.syns.begin(), intResult.syns.end(), arg2) - intResult.syns.begin();
                     std::vector<ClauseResultEntry> updatedResult;
                     for (ClauseResultEntry& resultEntry : intResult.rows) {
-                        if (database.modifiesKB.procModifies(arg1, std::stoi(resultEntry[index]))) {
+                        if (database.modifiesKB.procModifies(arg1, database.varTable.getVarId(resultEntry[index]))) {
                             updatedResult.emplace_back(resultEntry);
                         }
                     }
@@ -238,7 +238,7 @@ namespace PQL {
                     int index = std::find(intResult.syns.begin(), intResult.syns.end(), arg1) - intResult.syns.begin();
                     std::vector<ClauseResultEntry> updatedResult;
                     for (ClauseResultEntry& resultEntry : intResult.rows) {
-                        if (database.modifiesKB.getAllVarsModifiedByProc(std::stoi(resultEntry[index])).size() > 0) {
+                        if (database.modifiesKB.getAllVarsModifiedByProc(database.procTable.getProcId(resultEntry[index])).size() > 0) {
                             updatedResult.emplace_back(resultEntry);
                         }
                     }
@@ -344,7 +344,7 @@ namespace PQL {
                     int index2 = std::find(intResult.syns.begin(), intResult.syns.end(), arg2) - intResult.syns.begin();
                     std::vector<ClauseResultEntry> updatedResult;
                     for (ClauseResultEntry& resultEntry : intResult.rows) {
-                        std::unordered_set<VarId> vars = database.modifiesKB.getAllVarsModifiedByProc(std::stoi(resultEntry[index1]));
+                        std::unordered_set<VarId> vars = database.modifiesKB.getAllVarsModifiedByProc(database.procTable.getProcId(resultEntry[index1]));
                         for (VarId var : vars) {
                             ClauseResultEntry newResultEntry(resultEntry);
                             newResultEntry.insert(newResultEntry.begin() + index2, database.varTable.get(var));

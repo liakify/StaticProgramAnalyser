@@ -207,6 +207,13 @@ namespace PQL {
                     std::vector<ClauseResultEntry> updatedResult;
                     for (ClauseResultEntry& resultEntry : intResult.rows) {
                         std::string value = resultEntry[index1];
+                        if (synonymTable[syn1] == DesignEntity::CALL) {
+                            value = dynamic_cast<CallStmt*>(database.stmtTable.get(std::stoi(value)).get())->getProc();
+                        } else if (synonymTable[syn1] == DesignEntity::READ) {
+                            value = database.varTable.get(dynamic_cast<ReadStmt*>(database.stmtTable.get(std::stoi(value)).get())->getVar());
+                        } else if (synonymTable[syn1] == DesignEntity::PRINT) {
+                            value = database.varTable.get(dynamic_cast<PrintStmt*>(database.stmtTable.get(std::stoi(value)).get())->getVar());
+                        }
                         if (result2.find(value) != result2.end()) {
                             ClauseResultEntry newResultEntry(resultEntry);
                             newResultEntry.insert(newResultEntry.begin() + index2, value);
@@ -222,6 +229,13 @@ namespace PQL {
                     std::vector<ClauseResultEntry> updatedResult;
                     for (ClauseResultEntry& resultEntry : intResult.rows) {
                         std::string value = resultEntry[index2];
+                        if (synonymTable[syn2] == DesignEntity::CALL) {
+                            value = dynamic_cast<CallStmt*>(database.stmtTable.get(std::stoi(value)).get())->getProc();
+                        } else if (synonymTable[syn2] == DesignEntity::READ) {
+                            value = database.varTable.get(dynamic_cast<ReadStmt*>(database.stmtTable.get(std::stoi(value)).get())->getVar());
+                        } else if (synonymTable[syn2] == DesignEntity::PRINT) {
+                            value = database.varTable.get(dynamic_cast<PrintStmt*>(database.stmtTable.get(std::stoi(value)).get())->getVar());
+                        }
                         if (result1.find(value) != result1.end()) {
                             ClauseResultEntry newResultEntry(resultEntry);
                             newResultEntry.insert(newResultEntry.begin() + index1, value);
@@ -234,6 +248,22 @@ namespace PQL {
                     int index2 = std::find(intResult.syns.begin(), intResult.syns.end(), syn2) - intResult.syns.begin();
                     std::vector<ClauseResultEntry> updatedResult;
                     for (ClauseResultEntry& resultEntry : intResult.rows) {
+                        std::string value1 = resultEntry[index1];
+                        std::string value2 = resultEntry[index2];
+                        if (synonymTable[syn1] == DesignEntity::CALL) {
+                            value1 = dynamic_cast<CallStmt*>(database.stmtTable.get(std::stoi(value1)).get())->getProc();
+                        } else if (synonymTable[syn1] == DesignEntity::READ) {
+                            value1 = database.varTable.get(dynamic_cast<ReadStmt*>(database.stmtTable.get(std::stoi(value1)).get())->getVar());
+                        } else if (synonymTable[syn1] == DesignEntity::PRINT) {
+                            value1 = database.varTable.get(dynamic_cast<PrintStmt*>(database.stmtTable.get(std::stoi(value1)).get())->getVar());
+                        }
+                        if (synonymTable[syn2] == DesignEntity::CALL) {
+                            value2 = dynamic_cast<CallStmt*>(database.stmtTable.get(std::stoi(value2)).get())->getProc();
+                        } else if (synonymTable[syn2] == DesignEntity::READ) {
+                            value2 = database.varTable.get(dynamic_cast<ReadStmt*>(database.stmtTable.get(std::stoi(value2)).get())->getVar());
+                        } else if (synonymTable[syn2] == DesignEntity::PRINT) {
+                            value2 = database.varTable.get(dynamic_cast<PrintStmt*>(database.stmtTable.get(std::stoi(value2)).get())->getVar());
+                        }
                         if (resultEntry[index1] == resultEntry[index2]) {
                             updatedResult.emplace_back(resultEntry);
                         }
