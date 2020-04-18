@@ -1,7 +1,9 @@
+#include <algorithm>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
 #include <utility>
+#include <vector>
 
 #include "AssignPatternEvaluator.h"
 #include "LoggingUtils.h"
@@ -97,7 +99,7 @@ namespace PQL {
             VarId arg1Id = database.varTable.getVarId(arg1);
 
             std::unordered_set<StmtId> stmts = database.modifiesKB.getAllStmtsModifyVar(arg1Id);
-            
+
             if (std::find(intResult.syns.begin(), intResult.syns.end(), arg0) == intResult.syns.end()) {
                 intResult.syns.emplace_back(arg0);
                 for (StmtId stmt : stmts) {

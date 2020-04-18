@@ -1,7 +1,9 @@
+#include <algorithm>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
 #include <utility>
+#include <vector>
 
 #include "WithEvaluator.h"
 #include "LoggingUtils.h"
@@ -383,7 +385,7 @@ namespace PQL {
 
                 bool foundSyn1 = (std::find(intResult.syns.begin(), intResult.syns.end(), syn1) != intResult.syns.end());
                 bool foundSyn2 = (std::find(intResult.syns.begin(), intResult.syns.end(), syn2) != intResult.syns.end());
-                
+
                 if (!foundSyn1 && !foundSyn2) {
 
                     bool singleSynonym = (syn1 == syn2);

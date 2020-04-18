@@ -1,7 +1,9 @@
+#include <algorithm>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
 #include <utility>
+#include <vector>
 
 #include "AffectsEvaluator.h"
 #include "LoggingUtils.h"
@@ -69,7 +71,7 @@ namespace PQL {
                     intResult.rows.clear();
                     intResult.trueResult = false;
                 }
-    
+
             } else {
                 // Case 2: Wildcard, Integer
                 StmtId arg2 = std::stoi(args.second.value);
@@ -119,7 +121,7 @@ namespace PQL {
                     }
                     intResult.rows = updatedResult;
                 }
-    
+
             } else {
                 // Case 2: Synonym, Integer
                 Synonym arg1 = args.first.value;
@@ -193,7 +195,7 @@ namespace PQL {
                     }
                     intResult.rows = updatedResult;
                 }
-    
+
             } else {
                 // Case 2: Synonym, Wildcard
                 Synonym arg1 = args.first.value;
@@ -220,7 +222,7 @@ namespace PQL {
                     }
                     intResult.rows = updatedResult;
                 }
-    
+
             }
 
             if (intResult.rows.empty()) {

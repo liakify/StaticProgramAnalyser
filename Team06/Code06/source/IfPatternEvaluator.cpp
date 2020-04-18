@@ -1,6 +1,8 @@
+#include <algorithm>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
+#include <vector>
 
 #include "IfPatternEvaluator.h"
 #include "LoggingUtils.h"
@@ -16,7 +18,7 @@ namespace PQL {
         * @param    intResult   The intermediate result table for the group that the clause belongs to.
         */
         void evaluateIfPatternClauseWild(PKB::PKB& database, PatternClause& clause, ClauseResult& intResult) {
-            
+
             std::unordered_set<StmtId> stmts = database.patternKB.getAllIfStmtsWithCtrlVars();
 
             Synonym arg0 = clause.getSynonym().value;

@@ -1,7 +1,9 @@
+#include <algorithm>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
 #include <utility>
+#include <vector>
 
 #include "FollowsEvaluator.h"
 #include "LoggingUtils.h"
@@ -195,7 +197,7 @@ namespace PQL {
                     }
                     intResult.rows = updatedResult;
                 }
-    
+
             } else {
                 Synonym arg1 = args.first.value;
 

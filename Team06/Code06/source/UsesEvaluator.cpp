@@ -1,7 +1,9 @@
+#include <algorithm>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
 #include <utility>
+#include <vector>
 
 #include "UsesEvaluator.h"
 #include "LoggingUtils.h"
@@ -30,7 +32,7 @@ namespace PQL {
                     intResult.rows.clear();
                     intResult.trueResult = false;
                 }
-    
+
             } else {
                 // Case 2: Procedure name provided
                 ProcId arg1 = database.procTable.getProcId(args.first.value);
@@ -40,7 +42,7 @@ namespace PQL {
                     intResult.rows.clear();
                     intResult.trueResult = false;
                 }
-    
+
             }
         }
 
@@ -62,7 +64,7 @@ namespace PQL {
                     intResult.rows.clear();
                     intResult.trueResult = false;
                 }
-    
+
             } else {
                 // Case 2: Procedure name provided
                 ProcId arg1 = database.procTable.getProcId(args.first.value);
@@ -71,7 +73,7 @@ namespace PQL {
                     intResult.rows.clear();
                     intResult.trueResult = false;
                 }
-    
+
             }
         }
 
@@ -240,7 +242,7 @@ namespace PQL {
                     }
                     intResult.rows = updatedResult;
                 }
-    
+
             } else {
                 // Case 2: Synonym is a statement
                 if (std::find(intResult.syns.begin(), intResult.syns.end(), arg1) == intResult.syns.end()) {
@@ -342,7 +344,7 @@ namespace PQL {
                     std::vector<ClauseResultEntry> updatedResult;
                     for (ClauseResultEntry& resultEntry : intResult.rows) {
                         std::unordered_set<VarId> vars = database.usesKB.getAllVarsUsedByProc(database.procTable.getProcId(resultEntry[index1]));
-                        for (VarId var : vars) {                            
+                        for (VarId var : vars) {
                             ClauseResultEntry newResultEntry(resultEntry);
                             newResultEntry.insert(newResultEntry.begin() + index2, database.varTable.get(var));
                             updatedResult.emplace_back(newResultEntry);

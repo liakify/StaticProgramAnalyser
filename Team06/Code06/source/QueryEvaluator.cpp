@@ -358,7 +358,7 @@ namespace PQL {
             }
             updatedEntries.emplace_back(updatedResultEntry);
         }
-        
+
         std::sort(updatedEntries.begin(), updatedEntries.end());
         updatedEntries.resize(std::distance(updatedEntries.begin(), std::unique(updatedEntries.begin(), updatedEntries.end())));
         result.rows = updatedEntries;

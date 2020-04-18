@@ -1,7 +1,9 @@
+#include <algorithm>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
 #include <utility>
+#include <vector>
 
 #include "ModifiesEvaluator.h"
 #include "LoggingUtils.h"
@@ -30,7 +32,7 @@ namespace PQL {
                     intResult.rows.clear();
                     intResult.trueResult = false;
                 }
-    
+
             } else {
                 // Case 2: Procedure name provided
                 ProcId arg1 = database.procTable.getProcId(args.first.value);
@@ -40,7 +42,7 @@ namespace PQL {
                     intResult.rows.clear();
                     intResult.trueResult = false;
                 }
-    
+
             }
 
         }
@@ -63,7 +65,7 @@ namespace PQL {
                     intResult.rows.clear();
                     intResult.trueResult = false;
                 }
-    
+
             } else {
                 // Case 2: Procedure name provided
                 ProcId arg1 = database.procTable.getProcId(args.first.value);
@@ -71,7 +73,7 @@ namespace PQL {
                     intResult.rows.clear();
                     intResult.trueResult = false;
                 }
-    
+
             }
         }
 
@@ -112,7 +114,7 @@ namespace PQL {
                     }
                     intResult.rows = updatedResult;
                 }
-    
+
             } else {
                 // Case 2: Procedure name
                 ProcId arg1 = database.procTable.getProcId(args.first.value);
@@ -178,7 +180,7 @@ namespace PQL {
                     }
                     intResult.rows = updatedResult;
                 }
-    
+
             } else {
                 // Case 2: Synonym is a statement
                 if (std::find(intResult.syns.begin(), intResult.syns.end(), arg1) == intResult.syns.end()) {
@@ -244,7 +246,7 @@ namespace PQL {
                     }
                     intResult.rows = updatedResult;
                 }
-    
+
             } else {
                 // Case 2: Synonym is a statement
                 if (std::find(intResult.syns.begin(), intResult.syns.end(), arg1) == intResult.syns.end()) {
