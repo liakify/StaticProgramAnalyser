@@ -5,4 +5,4 @@ install:
         - PowerShell -Command 'Set-ExecutionPolicy -ExecutionPolicy RemoteSigned'
 script:
         - ./run.bat
-        - PowerShell -File ./runAllSysTest.ps1
+        - PowerShell -File ./Tools06/runAllSysTest.ps1
