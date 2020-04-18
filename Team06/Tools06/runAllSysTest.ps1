@@ -95,10 +95,14 @@ $list_of_test_files = @(
   'nextStar_tle',
   'CallsStar_multipleCallsInOneProc',
   'mixed_0',
+  'invalid_chars_0'
   
   # STAGED TESTS
   '..\performance600_single',
   '..\performance600_chainedNext'
+  '..\intergroup_0'
+  '..\intragroup_0'
+  '..\intragroup_1'
   
   # TESTS BELOW CURRENTLY FAIL / TIMEOUT
   # '..\performance600_runtimeCache'
