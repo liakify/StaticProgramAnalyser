@@ -290,7 +290,7 @@ namespace PQL {
 
             // Perform a Multi-Source Best First Search. Start with clauses containing single synonyms.
             auto compare = [](ClauseNode* first, ClauseNode* second) {
-                return *first < *second;
+                return *second < *first;
             };
 
             // We need each group to have at least one clause in the priority queue.
