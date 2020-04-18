@@ -14,9 +14,9 @@ procedure Second {
     x = x * y + z; }
 
 procedure First {
-read x;
-read z;
-call Second; }
+    read x;
+    read z;
+    call Second; }
 
 procedure Third {
     z = 5;

@@ -1,0 +1,90 @@
+1 - Test 1 Q3(a)
+assign a; variable v;
+Select a pattern a(v, _"c / 2"_)
+14
+5000
+2 - Test 1 Q3(b)
+variable v;
+Select v such that Uses(21, v)
+a, c, count, q, r, s, x, y
+5000
+3 - Test 1 Q3(c) [*INVALID - semantic error]
+assign a; constant c;
+Select c such that Uses(a, c)
+
+5000
+4 - Test 1 Q3(d)
+assign a, a1;
+Select <a, a1> such that Follows*(a1, a) and Next*(a, a1)
+14 13, 18 17, 25 22
+5000
+5 - Test 1 Q3(e)
+stmt s; while w; variable v;
+Select v such that Modifies(s, v) and Parent*(w, s)
+a, b, c, count, s, y
+5000
+6 - Test 1 Q3(f)
+stmt s;
+Select s such that Affects*(19, s)
+13, 14, 19
+5000
+7 - Test 1 Q3(g)
+assign a; read re;
+Select a such that Next*(re, a)
+13, 14, 17, 18, 19
+5000
+8 - Test 1 Q3(h) [*INVALID - syntax error]
+assign a; variable v;
+Select v pattern a(v, "c") and pattern a(v, "r")
+
+5000
+9 - Test 1 Q3(i)
+procedure p, q; read re; variable v;
+Select q.procName such that Uses(p, v) and Calls(p, q) with v.varName = re.varName
+bisection, plot
+5000
+10 - Test 1 Q3(j)
+if ifs; while w; variable v;
+Select <w, ifs, v> pattern ifs(v, _, _) and w(v, _)
+12 6 a, 12 6 b, 21 6 a
+5000
+11 - Test 1 Q3(k)
+procedure p; variable v;
+Select p such that Uses(p, v) with v.varName = "b"
+bisection, main
+5000
+12 - Test 1 Q3(l)
+assign a; print pn;
+Select pn such that Follows(a, pn) pattern a(_, _"c"_)
+23
+5000
+13 - Test 1 Q3(m)
+stmt s;
+Select s such that Affects*(s, s)
+13, 14, 18, 19, 25
+5000
+14 - Test 1 Q3(n) [*INVALID - semantic error]
+procedure p; call cl; while w; variable v;
+Select cl such that Modifies(p, v) pattern w(v, _) such that Calls(cl, p) and Uses(cl, v)
+
+5000
+15 - Test 1 Q3(o)
+assign a, a1; while w; variable v;
+Select v pattern a(v, _) such that Next(a, a1) pattern w(v, _) such that Parent*(w, a1)
+a
+5000
+16 - Test 1 Q3(p)
+stmt s; assign a, a1;
+Select BOOLEAN such that Affects*(a, a) with a.stmt# = s.stmt# such that Follows*(s, a1) and Affects(a, a1)
+TRUE
+5000
+17 - Test 1 Q3(q)
+constant c; stmt s; assign a;
+Select <s, a> with s.stmt# = c.value such that Affects*(s, a)
+20 25, 9 13, 9 14, 9 19
+5000
+18 - Test 1 Q3(r)
+procedure p; stmt s, s1; print pn; variable v;
+Select <pn, v> such that Next*(pn, s) and Parent*(s1, s) and Uses(s, v) with p.procName = "plot"
+8 x, 8 c, 8 y, 8 a, 8 b, 8 s, 8 count, 10 x, 10 c, 10 y, 10 a, 10 b, 10 s, 10 count, 23 q, 23 x, 23 r, 23 c, 23 s, 23 y, 23 count, 24 q, 24 x, 24 r, 24 c, 24 s, 24 y, 24 count
+5000

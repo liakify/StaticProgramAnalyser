@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <queue>
 #include <string>
+#include <unordered_map>
 #include <utility>
 #include <vector>
 
@@ -59,6 +60,62 @@ namespace PQL {
                 return id < other.id;
             }
         };
+
+        void assignAllSynonymIds(Query& query) {
+            std::unordered_map<Synonym, int> synonymIdMap;
+            unsigned int id = 0;
+
+            // Assign each synonym declared in the query a unique synonym ID
+            for (auto& synonymMapping : query.synonymTable) {
+                synonymIdMap[synonymMapping.first] = id;
+                id++;
+            }
+
+            assert(id == query.synonymTable.size());
+
+            // Update all return types with the synonym ID of the corresponding synonym
+            for (ReturnType& target : query.targetEntities) {
+                target.synonymId = synonymIdMap[target.synonym];
+            }
+
+            // Update all synonym arguments of relation clauses with assigned synonym IDs
+            for (RelationClause& relation : query.relations) {
+                std::pair<Argument, Argument> args = relation.getArgs();
+
+                if (args.first.type == ArgType::SYNONYM) {
+                    assert(relation.setFirstSynonymId(synonymIdMap[args.first.value]));
+                }
+
+                if (args.second.type == ArgType::SYNONYM) {
+                    assert(relation.setSecondSynonymId(synonymIdMap[args.second.value]));
+                }
+            }
+
+            // Update all synonym arguments of pattern clauses with assigned synonym IDs
+            for (PatternClause& pattern : query.patterns) {
+                std::pair<Argument, Argument> args = pattern.getArgs();
+
+                // Pattern synonym argument is always a synonym
+                assert(pattern.setPatternSynonymId(synonymIdMap[pattern.getSynonym().value]));
+
+                if (args.first.type == ArgType::SYNONYM) {
+                    assert(pattern.setFirstSynonymId(synonymIdMap[args.first.value]));
+                }
+            }
+
+            // Update all synonym arguments of equality clauses with assigned synonym IDs
+            for (WithClause& equality : query.equalities) {
+                std::pair<Argument, Argument> args = equality.getArgs();
+
+                if (args.first.type == ArgType::SYNONYM || args.first.type == ArgType::ATTRIBUTE) {
+                    assert(equality.setLeftSynonymId(synonymIdMap[args.first.value]));
+                }
+
+                if (args.second.type == ArgType::SYNONYM || args.second.type == ArgType::ATTRIBUTE) {
+                    assert(equality.setRightSynonymId(synonymIdMap[args.second.value]));
+                }
+            }
+        }
 
         ClauseNode constructRelationClauseNode(RelationClause& relation) {
             ClauseNode node;
@@ -156,6 +213,9 @@ namespace PQL {
 
         OptimisedQuery optimiseQuery(Query& query) {
 
+            // Assign unique synonym ID to each synonym appearing in a return type or argument
+            assignAllSynonymIds(query);
+
             // Create list of all clauses
             std::vector<ClauseNode> nodes;
             for (RelationClause& relation : query.relations) {
@@ -178,7 +238,7 @@ namespace PQL {
             std::vector<std::vector<int> > graph(nodes.size(), std::vector<int>());
 
             for (unsigned int i = 0; i < nodes.size(); i++) {
-                for (unsigned int j = 0; j < nodes.size(); j++) {
+                for (unsigned int j = 0; j < i; j++) {
                     // Connect with bidirectional edge if the two clauses share any synonyms
                     for (Synonym synonym : nodes[i].synonyms) {
                         if (nodes[j].containsSynonym(synonym)) {

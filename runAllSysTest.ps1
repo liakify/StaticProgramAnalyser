@@ -73,26 +73,28 @@ $list_of_test_files = @(
   'withSuchthat_4',
   'withSuchthat_5',
   'withSuchthat_6',
-  'affects_0'
-  'affects_1'
-  'affects_2'
-  'affects_3'
-  'affects_4'
-  'affects_singleStmt'
-  'affects_invalidArgs'
-  'affectsStar_0'
-  'affectsStar_1'
-  'affectsStar_2'
-  'affectsStar_singleStmt'
-  'affectsStar_invalidArgs'
-  'suchthatPattern_affects+Star'
-  'withSuchthat_7'
-  'given_0'
-  'given_1'
-  'given_2'
-  'nextStar_tle'
-  'CallsStar_multipleCallsInOneProc'
-  'mixed_0'
+  'affects_0',
+  'affects_1',
+  'affects_2',
+  'affects_3',
+  'affects_4',
+  'affects_singleStmt',
+  'affects_invalidArgs',
+  'affectsStar_0',
+  'affectsStar_1',
+  'affectsStar_2',
+  'affectsStar_singleStmt',
+  'affectsStar_invalidArgs',
+  'suchthatPattern_affects+Star',
+  'withSuchthat_7',
+  'given_0',
+  'given_1',
+  'given_2',
+  'given_3',
+  'given_4',
+  'nextStar_tle',
+  'CallsStar_multipleCallsInOneProc',
+  'mixed_0',
   
   # STAGED TESTS
   '..\performance600_intragroupShortcircuit'
