@@ -117,12 +117,18 @@ namespace UnitTesting {
         string INVALID_AND_WITH_QUERY = "prog_line and; Select BOOLEAN with 1 = and and with \"bob\" = \"theBuilder\"";
         string MISSING_RETURN_TYPE_QUERY = "print pn; stmt s1; Select such that Follows(pn, s1)";
         string INCORRECT_RELATION_KEYWORD_QUERY = "stmt s; print pn; Select pn such tat Follows*(s, p)";
+        string RELATION_SINGLE_BLANK_ARG_QUERY = "Select BOOLEAN such that Follows*(1, )";
+        string RELATION_SINGLE_BLANK_MANY_ARGS_QUERY = "procedure p; Select p such that Calls(\"main\", p, )";
+        string RELATION_MANY_BLANK_ARGS_QUERY = "Select BOOLEAN such that Next( , )";
         string INCORRECT_PATTERN_KEYWORD_QUERY = "assign a; Select a patern a(_, \"0\")";
         string INCORRECT_EQUALITY_KEYWORD_QUERY = "Select BOOLEAN wit 1 = 1";
         string RELATION_INVALID_ARG_CHARACTER_QUERY = "while w; Select w such that Uses(w, v > 0)";
         string RELATION_INVALID_ATTRIBUTE_ARG_QUERY = "procedure p; call cl; Select cl.stmt# such that Calls(p, cl.procName)";
         string PATTERN_INVALID_SYNTAX_QUERY = "read rd; print pn; assign a; Select a pattern(_, _) and Follows(rd, pn)";
         string PATTERN_TOO_FEW_ARGS_QUERY = "if ifs; Select ifs pattern ifs(_)";
+        string PATTERN_BLANK_TARGET_ARG_QUERY = "assign a; Select a pattern a( , _)";
+        string PATTERN_BLANK_PATTERN_ARG_QUERY = "while w; Select w pattern w(_, )";
+        string PATTERN_SINGLE_BLANK_MANY_ARGS_QUERY = "if ifs; Select ifs pattern ifs(_, , _)";
         string PATTERN_INVALID_FIRST_ARG_CHARACTER_QUERY = "while w; Select w.stmt# pattern w(\"i > 0\", _)";
         string PATTERN_INVALID_SECOND_ARG_CHARACTER_QUERY = "assign a; Select a pattern a(\"x\", \"i = 1\")";
         string PATTERN_INVALID_ATTRIBUTE_ARG_QUERY = "if ifs; Select ifs pattern ifs(v.value, _, _)";
@@ -161,7 +167,8 @@ namespace UnitTesting {
         // Invalid queries that fail in parseRelationClauses
         string INVALID_RELATION_TYPE_QUERY = "procedure p, q; Select p such that Recurses(p, q)";
         string INVALID_RELATION_KEYWORD_QUERY = "read rd; print pn; Select s1 such that Folows(rd, pn)";
-        string INCORRECT_RELATION_NUM_ARGS_QUERY = "stmt s1, s2, s3; Select s1 such that Parent(s1, s2, s3)";
+        string RELATION_TOO_FEW_ARGS_QUERY = "procedure p; Select BOOLEAN such that Modifies(p)";
+        string RELATION_TOO_MANY_ARGS_QUERY = "stmt s1, s2, s3; Select s1 such that Parent(s1, s2, s3)";
         string FOLLOWS_NON_STMT_REF_ARG_QUERY = "Select BOOLEAN such that Follows*(\"32\", 30)";
         string PARENT_NON_STMT_REF_ARG_QUERY = "Select BOOLEAN such that Parent*(3203, __private)";
         string USES_INVALID_SECOND_ARG_QUERY = "assign a; Select a such that Uses(a, 420)";
@@ -1363,12 +1370,18 @@ namespace UnitTesting {
             { INVALID_AND_WITH_QUERY, SYNTAX_ERR_INVALID_AND_CHAINED_CLAUSES },
             { MISSING_RETURN_TYPE_QUERY, SYNTAX_ERR_INVALID_CLAUSES_IN_QUERY_BODY },
             { INCORRECT_RELATION_KEYWORD_QUERY, SYNTAX_ERR_INVALID_CLAUSES_IN_QUERY_BODY },
+            { RELATION_SINGLE_BLANK_ARG_QUERY, SYNTAX_ERR_INVALID_CLAUSES_IN_QUERY_BODY },
+            { RELATION_SINGLE_BLANK_MANY_ARGS_QUERY, SYNTAX_ERR_INVALID_CLAUSES_IN_QUERY_BODY },
+            { RELATION_MANY_BLANK_ARGS_QUERY, SYNTAX_ERR_INVALID_CLAUSES_IN_QUERY_BODY },
             { INCORRECT_PATTERN_KEYWORD_QUERY,  SYNTAX_ERR_INVALID_CLAUSES_IN_QUERY_BODY },
             { INCORRECT_EQUALITY_KEYWORD_QUERY, SYNTAX_ERR_INVALID_CLAUSES_IN_QUERY_BODY },
             { RELATION_INVALID_ARG_CHARACTER_QUERY, SYNTAX_ERR_INVALID_CLAUSES_IN_QUERY_BODY },
             { RELATION_INVALID_ATTRIBUTE_ARG_QUERY, SYNTAX_ERR_INVALID_CLAUSES_IN_QUERY_BODY },
             { PATTERN_INVALID_SYNTAX_QUERY, SYNTAX_ERR_INVALID_CLAUSES_IN_QUERY_BODY },
             { PATTERN_TOO_FEW_ARGS_QUERY, SYNTAX_ERR_MISSING_OR_MALFORMED_PATTERN_ARG },
+            { PATTERN_BLANK_TARGET_ARG_QUERY, SYNTAX_ERR_MISSING_OR_MALFORMED_PATTERN_ARG },
+            { PATTERN_BLANK_PATTERN_ARG_QUERY, SYNTAX_ERR_MISSING_OR_MALFORMED_PATTERN_ARG },
+            { PATTERN_SINGLE_BLANK_MANY_ARGS_QUERY, SYNTAX_ERR_MISSING_OR_MALFORMED_PATTERN_ARG },
             { PATTERN_INVALID_FIRST_ARG_CHARACTER_QUERY, SYNTAX_ERR_MISSING_OR_MALFORMED_PATTERN_ARG },
             { PATTERN_INVALID_SECOND_ARG_CHARACTER_QUERY, SYNTAX_ERR_MISSING_OR_MALFORMED_PATTERN_ARG },
             { PATTERN_INVALID_ATTRIBUTE_ARG_QUERY, SYNTAX_ERR_MISSING_OR_MALFORMED_PATTERN_ARG },
@@ -1404,7 +1417,8 @@ namespace UnitTesting {
             // parseRelationClauses
             { INVALID_RELATION_TYPE_QUERY, SYNTAX_ERR_INVALID_RELATION_KEYWORD },
             { INVALID_RELATION_KEYWORD_QUERY, SYNTAX_ERR_INVALID_RELATION_KEYWORD },
-            { INCORRECT_RELATION_NUM_ARGS_QUERY, SYNTAX_ERR_RELATION_INVALID_NUM_ARGS },
+            { RELATION_TOO_FEW_ARGS_QUERY, SYNTAX_ERR_RELATION_INVALID_NUM_ARGS },
+            { RELATION_TOO_MANY_ARGS_QUERY, SYNTAX_ERR_RELATION_INVALID_NUM_ARGS },
             { FOLLOWS_NON_STMT_REF_ARG_QUERY, SYNTAX_ERR_FOLLOWS_PARENTS_INVALID_STMT_REF },
             { PARENT_NON_STMT_REF_ARG_QUERY, SYNTAX_ERR_FOLLOWS_PARENTS_INVALID_STMT_REF },
             { USES_INVALID_SECOND_ARG_QUERY, SYNTAX_ERR_USES_MODIFIES_INVALID_SECOND_ENT_REF },
