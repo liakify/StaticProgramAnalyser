@@ -124,5 +124,14 @@ namespace PQL {
         * @return   The construct ClauseResult structure.
         */
         ClauseResult getClauseResultWithAllValues(Synonym synonym, DesignEntity designEntity);
+
+        /**
+        * Negates a given set of clause results.
+        *
+        * @param    results         The results to negate.
+        * @param    synonymTable    The synonym table associated with the query.
+        * @return   The negation of the results.
+        */
+        ClauseResult negateClauseResults(ClauseResult &result, std::unordered_map<std::string, DesignEntity> synonymTable);
     };
 }

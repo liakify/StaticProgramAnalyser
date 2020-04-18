@@ -189,6 +189,10 @@ namespace PQL {
                 }
             }
 
+            if (clause->isNegatedClause) {
+                negateClauseResults(result, query.synonymTable);
+            }
+
             // If the result is empty, we can stop evaluation immediately
             if (!result.trueResult && result.rows.empty()) {
                 return extractQueryResults(query, ClauseResult());
@@ -227,6 +231,47 @@ namespace PQL {
         ClauseResult result = extractQueryResults(query, combinedResult);
 
         return result;
+    }
+
+    ClauseResult QueryEvaluator::negateClauseResults(ClauseResult &result, std::unordered_map<std::string, DesignEntity> synonymTable) {
+        if (result.syns.size() == 0) {
+            if (result.trueResult) {
+                ClauseResult clauseResult;
+                clauseResult.trueResult = false;
+                return clauseResult;
+            } else {
+                ClauseResult clauseResult;
+                clauseResult.trueResult = true;
+                return clauseResult;
+            }
+        } else {
+            ClauseResult clauseResult;
+            ClauseResult allValues;
+            if (result.syns.size() == 1) {
+                allValues = getClauseResultWithAllValues(result.syns[0], synonymTable[result.syns[0]]);
+            } else {
+                allValues = combineTwoClauseResults(getClauseResultWithAllValues(result.syns[0], synonymTable[result.syns[0]]),
+                    getClauseResultWithAllValues(result.syns[1], synonymTable[result.syns[1]]));                
+            }
+            std::sort(allValues.rows.begin(), allValues.rows.end());
+            std::sort(result.rows.begin(), result.rows.end());
+            int j = 0;
+            for (int i = 0; i < allValues.rows.size(); i++) {
+                while (j < result.rows.size() && result.rows[j] < allValues.rows[i]) {
+                    j++;
+                }
+                if (j < result.rows.size()) {
+                    if (result.rows[j] != allValues.rows[i]) {
+                        clauseResult.rows.emplace_back(allValues.rows[i]);
+                    }
+                } else {
+                    clauseResult.rows.emplace_back(allValues.rows[i]);
+                }
+            }
+            clauseResult.syns = result.syns;
+            return clauseResult;
+        }
+
     }
 
     ClauseResult QueryEvaluator::extractQueryResults(Query &query, ClauseResult& combinedResult) {
