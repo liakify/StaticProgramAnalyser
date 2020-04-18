@@ -174,7 +174,7 @@ namespace PQL {
                     int index = std::find(intResult.syns.begin(), intResult.syns.end(), arg1) - intResult.syns.begin();
                     std::vector<ClauseResultEntry> updatedResult;
                     for (ClauseResultEntry& resultEntry : intResult.rows) {
-                        if (database.modifiesKB.procModifies(std::stoi(resultEntry[index]), arg2)) {
+                        if (database.modifiesKB.procModifies(database.procTable.getProcId(resultEntry[index]), arg2)) {
                             updatedResult.emplace_back(resultEntry);
                         }
                     }
