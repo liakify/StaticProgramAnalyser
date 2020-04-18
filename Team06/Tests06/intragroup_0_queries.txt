@@ -1,0 +1,15 @@
+1 - 
+procedure p; variable v; assign a;
+Select p.procName such that Modifies (p, v) pattern a (v, _"x + 1"_) such that Calls(p, "modifiesVar")
+assignsVar2
+5000
+2 - 
+stmt s1, s2; procedure p;
+Select s1 such that Parent (s1, s2) and Next(s1, s2) with p.procName = "assignsVar"
+
+5000
+3 - 
+call c; variable v; procedure p; print pn;
+Select pn such that Modifies(p, "var") and Next(pn, c) with p.procName = c.procName and p.procName = v.varName and "true" = "true"
+5
+5000
