@@ -491,9 +491,16 @@ namespace PQL {
             std::string arg1 = args.first.value;
             std::string arg2 = args.second.value;
 
-            if (arg1 != arg2) {
-                intResult.rows.clear();
-                intResult.trueResult = false;
+            if (args.first.type == ArgType::IDENTIFIER) {
+                if (arg1 != arg2) {
+                    intResult.rows.clear();
+                    intResult.trueResult = false;
+                }
+            } else {
+                if (std::stoi(arg1) != std::stoi(arg2)) {
+                    intResult.rows.clear();
+                    intResult.trueResult = false;
+                }
             }
 
         }
