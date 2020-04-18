@@ -21,8 +21,15 @@ namespace UnitTesting {
 
     TEST_CLASS(TestPQL) {
     public:
-        TEST_CLASS_INITIALIZE(initPQL) {
+        //TEST_CLASS_INITIALIZE(initPQL) {
 
+        //}
+
+        //TEST_METHOD(PQLManager) {
+        //    PQL::PQLManager defaultPQL = PQL::PQLManager(PKB::PKB());
+        //}
+
+        TEST_METHOD(evaluateQuery) {
             PKB::PKB dummyPKB = PKB::PKB();
 
             /** Sample SIMPLE program to ensure valid queries return valid results:
@@ -35,7 +42,7 @@ namespace UnitTesting {
               *
               */
 
-            // Populate all entity tables (constants, variable, statements, statement lists)
+              // Populate all entity tables (constants, variable, statements, statement lists)
             ConstId zeroId = dummyPKB.constTable.insertConst("0");
             ConstId oneId = dummyPKB.constTable.insertConst("1");
             VarId xId = dummyPKB.varTable.insertVar("x");
@@ -95,13 +102,7 @@ namespace UnitTesting {
 
             evalStub = PQL::QueryEvaluator(dummyPKB);
             facade = PQL::PQLManager(parserStub, evalStub);
-        }
 
-        TEST_METHOD(PQLManager) {
-            PQL::PQLManager defaultPQL = PQL::PQLManager(PKB::PKB());
-        }
-
-        TEST_METHOD(evaluateQuery) {
             // List of test queries and corresponding expected results
             // After each query is handled by PQLManager::evaluateQuery
             vector<pair<string, std::unordered_set<string>>> TEST_CASES = {
