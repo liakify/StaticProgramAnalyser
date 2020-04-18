@@ -36,7 +36,7 @@ namespace PQL {
         ClauseResult evaluateQuery(Query &query);
 
      private:
-        PKB::PKB database;
+        PKB::PKB* database;
 
         /**
         * Evaluates a single relation clause.

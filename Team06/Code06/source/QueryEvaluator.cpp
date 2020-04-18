@@ -28,7 +28,7 @@
 namespace PQL {
 
     QueryEvaluator::QueryEvaluator(PKB::PKB &database) {
-        this->database = database;
+        this->database = &database;
     }
 
     ClauseResult QueryEvaluator::getClauseResultWithAllValues(Synonym synonym, DesignEntity designEntity) {
@@ -43,7 +43,7 @@ namespace PQL {
         case DesignEntity::PRINT:
         case DesignEntity::READ:
         case DesignEntity::WHILE: {
-            std::unordered_set<StmtId> stmts = database.stmtTable.getStmtsByType(SPA::TypeUtils::getStmtTypeFromDesignEntity(designEntity));
+            std::unordered_set<StmtId> stmts = database->stmtTable.getStmtsByType(SPA::TypeUtils::getStmtTypeFromDesignEntity(designEntity));
             for (StmtId stmt : stmts) {
                 ClauseResultEntry resultEntry;
                 resultEntry.emplace_back(std::to_string(stmt));
@@ -54,7 +54,7 @@ namespace PQL {
         }
         case DesignEntity::PROG_LINE:
         case DesignEntity::STATEMENT: {
-            for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
+            for (StmtId i = 1; i <= database->stmtTable.size(); i++) {
                 ClauseResultEntry resultEntry;
                 resultEntry.emplace_back(std::to_string(i));
                 clauseResult.rows.emplace_back(resultEntry);
@@ -63,25 +63,25 @@ namespace PQL {
             break;
         }
         case DesignEntity::CONSTANT: {
-            for (ConstId i = 1; i <= database.constTable.size(); i++) {
+            for (ConstId i = 1; i <= database->constTable.size(); i++) {
                 ClauseResultEntry resultEntry;
-                resultEntry.emplace_back(database.constTable.get(i));
+                resultEntry.emplace_back(database->constTable.get(i));
                 clauseResult.rows.emplace_back(resultEntry);
             }
             return clauseResult;
             break;
         }
         case DesignEntity::PROCEDURE: {
-            for (ProcId i = 1; i <= database.procTable.size(); i++) {
+            for (ProcId i = 1; i <= database->procTable.size(); i++) {
                 ClauseResultEntry resultEntry;
-                resultEntry.emplace_back(database.procTable.get(i).getName());
+                resultEntry.emplace_back(database->procTable.get(i).getName());
                 clauseResult.rows.emplace_back(resultEntry);
             }
             return clauseResult;
             break;
         }
         case DesignEntity::VARIABLE: {
-            std::unordered_set<VarName> allVars = database.varTable.getAllVars();
+            std::unordered_set<VarName> allVars = database->varTable.getAllVars();
             for (VarName var : allVars) {
                 ClauseResultEntry resultEntry;
                 resultEntry.emplace_back(var);
@@ -412,16 +412,16 @@ namespace PQL {
                         if (query.synonymTable[targetSyn] == DesignEntity::PROCEDURE) {
                             finalResultEntry[position] = resultEntry[j];
                         } else {
-                            CallStmt *callStmt = dynamic_cast<CallStmt*>(database.stmtTable.get(std::stoi(resultEntry[j])).get());
+                            CallStmt *callStmt = dynamic_cast<CallStmt*>(database->stmtTable.get(std::stoi(resultEntry[j])).get());
                             finalResultEntry[position] = callStmt->getProc();
                         }
                     } else if (targetAttr == AttrType::VAR_NAME) {
                         if (query.synonymTable[targetSyn] == DesignEntity::READ) {
-                            ReadStmt* readStmt = dynamic_cast<ReadStmt*>(database.stmtTable.get(std::stoi(resultEntry[j])).get());
-                            finalResultEntry[position] = database.varTable.get(readStmt->getVar());
+                            ReadStmt* readStmt = dynamic_cast<ReadStmt*>(database->stmtTable.get(std::stoi(resultEntry[j])).get());
+                            finalResultEntry[position] = database->varTable.get(readStmt->getVar());
                         } else if (query.synonymTable[targetSyn] == DesignEntity::PRINT) {
-                            PrintStmt* printStmt = dynamic_cast<PrintStmt*>(database.stmtTable.get(std::stoi(resultEntry[j])).get());
-                            finalResultEntry[position] = database.varTable.get(printStmt->getVar());
+                            PrintStmt* printStmt = dynamic_cast<PrintStmt*>(database->stmtTable.get(std::stoi(resultEntry[j])).get());
+                            finalResultEntry[position] = database->varTable.get(printStmt->getVar());
                         } else {
                             finalResultEntry[position] = resultEntry[j];
                         }
@@ -533,42 +533,42 @@ namespace PQL {
         std::unordered_map<std::string, DesignEntity> &synonymTable, ClauseResult& intResult) {
         switch (relationClause.getRelationType()) {
         case RelationType::FOLLOWS:
-            return FollowsEvaluator::evaluateFollowsClause(this->database, relationClause, synonymTable, intResult);
+            return FollowsEvaluator::evaluateFollowsClause(*database, relationClause, synonymTable, intResult);
             break;
         case RelationType::FOLLOWST:
-            return FollowsStarEvaluator::evaluateFollowsStarClause(this->database, relationClause, synonymTable, intResult);
+            return FollowsStarEvaluator::evaluateFollowsStarClause(*database, relationClause, synonymTable, intResult);
             break;
         case RelationType::PARENT:
-            return ParentEvaluator::evaluateParentClause(this->database, relationClause, synonymTable, intResult);
+            return ParentEvaluator::evaluateParentClause(*database, relationClause, synonymTable, intResult);
             break;
         case RelationType::PARENTT:
-            return ParentStarEvaluator::evaluateParentStarClause(this->database, relationClause, synonymTable, intResult);
+            return ParentStarEvaluator::evaluateParentStarClause(*database, relationClause, synonymTable, intResult);
             break;
         case RelationType::MODIFIESS:
         case RelationType::MODIFIESP:
-            return ModifiesEvaluator::evaluateModifiesClause(this->database, relationClause, synonymTable, intResult);
+            return ModifiesEvaluator::evaluateModifiesClause(*database, relationClause, synonymTable, intResult);
             break;
         case RelationType::USESS:
         case RelationType::USESP:
-            return UsesEvaluator::evaluateUsesClause(this->database, relationClause, synonymTable, intResult);
+            return UsesEvaluator::evaluateUsesClause(*database, relationClause, synonymTable, intResult);
             break;
         case RelationType::CALLS:
-            return CallsEvaluator::evaluateCallsClause(this->database, relationClause, synonymTable, intResult);
+            return CallsEvaluator::evaluateCallsClause(*database, relationClause, synonymTable, intResult);
             break;
         case RelationType::CALLST:
-            return CallsStarEvaluator::evaluateCallsStarClause(this->database, relationClause, synonymTable, intResult);
+            return CallsStarEvaluator::evaluateCallsStarClause(*database, relationClause, synonymTable, intResult);
             break;
         case RelationType::NEXT:
-            return NextEvaluator::evaluateNextClause(this->database, relationClause, synonymTable, intResult);
+            return NextEvaluator::evaluateNextClause(*database, relationClause, synonymTable, intResult);
             break;
         case RelationType::NEXTT:
-            return NextStarEvaluator::evaluateNextStarClause(this->database, relationClause, synonymTable, intResult);
+            return NextStarEvaluator::evaluateNextStarClause(*database, relationClause, synonymTable, intResult);
             break;
         case RelationType::AFFECTS:
-            return AffectsEvaluator::evaluateAffectsClause(this->database, relationClause, synonymTable, intResult);
+            return AffectsEvaluator::evaluateAffectsClause(*database, relationClause, synonymTable, intResult);
             break;
         case RelationType::AFFECTST:
-            return AffectsStarEvaluator::evaluateAffectsStarClause(this->database, relationClause, synonymTable, intResult);
+            return AffectsStarEvaluator::evaluateAffectsStarClause(*database, relationClause, synonymTable, intResult);
             break;
         default:
             SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluateRelationClause: Unknown relation type %d\n", relationClause.getRelationType());
@@ -580,13 +580,13 @@ namespace PQL {
 
         switch (patternClause.getPatternType()) {
         case PatternType::ASSIGN_PATTERN:
-            return AssignPatternEvaluator::evaluateAssignPatternClause(this->database, patternClause, synonymTable, intResult);
+            return AssignPatternEvaluator::evaluateAssignPatternClause(*database, patternClause, synonymTable, intResult);
             break;
         case PatternType::IF_PATTERN:
-            return IfPatternEvaluator::evaluateIfPatternClause(this->database, patternClause, synonymTable, intResult);
+            return IfPatternEvaluator::evaluateIfPatternClause(*database, patternClause, synonymTable, intResult);
             break;
         case PatternType::WHILE_PATTERN:
-            return WhilePatternEvaluator::evaluateWhilePatternClause(this->database, patternClause, synonymTable, intResult);
+            return WhilePatternEvaluator::evaluateWhilePatternClause(*database, patternClause, synonymTable, intResult);
             break;
         default:
             SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluatePatternClause: Unknown pattern type %d\n", patternClause.getPatternType());
@@ -597,7 +597,7 @@ namespace PQL {
     void QueryEvaluator::evaluateWithClause(WithClause& withClause,
         std::unordered_map<std::string, DesignEntity>& synonymTable, ClauseResult& intResult) {
 
-        return WithEvaluator::evaluateWithClause(this->database, withClause, synonymTable, intResult);
+        return WithEvaluator::evaluateWithClause(*database, withClause, synonymTable, intResult);
 
     }
 

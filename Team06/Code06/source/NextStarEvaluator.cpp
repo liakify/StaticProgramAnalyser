@@ -284,6 +284,9 @@ namespace PQL {
                             }
                         }
                     }
+                    if (!nextStarStmts.empty()) {
+                        database.nextStarSetProcessedAll(i, NodeType::PREDECESSOR);
+                    }
                 }
 
             } else if (foundSyn1 && !foundSyn2) {
