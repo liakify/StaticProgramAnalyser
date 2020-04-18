@@ -180,6 +180,7 @@ namespace PKB {
         if (nextKB.processedAll(s, type)) {  // cached
             return nextKB.getAllNodes(s, type);
         }
+        nextKB.initCacheEntry(s);
         rtDE.processNextStarGetAllNodes(s, type, this);
         return nextKB.getAllNodes(s, type);
     }
