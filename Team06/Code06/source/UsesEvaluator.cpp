@@ -192,8 +192,10 @@ namespace PQL {
                     int index = std::find(intResult.syns.begin(), intResult.syns.end(), arg1) - intResult.syns.begin();
                     std::vector<ClauseResultEntry> updatedResult;
                     for (ClauseResultEntry& resultEntry : intResult.rows) {
-                        if (database.usesKB.stmtUses(std::stoi(resultEntry[index]), arg2)) {
-                            updatedResult.emplace_back(resultEntry);
+                        if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(std::stoi(resultEntry[index]))->getType(), synonymTable[arg1])) {
+                            if (database.usesKB.stmtUses(std::stoi(resultEntry[index]), arg2)) {
+                                updatedResult.emplace_back(resultEntry);
+                            }
                         }
                     }
                     intResult.rows = updatedResult;
@@ -257,7 +259,9 @@ namespace PQL {
                     std::vector<ClauseResultEntry> updatedResult;
                     for (ClauseResultEntry& resultEntry : intResult.rows) {
                         if (database.usesKB.getAllVarsUsedByStmt(std::stoi(resultEntry[index])).size() > 0) {
-                            updatedResult.emplace_back(resultEntry);
+                            if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(std::stoi(resultEntry[index]))->getType(), synonymTable[arg1])) {
+                                updatedResult.emplace_back(resultEntry);
+                            }
                         }
                     }
                     intResult.rows = updatedResult;
@@ -338,7 +342,7 @@ namespace PQL {
                     std::vector<ClauseResultEntry> updatedResult;
                     for (ClauseResultEntry& resultEntry : intResult.rows) {
                         std::unordered_set<VarId> vars = database.usesKB.getAllVarsUsedByProc(std::stoi(resultEntry[index1]));
-                        for (VarId var : vars) {
+                        for (VarId var : vars) {                            
                             ClauseResultEntry newResultEntry(resultEntry);
                             newResultEntry.insert(newResultEntry.begin() + index2, database.varTable.get(var));
                             updatedResult.emplace_back(newResultEntry);
@@ -354,9 +358,11 @@ namespace PQL {
                     for (ClauseResultEntry& resultEntry : intResult.rows) {
                         std::unordered_set<VarId> vars = database.usesKB.getAllVarsUsedByStmt(std::stoi(resultEntry[index1]));
                         for (VarId var : vars) {
-                            ClauseResultEntry newResultEntry(resultEntry);
-                            newResultEntry.insert(newResultEntry.begin() + index2, database.varTable.get(var));
-                            updatedResult.emplace_back(newResultEntry);
+                            if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(std::stoi(resultEntry[index1]))->getType(), synonymTable[arg1])) {
+                                ClauseResultEntry newResultEntry(resultEntry);
+                                newResultEntry.insert(newResultEntry.begin() + index2, database.varTable.get(var));
+                                updatedResult.emplace_back(newResultEntry);
+                            }
                         }
                     }
                     intResult.rows = updatedResult;
@@ -386,9 +392,11 @@ namespace PQL {
                     for (ClauseResultEntry& resultEntry : intResult.rows) {
                         std::unordered_set<StmtId> stmts = database.usesKB.getAllStmtsUsingVar(database.varTable.getVarId(resultEntry[index2]));
                         for (StmtId stmt : stmts) {
-                            ClauseResultEntry newResultEntry(resultEntry);
-                            newResultEntry.insert(newResultEntry.begin() + index1, std::to_string(stmt));
-                            updatedResult.emplace_back(newResultEntry);
+                            if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(std::stoi(resultEntry[index1]))->getType(), synonymTable[arg1])) {
+                                ClauseResultEntry newResultEntry(resultEntry);
+                                newResultEntry.insert(newResultEntry.begin() + index1, std::to_string(stmt));
+                                updatedResult.emplace_back(newResultEntry);
+                            }
                         }
                     }
                     intResult.rows = updatedResult;
@@ -410,7 +418,9 @@ namespace PQL {
                     std::vector<ClauseResultEntry> updatedResult;
                     for (ClauseResultEntry& resultEntry : intResult.rows) {
                         if (database.usesKB.stmtUses(std::stoi(resultEntry[index1]), database.varTable.getVarId(resultEntry[index2]))) {
-                            updatedResult.emplace_back(resultEntry);
+                            if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(std::stoi(resultEntry[index1]))->getType(), synonymTable[arg1])) {
+                                updatedResult.emplace_back(resultEntry);
+                            }
                         }
                     }
                     intResult.rows = updatedResult;

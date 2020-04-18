@@ -110,7 +110,9 @@ namespace PQL {
                     std::vector<ClauseResultEntry> updatedResult;
                     for (ClauseResultEntry& resultEntry : intResult.rows) {
                         if (database.nextStar(arg1, std::stoi(resultEntry[index]))) {
-                            updatedResult.emplace_back(resultEntry);
+                            if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(std::stoi(resultEntry[index]))->getType(), synonymTable[arg2])) {
+                                updatedResult.emplace_back(resultEntry);
+                            }
                         }
                     }
                     intResult.rows = updatedResult;
@@ -136,7 +138,9 @@ namespace PQL {
                     std::vector<ClauseResultEntry> updatedResult;
                     for (ClauseResultEntry& resultEntry : intResult.rows) {
                         if (database.nextStar(std::stoi(resultEntry[index]), arg2)) {
-                            updatedResult.emplace_back(resultEntry);
+                            if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(std::stoi(resultEntry[index]))->getType(), synonymTable[arg1])) {
+                                updatedResult.emplace_back(resultEntry);
+                            }
                         }
                     }
                     intResult.rows = updatedResult;
@@ -182,7 +186,9 @@ namespace PQL {
                     std::vector<ClauseResultEntry> updatedResult;
                     for (ClauseResultEntry& resultEntry : intResult.rows) {
                         if (database.hasPrev(std::stoi(resultEntry[index]))) {
-                            updatedResult.emplace_back(resultEntry);
+                            if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(std::stoi(resultEntry[index]))->getType(), synonymTable[arg2])) {
+                                updatedResult.emplace_back(resultEntry);
+                            }
                         }
                     }
                     intResult.rows = updatedResult;
@@ -208,7 +214,9 @@ namespace PQL {
                     std::vector<ClauseResultEntry> updatedResult;
                     for (ClauseResultEntry& resultEntry : intResult.rows) {
                         if (database.hasNext(std::stoi(resultEntry[index]))) {
-                            updatedResult.emplace_back(resultEntry);
+                            if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(std::stoi(resultEntry[index]))->getType(), synonymTable[arg1])) {
+                                updatedResult.emplace_back(resultEntry);
+                            }
                         }
                     }
                     intResult.rows = updatedResult;
@@ -288,9 +296,12 @@ namespace PQL {
                 for (ClauseResultEntry& resultEntry : intResult.rows) {
                     std::unordered_set<StmtId> stmts = database.nextStarGetAllNodes(std::stoi(resultEntry[index1]), NodeType::SUCCESSOR);
                     for (StmtId stmt : stmts) {
-                        ClauseResultEntry newResultEntry(resultEntry);
-                        newResultEntry.insert(newResultEntry.begin() + index2, std::to_string(stmt));
-                        updatedResult.emplace_back(newResultEntry);
+                        if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(std::stoi(resultEntry[index1]))->getType(), synonymTable[arg1]) &&
+                            SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(stmt)->getType(), synonymTable[arg2])) {
+                            ClauseResultEntry newResultEntry(resultEntry);
+                            newResultEntry.insert(newResultEntry.begin() + index2, std::to_string(stmt));
+                            updatedResult.emplace_back(newResultEntry);
+                        }
                     }
                 }
                 intResult.rows = updatedResult;
@@ -303,9 +314,12 @@ namespace PQL {
                 for (ClauseResultEntry& resultEntry : intResult.rows) {
                     std::unordered_set<StmtId> stmts = database.nextStarGetAllNodes(std::stoi(resultEntry[index2]), NodeType::PREDECESSOR);
                     for (StmtId stmt : stmts) {
-                        ClauseResultEntry newResultEntry(resultEntry);
-                        newResultEntry.insert(newResultEntry.begin() + index1, std::to_string(stmt));
-                        updatedResult.emplace_back(newResultEntry);
+                        if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(stmt)->getType(), synonymTable[arg1]) &&
+                            SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(std::stoi(resultEntry[index2]))->getType(), synonymTable[arg2])) {
+                            ClauseResultEntry newResultEntry(resultEntry);
+                            newResultEntry.insert(newResultEntry.begin() + index1, std::to_string(stmt));
+                            updatedResult.emplace_back(newResultEntry);
+                        }
                     }
                 }
                 intResult.rows = updatedResult;
@@ -315,7 +329,10 @@ namespace PQL {
                 std::vector<ClauseResultEntry> updatedResult;
                 for (ClauseResultEntry& resultEntry : intResult.rows) {
                     if (database.nextStar(std::stoi(resultEntry[index1]), std::stoi(resultEntry[index2]))) {
-                        updatedResult.emplace_back(resultEntry);
+                        if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(std::stoi(resultEntry[index1]))->getType(), synonymTable[arg1]) &&
+                            SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(std::stoi(resultEntry[index2]))->getType(), synonymTable[arg2])) {
+                            updatedResult.emplace_back(resultEntry);
+                        }
                     }
                 }
                 intResult.rows = updatedResult;
