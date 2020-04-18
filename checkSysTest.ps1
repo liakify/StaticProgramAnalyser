@@ -16,12 +16,16 @@ $regression_test_path = '.\Team06\Tests06\regression_tests\'
 
 $list_of_test_files = @(
 
-  '..\performance600_intragroupShortcircuit'
-  '..\performance600_single'
-  '..\performance600_chainedNext'
-  '..\performance600_runtimeCache'
-  '..\performance600_chainedAffects'
-  '..\performance600_nextStar+AffectsStar+Tuple'
+  '..\intergroup_0'
+  '..\intragroup_0'
+  '..\intragroup_1'
+
+  # '..\performance600_intragroupShortcircuit'
+  # '..\performance600_single'
+  # '..\performance600_chainedNext'
+  # '..\performance600_runtimeCache'
+  # '..\performance600_chainedAffects'
+  # '..\performance600_nextStar+AffectsStar+Tuple'
   
   # TEST BELOW CURRENTLY FAIL / TIMEOUT
   # '..\performance600_chainedAffectsStar'
