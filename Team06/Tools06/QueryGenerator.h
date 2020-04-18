@@ -125,9 +125,9 @@ int main() {
   // argument for Query Generator is based on Iteration Number.
   QueryGenerator qg = QueryGenerator(1);
 
-  myfile.open("PQL-1-10000.txt");
+  myfile.open("PQL-1-100.txt");
 
-  myfile << qg.GenerateN(10000);
+  myfile << qg.GenerateN(100);
 
   myfile.close();
   return 0;
