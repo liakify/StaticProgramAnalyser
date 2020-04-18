@@ -6,7 +6,7 @@ Select s such that not Follows(s, 2)
 2 - Follows: Double Synonym
 stmt s1, s2;
 Select s2 such that not Follows(s1, s2)
-1, 3, 5, 7, 10, 12, 15, 16, 18
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18
 5000
 3 - FollowsStar: Single Synonym
 stmt s;
@@ -16,7 +16,7 @@ Select s such that not Follows*(s, 9)
 4 - FollowsStar: Double Synonym
 stmt s1, s2;
 Select s2 such that not Follows*(s1, s2)
-1, 3, 5, 7, 10, 12, 15, 16, 18
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18
 5000
 5 - Parent: Single Synonym
 stmt s;
@@ -26,7 +26,7 @@ Select s such that not Parent(s, 3)
 6 - Parent: Double Synonym
 stmt s1, s2;
 Select s2 such that not Parent(s1, s2)
-1, 2, 8, 9, 10, 11, 13, 14, 17, 18
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18
 5000
 7 - ParentStar: Single Synonym
 stmt s;
@@ -36,7 +36,7 @@ Select s such that not Parent*(s, 5)
 8 - ParentStar: Double Synonym
 stmt s1, s2;
 Select s2 such that not Parent*(s1, s2)
-1, 2, 8, 9, 10, 11, 13, 14, 17, 18
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18
 5000
 9 - Uses: Single Synonym, variable
 variable v;
@@ -45,13 +45,13 @@ z
 5000
 10 - Uses: Single Synonym, procedure
 procedure p;
-Select p such that not Uses(p, "x")
-
+Select p such that not Uses(p, "y")
+Not3
 5000
 11 - Uses: Double Synonym
 stmt s; variable v;
 Select s such that not Uses(s, v)
-1, 3, 6, 16, 17
+1, 3, 6, 11, 16, 17
 5000
 12 - Modifies: Single Synonym, variable
 variable v;
@@ -60,8 +60,8 @@ x, y
 5000
 13 - Modifies: Single Synonym, procedure
 procedure p;
-Select p such that not Modifies(p, "x")
-
+Select p such that not Modifies(p, "y")
+Not3
 5000
 14 - Modifies: Double Synonym
 stmt s; variable v;
@@ -76,7 +76,7 @@ Not2, Not3
 16 - Calls: Double Synonym
 procedure p1, p2;
 Select p2 such that not Calls(p1, p2)
-Not
+Not, Not2, Not3
 5000
 17 - CallsStar: Single Synonym
 procedure p;
@@ -86,7 +86,7 @@ Not3
 18 - CallsStar: Double Synonym
 procedure p1, p2;
 Select p2 such that not Calls*(p1, p2)
-Not
+Not, Not2, Not3
 5000
 19 - Next: Single Synonym
 prog_line n;
@@ -96,7 +96,7 @@ Select n such that not Next(n, 5)
 20 - Next: Double Synonym
 prog_line n1, n2;
 Select n2 such that not Next(n1, n2)
-1, 10, 18
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18
 5000
 21 - NextStar: Single Synonym
 prog_line n;
@@ -106,7 +106,7 @@ Select n such that not Next*(n, 5)
 22 - NextStar: Double Synonym
 prog_line n1, n2;
 Select n2 such that not Next*(n1, n2)
-1, 10, 18
+1, 2, 3, 6, 7, 8, 9, 10, 13, 14, 15, 16, 17, 18
 5000
 23 - Affects: Single Synonym
 assign a;
@@ -116,7 +116,7 @@ Select a such that not Affects(a, 8)
 24 - Affects: Double Synonym
 assign a1, a2;
 Select a2 such that not Affects(a1, a2)
-1, 3, 10, 18
+1, 3, 8, 10, 12, 18
 5000
 25 - AffectsStar: Single Synonym
 assign a;
@@ -126,7 +126,7 @@ Select a such that not Affects*(a, 8)
 26 - AffectsStar: Double Synonym
 assign a1, a2;
 Select a2 such that not Affects*(a1, a2)
-1, 3, 10, 18
+1, 3, 8, 10, 12, 18
 5000
 27 - Empty Clause: Uses
 stmt s;
