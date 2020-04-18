@@ -153,8 +153,8 @@ namespace PQL {
                     }
                 }
 
-                bool foundSyn1 = (std::find(intResult.syns.begin(), intResult.syns.end(), syn1) == intResult.syns.end());
-                bool foundSyn2 = (std::find(intResult.syns.begin(), intResult.syns.end(), syn2) == intResult.syns.end());
+                bool foundSyn1 = (std::find(intResult.syns.begin(), intResult.syns.end(), syn1) != intResult.syns.end());
+                bool foundSyn2 = (std::find(intResult.syns.begin(), intResult.syns.end(), syn2) != intResult.syns.end());
 
                 if (!foundSyn1 && !foundSyn2) {
                     bool singleSynonym = (syn1 == syn2);
@@ -203,10 +203,10 @@ namespace PQL {
                         }
                     }
                 } else if (foundSyn1 && !foundSyn2) {
-                    int index1 = std::find(intResult.syns.begin(), intResult.syns.end(), arg1) - intResult.syns.begin();
-                    intResult.syns.emplace_back(arg2);
+                    int index1 = std::find(intResult.syns.begin(), intResult.syns.end(), syn1) - intResult.syns.begin();
+                    intResult.syns.emplace_back(syn2);
                     std::sort(intResult.syns.begin(), intResult.syns.end());
-                    int index2 = std::find(intResult.syns.begin(), intResult.syns.end(), arg2) - intResult.syns.begin();
+                    int index2 = std::find(intResult.syns.begin(), intResult.syns.end(), syn2) - intResult.syns.begin();
                     std::vector<ClauseResultEntry> updatedResult;
                     for (ClauseResultEntry& resultEntry : intResult.rows) {
                         std::string value = resultEntry[index1];
@@ -218,10 +218,10 @@ namespace PQL {
                     }
                     intResult.rows = updatedResult;
                 } else if (!foundSyn1 && foundSyn2) {
-                    int index2 = std::find(intResult.syns.begin(), intResult.syns.end(), arg2) - intResult.syns.begin();
-                    intResult.syns.emplace_back(arg1);
+                    int index2 = std::find(intResult.syns.begin(), intResult.syns.end(), syn2) - intResult.syns.begin();
+                    intResult.syns.emplace_back(syn1);
                     std::sort(intResult.syns.begin(), intResult.syns.end());
-                    int index1 = std::find(intResult.syns.begin(), intResult.syns.end(), arg1) - intResult.syns.begin();
+                    int index1 = std::find(intResult.syns.begin(), intResult.syns.end(), syn1) - intResult.syns.begin();
                     std::vector<ClauseResultEntry> updatedResult;
                     for (ClauseResultEntry& resultEntry : intResult.rows) {
                         std::string value = resultEntry[index2];
@@ -233,8 +233,8 @@ namespace PQL {
                     }
                     intResult.rows = updatedResult;
                 } else if (foundSyn1 && foundSyn2) {
-                    int index1 = std::find(intResult.syns.begin(), intResult.syns.end(), arg1) - intResult.syns.begin();
-                    int index2 = std::find(intResult.syns.begin(), intResult.syns.end(), arg2) - intResult.syns.begin();
+                    int index1 = std::find(intResult.syns.begin(), intResult.syns.end(), syn1) - intResult.syns.begin();
+                    int index2 = std::find(intResult.syns.begin(), intResult.syns.end(), syn2) - intResult.syns.begin();
                     std::vector<ClauseResultEntry> updatedResult;
                     for (ClauseResultEntry& resultEntry : intResult.rows) {
                         if (resultEntry[index1] == resultEntry[index2]) {
@@ -354,8 +354,8 @@ namespace PQL {
                     }
                 }
 
-                bool foundSyn1 = (std::find(intResult.syns.begin(), intResult.syns.end(), syn1) == intResult.syns.end());
-                bool foundSyn2 = (std::find(intResult.syns.begin(), intResult.syns.end(), syn2) == intResult.syns.end());
+                bool foundSyn1 = (std::find(intResult.syns.begin(), intResult.syns.end(), syn1) != intResult.syns.end());
+                bool foundSyn2 = (std::find(intResult.syns.begin(), intResult.syns.end(), syn2) != intResult.syns.end());
                 
                 if (!foundSyn1 && !foundSyn2) {
 
@@ -384,10 +384,10 @@ namespace PQL {
                         }
                     }
                 } else if (foundSyn1 && !foundSyn2) {
-                    int index1 = std::find(intResult.syns.begin(), intResult.syns.end(), arg1) - intResult.syns.begin();
-                    intResult.syns.emplace_back(arg2);
+                    int index1 = std::find(intResult.syns.begin(), intResult.syns.end(), syn1) - intResult.syns.begin();
+                    intResult.syns.emplace_back(syn2);
                     std::sort(intResult.syns.begin(), intResult.syns.end());
-                    int index2 = std::find(intResult.syns.begin(), intResult.syns.end(), arg2) - intResult.syns.begin();
+                    int index2 = std::find(intResult.syns.begin(), intResult.syns.end(), syn2) - intResult.syns.begin();
                     std::vector<ClauseResultEntry> updatedResult;
                     for (ClauseResultEntry& resultEntry : intResult.rows) {
                         std::string value = resultEntry[index1];
@@ -399,10 +399,10 @@ namespace PQL {
                     }
                     intResult.rows = updatedResult;
                 } else if (!foundSyn1 && foundSyn2) {
-                    int index2 = std::find(intResult.syns.begin(), intResult.syns.end(), arg2) - intResult.syns.begin();
-                    intResult.syns.emplace_back(arg1);
+                    int index2 = std::find(intResult.syns.begin(), intResult.syns.end(), syn2) - intResult.syns.begin();
+                    intResult.syns.emplace_back(syn1);
                     std::sort(intResult.syns.begin(), intResult.syns.end());
-                    int index1 = std::find(intResult.syns.begin(), intResult.syns.end(), arg1) - intResult.syns.begin();
+                    int index1 = std::find(intResult.syns.begin(), intResult.syns.end(), syn1) - intResult.syns.begin();
                     std::vector<ClauseResultEntry> updatedResult;
                     for (ClauseResultEntry& resultEntry : intResult.rows) {
                         std::string value = resultEntry[index2];
@@ -414,8 +414,8 @@ namespace PQL {
                     }
                     intResult.rows = updatedResult;
                 } else if (foundSyn1 && foundSyn2) {
-                    int index1 = std::find(intResult.syns.begin(), intResult.syns.end(), arg1) - intResult.syns.begin();
-                    int index2 = std::find(intResult.syns.begin(), intResult.syns.end(), arg2) - intResult.syns.begin();
+                    int index1 = std::find(intResult.syns.begin(), intResult.syns.end(), syn1) - intResult.syns.begin();
+                    int index2 = std::find(intResult.syns.begin(), intResult.syns.end(), syn2) - intResult.syns.begin();
                     std::vector<ClauseResultEntry> updatedResult;
                     for (ClauseResultEntry& resultEntry : intResult.rows) {
                         if (resultEntry[index1] == resultEntry[index2]) {

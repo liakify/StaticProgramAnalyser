@@ -23,12 +23,11 @@ namespace PQL {
             std::unordered_set<StmtId> stmts = database.stmtTable.getStmtsByType(StmtType::ASSIGN);
 
             if (std::find(intResult.syns.begin(), intResult.syns.end(), arg0) == intResult.syns.end()) {
-                ClauseResult clauseResult;
-                clauseResult.syns.emplace_back(arg0);
+                intResult.syns.emplace_back(arg0);
                 for (StmtId stmt : stmts) {
                     ClauseResultEntry resultEntry;
                     resultEntry.emplace_back(std::to_string(stmt));
-                    clauseResult.rows.emplace_back(resultEntry);
+                    intResult.rows.emplace_back(resultEntry);
                 }
             } else {
                 int index = std::find(intResult.syns.begin(), intResult.syns.end(), arg0) - intResult.syns.begin();
@@ -113,7 +112,9 @@ namespace PQL {
                 std::vector<ClauseResultEntry> updatedResult;
                 for (ClauseResultEntry& resultEntry : intResult.rows) {
                     if (stmts.find(std::stoi(resultEntry[index])) != stmts.end()) {
-                        updatedResult.emplace_back(resultEntry);
+                        if (database.stmtTable.get(std::stoi(resultEntry[index]))->getType() == StmtType::ASSIGN) {
+                            updatedResult.emplace_back(resultEntry);
+                        }
                     }
                 }
                 intResult.rows = updatedResult;
@@ -191,8 +192,8 @@ namespace PQL {
 
             std::unordered_set<StmtId> stmts = database.stmtTable.getStmtsByType(StmtType::ASSIGN);
 
-            bool foundSyn0 = (std::find(intResult.syns.begin(), intResult.syns.end(), arg0) == intResult.syns.end());
-            bool foundSyn1 = (std::find(intResult.syns.begin(), intResult.syns.end(), arg1) == intResult.syns.end());
+            bool foundSyn0 = (std::find(intResult.syns.begin(), intResult.syns.end(), arg0) != intResult.syns.end());
+            bool foundSyn1 = (std::find(intResult.syns.begin(), intResult.syns.end(), arg1) != intResult.syns.end());
 
             if (!foundSyn0 && !foundSyn1) {
                 // If synonym 'arg1' appeared on LHS, then it must have been modified by the assignment
@@ -244,12 +245,14 @@ namespace PQL {
                 int index0 = std::find(intResult.syns.begin(), intResult.syns.end(), arg0) - intResult.syns.begin();
                 std::vector<ClauseResultEntry> updatedResult;
                 for (ClauseResultEntry& resultEntry : intResult.rows) {
-                    VarId var = database.varTable.getVarId(resultEntry[index0]);
+                    VarId var = database.varTable.getVarId(resultEntry[index1]);
                     std::unordered_set<StmtId> stmts = database.modifiesKB.getAllStmtsModifyVar(var);
                     for (StmtId stmt : stmts) {
-                        ClauseResultEntry newResultEntry(resultEntry);
-                        newResultEntry.insert(newResultEntry.begin() + index0, std::to_string(stmt));
-                        updatedResult.emplace_back(newResultEntry);
+                        if (database.stmtTable.get(stmt)->getType() == StmtType::ASSIGN) {
+                            ClauseResultEntry newResultEntry(resultEntry);
+                            newResultEntry.insert(newResultEntry.begin() + index0, std::to_string(stmt));
+                            updatedResult.emplace_back(newResultEntry);
+                        }
                     }
                 }
                 intResult.rows = updatedResult;
@@ -261,7 +264,9 @@ namespace PQL {
                     StmtId stmt = std::stoi(resultEntry[index0]);
                     VarId var = database.varTable.getVarId(resultEntry[index1]);
                     if (database.modifiesKB.stmtModifies(stmt, var)) {
-                        updatedResult.emplace_back(resultEntry);
+                        if (database.stmtTable.get(stmt)->getType() == StmtType::ASSIGN) {
+                            updatedResult.emplace_back(resultEntry);
+                        }
                     }
                 }
                 intResult.rows = updatedResult;
@@ -289,8 +294,8 @@ namespace PQL {
             Synonym arg1 = args.first.value;
             Pattern arg2 = args.second.value;
 
-            bool foundSyn0 = (std::find(intResult.syns.begin(), intResult.syns.end(), arg0) == intResult.syns.end());
-            bool foundSyn1 = (std::find(intResult.syns.begin(), intResult.syns.end(), arg1) == intResult.syns.end());
+            bool foundSyn0 = (std::find(intResult.syns.begin(), intResult.syns.end(), arg0) != intResult.syns.end());
+            bool foundSyn1 = (std::find(intResult.syns.begin(), intResult.syns.end(), arg1) != intResult.syns.end());
 
             std::unordered_set<StmtId> stmts1 = database.stmtTable.getStmtsByType(StmtType::ASSIGN);
             std::unordered_set<StmtId> stmts2 = database.patternKB.getAssignPatternStmts(arg2);
@@ -352,7 +357,7 @@ namespace PQL {
                 int index0 = std::find(intResult.syns.begin(), intResult.syns.end(), arg0) - intResult.syns.begin();
                 std::vector<ClauseResultEntry> updatedResult;
                 for (ClauseResultEntry& resultEntry : intResult.rows) {
-                    VarId var = database.varTable.getVarId(resultEntry[index0]);
+                    VarId var = database.varTable.getVarId(resultEntry[index1]);
                     std::unordered_set<StmtId> stmts = database.modifiesKB.getAllStmtsModifyVar(var);
                     for (StmtId stmt : stmts) {
                         if (stmts2.find(stmt) != stmts2.end()) {

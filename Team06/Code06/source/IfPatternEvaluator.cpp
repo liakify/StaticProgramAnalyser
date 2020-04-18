@@ -95,8 +95,8 @@ namespace PQL {
             Synonym arg0 = clause.getSynonym().value;
             Synonym arg1 = clause.getArgs().first.value;
 
-            bool foundSyn0 = (std::find(intResult.syns.begin(), intResult.syns.end(), arg0) == intResult.syns.end());
-            bool foundSyn1 = (std::find(intResult.syns.begin(), intResult.syns.end(), arg1) == intResult.syns.end());
+            bool foundSyn0 = (std::find(intResult.syns.begin(), intResult.syns.end(), arg0) != intResult.syns.end());
+            bool foundSyn1 = (std::find(intResult.syns.begin(), intResult.syns.end(), arg1) != intResult.syns.end());
 
             if (!foundSyn0 && !foundSyn1) {
                 if (arg0 < arg1) {

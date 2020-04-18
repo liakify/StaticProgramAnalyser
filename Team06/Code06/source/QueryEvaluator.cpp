@@ -100,12 +100,10 @@ namespace PQL {
         OptimisedQuery optQuery = QueryOptimiser::optimiseQuery(query);
 
         // Maintain one ClauseResult structure for each group
-        // +1 in case there are no groups at all
-        std::vector<ClauseResult> clauseResults = std::vector<ClauseResult>(optQuery.last.size() + 1);
+        std::vector<ClauseResult> clauseResults = std::vector<ClauseResult>(optQuery.last.size());
 
         // To determine if each group should participate in inter-group merging
-        std::vector<bool> toMerge = std::vector<bool>(optQuery.last.size() + 1, false);
-        toMerge[optQuery.last.size()] = true;
+        std::vector<bool> toMerge = std::vector<bool>(optQuery.last.size(), false);
 
         // Add table containing "TRUE" to every group
         for (ClauseResult& clauseResult : clauseResults) {
@@ -302,19 +300,23 @@ namespace PQL {
             }
         }
 
-        mergingGroups.emplace_back(clauseResults[optQuery.last.size()]);
-
         // Merge a table for each synonym not present in any clause
         for (Synonym synonym : missingTargetSynonyms) {
             mergingGroups.emplace_back(getClauseResultWithAllValues(synonym, query.synonymTable[synonym]));
         }
 
+        // If there are no groups to be merged, probably a Select BOOLEAN
+        if (mergingGroups.size() == 0) {
+            ClauseResult clauseResult;
+            clauseResult.trueResult = true;
+            mergingGroups.emplace_back(clauseResult);
+        }
+
         // Combine all results
         // ClauseResult combinedResult = combineClauseResults(mergingGroups);
-        ClauseResult combinedResult;
-        combinedResult.trueResult = true;
-        for (ClauseResult& result : mergingGroups) {
-            combinedResult = combineTwoClauseResults(combinedResult, result, {});
+        ClauseResult combinedResult = mergingGroups[0];
+        for (int i = 1; i < mergingGroups.size(); i++) {
+            combinedResult = combineTwoClauseResults(combinedResult, mergingGroups[i], {});
         }
 
         // Extract necessary results to answer query
@@ -331,9 +333,12 @@ namespace PQL {
             while (j < toDelete.size() && toDelete[j] < result.syns[i]) {
                 j++;
             }
-            if (j >= toDelete.size()) break;
-            if (toDelete[j] == result.syns[i]) {
-                positions.emplace_back(i);
+            if (j < toDelete.size()) {
+                if (toDelete[j] == result.syns[i]) {
+                    positions.emplace_back(i);
+                } else {
+                    updatedSynonyms.emplace_back(result.syns[i]);
+                }
             } else {
                 updatedSynonyms.emplace_back(result.syns[i]);
             }
@@ -454,20 +459,7 @@ namespace PQL {
     }
 
     ClauseResult QueryEvaluator::combineTwoClauseResults(ClauseResult clauseResults1, ClauseResult clauseResults2, std::vector<Synonym> toDelete) {
-        if (clauseResults1.trueResult && clauseResults2.trueResult) {
-            return clauseResults1;
-        } else if (clauseResults1.trueResult && !clauseResults2.rows.empty()) {
-            return clauseResults2;
-        } else if (!clauseResults1.rows.empty() && clauseResults2.trueResult) {
-            return clauseResults1;
-        }
-
-        if (clauseResults1.rows.empty() || clauseResults2.rows.empty()) {
-            return clauseResults1;
-        }
-
         // Extract common synonyms and get structure of combined result
-        std::vector<std::pair<int, int> > commonSynonyms;
         std::vector<std::pair<int, int> > combStruct;
         unsigned int i = 0, j = 0;
         while (i < clauseResults1.syns.size()) {
@@ -479,7 +471,6 @@ namespace PQL {
                 break;
             }
             if (clauseResults1.syns[i] == clauseResults2.syns[j]) {
-                commonSynonyms.emplace_back(std::make_pair(i, j));
                 j++;
             }
             combStruct.emplace_back(std::make_pair(i, 0));
@@ -495,35 +486,18 @@ namespace PQL {
         }
 
         ClauseResult combinedResult;
-        std::vector<std::pair<int, int> > finalCombStruct;
-        // Populate synonym list and remove all synonyms that are deleted
-        unsigned int k = 0;
-        for (unsigned int i = 0; i < combStruct.size(); i++) {
+        for (int i = 0; i < combStruct.size(); i++) {
             if (combStruct[i].second == 0) {
-                while (k < toDelete.size() && toDelete[k] < clauseResults1.syns[combStruct[i].first]) {
-                    k++;
-                }
-                if (toDelete.empty() || k >= toDelete.size() || (k < toDelete.size() && toDelete[k] != clauseResults1.syns[combStruct[i].first])) {
-                    combinedResult.syns.emplace_back(clauseResults1.syns[combStruct[i].first]);
-                    finalCombStruct.emplace_back(combStruct[i]);
-                }
+                combinedResult.syns.emplace_back(clauseResults1.syns[combStruct[i].first]);
             } else {
-                while (k < toDelete.size() && toDelete[k] < clauseResults2.syns[combStruct[i].first]) {
-                    k++;
-                }
-                if (toDelete.empty() || k >= toDelete.size() || (k < toDelete.size() && toDelete[k] != clauseResults2.syns[combStruct[i].first])) {
-                    combinedResult.syns.emplace_back(clauseResults2.syns[combStruct[i].first]);
-                    finalCombStruct.emplace_back(combStruct[i]);
-                }
+                combinedResult.syns.emplace_back(clauseResults2.syns[combStruct[i].first]);
             }
         }
 
         // Perform a Cartesian Product
         for (ClauseResultEntry& entry1 : clauseResults1.rows) {
             for (ClauseResultEntry& entry2 : clauseResults2.rows) {
-                if (checkCommonSynonyms(entry1, entry2, commonSynonyms)) {
-                    combinedResult.rows.emplace_back(combineTwoClauseResultEntries(entry1, entry2, finalCombStruct));
-                }
+                combinedResult.rows.emplace_back(combineTwoClauseResultEntries(entry1, entry2, combStruct));
             }
         }
 
