@@ -353,7 +353,7 @@ namespace PQL {
          */
         ClauseType getClauseType();
 
-    protected:
+     protected:
         std::string clause;
         bool isNegated;
         ClauseType clauseType;
