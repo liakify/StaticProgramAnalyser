@@ -251,7 +251,7 @@ namespace PQL {
                 allValues = getClauseResultWithAllValues(result.syns[0], synonymTable[result.syns[0]]);
             } else {
                 allValues = combineTwoClauseResults(getClauseResultWithAllValues(result.syns[0], synonymTable[result.syns[0]]),
-                    getClauseResultWithAllValues(result.syns[1], synonymTable[result.syns[1]]));                
+                    getClauseResultWithAllValues(result.syns[1], synonymTable[result.syns[1]]));
             }
             std::sort(allValues.rows.begin(), allValues.rows.end());
             std::sort(result.rows.begin(), result.rows.end());
