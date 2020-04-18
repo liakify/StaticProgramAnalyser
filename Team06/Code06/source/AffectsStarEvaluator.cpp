@@ -186,7 +186,6 @@ namespace PQL {
                             resultEntry.emplace_back(std::to_string(i));
                             intResult.rows.emplace_back(resultEntry);
                         }
-                        database.affectsStarSetProcessedAll(i, NodeType::SUCCESSOR);
                     }
                 } else {
                     int index = std::find(intResult.syns.begin(), intResult.syns.end(), arg2) - intResult.syns.begin();
@@ -212,7 +211,6 @@ namespace PQL {
                             resultEntry.emplace_back(std::to_string(i));
                             intResult.rows.emplace_back(resultEntry);
                         }
-                        database.affectsStarSetProcessedAll(i, NodeType::PREDECESSOR);
                     }
                 } else {
                     int index = std::find(intResult.syns.begin(), intResult.syns.end(), arg1) - intResult.syns.begin();
@@ -288,7 +286,6 @@ namespace PQL {
                             }
                         }
                     }
-                    database.affectsStarSetProcessedAll(i, NodeType::PREDECESSOR);
                 }
             } else if (foundSyn1 && !foundSyn2) {
                 int index1 = std::find(intResult.syns.begin(), intResult.syns.end(), arg1) - intResult.syns.begin();

@@ -181,10 +181,7 @@ namespace PQL {
                             resultEntry.emplace_back(std::to_string(i));
                             intResult.rows.emplace_back(resultEntry);
                         }
-
-                        database.affectsSetProcessedDirect(i, NodeType::SUCCESSOR);
                     }
-                    database.setAffectsFullyComputed();
                 } else {
                     int index = std::find(intResult.syns.begin(), intResult.syns.end(), arg2) - intResult.syns.begin();
                     std::vector<ClauseResultEntry> updatedResult;
@@ -209,9 +206,7 @@ namespace PQL {
                             resultEntry.emplace_back(std::to_string(i));
                             intResult.rows.emplace_back(resultEntry);
                         }
-                        database.affectsSetProcessedDirect(i, NodeType::PREDECESSOR);
                     }
-                    database.setAffectsFullyComputed();
                 } else {
                     int index = std::find(intResult.syns.begin(), intResult.syns.end(), arg1) - intResult.syns.begin();
                     std::vector<ClauseResultEntry> updatedResult;
@@ -285,9 +280,7 @@ namespace PQL {
                             }
                         }
                     }
-                    database.affectsSetProcessedDirect(i, NodeType::PREDECESSOR);
                 }
-                database.setAffectsFullyComputed();
             } else if (foundSyn1 && !foundSyn2) {
                 int index1 = std::find(intResult.syns.begin(), intResult.syns.end(), arg1) - intResult.syns.begin();
                 intResult.syns.emplace_back(arg2);
