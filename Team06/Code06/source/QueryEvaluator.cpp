@@ -189,7 +189,7 @@ namespace PQL {
                 }
             }
 
-            if (clause->isNegatedClause) {
+            if (clause->isNegatedClause()) {
                 negateClauseResults(result, query.synonymTable);
             }
 
