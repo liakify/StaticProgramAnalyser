@@ -102,11 +102,11 @@ namespace PQL {
 
         // Maintain one ClauseResult structure for each group
         // +1 in case there are no groups at all
-        std::vector<ClauseResult> clauseResults = std::vector<ClauseResult>(optQuery.groups.size() + 1);
+        std::vector<ClauseResult> clauseResults = std::vector<ClauseResult>(optQuery.last.size() + 1);
 
         // To determine if each group should participate in inter-group merging
-        std::vector<bool> toMerge = std::vector<bool>(optQuery.groups.size() + 1, false);
-        toMerge[optQuery.groups.size()] = true;
+        std::vector<bool> toMerge = std::vector<bool>(optQuery.last.size() + 1, false);
+        toMerge[optQuery.last.size()] = true;
 
         // Add table containing "TRUE" to every group
         for (ClauseResult& clauseResult : clauseResults) {
@@ -121,10 +121,58 @@ namespace PQL {
             missingTargetSynonyms.insert(ref.synonym);
         }
 
+        // For every synonym that is not a target synonym, maintain a count of the remaining clauses they appear in
+        std::unordered_map<Synonym, int> nonTargetSynonyms;
+        for (unsigned int i = 0; i < optQuery.clauses.size(); i++) {
+            Clause* clause = optQuery.clauses[i];
+            if (clause->getClauseType() == ClauseType::RELATION) {
+                RelationClause* relation = static_cast<RelationClause*>(clause);
+                std::pair<Argument, Argument> args = relation->getArgs();
+                Argument arg1 = args.first;
+                Argument arg2 = args.second;
+                if (arg1.type == ArgType::SYNONYM && targetSynonyms.find(arg1.value) == targetSynonyms.end()) {
+                    nonTargetSynonyms[arg1.value]++;
+                }
+                if (arg2.type == ArgType::SYNONYM && targetSynonyms.find(arg2.value) == targetSynonyms.end()) {
+                    nonTargetSynonyms[arg2.value]++;
+                }
+            } else if (clause->getClauseType() == ClauseType::PATTERN) {
+                PatternClause* pattern = static_cast<PatternClause*>(clause);
+                std::pair<Argument, Argument> args = pattern->getArgs();
+                Argument arg0 = pattern->getSynonym();
+                Argument arg1 = args.first;
+                Argument arg2 = args.second;
+                if (targetSynonyms.find(arg0.value) == targetSynonyms.end()) {
+                    nonTargetSynonyms[arg0.value]++;
+                }
+                if (arg1.type == ArgType::SYNONYM && targetSynonyms.find(arg1.value) == targetSynonyms.end()) {
+                    nonTargetSynonyms[arg1.value]++;
+                }
+                if (arg2.type == ArgType::SYNONYM && targetSynonyms.find(arg2.value) == targetSynonyms.end()) {
+                    nonTargetSynonyms[arg2.value]++;
+                }
+            } else if (clause->getClauseType() == ClauseType::WITH) {
+                WithClause* with = static_cast<WithClause*>(clause);
+                std::pair<Argument, Argument> args = with->getArgs();
+                Argument arg1 = args.first;
+                Argument arg2 = args.second;
+                if ((arg1.type == ArgType::SYNONYM || arg1.type == ArgType::ATTRIBUTE) && targetSynonyms.find(arg1.value) == targetSynonyms.end()) {
+                    nonTargetSynonyms[arg1.value]++;
+                }
+                if ((arg2.type == ArgType::SYNONYM || arg2.type == ArgType::ATTRIBUTE) && targetSynonyms.find(arg2.value) == targetSynonyms.end()) {
+                    nonTargetSynonyms[arg2.value]++;
+                }
+            }
+        }
+
         // Evaluate clauses
         for (unsigned int i = 0; i < optQuery.clauses.size(); i++) {
             ClauseResult result;
             Clause* clause = optQuery.clauses[i];
+            // Set of synonyms that we should delete after this clause has been evaluated
+            // We delete a synonym if it is not selected and does not occur in any future clauses
+            std::vector<Synonym> toDelete;
+
             if (clause->getClauseType() == ClauseType::RELATION) {
                 RelationClause* relation = static_cast<RelationClause*>(clause);
                 result = evaluateRelationClause(*relation, query.synonymTable);
@@ -137,11 +185,25 @@ namespace PQL {
                     if (targetSynonyms.find(arg1.value) != targetSynonyms.end()) {
                         toMerge[optQuery.groups[i]] = true;
                     }
+                    // Reduce appearance counts for all synonyms that do not appear
+                    if (nonTargetSynonyms.find(arg1.value) != nonTargetSynonyms.end()) {
+                        nonTargetSynonyms[arg1.value]--;
+                        if (nonTargetSynonyms[arg1.value] == 0) {
+                            toDelete.emplace_back(arg1.value);
+                        }
+                    }
                 }
                 if (arg2.type == ArgType::SYNONYM) {
                     missingTargetSynonyms.erase(arg2.value);
                     if (targetSynonyms.find(arg2.value) != targetSynonyms.end()) {
                         toMerge[optQuery.groups[i]] = true;
+                    }
+                    // Reduce appearance counts for all synonyms that do not appear
+                    if (nonTargetSynonyms.find(arg2.value) != nonTargetSynonyms.end()) {
+                        nonTargetSynonyms[arg2.value]--;
+                        if (nonTargetSynonyms[arg2.value] == 0) {
+                            toDelete.emplace_back(arg2.value);
+                        }
                     }
                 }
             } else if (clause->getClauseType() == ClauseType::PATTERN) {
@@ -156,16 +218,37 @@ namespace PQL {
                 if (targetSynonyms.find(arg0.value) != targetSynonyms.end()) {
                     toMerge[optQuery.groups[i]] = true;
                 }
+                // Reduce appearance counts for all synonyms that do not appear
+                if (nonTargetSynonyms.find(arg0.value) != nonTargetSynonyms.end()) {
+                    nonTargetSynonyms[arg0.value]--;
+                    if (nonTargetSynonyms[arg0.value] == 0) {
+                        toDelete.emplace_back(arg0.value);
+                    }
+                }
                 if (arg1.type == ArgType::SYNONYM) {
                     missingTargetSynonyms.erase(arg1.value);
                     if (targetSynonyms.find(arg1.value) != targetSynonyms.end()) {
                         toMerge[optQuery.groups[i]] = true;
+                    }
+                    // Reduce appearance counts for all synonyms that do not appear
+                    if (nonTargetSynonyms.find(arg1.value) != nonTargetSynonyms.end()) {
+                        nonTargetSynonyms[arg1.value]--;
+                        if (nonTargetSynonyms[arg1.value] == 0) {
+                            toDelete.emplace_back(arg1.value);
+                        }
                     }
                 }
                 if (arg2.type == ArgType::SYNONYM) {
                     missingTargetSynonyms.erase(arg2.value);
                     if (targetSynonyms.find(arg2.value) != targetSynonyms.end()) {
                         toMerge[optQuery.groups[i]] = true;
+                    }
+                    // Reduce appearance counts for all synonyms that do not appear
+                    if (nonTargetSynonyms.find(arg2.value) != nonTargetSynonyms.end()) {
+                        nonTargetSynonyms[arg2.value]--;
+                        if (nonTargetSynonyms[arg2.value] == 0) {
+                            toDelete.emplace_back(arg2.value);
+                        }
                     }
                 }
             } else if (clause->getClauseType() == ClauseType::WITH) {
@@ -180,11 +263,25 @@ namespace PQL {
                     if (targetSynonyms.find(arg1.value) != targetSynonyms.end()) {
                         toMerge[optQuery.groups[i]] = true;
                     }
+                    // Reduce appearance counts for all synonyms that do not appear
+                    if (nonTargetSynonyms.find(arg1.value) != nonTargetSynonyms.end()) {
+                        nonTargetSynonyms[arg1.value]--;
+                        if (nonTargetSynonyms[arg1.value] == 0) {
+                            toDelete.emplace_back(arg1.value);
+                        }
+                    }
                 }
                 if (arg2.type == ArgType::SYNONYM || arg2.type == ArgType::ATTRIBUTE) {
                     missingTargetSynonyms.erase(arg2.value);
                     if (targetSynonyms.find(arg2.value) != targetSynonyms.end()) {
                         toMerge[optQuery.groups[i]] = true;
+                    }
+                    // Reduce appearance counts for all synonyms that do not appear
+                    if (nonTargetSynonyms.find(arg2.value) != nonTargetSynonyms.end()) {
+                        nonTargetSynonyms[arg2.value]--;
+                        if (nonTargetSynonyms[arg2.value] == 0) {
+                            toDelete.emplace_back(arg2.value);
+                        }
                     }
                 }
             }
@@ -199,8 +296,9 @@ namespace PQL {
             }
 
             // Merge this table with the intermediate table of the corresponding group
+            // Also delete any synonyms that we don't need anymore
             SPA::LoggingUtils::LogInfoMessage("Performing merge between tables of size %d and %d\n", result.rows.size(), clauseResults[optQuery.groups[i]].rows.size());
-            clauseResults[optQuery.groups[i]] = combineTwoClauseResults(result, clauseResults[optQuery.groups[i]]);
+            clauseResults[optQuery.groups[i]] = combineTwoClauseResults(result, clauseResults[optQuery.groups[i]], toDelete);
 
             // If the merged table is empty, stop evaluation immediately
             if (!clauseResults[optQuery.groups[i]].trueResult && clauseResults[optQuery.groups[i]].rows.empty()) {
@@ -217,7 +315,7 @@ namespace PQL {
             }
         }
 
-        mergingGroups.emplace_back(clauseResults[optQuery.groups.size()]);
+        mergingGroups.emplace_back(clauseResults[optQuery.last.size()]);
 
         // Merge a table for each synonym not present in any clause
         for (Synonym synonym : missingTargetSynonyms) {
@@ -225,7 +323,12 @@ namespace PQL {
         }
 
         // Combine all results
-        ClauseResult combinedResult = combineClauseResults(mergingGroups);
+        // ClauseResult combinedResult = combineClauseResults(mergingGroups);
+        ClauseResult combinedResult;
+        combinedResult.trueResult = true;
+        for (ClauseResult& result : mergingGroups) {
+            combinedResult = combineTwoClauseResults(combinedResult, result, {});
+        }
 
         // Extract necessary results to answer query
         ClauseResult result = extractQueryResults(query, combinedResult);
@@ -368,7 +471,7 @@ namespace PQL {
         return true;
     }
 
-    ClauseResult QueryEvaluator::combineTwoClauseResults(ClauseResult clauseResults1, ClauseResult clauseResults2) {
+    ClauseResult QueryEvaluator::combineTwoClauseResults(ClauseResult clauseResults1, ClauseResult clauseResults2, std::vector<Synonym> toDelete) {
         if (clauseResults1.trueResult && clauseResults2.trueResult) {
             return clauseResults1;
         } else if (clauseResults1.trueResult && !clauseResults2.rows.empty()) {
@@ -410,12 +513,26 @@ namespace PQL {
         }
 
         ClauseResult combinedResult;
-        // Populate synonym list
+        std::vector<std::pair<int, int> > finalCombStruct;
+        // Populate synonym list and remove all synonyms that are deleted
+        unsigned int k = 0;
         for (unsigned int i = 0; i < combStruct.size(); i++) {
             if (combStruct[i].second == 0) {
-                combinedResult.syns.emplace_back(clauseResults1.syns[combStruct[i].first]);
+                while (k < toDelete.size() && toDelete[k] < clauseResults1.syns[combStruct[i].first]) {
+                    k++;
+                }
+                if (toDelete.empty() || k >= toDelete.size() || (k < toDelete.size() && toDelete[k] != clauseResults1.syns[combStruct[i].first])) {
+                    combinedResult.syns.emplace_back(clauseResults1.syns[combStruct[i].first]);
+                    finalCombStruct.emplace_back(combStruct[i]);
+                }
             } else {
-                combinedResult.syns.emplace_back(clauseResults2.syns[combStruct[i].first]);
+                while (k < toDelete.size() && toDelete[k] < clauseResults2.syns[combStruct[i].first]) {
+                    k++;
+                }
+                if (toDelete.empty() || k >= toDelete.size() || (k < toDelete.size() && toDelete[k] != clauseResults2.syns[combStruct[i].first])) {
+                    combinedResult.syns.emplace_back(clauseResults2.syns[combStruct[i].first]);
+                    finalCombStruct.emplace_back(combStruct[i]);
+                }
             }
         }
 
@@ -423,7 +540,7 @@ namespace PQL {
         for (ClauseResultEntry& entry1 : clauseResults1.rows) {
             for (ClauseResultEntry& entry2 : clauseResults2.rows) {
                 if (checkCommonSynonyms(entry1, entry2, commonSynonyms)) {
-                    combinedResult.rows.emplace_back(combineTwoClauseResultEntries(entry1, entry2, combStruct));
+                    combinedResult.rows.emplace_back(combineTwoClauseResultEntries(entry1, entry2, finalCombStruct));
                 }
             }
         }
@@ -452,7 +569,7 @@ namespace PQL {
         }
         ClauseResult leftResult = combineClauseResults(left);
         ClauseResult rightResult = combineClauseResults(right);
-        ClauseResult combinedResults = combineTwoClauseResults(leftResult, rightResult);
+        ClauseResult combinedResults = combineTwoClauseResults(leftResult, rightResult, {});
         return combinedResults;
     }
 

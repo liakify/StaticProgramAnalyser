@@ -1,0 +1,65 @@
+1 - Calls clause should be evaluated first and return empty
+stmt s1, s2, s3, s4; procedure p, q;
+Select <s1, s2, s3, s4> such that Affects*(s1, s2) and Next*(s3, s4) and Next* (s2, s3) and Affects (s1, s4) such that Calls (p, q)
+
+5000
+2 - CallsStar clause should be evaluated first and return empty
+stmt s1, s2, s3, s4; procedure p, q;
+Select <s1, s2, s3, s4> such that Affects*(s1, s2) and Next*(s3, s4) and Next* (s2, s3) and Affects (s1, s4) such that Calls* (p, q)
+
+5000
+3 - Modifies clause should be evaluated first and return empty
+stmt s1, s2, s3, s4; procedure p, q;
+Select <s1, s2, s3, s4> such that Affects*(s1, s2) and Next*(s3, s4) and Next* (s2, s3) and Affects (s1, s4) such that Modifies (p, "notFound")
+
+5000
+4 - Uses clause should be evaluated first and return empty
+stmt s1, s2, s3, s4; procedure p, q;
+Select <s1, s2, s3, s4> such that Affects*(s1, s2) and Next*(s3, s4) and Next* (s2, s3) and Affects (s1, s4) such that Uses (p, "notFound")
+
+5000
+5 - Next clause should be evaluated first and return empty
+stmt s1, s2, s3, s4; procedure p, q;
+Select <s1, s2, s3, s4> such that Affects*(s1, s2) and Next*(s3, s4) and Next* (s2, s3) and Affects (s1, s4) such that Next (s1, s1)
+
+5000
+6 - Parent clause should be evaluated first and return empty
+stmt s1, s2, s3, s4; procedure p, q;
+Select <s1, s2, s3, s4> such that Affects*(s1, s2) and Next*(s3, s4) and Next* (s2, s3) and Affects (s1, s4) such that Parent (s1, s1)
+
+5000
+7 - ParentStar clause should be evaluated first and return empty
+stmt s1, s2, s3, s4; procedure p, q;
+Select <s1, s2, s3, s4> such that Affects*(s1, s2) and Next*(s3, s4) and Next* (s2, s3) and Affects (s1, s4) such that Parent* (s1, s1)
+
+5000
+8 - Follows clause should be evaluated first and return empty
+stmt s1, s2, s3, s4; procedure p, q;
+Select <s1, s2, s3, s4> such that Affects*(s1, s2) and Next*(s3, s4) and Next* (s2, s3) and Affects (s1, s4) such that Follows (s1, s1)
+
+5000
+9 - FollowsStar clause should be evaluated first and return empty
+stmt s1, s2, s3, s4; procedure p, q;
+Select <s1, s2, s3, s4> such that Affects*(s1, s2) and Next*(s3, s4) and Next* (s2, s3) and Affects (s1, s4) such that Follows* (s1, s1)
+
+5000
+10 - with clause should be evaluated first and return empty
+stmt s1, s2, s3, s4; procedure p, q;
+Select <s1, s2, s3, s4> such that Affects*(s1, s2) and Next*(s3, s4) and Next* (s2, s3) and Affects (s1, s4) with "false" = "true"
+
+5000
+11 - pattern assign clause should be evaluated first and return empty
+stmt s1, s2, s3, s4; procedure p, q; assign a;
+Select <s1, s2, s3, s4> such that Affects*(s1, s2) and Next*(s3, s4) and Next* (s2, s3) and Affects (s1, s4) pattern a ("notFound", _)
+
+5000
+12 - pattern if clause should be evaluated first and return empty
+stmt s1, s2, s3, s4; procedure p, q; if ifs;
+Select <s1, s2, s3, s4> such that Affects*(s1, s2) and Next*(s3, s4) and Next* (s2, s3) and Affects (s1, s4) pattern ifs ("notFound", _, _)
+
+5000
+13 - pattern while clause should be evaluated first and return empty
+stmt s1, s2, s3, s4; procedure p, q; while w;
+Select <s1, s2, s3, s4> such that Affects*(s1, s2) and Next*(s3, s4) and Next* (s2, s3) and Affects (s1, s4) pattern w ("notFound", _)
+
+5000

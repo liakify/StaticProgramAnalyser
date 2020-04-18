@@ -423,9 +423,9 @@ namespace PQL {
     // Returns an array of clauses
     bool QueryParser::splitClauses(Query& query, string queryBodySuffix,
         vector<string>& relationClauses, vector<string>& patternClauses, vector<string>& withClauses) {
-        string RELATION_CLAUSE = "(?:not\\s+)?[A-Za-z*]+\\s*\\([\\w,\"\\s]*\\)";
-        string PATTERN_CLAUSE = "(?:not\\s+)?[A-Za-z][A-Za-z0-9]*\\s*\\([\\w\"\\s]+(?:,\\s*(?:_|(?:(_?)\\s*\"[A-Za-z0-9\\(\\)\\+\\-\\*\\/\\%\\s]+\"\\s*\\1))\\s*)+\\)";
-        string CONNECTED_PATTERN_CLAUSE = "(?:not\\s+)?[A-Za-z][A-Za-z0-9]*\\s*\\([\\w\"\\s]+(?:,\\s*(?:_|(?:(_?)\\s*\"[A-Za-z0-9\\(\\)\\+\\-\\*\\/\\%\\s]+\"\\s*\\2))\\s*)+\\)";
+        string RELATION_CLAUSE = "(?:not\\s+)?[A-Za-z*]+\\s*\\(\\s*\"?\\s*[A-Za-z0-9_]+\\s*\"?\\s*?(?:,\\s*\"?\\s*[A-Za-z0-9_]+\\s*\"?\\s*?)*\\)";
+        string PATTERN_CLAUSE = "(?:not\\s+)?[A-Za-z][A-Za-z0-9]*\\s*\\(\\s*\"?\\s*[A-Za-z0-9_]+\\s*\"?\\s*?(?:,\\s*(?:_|(?:(_?)\\s*\"[A-Za-z0-9\\(\\)\\+\\-\\*\\/\\%\\s]+\"\\s*\\1))\\s*)+\\)";
+        string CONNECTED_PATTERN_CLAUSE = "(?:not\\s+)?[A-Za-z][A-Za-z0-9]*\\s*\\(\\s*\"?\\s*[A-Za-z0-9_]+\\s*\"?\\s*?(?:,\\s*(?:_|(?:(_?)\\s*\"[A-Za-z0-9\\(\\)\\+\\-\\*\\/\\%\\s]+\"\\s*\\2))\\s*)+\\)";
         string WITH_ARGUMENT = "[A-Za-z0-9]+(?:\\s*\\.\\s*[A-Za-z0-9#]+)?";
         string WITH_CLAUSE = "(?:not\\s+)?(\"?)\\s*" + WITH_ARGUMENT + "\\s*\\1\\s*=\\s*(?:(?=\")\"\\s*" + WITH_ARGUMENT + "\\s*\"|" + WITH_ARGUMENT + ")";
         string CONNECTED_WITH_CLAUSE = "(?:not\\s+)?(\"?)\\s*" + WITH_ARGUMENT + "\\s*\\2\\s*=\\s*(?:(?=\")\"\\s*" + WITH_ARGUMENT + "\\s*\"|" + WITH_ARGUMENT + ")";
@@ -649,7 +649,7 @@ namespace PQL {
                 } else {
                     relations.push_back({
                         clause, isNegated, relationClass, parseStmtRef(arg1), parseStmtRef(arg2)
-                    });
+                        });
                 }
                 break;
             case RelationType::USESS:
@@ -667,7 +667,7 @@ namespace PQL {
                 } else if (QueryUtils::isValidStmtRef(arg1)) {
                     relations.push_back({
                         clause, isNegated, relationClass, parseStmtRef(arg1), parseEntityRef(arg2)
-                    });
+                        });
                 } else if (QueryUtils::isValidEntityRef(arg1)) {
                     // If first argument is an entity reference, we can immediately distinguish this clause
                     // as the procedure variant of the Uses or Modifies relation, depending on the keyword
@@ -675,7 +675,7 @@ namespace PQL {
                         clause, isNegated,
                         relationClass == RelationType::USESS ? RelationType::USESP : RelationType::MODIFIESP,
                         parseEntityRef(arg1), parseEntityRef(arg2)
-                    });
+                        });
                 } else {
                     // SYNTAX ERROR: cannot be interpreted either as statement or entity ref
                     query.status = SYNTAX_ERR_USES_MODIFIES_INVALID_FIRST_ARG;
@@ -691,7 +691,7 @@ namespace PQL {
                 } else {
                     relations.push_back({
                         clause, isNegated, relationClass, parseEntityRef(arg1), parseEntityRef(arg2)
-                    });
+                        });
                 }
                 break;
             case RelationType::NEXT:
@@ -704,7 +704,7 @@ namespace PQL {
                 } else {
                     relations.push_back({
                         clause, isNegated, relationClass, parseStmtRef(arg1), parseStmtRef(arg2)
-                    });
+                        });
                 }
                 break;
             case RelationType::AFFECTS:
@@ -717,7 +717,7 @@ namespace PQL {
                 } else {
                     relations.push_back({
                         clause, isNegated, relationClass, parseStmtRef(arg1), parseStmtRef(arg2)
-                    });
+                        });
                 }
                 break;
             case RelationType::CONTAINS:
@@ -732,7 +732,7 @@ namespace PQL {
                 } else {
                     relations.push_back({
                         clause, isNegated, relationClass, parseEntityRef(arg1), parseStmtRef(arg2)
-                    });
+                        });
                 }
                 break;
             default:
@@ -798,7 +798,7 @@ namespace PQL {
                         clause, isNegated, PatternType::ASSIGN_PATTERN,
                         { ArgType::SYNONYM, synonym, UNSET_SYNONYM_ID, AttrType::INVALID },
                         parseEntityRef(referenceString), parsePattern(args.at(1))
-                    });
+                        });
                 } catch (const invalid_argument&) {
                     // SYNTAX ERROR: pattern string is not a valid infix arithmetic expression
                     query.status = SYNTAX_ERR_ASSIGN_PATTERN_INVALID_PATTERN;
@@ -816,7 +816,7 @@ namespace PQL {
                         clause, isNegated, PatternType::WHILE_PATTERN,
                         { ArgType::SYNONYM, synonym, UNSET_SYNONYM_ID, AttrType::INVALID },
                         parseEntityRef(referenceString), parsePattern(args.at(1))
-                    });
+                        });
                 }
                 break;
             case DesignEntity::IF:
@@ -832,7 +832,7 @@ namespace PQL {
                         clause, isNegated, PatternType::IF_PATTERN,
                         { ArgType::SYNONYM, synonym, UNSET_SYNONYM_ID, AttrType::INVALID },
                         parseEntityRef(referenceString), parsePattern(args.at(1))
-                    });
+                        });
                 }
                 break;
             default:
@@ -885,13 +885,13 @@ namespace PQL {
                 (arg2.type == ArgType::INTEGER || arg2.type == ArgType::IDENTIFIER)) {
                 equalities.push_back({
                     clause, isNegated, WithType::LITERAL_EQUAL, arg1, arg2
-                });
+                    });
             } else {
                 // Equality type is currently unknown since the type of the values both
                 // expressions evaluate to have not been computed yet
                 equalities.push_back({
                     clause, isNegated, WithType::UNKNOWN_EQUAL, arg1, arg2
-                });
+                    });
             }
         }
 
