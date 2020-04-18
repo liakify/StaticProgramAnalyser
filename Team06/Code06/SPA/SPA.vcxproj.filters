@@ -131,6 +131,7 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\source\ContainsKB.cpp">
+    <ClCompile Include="..\source\QueryOptimiser.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\source\ContainsEvaluator.cpp">
@@ -280,12 +281,16 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\source\ContainsKB.h">
+    <ClInclude Include="..\source\QueryOptimiser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\source\ContainsEvaluator.h">
+<<<<<<< HEAD
+=======
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\source\QueryOptimiser.h">
+>>>>>>> 81e4190cc9f24f21f349cdca49fc41157f4030c6
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
