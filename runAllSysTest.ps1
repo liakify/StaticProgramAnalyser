@@ -100,6 +100,7 @@ $list_of_test_files = @(
   '..\intergroup_0'
   '..\intragroup_0'
   '..\intragroup_1'
+  '..\invalid_chars_0'
   
   # TESTS BELOW CURRENTLY FAIL / TIMEOUT
   # '..\performance600_runtimeCache'
