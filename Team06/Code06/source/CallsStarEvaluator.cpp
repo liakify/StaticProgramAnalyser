@@ -1,9 +1,7 @@
-#include <algorithm>
 #include <string>
 #include <unordered_map>
 #include <unordered_set>
 #include <utility>
-#include <vector>
 
 #include "CallsStarEvaluator.h"
 #include "LoggingUtils.h"
@@ -17,33 +15,33 @@ namespace PQL {
         *
         * @param    database    The PKB to evaluate the clause on.
         * @param    clause      The clause to evaluate.
-        * @param    intResult   The intermediate result table for the group that the clause belongs to.
+        * @return   The result of the evaluation.
         */
-        void evaluateCallsStarClauseIdId(PKB::PKB& database, RelationClause clause, ClauseResult& intResult) {
+        ClauseResult evaluateCallsStarClauseIdId(PKB::PKB& database, RelationClause clause) {
             std::pair<Argument, Argument> args = clause.getArgs();
             ProcId arg1 = database.procTable.getProcId(args.first.value);
             ProcId arg2 = database.procTable.getProcId(args.second.value);
 
-            if (!database.callsKB.callStar(arg1, arg2)) {
-                intResult.rows.clear();
-                intResult.trueResult = false;
+            ClauseResult clauseResult;
+            if (database.callsKB.callStar(arg1, arg2)) {
+                clauseResult.trueResult = true;
             }
-
+            return clauseResult;
         }
 
         /**
         * Evaluates a single Calls* clause on the given PKB where the inputs are two wildcards.
         *
         * @param    database    The PKB to evaluate the clause on.
-        * @param    intResult   The intermediate result table for the group that the clause belongs to.
+        * @return   The result of the evaluation.
         */
-        void evaluateCallsStarClauseWildWild(PKB::PKB& database, ClauseResult& intResult) {
+        ClauseResult evaluateCallsStarClauseWildWild(PKB::PKB& database) {
 
-            if (!database.callsKB.hasCallsRelation()) {
-                intResult.rows.clear();
-                intResult.trueResult = false;
+            ClauseResult clauseResult;
+            if (database.callsKB.hasCallsRelation()) {
+                clauseResult.trueResult = true;
             }
-
+            return clauseResult;
         }
 
         /**
@@ -51,29 +49,29 @@ namespace PQL {
         *
         * @param    database    The PKB to evaluate the clause on.
         * @param    clause      The clause to evaluate.
-        * @param    intResult   The intermediate result table for the group that the clause belongs to.
+        * @return   The result of the evaluation.
         */
-        void evaluateCallsStarClauseIdWild(PKB::PKB& database, RelationClause clause, ClauseResult& intResult) {
+        ClauseResult evaluateCallsStarClauseIdWild(PKB::PKB& database, RelationClause clause) {
             std::pair<Argument, Argument> args = clause.getArgs();
             ArgType argType1 = args.first.type;
             ArgType argType2 = args.second.type;
 
             if (argType1 == ArgType::IDENTIFIER && argType2 == ArgType::WILDCARD) {
                 // Case 1: Identifier, Wildcard
+                ClauseResult clauseResult;
                 ProcId arg1 = database.procTable.getProcId(args.first.value);
-                if (!database.callsKB.hasCallee(arg1)) {
-                    intResult.rows.clear();
-                    intResult.trueResult = false;
+                if (database.callsKB.hasCallee(arg1)) {
+                    clauseResult.trueResult = true;
                 }
-
+                return clauseResult;
             } else {
                 // Case 2: Wildcard, Identifier
+                ClauseResult clauseResult;
                 ProcId arg2 = database.procTable.getProcId(args.second.value);
-                if (!database.callsKB.hasCaller(arg2)) {
-                    intResult.rows.clear();
-                    intResult.trueResult = false;
+                if (database.callsKB.hasCaller(arg2)) {
+                    clauseResult.trueResult = true;
                 }
-
+                return clauseResult;
             }
         }
 
@@ -83,10 +81,10 @@ namespace PQL {
         * @param    database    The PKB to evaluate the clause on.
         * @param    clause      The clause to evaluate.
         * @param    synonymTable    The synonym table associated with the query containing the clause.
-        * @param    intResult   The intermediate result table for the group that the clause belongs to.
+        * @return   The result of the evaluation.
         */
-        void evaluateCallsStarClauseIdSyn(PKB::PKB& database, RelationClause clause,
-            unordered_map<std::string, DesignEntity>& synonymTable, ClauseResult& intResult) {
+        ClauseResult evaluateCallsStarClauseIdSyn(PKB::PKB& database, RelationClause clause,
+            unordered_map<std::string, DesignEntity>& synonymTable) {
 
             std::pair<Argument, Argument> args = clause.getArgs();
             ArgType argType1 = args.first.type;
@@ -97,50 +95,29 @@ namespace PQL {
                 ProcId arg1 = database.procTable.getProcId(args.first.value);
                 Synonym arg2 = args.second.value;
 
-                if (std::find(intResult.syns.begin(), intResult.syns.end(), arg2) == intResult.syns.end()) {
-                    intResult.syns.emplace_back(arg2);
-                    std::unordered_set<ProcId> allCallees = database.callsKB.getAllNodes(arg1, NodeType::SUCCESSOR);
-                    for (ProcId callee : allCallees) {
-                        ClauseResultEntry resultEntry;
-                        resultEntry.emplace_back(database.procTable.get(callee).getName());
-                        intResult.rows.emplace_back(resultEntry);
-                    }
-                } else {
-                    int index = std::find(intResult.syns.begin(), intResult.syns.end(), arg2) - intResult.syns.begin();
-                    std::vector<ClauseResultEntry> updatedResult;
-                    for (ClauseResultEntry& resultEntry : intResult.rows) {
-                        if (database.callsKB.callStar(arg1, database.procTable.getProcId(resultEntry[index]))) {
-                            updatedResult.emplace_back(resultEntry);
-                        }
-                    }
-                    intResult.rows = updatedResult;
+                ClauseResult clauseResult;
+                clauseResult.syns.emplace_back(arg2);
+                std::unordered_set<StmtId> allCallees = database.callsKB.getAllNodes(arg1, NodeType::SUCCESSOR);
+                for (ProcId callee : allCallees) {
+                    ClauseResultEntry resultEntry;
+                    resultEntry.emplace_back(database.procTable.get(callee).getName());
+                    clauseResult.rows.emplace_back(resultEntry);
                 }
+                return clauseResult;
             } else {
                 // Case 2: Synonym, Integer
                 Synonym arg1 = args.first.value;
                 ProcId arg2 = database.procTable.getProcId(args.second.value);
 
-                if (std::find(intResult.syns.begin(), intResult.syns.end(), arg1) == intResult.syns.end()) {
-                    intResult.syns.emplace_back(arg1);
-                    std::unordered_set<ProcId> allCallers = database.callsKB.getAllNodes(arg2, NodeType::PREDECESSOR);
-                    for (ProcId caller : allCallers) {
-                        ClauseResultEntry resultEntry;
-                        resultEntry.emplace_back(database.procTable.get(caller).getName());
-                        intResult.rows.emplace_back(resultEntry);
-                    }
-                } else {
-                    int index = std::find(intResult.syns.begin(), intResult.syns.end(), arg1) - intResult.syns.begin();
-                    std::vector<ClauseResultEntry> updatedResult;
-                    for (ClauseResultEntry& resultEntry : intResult.rows) {
-                        if (database.callsKB.callStar(database.procTable.getProcId(resultEntry[index]), arg2)) {
-                            updatedResult.emplace_back(resultEntry);
-                        }
-                    }
-                    intResult.rows = updatedResult;
+                ClauseResult clauseResult;
+                clauseResult.syns.emplace_back(arg1);
+                std::unordered_set<StmtId> allCallers = database.callsKB.getAllNodes(arg2, NodeType::PREDECESSOR);
+                for (ProcId caller : allCallers) {
+                    ClauseResultEntry resultEntry;
+                    resultEntry.emplace_back(database.procTable.get(caller).getName());
+                    clauseResult.rows.emplace_back(resultEntry);
                 }
-            }
-            if (intResult.rows.empty()) {
-                intResult.trueResult = false;
+                return clauseResult;
             }
         }
 
@@ -150,10 +127,10 @@ namespace PQL {
         * @param    database    The PKB to evaluate the clause on.
         * @param    clause      The clause to evaluate.
         * @param    synonymTable    The synonym table associated with the query containing the clause.
-        * @param    intResult   The intermediate result table for the group that the clause belongs to.
+        * @return   The result of the evaluation.
         */
-        void evaluateCallsStarClauseWildSyn(PKB::PKB& database, RelationClause clause,
-            unordered_map<std::string, DesignEntity>& synonymTable, ClauseResult& intResult) {
+        ClauseResult evaluateCallsStarClauseWildSyn(PKB::PKB& database, RelationClause clause,
+            unordered_map<std::string, DesignEntity>& synonymTable) {
 
             std::pair<Argument, Argument> args = clause.getArgs();
             ArgType argType1 = args.first.type;
@@ -163,50 +140,28 @@ namespace PQL {
                 Synonym arg2 = args.second.value;
 
                 // Case 1: Wildcard, Synonym
-                if (std::find(intResult.syns.begin(), intResult.syns.end(), arg2) == intResult.syns.end()) {
-                    intResult.syns.emplace_back(arg2);
-                    std::unordered_set<ProcId> callees = database.callsKB.getAllCallees();
-                    for (ProcId callee : callees) {
-                        ClauseResultEntry resultEntry;
-                        resultEntry.emplace_back(database.procTable.get(callee).getName());
-                        intResult.rows.emplace_back(resultEntry);
-                    }
-                } else {
-                    int index = std::find(intResult.syns.begin(), intResult.syns.end(), arg2) - intResult.syns.begin();
-                    std::vector<ClauseResultEntry> updatedResult;
-                    for (ClauseResultEntry& resultEntry : intResult.rows) {
-                        if (database.callsKB.hasCaller(database.procTable.getProcId(resultEntry[index]))) {
-                            updatedResult.emplace_back(resultEntry);
-                        }
-                    }
-                    intResult.rows = updatedResult;
+                ClauseResult clauseResult;
+                clauseResult.syns.emplace_back(arg2);
+                std::unordered_set<ProcId> callees = database.callsKB.getAllCallees();
+                for (ProcId callee : callees) {
+                    ClauseResultEntry resultEntry;
+                    resultEntry.emplace_back(database.procTable.get(callee).getName());
+                    clauseResult.rows.emplace_back(resultEntry);
                 }
-
+                return clauseResult;
             } else {
                 Synonym arg1 = args.first.value;
 
                 // Case 2: Synonym, Wildcard
-                if (std::find(intResult.syns.begin(), intResult.syns.end(), arg1) == intResult.syns.end()) {
-                    intResult.syns.emplace_back(arg1);
-                    std::unordered_set<ProcId> callers = database.callsKB.getAllCallers();
-                    for (ProcId caller : callers) {
-                        ClauseResultEntry resultEntry;
-                        resultEntry.emplace_back(database.procTable.get(caller).getName());
-                        intResult.rows.emplace_back(resultEntry);
-                    }
-                } else {
-                    int index = std::find(intResult.syns.begin(), intResult.syns.end(), arg1) - intResult.syns.begin();
-                    std::vector<ClauseResultEntry> updatedResult;
-                    for (ClauseResultEntry& resultEntry : intResult.rows) {
-                        if (database.callsKB.hasCallee(database.procTable.getProcId(resultEntry[index]))) {
-                            updatedResult.emplace_back(resultEntry);
-                        }
-                    }
-                    intResult.rows = updatedResult;
+                ClauseResult clauseResult;
+                clauseResult.syns.emplace_back(arg1);
+                std::unordered_set<ProcId> callers = database.callsKB.getAllCallers();
+                for (ProcId caller : callers) {
+                    ClauseResultEntry resultEntry;
+                    resultEntry.emplace_back(database.procTable.get(caller).getName());
+                    clauseResult.rows.emplace_back(resultEntry);
                 }
-            }
-            if (intResult.rows.empty()) {
-                intResult.trueResult = false;
+                return clauseResult;
             }
         }
 
@@ -216,95 +171,46 @@ namespace PQL {
         * @param    database    The PKB to evaluate the clause on.
         * @param    clause      The clause to evaluate.
         * @param    synonymTable    The synonym table associated with the query containing the clause.
-        * @param    intResult   The intermediate result table for the group that the clause belongs to.
+        * @return   The result of the evaluation.
         */
-        void evaluateCallsStarClauseSynSyn(PKB::PKB& database, RelationClause clause,
-            unordered_map<std::string, DesignEntity>& synonymTable, ClauseResult& intResult) {
+        ClauseResult evaluateCallsStarClauseSynSyn(PKB::PKB& database, RelationClause clause,
+            unordered_map<std::string, DesignEntity>& synonymTable) {
 
             std::pair<Argument, Argument> args = clause.getArgs();
             Synonym arg1 = args.first.value;
             Synonym arg2 = args.second.value;
 
+            ClauseResult clauseResult;
             if (arg1 == arg2) {
                 // In SIMPLE, a procedure should not be able to call itself.
-                intResult.rows.clear();
-                intResult.trueResult = false;
-                return;
+                return clauseResult;
             }
-
-            bool foundSyn1 = (std::find(intResult.syns.begin(), intResult.syns.end(), arg1) != intResult.syns.end());
-            bool foundSyn2 = (std::find(intResult.syns.begin(), intResult.syns.end(), arg2) != intResult.syns.end());
-
-            if (!foundSyn1 && !foundSyn2) {
-                if (arg1 < arg2) {
-                    intResult.syns.emplace_back(arg1);
-                    intResult.syns.emplace_back(arg2);
-                } else {
-                    intResult.syns.emplace_back(arg2);
-                    intResult.syns.emplace_back(arg1);
-                }
-                for (ProcId caller = 1; caller <= database.procTable.size(); caller++) {
-                    std::unordered_set<ProcId> callees = database.callsKB.getAllNodes(caller, NodeType::SUCCESSOR);
-                    for (ProcId callee : callees) {
-                        ClauseResultEntry resultEntry;
-                        if (arg1 < arg2) {
-                            resultEntry.emplace_back(database.procTable.get(caller).getName());
-                            resultEntry.emplace_back(database.procTable.get(callee).getName());
-                        } else {
-                            resultEntry.emplace_back(database.procTable.get(callee).getName());
-                            resultEntry.emplace_back(database.procTable.get(caller).getName());
-                        }
-                        intResult.rows.emplace_back(resultEntry);
-                    }
-                }
-            } else if (foundSyn1 && !foundSyn2) {
-                int index1 = std::find(intResult.syns.begin(), intResult.syns.end(), arg1) - intResult.syns.begin();
-                intResult.syns.emplace_back(arg2);
-                std::sort(intResult.syns.begin(), intResult.syns.end());
-                int index2 = std::find(intResult.syns.begin(), intResult.syns.end(), arg2) - intResult.syns.begin();
-                std::vector<ClauseResultEntry> updatedResult;
-                for (ClauseResultEntry& resultEntry : intResult.rows) {
-                    std::unordered_set<ProcId> procs = database.callsKB.getAllNodes(database.procTable.getProcId(resultEntry[index1]), NodeType::SUCCESSOR);
-                    for (ProcId proc : procs) {
-                        ClauseResultEntry newResultEntry(resultEntry);
-                        newResultEntry.insert(newResultEntry.begin() + index2, database.procTable.get(proc).getName());
-                        updatedResult.emplace_back(newResultEntry);
-                    }
-                }
-                intResult.rows = updatedResult;
-            } else if (!foundSyn1 && foundSyn2) {
-                int index2 = std::find(intResult.syns.begin(), intResult.syns.end(), arg2) - intResult.syns.begin();
-                intResult.syns.emplace_back(arg1);
-                std::sort(intResult.syns.begin(), intResult.syns.end());
-                int index1 = std::find(intResult.syns.begin(), intResult.syns.end(), arg1) - intResult.syns.begin();
-                std::vector<ClauseResultEntry> updatedResult;
-                for (ClauseResultEntry& resultEntry : intResult.rows) {
-                    std::unordered_set<ProcId> procs = database.callsKB.getAllNodes(database.procTable.getProcId(resultEntry[index2]), NodeType::PREDECESSOR);
-                    for (ProcId proc : procs) {
-                        ClauseResultEntry newResultEntry(resultEntry);
-                        newResultEntry.insert(newResultEntry.begin() + index1, database.procTable.get(proc).getName());
-                        updatedResult.emplace_back(newResultEntry);
-                    }
-                }
-                intResult.rows = updatedResult;
-            } else if (foundSyn1 && foundSyn2) {
-                int index1 = std::find(intResult.syns.begin(), intResult.syns.end(), arg1) - intResult.syns.begin();
-                int index2 = std::find(intResult.syns.begin(), intResult.syns.end(), arg2) - intResult.syns.begin();
-                std::vector<ClauseResultEntry> updatedResult;
-                for (ClauseResultEntry& resultEntry : intResult.rows) {
-                    if (database.callsKB.callStar(database.procTable.getProcId(resultEntry[index1]), database.procTable.getProcId(resultEntry[index2]))) {
-                        updatedResult.emplace_back(resultEntry);
-                    }
-                }
-                intResult.rows = updatedResult;
+            if (arg1 < arg2) {
+                clauseResult.syns.emplace_back(arg1);
+                clauseResult.syns.emplace_back(arg2);
+            } else {
+                clauseResult.syns.emplace_back(arg2);
+                clauseResult.syns.emplace_back(arg1);
             }
-            if (intResult.rows.empty()) {
-                intResult.trueResult = false;
+            for (ProcId caller = 1; caller <= database.procTable.size(); caller++) {
+                std::unordered_set<ProcId> callees = database.callsKB.getAllNodes(caller, NodeType::SUCCESSOR);
+                for (ProcId callee : callees) {
+                    ClauseResultEntry resultEntry;
+                    if (arg1 < arg2) {
+                        resultEntry.emplace_back(database.procTable.get(caller).getName());
+                        resultEntry.emplace_back(database.procTable.get(callee).getName());
+                    } else {
+                        resultEntry.emplace_back(database.procTable.get(callee).getName());
+                        resultEntry.emplace_back(database.procTable.get(caller).getName());
+                    }
+                    clauseResult.rows.emplace_back(resultEntry);
+                }
             }
+            return clauseResult;
         }
 
-        void evaluateCallsStarClause(PKB::PKB& database, RelationClause clause,
-            unordered_map<std::string, DesignEntity>& synonymTable, ClauseResult& intResult) {
+        ClauseResult evaluateCallsStarClause(PKB::PKB& database, RelationClause clause,
+            unordered_map<std::string, DesignEntity>& synonymTable) {
 
             std::pair<Argument, Argument> args = clause.getArgs();
             ArgType argType1 = args.first.type;
@@ -312,28 +218,28 @@ namespace PQL {
 
             if (argType1 == ArgType::IDENTIFIER && argType2 == ArgType::IDENTIFIER) {
                 // Two identifiers supplied
-                evaluateCallsStarClauseIdId(database, clause, intResult);
+                return evaluateCallsStarClauseIdId(database, clause);
             } else if (argType1 == ArgType::WILDCARD && argType2 == ArgType::WILDCARD) {
                 // Two wildcards supplied
-                evaluateCallsStarClauseWildWild(database, intResult);
+                return evaluateCallsStarClauseWildWild(database);
             } else if (argType1 == ArgType::IDENTIFIER && argType2 == ArgType::WILDCARD ||
                 argType1 == ArgType::WILDCARD && argType2 == ArgType::IDENTIFIER) {
                 // One identifier, one wildcard supplied
-                evaluateCallsStarClauseIdWild(database, clause, intResult);
+                return evaluateCallsStarClauseIdWild(database, clause);
             } else if (argType1 == ArgType::IDENTIFIER && argType2 == ArgType::SYNONYM ||
                 argType1 == ArgType::SYNONYM && argType2 == ArgType::IDENTIFIER) {
                 // One identifier, one synonym
-                evaluateCallsStarClauseIdSyn(database, clause, synonymTable, intResult);
+                return evaluateCallsStarClauseIdSyn(database, clause, synonymTable);
             } else if (argType1 == ArgType::WILDCARD && argType2 == ArgType::SYNONYM ||
                 argType1 == ArgType::SYNONYM && argType2 == ArgType::WILDCARD) {
                 // One synonym, one wildcard
-                evaluateCallsStarClauseWildSyn(database, clause, synonymTable, intResult);
+                return evaluateCallsStarClauseWildSyn(database, clause, synonymTable);
             } else if (argType1 == ArgType::SYNONYM && argType2 == ArgType::SYNONYM) {
                 // Two synonyms
-                evaluateCallsStarClauseSynSyn(database, clause, synonymTable, intResult);
+                return evaluateCallsStarClauseSynSyn(database, clause, synonymTable);
             } else {
                 SPA::LoggingUtils::LogErrorMessage("CallsStarEvaluator::evaluateCallsStarClause: Invalid ArgTypes for Calls* clause. argType1 = %d, argType2 = %d\n", argType1, argType2);
-
+                return {};
             }
         }
 
