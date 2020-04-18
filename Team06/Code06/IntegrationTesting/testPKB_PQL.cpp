@@ -77,7 +77,7 @@ namespace IntegrationTesting {
         string query_relCond_WILDINT = "Select BOOLEAN such that Follows(_, 3)";
         string query_relCond_WILDWILD = "Select BOOLEAN such that Calls(_, _)";
 
-    TEST_CLASS_INITIALIZE(setup) {
+    TEST_METHOD(evaluateQuery) {
         PKB::PKB pkb = PKB::PKB();
 
         pkb.varTable.insertVar("x"); // VarId = 1
@@ -106,7 +106,7 @@ namespace IntegrationTesting {
         pkb.stmtListTable.insertStmtLst(StatementList(std::vector<StmtId>({ 1, 2, 3 }))); // StmtListId = 1
         pkb.stmtListTable.insertStmtLst(StatementList(std::vector<StmtId>({ 4 }))); // StmtListId = 2
         pkb.stmtListTable.insertStmtLst(StatementList(std::vector<StmtId>({ 5 }))); // StmtListId = 3
-        pkb.stmtListTable.insertStmtLst(StatementList(std::vector<StmtId>({ 6, 7, 9}))); // StmtListId = 4
+        pkb.stmtListTable.insertStmtLst(StatementList(std::vector<StmtId>({ 6, 7, 9 }))); // StmtListId = 4
         pkb.stmtListTable.insertStmtLst(StatementList(std::vector<StmtId>({ 8 }))); // StmtListId = 5
 
         pkb.procTable.insertProc(Procedure("p", 1)); // ProcId = 1
@@ -250,9 +250,8 @@ namespace IntegrationTesting {
         pkb.patternKB.addWhilePattern(3, 7);
 
         pql = PQL::PQLManager(pkb);
-    }
 
-    TEST_METHOD(evaluateQuery) {
+
         pql.evaluateQuery(query_selectDesignEntity_STMT, results);
         Assert::IsTrue(std::unordered_set<string>(results.begin(), results.end()) == std::unordered_set<string>({ "1", "2", "3", "4", "5", "6", "7", "8", "9" }));
         results.clear();
@@ -364,9 +363,7 @@ namespace IntegrationTesting {
         pql.evaluateQuery(query_patternCond_While, results);
         Assert::IsTrue(std::unordered_set<string>(results.begin(), results.end()) == std::unordered_set<string>({ "z" }));
         results.clear();
-    }
 
-    TEST_METHOD(evaluateQuery_relCond) {
         pql.evaluateQuery(query_relCond_ModifiesP, results);
         Assert::IsTrue(std::unordered_set<string>(results.begin(), results.end()) == std::unordered_set<string>({ "p", "p2" }));
         results.clear();
@@ -451,6 +448,5 @@ namespace IntegrationTesting {
         Assert::IsTrue(results == std::list<string>({ "TRUE" }));
         results.clear();
     }
-
   };
 }

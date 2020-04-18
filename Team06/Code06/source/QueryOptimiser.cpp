@@ -290,7 +290,7 @@ namespace PQL {
 
             // Perform a Multi-Source Best First Search. Start with clauses containing single synonyms.
             auto compare = [](ClauseNode* first, ClauseNode* second) {
-                return *first < *second;
+                return *second < *first;
             };
 
             // We need each group to have at least one clause in the priority queue.
@@ -304,10 +304,12 @@ namespace PQL {
                 if (startingNode[node.group] == nullptr) {
                     startingNode[node.group] = &node;
                 } else if (node < *startingNode[node.group]) {
+                    /*
                     // If the evicted clause is a single-synonym basic relation, add it anyway
                     if (!startingNode[node.group]->advancedRelation && startingNode[node.group]->getSynonymCount() == 1) {
                         pq.emplace(startingNode[node.group]);
                     }
+                    */
                     startingNode[node.group] = &node;
 
                 }

@@ -28,7 +28,7 @@
 namespace PQL {
 
     QueryEvaluator::QueryEvaluator(PKB::PKB &database) {
-        this->database = database;
+        this->database = &database;
     }
 
     ClauseResult QueryEvaluator::getClauseResultWithAllValues(Synonym synonym, DesignEntity designEntity) {
@@ -43,7 +43,7 @@ namespace PQL {
         case DesignEntity::PRINT:
         case DesignEntity::READ:
         case DesignEntity::WHILE: {
-            std::unordered_set<StmtId> stmts = database.stmtTable.getStmtsByType(SPA::TypeUtils::getStmtTypeFromDesignEntity(designEntity));
+            std::unordered_set<StmtId> stmts = database->stmtTable.getStmtsByType(SPA::TypeUtils::getStmtTypeFromDesignEntity(designEntity));
             for (StmtId stmt : stmts) {
                 ClauseResultEntry resultEntry;
                 resultEntry.emplace_back(std::to_string(stmt));
@@ -54,7 +54,7 @@ namespace PQL {
         }
         case DesignEntity::PROG_LINE:
         case DesignEntity::STATEMENT: {
-            for (StmtId i = 1; i <= database.stmtTable.size(); i++) {
+            for (StmtId i = 1; i <= database->stmtTable.size(); i++) {
                 ClauseResultEntry resultEntry;
                 resultEntry.emplace_back(std::to_string(i));
                 clauseResult.rows.emplace_back(resultEntry);
@@ -63,25 +63,25 @@ namespace PQL {
             break;
         }
         case DesignEntity::CONSTANT: {
-            for (ConstId i = 1; i <= database.constTable.size(); i++) {
+            for (ConstId i = 1; i <= database->constTable.size(); i++) {
                 ClauseResultEntry resultEntry;
-                resultEntry.emplace_back(database.constTable.get(i));
+                resultEntry.emplace_back(database->constTable.get(i));
                 clauseResult.rows.emplace_back(resultEntry);
             }
             return clauseResult;
             break;
         }
         case DesignEntity::PROCEDURE: {
-            for (ProcId i = 1; i <= database.procTable.size(); i++) {
+            for (ProcId i = 1; i <= database->procTable.size(); i++) {
                 ClauseResultEntry resultEntry;
-                resultEntry.emplace_back(database.procTable.get(i).getName());
+                resultEntry.emplace_back(database->procTable.get(i).getName());
                 clauseResult.rows.emplace_back(resultEntry);
             }
             return clauseResult;
             break;
         }
         case DesignEntity::VARIABLE: {
-            std::unordered_set<VarName> allVars = database.varTable.getAllVars();
+            std::unordered_set<VarName> allVars = database->varTable.getAllVars();
             for (VarName var : allVars) {
                 ClauseResultEntry resultEntry;
                 resultEntry.emplace_back(var);
@@ -100,12 +100,10 @@ namespace PQL {
         OptimisedQuery optQuery = QueryOptimiser::optimiseQuery(query);
 
         // Maintain one ClauseResult structure for each group
-        // +1 in case there are no groups at all
-        std::vector<ClauseResult> clauseResults = std::vector<ClauseResult>(optQuery.last.size() + 1);
+        std::vector<ClauseResult> clauseResults = std::vector<ClauseResult>(optQuery.last.size());
 
         // To determine if each group should participate in inter-group merging
-        std::vector<bool> toMerge = std::vector<bool>(optQuery.last.size() + 1, false);
-        toMerge[optQuery.last.size()] = true;
+        std::vector<bool> toMerge = std::vector<bool>(optQuery.last.size(), false);
 
         // Add table containing "TRUE" to every group
         for (ClauseResult& clauseResult : clauseResults) {
@@ -166,7 +164,6 @@ namespace PQL {
 
         // Evaluate clauses
         for (unsigned int i = 0; i < optQuery.clauses.size(); i++) {
-            ClauseResult result;
             Clause* clause = optQuery.clauses[i];
             // Set of synonyms that we should delete after this clause has been evaluated
             // We delete a synonym if it is not selected and does not occur in any future clauses
@@ -174,7 +171,7 @@ namespace PQL {
 
             if (clause->getClauseType() == ClauseType::RELATION) {
                 RelationClause* relation = static_cast<RelationClause*>(clause);
-                result = evaluateRelationClause(*relation, query.synonymTable);
+                evaluateRelationClause(*relation, query.synonymTable, clauseResults[optQuery.groups[i]]);
                 // Remove all present synonyms from target synonyms
                 std::pair<Argument, Argument> args = relation->getArgs();
                 Argument arg1 = args.first;
@@ -207,7 +204,7 @@ namespace PQL {
                 }
             } else if (clause->getClauseType() == ClauseType::PATTERN) {
                 PatternClause* pattern = static_cast<PatternClause*>(clause);
-                result = evaluatePatternClause(*pattern, query.synonymTable);
+                evaluatePatternClause(*pattern, query.synonymTable, clauseResults[optQuery.groups[i]]);
                 // Remove all present synonyms from target synonyms
                 std::pair<Argument, Argument> args = pattern->getArgs();
                 Argument arg0 = pattern->getSynonym();
@@ -252,7 +249,7 @@ namespace PQL {
                 }
             } else if (clause->getClauseType() == ClauseType::WITH) {
                 WithClause* with = static_cast<WithClause*>(clause);
-                result = evaluateWithClause(*with, query.synonymTable);
+                evaluateWithClause(*with, query.synonymTable, clauseResults[optQuery.groups[i]]);
                 // Remove all present synonyms from target synonyms
                 std::pair<Argument, Argument> args = with->getArgs();
                 Argument arg1 = args.first;
@@ -285,20 +282,13 @@ namespace PQL {
                 }
             }
 
-            // If the result is empty, we can stop evaluation immediately
-            if (!result.trueResult && result.rows.empty()) {
-                return extractQueryResults(query, ClauseResult());
-            }
-
-            // Merge this table with the intermediate table of the corresponding group
-            // Also delete any synonyms that we don't need anymore
-            SPA::LoggingUtils::LogInfoMessage("Performing merge between tables of size %d and %d\n", result.rows.size(), clauseResults[optQuery.groups[i]].rows.size());
-            clauseResults[optQuery.groups[i]] = combineTwoClauseResults(result, clauseResults[optQuery.groups[i]], toDelete);
-
             // If the merged table is empty, stop evaluation immediately
             if (!clauseResults[optQuery.groups[i]].trueResult && clauseResults[optQuery.groups[i]].rows.empty()) {
                 return extractQueryResults(query, ClauseResult());
             }
+
+            // Delete any synonyms that we don't need anymore
+            deleteSynonyms(clauseResults[optQuery.groups[i]], toDelete);
         }
 
         // Find all groups that should participate in inter-group merging
@@ -310,25 +300,68 @@ namespace PQL {
             }
         }
 
-        mergingGroups.emplace_back(clauseResults[optQuery.last.size()]);
-
         // Merge a table for each synonym not present in any clause
         for (Synonym synonym : missingTargetSynonyms) {
             mergingGroups.emplace_back(getClauseResultWithAllValues(synonym, query.synonymTable[synonym]));
         }
 
+        // If there are no groups to be merged, probably a Select BOOLEAN
+        if (mergingGroups.size() == 0) {
+            ClauseResult clauseResult;
+            clauseResult.trueResult = true;
+            mergingGroups.emplace_back(clauseResult);
+        }
+
         // Combine all results
         // ClauseResult combinedResult = combineClauseResults(mergingGroups);
-        ClauseResult combinedResult;
-        combinedResult.trueResult = true;
-        for (ClauseResult& result : mergingGroups) {
-            combinedResult = combineTwoClauseResults(combinedResult, result, {});
+        ClauseResult combinedResult = mergingGroups[0];
+        for (int i = 1; i < mergingGroups.size(); i++) {
+            combinedResult = combineTwoClauseResults(combinedResult, mergingGroups[i], {});
         }
 
         // Extract necessary results to answer query
         ClauseResult result = extractQueryResults(query, combinedResult);
 
         return result;
+    }
+
+    void QueryEvaluator::deleteSynonyms(ClauseResult& result, std::vector<Synonym> toDelete) {
+        std::vector<int> positions;
+        std::vector<Synonym> updatedSynonyms;
+        int i = 0, j = 0;
+        while (i < result.syns.size()) {
+            while (j < toDelete.size() && toDelete[j] < result.syns[i]) {
+                j++;
+            }
+            if (j < toDelete.size()) {
+                if (toDelete[j] == result.syns[i]) {
+                    positions.emplace_back(i);
+                } else {
+                    updatedSynonyms.emplace_back(result.syns[i]);
+                }
+            } else {
+                updatedSynonyms.emplace_back(result.syns[i]);
+            }
+            i++;
+        }
+        result.syns = updatedSynonyms;
+        std::vector<ClauseResultEntry> updatedEntries;
+        for (ClauseResultEntry& resultEntry : result.rows) {
+            ClauseResultEntry updatedResultEntry;
+            int j = 0;
+            for (unsigned int i = 0; i < resultEntry.size(); i++) {
+                if (j < positions.size() && positions[j] == i) {
+                    j++;
+                } else {
+                    updatedResultEntry.emplace_back(resultEntry[i]);
+                }
+            }
+            updatedEntries.emplace_back(updatedResultEntry);
+        }
+
+        std::sort(updatedEntries.begin(), updatedEntries.end());
+        updatedEntries.resize(std::distance(updatedEntries.begin(), std::unique(updatedEntries.begin(), updatedEntries.end())));
+        result.rows = updatedEntries;
     }
 
     ClauseResult QueryEvaluator::extractQueryResults(Query &query, ClauseResult& combinedResult) {
@@ -379,16 +412,16 @@ namespace PQL {
                         if (query.synonymTable[targetSyn] == DesignEntity::PROCEDURE) {
                             finalResultEntry[position] = resultEntry[j];
                         } else {
-                            CallStmt *callStmt = dynamic_cast<CallStmt*>(database.stmtTable.get(std::stoi(resultEntry[j])).get());
+                            CallStmt *callStmt = dynamic_cast<CallStmt*>(database->stmtTable.get(std::stoi(resultEntry[j])).get());
                             finalResultEntry[position] = callStmt->getProc();
                         }
                     } else if (targetAttr == AttrType::VAR_NAME) {
                         if (query.synonymTable[targetSyn] == DesignEntity::READ) {
-                            ReadStmt* readStmt = dynamic_cast<ReadStmt*>(database.stmtTable.get(std::stoi(resultEntry[j])).get());
-                            finalResultEntry[position] = database.varTable.get(readStmt->getVar());
+                            ReadStmt* readStmt = dynamic_cast<ReadStmt*>(database->stmtTable.get(std::stoi(resultEntry[j])).get());
+                            finalResultEntry[position] = database->varTable.get(readStmt->getVar());
                         } else if (query.synonymTable[targetSyn] == DesignEntity::PRINT) {
-                            PrintStmt* printStmt = dynamic_cast<PrintStmt*>(database.stmtTable.get(std::stoi(resultEntry[j])).get());
-                            finalResultEntry[position] = database.varTable.get(printStmt->getVar());
+                            PrintStmt* printStmt = dynamic_cast<PrintStmt*>(database->stmtTable.get(std::stoi(resultEntry[j])).get());
+                            finalResultEntry[position] = database->varTable.get(printStmt->getVar());
                         } else {
                             finalResultEntry[position] = resultEntry[j];
                         }
@@ -426,20 +459,7 @@ namespace PQL {
     }
 
     ClauseResult QueryEvaluator::combineTwoClauseResults(ClauseResult clauseResults1, ClauseResult clauseResults2, std::vector<Synonym> toDelete) {
-        if (clauseResults1.trueResult && clauseResults2.trueResult) {
-            return clauseResults1;
-        } else if (clauseResults1.trueResult && !clauseResults2.rows.empty()) {
-            return clauseResults2;
-        } else if (!clauseResults1.rows.empty() && clauseResults2.trueResult) {
-            return clauseResults1;
-        }
-
-        if (clauseResults1.rows.empty() || clauseResults2.rows.empty()) {
-            return clauseResults1;
-        }
-
         // Extract common synonyms and get structure of combined result
-        std::vector<std::pair<int, int> > commonSynonyms;
         std::vector<std::pair<int, int> > combStruct;
         unsigned int i = 0, j = 0;
         while (i < clauseResults1.syns.size()) {
@@ -451,7 +471,6 @@ namespace PQL {
                 break;
             }
             if (clauseResults1.syns[i] == clauseResults2.syns[j]) {
-                commonSynonyms.emplace_back(std::make_pair(i, j));
                 j++;
             }
             combStruct.emplace_back(std::make_pair(i, 0));
@@ -467,35 +486,18 @@ namespace PQL {
         }
 
         ClauseResult combinedResult;
-        std::vector<std::pair<int, int> > finalCombStruct;
-        // Populate synonym list and remove all synonyms that are deleted
-        unsigned int k = 0;
-        for (unsigned int i = 0; i < combStruct.size(); i++) {
+        for (int i = 0; i < combStruct.size(); i++) {
             if (combStruct[i].second == 0) {
-                while (k < toDelete.size() && toDelete[k] < clauseResults1.syns[combStruct[i].first]) {
-                    k++;
-                }
-                if (toDelete.empty() || k >= toDelete.size() || (k < toDelete.size() && toDelete[k] != clauseResults1.syns[combStruct[i].first])) {
-                    combinedResult.syns.emplace_back(clauseResults1.syns[combStruct[i].first]);
-                    finalCombStruct.emplace_back(combStruct[i]);
-                }
+                combinedResult.syns.emplace_back(clauseResults1.syns[combStruct[i].first]);
             } else {
-                while (k < toDelete.size() && toDelete[k] < clauseResults2.syns[combStruct[i].first]) {
-                    k++;
-                }
-                if (toDelete.empty() || k >= toDelete.size() || (k < toDelete.size() && toDelete[k] != clauseResults2.syns[combStruct[i].first])) {
-                    combinedResult.syns.emplace_back(clauseResults2.syns[combStruct[i].first]);
-                    finalCombStruct.emplace_back(combStruct[i]);
-                }
+                combinedResult.syns.emplace_back(clauseResults2.syns[combStruct[i].first]);
             }
         }
 
         // Perform a Cartesian Product
         for (ClauseResultEntry& entry1 : clauseResults1.rows) {
             for (ClauseResultEntry& entry2 : clauseResults2.rows) {
-                if (checkCommonSynonyms(entry1, entry2, commonSynonyms)) {
-                    combinedResult.rows.emplace_back(combineTwoClauseResultEntries(entry1, entry2, finalCombStruct));
-                }
+                combinedResult.rows.emplace_back(combineTwoClauseResultEntries(entry1, entry2, combStruct));
             }
         }
 
@@ -527,77 +529,75 @@ namespace PQL {
         return combinedResults;
     }
 
-    ClauseResult QueryEvaluator::evaluateRelationClause(RelationClause &relationClause,
-        std::unordered_map<std::string, DesignEntity> &synonymTable) {
+    void QueryEvaluator::evaluateRelationClause(RelationClause &relationClause,
+        std::unordered_map<std::string, DesignEntity> &synonymTable, ClauseResult& intResult) {
         switch (relationClause.getRelationType()) {
         case RelationType::FOLLOWS:
-            return FollowsEvaluator::evaluateFollowsClause(this->database, relationClause, synonymTable);
+            return FollowsEvaluator::evaluateFollowsClause(*database, relationClause, synonymTable, intResult);
             break;
         case RelationType::FOLLOWST:
-            return FollowsStarEvaluator::evaluateFollowsStarClause(this->database, relationClause, synonymTable);
+            return FollowsStarEvaluator::evaluateFollowsStarClause(*database, relationClause, synonymTable, intResult);
             break;
         case RelationType::PARENT:
-            return ParentEvaluator::evaluateParentClause(this->database, relationClause, synonymTable);
+            return ParentEvaluator::evaluateParentClause(*database, relationClause, synonymTable, intResult);
             break;
         case RelationType::PARENTT:
-            return ParentStarEvaluator::evaluateParentStarClause(this->database, relationClause, synonymTable);
+            return ParentStarEvaluator::evaluateParentStarClause(*database, relationClause, synonymTable, intResult);
             break;
         case RelationType::MODIFIESS:
         case RelationType::MODIFIESP:
-            return ModifiesEvaluator::evaluateModifiesClause(this->database, relationClause, synonymTable);
+            return ModifiesEvaluator::evaluateModifiesClause(*database, relationClause, synonymTable, intResult);
             break;
         case RelationType::USESS:
         case RelationType::USESP:
-            return UsesEvaluator::evaluateUsesClause(this->database, relationClause, synonymTable);
+            return UsesEvaluator::evaluateUsesClause(*database, relationClause, synonymTable, intResult);
             break;
         case RelationType::CALLS:
-            return CallsEvaluator::evaluateCallsClause(this->database, relationClause, synonymTable);
+            return CallsEvaluator::evaluateCallsClause(*database, relationClause, synonymTable, intResult);
             break;
         case RelationType::CALLST:
-            return CallsStarEvaluator::evaluateCallsStarClause(this->database, relationClause, synonymTable);
+            return CallsStarEvaluator::evaluateCallsStarClause(*database, relationClause, synonymTable, intResult);
             break;
         case RelationType::NEXT:
-            return NextEvaluator::evaluateNextClause(this->database, relationClause, synonymTable);
+            return NextEvaluator::evaluateNextClause(*database, relationClause, synonymTable, intResult);
             break;
         case RelationType::NEXTT:
-            return NextStarEvaluator::evaluateNextStarClause(this->database, relationClause, synonymTable);
+            return NextStarEvaluator::evaluateNextStarClause(*database, relationClause, synonymTable, intResult);
             break;
         case RelationType::AFFECTS:
-            return AffectsEvaluator::evaluateAffectsClause(this->database, relationClause, synonymTable);
+            return AffectsEvaluator::evaluateAffectsClause(*database, relationClause, synonymTable, intResult);
             break;
         case RelationType::AFFECTST:
-            return AffectsStarEvaluator::evaluateAffectsStarClause(this->database, relationClause, synonymTable);
+            return AffectsStarEvaluator::evaluateAffectsStarClause(*database, relationClause, synonymTable, intResult);
             break;
         default:
             SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluateRelationClause: Unknown relation type %d\n", relationClause.getRelationType());
-            return {};
         }
     }
 
-    ClauseResult QueryEvaluator::evaluatePatternClause(PatternClause &patternClause,
-        std::unordered_map<std::string, DesignEntity> &synonymTable) {
+    void QueryEvaluator::evaluatePatternClause(PatternClause &patternClause,
+        std::unordered_map<std::string, DesignEntity> &synonymTable, ClauseResult& intResult) {
 
         switch (patternClause.getPatternType()) {
         case PatternType::ASSIGN_PATTERN:
-            return AssignPatternEvaluator::evaluateAssignPatternClause(this->database, patternClause, synonymTable);
+            return AssignPatternEvaluator::evaluateAssignPatternClause(*database, patternClause, synonymTable, intResult);
             break;
         case PatternType::IF_PATTERN:
-            return IfPatternEvaluator::evaluateIfPatternClause(this->database, patternClause, synonymTable);
+            return IfPatternEvaluator::evaluateIfPatternClause(*database, patternClause, synonymTable, intResult);
             break;
         case PatternType::WHILE_PATTERN:
-            return WhilePatternEvaluator::evaluateWhilePatternClause(this->database, patternClause, synonymTable);
+            return WhilePatternEvaluator::evaluateWhilePatternClause(*database, patternClause, synonymTable, intResult);
             break;
         default:
             SPA::LoggingUtils::LogErrorMessage("QueryEvaluator::evaluatePatternClause: Unknown pattern type %d\n", patternClause.getPatternType());
-            return {};
         }
 
     }
 
-    ClauseResult QueryEvaluator::evaluateWithClause(WithClause& withClause,
-        std::unordered_map<std::string, DesignEntity>& synonymTable) {
+    void QueryEvaluator::evaluateWithClause(WithClause& withClause,
+        std::unordered_map<std::string, DesignEntity>& synonymTable, ClauseResult& intResult) {
 
-        return WithEvaluator::evaluateWithClause(this->database, withClause, synonymTable);
+        return WithEvaluator::evaluateWithClause(*database, withClause, synonymTable, intResult);
 
     }
 
