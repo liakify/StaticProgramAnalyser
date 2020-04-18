@@ -190,7 +190,7 @@ namespace PQL {
             }
 
             if (clause->isNegatedClause()) {
-                result = negateClauseResults(result, query.synonymTable);
+                negateClauseResults(result, query.synonymTable);
             }
 
             // If the result is empty, we can stop evaluation immediately
