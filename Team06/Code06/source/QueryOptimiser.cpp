@@ -304,10 +304,12 @@ namespace PQL {
                 if (startingNode[node.group] == nullptr) {
                     startingNode[node.group] = &node;
                 } else if (node < *startingNode[node.group]) {
+                    /*
                     // If the evicted clause is a single-synonym basic relation, add it anyway
                     if (!startingNode[node.group]->advancedRelation && startingNode[node.group]->getSynonymCount() == 1) {
                         pq.emplace(startingNode[node.group]);
                     }
+                    */
                     startingNode[node.group] = &node;
 
                 }
