@@ -107,7 +107,7 @@ namespace PQL {
                     int index = std::find(intResult.syns.begin(), intResult.syns.end(), arg2) - intResult.syns.begin();
                     std::vector<ClauseResultEntry> updatedResult;
                     for (ClauseResultEntry& resultEntry : intResult.rows) {
-                        if (database.callsKB.calls(arg1, std::stoi(resultEntry[index]))) {
+                        if (database.callsKB.calls(arg1, database.procTable.getProcId(resultEntry[index]))) {
                             updatedResult.emplace_back(resultEntry);
                         }
                     }
@@ -131,7 +131,7 @@ namespace PQL {
                     int index = std::find(intResult.syns.begin(), intResult.syns.end(), arg1) - intResult.syns.begin();
                     std::vector<ClauseResultEntry> updatedResult;
                     for (ClauseResultEntry& resultEntry : intResult.rows) {
-                        if (database.callsKB.calls(std::stoi(resultEntry[index]), arg2)) {
+                        if (database.callsKB.calls(database.procTable.getProcId(resultEntry[index]), arg2)) {
                             updatedResult.emplace_back(resultEntry);
                         }
                     }
@@ -174,7 +174,7 @@ namespace PQL {
                     int index = std::find(intResult.syns.begin(), intResult.syns.end(), arg2) - intResult.syns.begin();
                     std::vector<ClauseResultEntry> updatedResult;
                     for (ClauseResultEntry& resultEntry : intResult.rows) {
-                        if (database.callsKB.hasCaller(std::stoi(resultEntry[index]))) {
+                        if (database.callsKB.hasCaller(database.procTable.getProcId(resultEntry[index]))) {
                             updatedResult.emplace_back(resultEntry);
                         }
                     }
@@ -197,7 +197,7 @@ namespace PQL {
                     int index = std::find(intResult.syns.begin(), intResult.syns.end(), arg1) - intResult.syns.begin();
                     std::vector<ClauseResultEntry> updatedResult;
                     for (ClauseResultEntry& resultEntry : intResult.rows) {
-                        if (database.callsKB.hasCallee(std::stoi(resultEntry[index]))) {
+                        if (database.callsKB.hasCallee(database.procTable.getProcId(resultEntry[index]))) {
                             updatedResult.emplace_back(resultEntry);
                         }
                     }
@@ -266,10 +266,10 @@ namespace PQL {
                 int index2 = std::find(intResult.syns.begin(), intResult.syns.end(), arg2) - intResult.syns.begin();
                 std::vector<ClauseResultEntry> updatedResult;
                 for (ClauseResultEntry& resultEntry : intResult.rows) {
-                    std::unordered_set<StmtId> stmts = database.callsKB.getDirectNodes(std::stoi(resultEntry[index1]), NodeType::SUCCESSOR);
-                    for (StmtId stmt : stmts) {
+                    std::unordered_set<ProcId> procs = database.callsKB.getDirectNodes(database.procTable.getProcId(resultEntry[index1]), NodeType::SUCCESSOR);
+                    for (ProcId proc : procs) {
                         ClauseResultEntry newResultEntry(resultEntry);
-                        newResultEntry.insert(newResultEntry.begin() + index2, std::to_string(stmt));
+                        newResultEntry.insert(newResultEntry.begin() + index2, database.procTable.get(proc).getName());
                         updatedResult.emplace_back(newResultEntry);
                     }
                 }
@@ -281,10 +281,10 @@ namespace PQL {
                 int index1 = std::find(intResult.syns.begin(), intResult.syns.end(), arg1) - intResult.syns.begin();
                 std::vector<ClauseResultEntry> updatedResult;
                 for (ClauseResultEntry& resultEntry : intResult.rows) {
-                    std::unordered_set<StmtId> stmts = database.callsKB.getDirectNodes(std::stoi(resultEntry[index2]), NodeType::PREDECESSOR);
-                    for (StmtId stmt : stmts) {
+                    std::unordered_set<ProcId> procs = database.callsKB.getDirectNodes(database.procTable.getProcId(resultEntry[index2]), NodeType::PREDECESSOR);
+                    for (ProcId proc : procs) {
                         ClauseResultEntry newResultEntry(resultEntry);
-                        newResultEntry.insert(newResultEntry.begin() + index1, std::to_string(stmt));
+                        newResultEntry.insert(newResultEntry.begin() + index1, database.procTable.get(proc).getName());
                         updatedResult.emplace_back(newResultEntry);
                     }
                 }
@@ -294,7 +294,7 @@ namespace PQL {
                 int index2 = std::find(intResult.syns.begin(), intResult.syns.end(), arg2) - intResult.syns.begin();
                 std::vector<ClauseResultEntry> updatedResult;
                 for (ClauseResultEntry& resultEntry : intResult.rows) {
-                    if (database.callsKB.calls(std::stoi(resultEntry[index1]), std::stoi(resultEntry[index2]))) {
+                    if (database.callsKB.calls(database.procTable.getProcId(resultEntry[index1]), database.procTable.getProcId(resultEntry[index2]))) {
                         updatedResult.emplace_back(resultEntry);
                     }
                 }

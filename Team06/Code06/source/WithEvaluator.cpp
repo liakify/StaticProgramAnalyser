@@ -77,35 +77,32 @@ namespace PQL {
                 if (std::find(intResult.syns.begin(), intResult.syns.end(), syn1) == intResult.syns.end()) {
 
                     if (synonymTable[syn1] == DesignEntity::CALL || synonymTable[syn1] == DesignEntity::READ || synonymTable[syn1] == DesignEntity::PRINT) {
-                        ClauseResult clauseResult;
-                        clauseResult.syns.emplace_back(syn1);
+                        intResult.syns.emplace_back(syn1);
                         std::unordered_multimap<ProcName, StmtId> stmts =
                             getStmtDataPairs(database, SPA::TypeUtils::getStmtTypeFromDesignEntity(synonymTable[syn1]));
                         for (std::pair<std::string, StmtId> stmt : stmts) {
                             if (stmt.first == arg2.value) {
                                 ClauseResultEntry resultEntry;
                                 resultEntry.emplace_back(std::to_string(stmt.second));
-                                clauseResult.rows.emplace_back(resultEntry);
+                                intResult.rows.emplace_back(resultEntry);
                             }
                         }
 
 
                     } else if (synonymTable[syn1] == DesignEntity::PROCEDURE) {
-                        ClauseResult clauseResult;
-                        clauseResult.syns.emplace_back(syn1);
+                        intResult.syns.emplace_back(syn1);
                         if (database.procTable.getProcId(arg2.value) != -1) {
                             ClauseResultEntry resultEntry;
                             resultEntry.emplace_back(arg2.value);
-                            clauseResult.rows.emplace_back(resultEntry);
+                            intResult.rows.emplace_back(resultEntry);
                         }
 
                     } else if (synonymTable[syn1] == DesignEntity::VARIABLE) {
-                        ClauseResult clauseResult;
-                        clauseResult.syns.emplace_back(syn1);
+                        intResult.syns.emplace_back(syn1);
                         if (database.varTable.getVarId(arg2.value) != -1) {
                             ClauseResultEntry resultEntry;
                             resultEntry.emplace_back(arg2.value);
-                            clauseResult.rows.emplace_back(resultEntry);
+                            intResult.rows.emplace_back(resultEntry);
                         }
 
                     }
@@ -444,7 +441,6 @@ namespace PQL {
             std::string arg1 = args.first.value;
             std::string arg2 = args.second.value;
 
-            ClauseResult clauseResult;
             if (arg1 != arg2) {
                 intResult.rows.clear();
                 intResult.trueResult = false;

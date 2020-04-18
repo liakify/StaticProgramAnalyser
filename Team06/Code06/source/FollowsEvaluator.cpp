@@ -292,7 +292,7 @@ namespace PQL {
                 std::vector<ClauseResultEntry> updatedResult;
                 for (ClauseResultEntry& resultEntry : intResult.rows) {
                     StmtId stmt = database.followsKB.getFollower(std::stoi(resultEntry[index1]));
-                    if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(std::stoi(resultEntry[index1]))->getType(), synonymTable[arg1]) &&
+                    if (stmt != 0 && SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(std::stoi(resultEntry[index1]))->getType(), synonymTable[arg1]) &&
                         SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(stmt)->getType(), synonymTable[arg2])) {
                         ClauseResultEntry newResultEntry(resultEntry);
                         newResultEntry.insert(newResultEntry.begin() + index2, std::to_string(stmt));
@@ -308,7 +308,7 @@ namespace PQL {
                 std::vector<ClauseResultEntry> updatedResult;
                 for (ClauseResultEntry& resultEntry : intResult.rows) {
                     StmtId stmt = database.followsKB.getFollowing(std::stoi(resultEntry[index2]));
-                    if (SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(stmt)->getType(), synonymTable[arg1]) &&
+                    if (stmt != 0 && SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(stmt)->getType(), synonymTable[arg1]) &&
                         SPA::TypeUtils::isStmtTypeDesignEntity(database.stmtTable.get(std::stoi(resultEntry[index2]))->getType(), synonymTable[arg2])) {
                         ClauseResultEntry newResultEntry(resultEntry);
                         newResultEntry.insert(newResultEntry.begin() + index1, std::to_string(stmt));
