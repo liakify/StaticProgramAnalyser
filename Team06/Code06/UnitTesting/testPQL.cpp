@@ -1,4 +1,4 @@
-#include <algorithm>
+#include <unordered_map>
 
 #include "stdafx.h"
 #include "PKB.h"
@@ -104,7 +104,7 @@ namespace UnitTesting {
         TEST_METHOD(evaluateQuery) {
             // List of test queries and corresponding expected results
             // After each query is handled by PQLManager::evaluateQuery
-            vector<pair<string, std::list<string>>> TEST_CASES = {
+            vector<pair<string, std::unordered_set<string>>> TEST_CASES = {
                 { StubQueries::EMPTY_QUERY, { } },
                 { StubQueries::BOOLEAN_VALID_QUERY, { "TRUE" } },
                 { StubQueries::BOOLEAN_INVALID_DECL_SYNTAX_QUERY, { } },
@@ -123,8 +123,7 @@ namespace UnitTesting {
                 // Compare the contents of the result list and the expected result list
                 std::list<string> output;
                 facade.evaluateQuery(testcase.first, output);
-                Assert::IsTrue(testcase.second.size() == output.size());
-                Assert::IsTrue(std::equal(testcase.second.begin(), testcase.second.end(), output.begin()));
+                Assert::IsTrue(std::unordered_set<std::string>(output.begin(), output.end()) == testcase.second);
             }
         }
 
