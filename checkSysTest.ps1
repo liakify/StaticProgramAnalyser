@@ -27,7 +27,7 @@ $list_of_test_files = @(
   # '..\performance600_chainedAffects'
   # '..\performance600_chainedAffectsStar'
   # '..\performance600_nextStar+AffectsStar+Tuple'
-    )
+)
 
 $list_of_no_xml_tests = @(
 )

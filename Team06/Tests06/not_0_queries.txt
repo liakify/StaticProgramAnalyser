@@ -1,0 +1,275 @@
+1 - Follows: Single Synonym
+stmt s;
+Select s such that not Follows(s, 2)
+2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18
+5000
+2 - Follows: Double Synonym
+stmt s1, s2;
+Select s2 such that not Follows(s1, s2)
+1, 3, 5, 7, 10, 12, 15, 16, 18
+5000
+3 - FollowsStar: Single Synonym
+stmt s;
+Select s such that not Follows*(s, 9)
+3, 4, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18
+5000
+4 - FollowsStar: Double Synonym
+stmt s1, s2;
+Select s2 such that not Follows*(s1, s2)
+1, 3, 5, 7, 10, 12, 15, 16, 18
+5000
+5 - Parent: Single Synonym
+stmt s;
+Select s such that not Parent(s, 3)
+1, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18
+5000
+6 - Parent: Double Synonym
+stmt s1, s2;
+Select s2 such that not Parent(s1, s2)
+1, 2, 8, 9, 10, 11, 13, 14, 17, 18
+5000
+7 - ParentStar: Single Synonym
+stmt s;
+Select s such that not Parent*(s, 5)
+1, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18
+5000
+8 - ParentStar: Double Synonym
+stmt s1, s2;
+Select s2 such that not Parent*(s1, s2)
+1, 2, 8, 9, 10, 11, 13, 14, 17, 18
+5000
+9 - Uses: Single Synonym, variable
+variable v;
+Select v such that not Uses(8, v)
+z
+5000
+10 - Uses: Single Synonym, procedure
+procedure p;
+Select p such that not Uses(p, "x")
+
+5000
+11 - Uses: Double Synonym
+stmt s; variable v;
+Select s such that not Uses(s, v)
+1, 3, 6, 16, 17
+5000
+12 - Modifies: Single Synonym, variable
+variable v;
+Select v such that not Modifies(8, v)
+x, y
+5000
+13 - Modifies: Single Synonym, procedure
+procedure p;
+Select p such that not Modifies(p, "x")
+
+5000
+14 - Modifies: Double Synonym
+stmt s; variable v;
+Select s such that not Modifies(s, v)
+4, 5, 7, 13
+5000
+15 - Calls: Single Synonym
+procedure p;
+Select p such that not Calls(p, "Not2")
+Not2, Not3
+5000
+16 - Calls: Double Synonym
+procedure p1, p2;
+Select p2 such that not Calls(p1, p2)
+Not
+5000
+17 - CallsStar: Single Synonym
+procedure p;
+Select p such that not Calls*(p, "Not3")
+Not3
+5000
+18 - CallsStar: Double Synonym
+procedure p1, p2;
+Select p2 such that not Calls*(p1, p2)
+Not
+5000
+19 - Next: Single Synonym
+prog_line n;
+Select n such that not Next(n, 5)
+1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18
+5000
+20 - Next: Double Synonym
+prog_line n1, n2;
+Select n2 such that not Next(n1, n2)
+1, 10, 18
+5000
+21 - NextStar: Single Synonym
+prog_line n;
+Select n such that not Next*(n, 5)
+6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18
+5000
+22 - NextStar: Double Synonym
+prog_line n1, n2;
+Select n2 such that not Next*(n1, n2)
+1, 10, 18
+5000
+23 - Affects: Single Synonym
+assign a;
+Select a such that not Affects(a, 8)
+3, 8, 10, 12, 18
+5000
+24 - Affects: Double Synonym
+assign a1, a2;
+Select a2 such that not Affects(a1, a2)
+1, 3, 10, 18
+5000
+25 - AffectsStar: Single Synonym
+assign a;
+Select a such that not Affects*(a, 8)
+3, 8, 10, 12, 18
+5000
+26 - AffectsStar: Double Synonym
+assign a1, a2;
+Select a2 such that not Affects*(a1, a2)
+1, 3, 10, 18
+5000
+27 - Empty Clause: Uses
+stmt s;
+Select s such that not Uses(s, "Nonexistent")
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18
+5000
+28 - Empty Clause: Modifies
+stmt s;
+Select s such that not Modifies(s, "Nonexistent")
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18
+5000
+29 - Empty Clause: Calls
+procedure p;
+Select p such that not Calls(p, "Not")
+Not, Not2, Not3
+5000
+30 - Empty Clause: Next
+prog_line n;
+Select n such that not Next(n, 1)
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18
+5000
+31 - Empty Clause: Affects
+assign a;
+Select a such that not Affects(a, "Nonexistent")
+1, 3, 8, 10, 12, 18
+5000
+32 - attrRef: p.procName
+procedure p;
+Select p.procName with not p.procName = "Not"
+Not2, Not3
+5000
+33 - attrRef: c.procName
+call c;
+Select c.procName with not c.procName = "Not2"
+Not3
+5000
+34 - attrRef: v.varName
+variable v;
+Select v.varName with not v.varName = "x"
+y, z
+5000
+35 - attrRef: r.varName
+read r;
+Select r.varName with not r.varName = "y"
+x
+5000
+36 - attrRef: pn.varName
+print pn;
+Select pn.varName with not pn.varName = "x"
+z
+5000
+37 - attrRef: cn.value
+constant cn;
+Select cn.value with not cn.value = 5
+1, 6
+5000
+38 - attrRef: s.stmt#
+stmt s;
+Select s.stmt# with not s.stmt# = 1
+2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18
+5000
+39 - attrRef: r.stmt#
+read r;
+Select r.stmt# with not r.stmt# = 6
+16, 17
+5000
+40 - attrRef: pn.stmt#
+print pn;
+Select pn.stmt# with not pn.stmt# = 7
+5, 13
+5000
+41 - attrRef: c.stmt#
+call c;
+Select c.stmt# with not c.stmt# = 15
+9
+5000
+42 - attrRef: ifs.stmt#
+if ifs;
+Select ifs.stmt# with not ifs.stmt# = 14
+2
+5000
+43 - attrRef: w.stmt#
+while w;
+Select w.stmt# with not w.stmt# = 11
+4
+5000
+44 - attrRef: a.stmt#
+assign a;
+Select a.stmt# with not a.stmt# = 10
+1, 3, 8, 12, 18
+5000
+45 - With: FALSE
+variable v;
+Select v.varName with not v.varName = "Nonexistent"
+x, y, z
+5000
+46 - With: Unrelated
+
+Select BOOLEAN with not "a" = "a"
+FALSE
+5000
+47 - Pattern a
+assign a; variable v;
+Select v pattern not a(v, _)
+
+5000
+48 - Pattern a: Specific LHS
+assign a;
+Select a pattern not a("x", _)
+1, 8, 10, 12
+5000
+49 - Pattern a: Specific RHS
+assign a; variable v;
+Select a pattern not a(v, _"x + y"_)
+1, 3, 10, 12, 18
+5000
+50 - Pattern ifs
+if ifs; variable v;
+Select v pattern not ifs(v, _, _)
+x, y
+5000
+51 - Pattern ifs: Specific
+if ifs;
+Select ifs pattern not ifs("z", _, _)
+2
+5000
+52 - Pattern ifs: No variable
+if ifs;
+Select ifs pattern not ifs(_, _, _)
+2
+5000
+53 - Pattern w
+while w; variable v;
+Select v pattern not w(v, _)
+z
+5000
+54 - Pattern w: Specific
+while w;
+Select w pattern not w("y", _)
+11
+5000
+55 - Pattern w: No variable
+while w;
+Select w pattern not w(_, _)
+11
+5000

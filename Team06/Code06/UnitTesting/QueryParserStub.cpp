@@ -36,7 +36,7 @@ namespace UnitTesting {
                 { },
                 {
                     {
-                        "pattern a(_, _\"x\"_)", PatternType::ASSIGN_PATTERN,
+                        "pattern a(_, _\"x\"_)", false, PatternType::ASSIGN_PATTERN,
                         { ArgType::SYNONYM, "a", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
                         { ArgType::WILDCARD, "_", PQL::NON_SYNONYM_ID, AttrType::INVALID },
                         { ArgType::INCLUSIVE_PATTERN, "_x_", PQL::NON_SYNONYM_ID, AttrType::INVALID }
@@ -95,7 +95,7 @@ namespace UnitTesting {
                 },
                 {
                     {
-                        "Next*(l1, l2)", RelationType::NEXTT,
+                        "Next*(l1, l2)", false, RelationType::NEXTT,
                         { ArgType::SYNONYM, "l1", PQL::UNSET_SYNONYM_ID, AttrType::INVALID },
                         { ArgType::SYNONYM, "l2", PQL::UNSET_SYNONYM_ID, AttrType::INVALID }
                     }

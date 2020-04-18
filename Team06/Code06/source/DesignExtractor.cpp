@@ -20,6 +20,7 @@ namespace FrontEnd {
         populatePattern();
         populateNext();
         updateStmtContainerId();
+        populateContains();
         return this->pkb;
     }
 
@@ -449,6 +450,16 @@ namespace FrontEnd {
             StatementList sl = pkb.stmtListTable.get(sid);
             for (StmtId id : sl.getStmtIds()) {
                 pkb.stmtTable.get(id)->setContainerId(sid);
+            }
+        }
+    }
+
+    void DesignExtractor::populateContains() {
+        for (ProcId pid = 1; pid <= pkb.procTable.size(); pid++) {
+            Procedure p = pkb.procTable.get(pid);
+            StatementList sl = pkb.stmtListTable.get(p.getStmtLstId());
+            for (StmtId sid = sl.getFirst(); sid <= sl.getMaxLast(); sid++) {
+                pkb.containsKB.addContains(pid, sid);
             }
         }
     }

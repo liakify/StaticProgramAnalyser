@@ -18,6 +18,7 @@
 #include "CallsKB.h"
 #include "NextKB.h"
 #include "AffectsKB.h"
+#include "ContainsKB.h"
 
 #include "RuntimeDesignExtractor.h"
 
@@ -198,6 +199,7 @@ namespace PKB {
         UsesKB usesKB;
         ModifiesKB modifiesKB;
         PatternKB patternKB;
+        ContainsKB containsKB;
 
      private:
         NextKB nextKB;

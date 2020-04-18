@@ -1,0 +1,10 @@
+1 - 
+procedure p; stmt s; 
+Select p such that Contains(p, s) and Modifies(s, _)
+AssignOnly, ReadOnly, ReadAndAssign
+5000
+2 - 
+procedure p, q; stmt s; if ifs; variable v; 
+Select <p, q> such that Contains(p, ifs) and Modifies(q, v) pattern ifs(v, _, _)
+AssignOnly AssignOnly, AssignOnly ReadOnly, AssignOnly ReadAndAssign
+5000

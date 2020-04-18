@@ -57,6 +57,7 @@ namespace PQL {
         bool parsePatternClauses(Query& query, std::vector<std::string>& patternClauses);
         bool parseWithClauses(Query& query, std::vector<std::string>& withClauses);
         std::pair<bool, ReturnType> parseReturnType(std::string arg);
+        std::pair<bool, std::string> parseClauseNegationStatus(std::string clause);
         Argument parseStmtRef(std::string arg);
         Argument parseEntityRef(std::string arg);
         Argument parsePattern(std::string arg);

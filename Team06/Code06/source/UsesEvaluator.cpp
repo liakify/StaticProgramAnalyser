@@ -228,6 +228,7 @@ namespace PQL {
                 clauseResult.syns.emplace_back(arg2);
                 clauseResult.syns.emplace_back(arg1);
             }
+
             if (synonymTable[arg1] == DesignEntity::PROCEDURE) {
                 for (StmtId i = 1; i <= database.procTable.size(); i++) {
                     std::unordered_set<VarId> usedVars = database.usesKB.getAllVarsUsedByProc(i);

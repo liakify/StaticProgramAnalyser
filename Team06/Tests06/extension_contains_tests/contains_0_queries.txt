@@ -1,0 +1,105 @@
+1 - Contains (p, s)
+procedure p; stmt s;
+Select p such that Contains (p, s)
+AssignOnly, ReadOnly, PrintOnly, ReadAndAssign, Everything
+5000
+2 - Contains (p, s) - select s
+procedure p; stmt s;
+Select s such that Contains (p, s)
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
+5000
+3 - Contains (p, INT)
+procedure p;
+Select p such that Contains (p, 5)
+ReadOnly
+5000
+4 - Contains (p, _)
+procedure p;
+Select p such that Contains (p, _)
+AssignOnly, ReadOnly, PrintOnly, ReadAndAssign, Everything
+5000
+5 - Contains (NAME, s)
+stmt s;
+Select s such that Contains ("Everything", s)
+10, 11, 12, 13, 14, 15, 16
+5000
+6 - Contains (NAME, INT)
+
+Select BOOLEAN such that Contains ("Everything", 13)
+TRUE
+5000
+7 - Contains (NAME, INT) => empty
+
+Select BOOLEAN such that Contains ("Everything", 1)
+FALSE
+5000
+8 - Contains (NAME, INT) => notFound procedure
+
+Select BOOLEAN such that Contains ("notFound", 13)
+FALSE
+5000
+9 - Contains (NAME, INT) => notFound statement
+
+Select BOOLEAN such that Contains ("Everything", 17)
+FALSE
+5000
+10 - Contains (NAME, _)
+
+Select BOOLEAN such that Contains ("AssignOnly", _)
+TRUE
+5000
+11 - Contains (_, s)
+stmt s;
+Select s such that Contains (_, s)
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
+5000
+12 - Contains (_, INT)
+
+Select BOOLEAN such that Contains (_, 5)
+TRUE
+5000
+13 - Contains (_, INT) => empty
+
+Select BOOLEAN such that Contains (_, 17)
+FALSE
+5000
+14 - Contains (_, s)
+stmt s;
+Select BOOLEAN such that Contains (_, s)
+TRUE
+5000
+15 - Contains (_, pl)
+prog_line pl;
+Select pl such that Contains (_, pl)
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
+5000
+16 - Contains (_, a)
+assign a;
+Select a such that Contains (_, a)
+2, 3, 11, 16
+5000
+17 - Contains (_, r)
+read r;
+Select r such that Contains (_, r)
+5, 14
+5000
+18 - Contains (_, pn)
+print pn;
+Select pn such that Contains (_, pn)
+6, 15
+5000
+19 - Contains (_, w)
+while w;
+Select w such that Contains (_, w)
+4, 7, 13
+5000
+20 - Contains (_, ifs)
+if ifs;
+Select ifs such that Contains (_, ifs)
+1, 10
+5000
+21 - Contains (NAME, c)
+call c;
+Select c such that Contains ("ReadAndAssign", c)
+8, 9
+5000

@@ -202,6 +202,7 @@ namespace PQL {
                 clauseResult.syns.emplace_back(arg1);
                 clauseResult.syns.emplace_back(arg0);
             }
+
             for (StmtId stmt : stmts) {
                 if (database.stmtTable.get(stmt)->getType() == StmtType::ASSIGN) {
                     std::unordered_set<VarId> vars = database.modifiesKB.getAllVarsModifiedByStmt(stmt);
