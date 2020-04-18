@@ -203,3 +203,8 @@ assign a;
 Select %.stmt#
 
 5000
+41 - attrRefs
+
+Select 9.stmt#
+
+5000
