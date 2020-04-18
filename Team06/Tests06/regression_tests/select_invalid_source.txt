@@ -1,3 +1,0 @@
-procedure Invalid {
-  print allShouldReturnBlank;
-}

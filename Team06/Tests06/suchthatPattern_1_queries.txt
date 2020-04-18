@@ -1,0 +1,120 @@
+1 - calls: 0 common synonyms => non-empty
+assign a; procedure p, q;
+Select p such that Calls (p, q) pattern a (_, _)
+suchthatPattern1, P2
+5000
+2 - calls: 0 common synonyms => non-empty
+if ifs; procedure p, q;
+Select p such that Calls* (p, q) pattern ifs (_, _, _)
+suchthatPattern1, P2
+5000
+3 - calls: 0 common synonyms => non-empty
+procedure p, q; while w;
+Select q such that Calls* (p, q) pattern w (_, _)
+P2, P3, P4
+5000
+4 - Next, No relation with any synonym
+prog_line n; assign a1, a2, a3; variable v;
+Select n such that Next(a1, a2) pattern a3 (v, _)
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12
+5000
+5 - Next, Connected Clauses
+assign a1, a2; variable v;
+Select a1 such that Next(a1, a2) pattern a1 (v, _)
+2, 3
+5000
+6 - Next, Connected Clauses: Select a2
+assign a1, a2; variable v;
+Select a2 such that Next(a1, a2) pattern a1 (v, _)
+3, 4
+5000
+7 - Next, Connected Clauses: pattern a2
+assign a1, a2; variable v;
+Select a1 such that Next(a1, a2) pattern a2 (v, _)
+2, 3
+5000
+8 - Next, Connected Clauses: pattern a2, Select a2
+assign a1, a2; variable v;
+Select a2 such that Next(a1, a2) pattern a2 (v, _)
+3, 4
+5000
+9 - Next, Connected Clauses: Limiting pattern
+assign a1, a2; variable v;
+Select a1 such that Next(a1, a2) pattern a2 (v, _"c"_)
+2
+5000
+10 - Next, Connected Clauses: Limiting pattern, select a2
+assign a1, a2; variable v;
+Select a2 such that Next(a1, a2) pattern a2 (v, _"c"_)
+3
+5000
+11 - Next, Connected Clauses: Limiting specific pattern
+assign a1, a2; variable v;
+Select a1 such that Next(a1, a2) pattern a2 (v, "c")
+2
+5000
+12 - Next, Connected Clauses: Limiting specific pattern, select a2
+assign a1, a2; variable v;
+Select a2 such that Next(a1, a2) pattern a2 (v, "c")
+3
+5000
+13 - Next*, Connected Clauses
+assign a1, a2; variable v;
+Select a1 such that Next*(a1, a2) pattern a1 (v, _)
+2, 3, 4
+5000
+14 - Next*, Connected Clauses: Select a2
+assign a1, a2; variable v;
+Select a2 such that Next*(a1, a2) pattern a1 (v, _)
+3, 4, 10
+5000
+15 - Next*, Connected Clauses: pattern a2
+assign a1, a2; variable v;
+Select a1 such that Next*(a1, a2) pattern a2 (v, _)
+2, 3, 4
+5000
+16 - Next*, Connected Clauses: pattern a2, Select a2
+assign a1, a2; variable v;
+Select a2 such that Next*(a1, a2) pattern a2 (v, _)
+3, 4, 10
+5000
+17 - Next*, Connected Clauses: Limiting pattern
+assign a1, a2; variable v;
+Select a1 such that Next*(a1, a2) pattern a2 (v, _"c"_)
+2
+5000
+18 - Next*, Connected Clauses: Limiting pattern, select a2
+assign a1, a2; variable v;
+Select a2 such that Next*(a1, a2) pattern a2 (v, _"c"_)
+3
+5000
+19 - Next*, Connected Clauses: Limiting specific pattern
+assign a1, a2; variable v;
+Select a1 such that Next*(a1, a2) pattern a2 (v, _"c"_)
+2
+5000
+20 - Next*, Connected Clauses: Limiting specific pattern, select a2
+assign a1, a2; variable v;
+Select a2 such that Next*(a1, a2) pattern a2 (v, _"c"_)
+3
+5000
+21 - Next, Next => empty
+assign a; variable v;
+Select a such that Next(a, 1) pattern a (v, _)
+
+5000
+22 - Next, Pattern => empty
+assign a; prog_line n;
+Select a such that Next(a, n) pattern a("notFound", "notFound")
+
+5000
+23 - Next*, Next* => empty
+assign a; variable v;
+Select a such that Next*(a, 1) pattern a (v, _)
+
+5000
+24 - Next*, Pattern => empty
+assign a; prog_line n;
+Select a such that Next*(a, n) pattern a("notFound", "notFound")
+
+5000

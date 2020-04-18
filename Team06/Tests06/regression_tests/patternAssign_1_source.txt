@@ -1,3 +1,0 @@
-procedure Pattern1 {
-  a = thisFileIsForInvalidQueries;
-}

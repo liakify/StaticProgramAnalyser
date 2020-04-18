@@ -1,9 +1,0 @@
-procedure SelectPatternWhile {
-  while (! (a1 == 1)  ) {
-    while (b1 >= 1) {
-      while ( (c1a > 1) || (c1b == c1c) ) {
-        read nested3; }}}
-  while (  a2 != 1) {
-    while ( (b2a <= 1) && (b2b > b2c) ) {
-      while ( c2 < 1) {
-        read nested3; }}} }

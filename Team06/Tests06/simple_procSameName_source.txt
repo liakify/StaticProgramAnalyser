@@ -1,0 +1,6 @@
+procedure ProcedureSameName {
+  read a;
+}
+procedure ProcedureSameName {
+  read b;
+}

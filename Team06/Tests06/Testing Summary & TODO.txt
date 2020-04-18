@@ -1,0 +1,82 @@
+===== Summary & Directives =====
+For single-procedure sources, ensure that non-SIMPLE prog_lines apart from procedure declaration, occupy no lines. This makes it easy to count.
+Write general approach to each test case. So that we have an overview to make sure we covered everything reasonable.
+TODOs are notes for Iteration 3. 
+
+*** TODO: 
+Query Editor to auto-number queries
+invalid argument types for relational-conditions
+  -ve numbers for constants
+  special characters
+
+
+=== Select ===
+Approach: 
+All possible result-cl clauses (i.e. 9 design entities)
+Valid syntax cases
+Invalid syntax cases
+
+*** TODO:
+call clause
+tuples
+
+=== Follows ===
+Approach: 
+
+=== Follows* ===
+Approach: 
+
+=== Parent ===
+Approach: 
+
+=== Parent* ===
+Approach: 
+
+=== Uses ===
+Approach: 
+All argument variations of Uses using stmts and variables,
++ testing on all nesting levels, bracket levels, boolean and arithmetic operators
++ relevant empty sets
+StmtRef variations: print, if, while, procedure
++ relevant empty sets
+Unfound variable names
+Unrelated Synonyms
+Invalid semantics (Uses(_, v))
+
+*** TODO:
+procedure that does not 'use'
+call type stmtRef variant
+tuples
+
+=== Modifies ===
+Approach: 
+All argument variations of Uses using stmts and variables,
++ testing on all nesting levels
++ relevant empty sets
+StmtRef variations: read, if, while, procedure
++ relevant empty sets
++ direct and indirect container relationships
++ then-branch and else-branch of if statements
+Unfound variable names
+Unrelated Synonyms 
+Invalid semantics (Modifies(_, v))
+
+*** TODO:
+procedure that does not 'modify'
+call type stmtRef variant
+tuples
+
+=== Pattern ===
+Approach:
+For assignment statement patterns:
++ varied across argument variations
++ entRef types covered: _, v, "a" (with select v variations)
++ expression-specs types covered: _, _"1"_, _"a"_
+across all operators, bracketing levels, whitespaces in source code
+unrelated synonyms: syn-assign, entRef, expression-specs
+invalid arguments: ((1, _), (_, 1), (1, 1))
+
+
+*** TODO:
+syn-if, syn-while, and their argument variations
+assign expression-spec types: "1", "a", "expr-with/without-brackets"

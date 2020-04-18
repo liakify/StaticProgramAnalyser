@@ -1,7 +1,0 @@
-procedure WithNext {
-  read a;
-  read b;
-  if (constant == 2) then {
-    read c;  } else {
-    read d;   } 
-  read e;}

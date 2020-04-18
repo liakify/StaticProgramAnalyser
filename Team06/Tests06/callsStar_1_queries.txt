@@ -1,0 +1,120 @@
+1 - invalid: argument type
+stmt s;
+Select s such that Calls*(1, _)
+
+5000
+2 - invalid: argument type
+stmt s;
+Select s such that Calls*(_, 1)
+
+5000
+3 - invalid: argument type
+stmt s;
+Select s such that Calls*(s, _)
+
+5000
+4 - invalid: argument type
+stmt s;
+Select s such that Calls*(_, s)
+
+5000
+5 - invalid: argument type
+read r;
+Select r such that Calls*(r, _)
+
+5000
+6 - invalid: argument type
+read r;
+Select r such that Calls*(_, r)
+
+5000
+7 - invalid: argument type
+print pn;
+Select pn such that Calls*(pn, _)
+
+5000
+8 - invalid: argument type
+print pn;
+Select pn such that Calls*(_, pn)
+
+5000
+9 - invalid: argument type
+call c;
+Select c such that Calls*(c, _)
+
+5000
+10 - invalid: argument type
+call c;
+Select c such that Calls*(_, c)
+
+5000
+11 - invalid: argument type
+while w;
+Select w such that Calls*(w, _)
+
+5000
+12 - invalid: argument type
+while w;
+Select w such that Calls*(_, w)
+
+5000
+13 - invalid: argument type
+if ifs;
+Select ifs such that Calls*(ifs, _)
+
+5000
+14 - invalid: argument type
+if ifs;
+Select ifs such that Calls*(_, ifs)
+
+5000
+15 - invalid: argument type
+assign a;
+Select a such that Calls*(a, _)
+
+5000
+16 - invalid: argument type
+assign a;
+Select a such that Calls*(_, a)
+
+5000
+17 - invalid: argument type
+variable v;
+Select v such that Calls*(v, _)
+
+5000
+18 - invalid: argument type
+variable v;
+Select v such that Calls*(_, v)
+
+5000
+19 - invalid: argument type
+constant cn;
+Select cn such that Calls*(cn, _)
+
+5000
+20 - invalid: argument type
+constant cn;
+Select cn such that Calls*(_, cn)
+
+5000
+21 - invalid: argument type
+prog_line pl;
+Select pl such that Calls*(pl, _)
+
+5000
+22 - invalid: argument type
+prog_line pl;
+Select pl such that Calls*(_, pl)
+
+5000
+23 - invalid: no arguments
+
+Select pl such that Calls*( , )
+
+5000
+24 - valid: spaces and tabs
+
+Select BOOLEAN such that Calls*     (     _   ,  _   )
+TRUE
+5000

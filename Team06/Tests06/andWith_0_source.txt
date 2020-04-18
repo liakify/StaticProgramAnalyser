@@ -1,0 +1,8 @@
+procedure AndWith {
+  Name = 2;
+  call Name; 
+  call Name2; }
+procedure Name {
+  print c; }
+procedure Name2 {
+  read Name;}

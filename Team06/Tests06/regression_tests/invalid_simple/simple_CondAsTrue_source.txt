@@ -1,5 +1,0 @@
-procedure Proc {
-  while (true) {
-    a = a;
-  }
-}

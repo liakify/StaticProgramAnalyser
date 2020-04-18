@@ -1,0 +1,40 @@
+1 - modifies: linked by v
+procedure p; variable v;
+Select p such that Modifies (p, v) with v.varName = "m1"
+UsesAndModifies, ModifiesOnly1
+5000
+2 - uses: linked by v
+procedure p; variable v;
+Select p such that Uses (p, v) with "u1" = v.varName
+UsesAndModifies, UsesOnly1
+5000
+3 - modifies: linked by p
+procedure p; variable v;
+Select v such that Modifies (p, v) with "ModifiesOnly2" = p.procName
+m2
+5000
+4 - uses: linked by p
+procedure p; variable v;
+Select v such that Uses (p, v) with p.procName = "UsesAndModifies"
+u1, u2
+5000
+5 - modifies: linked by c
+call c; variable v;
+Select v such that Modifies (c, v) with c.stmt# = 2
+m2
+5000
+6 - uses: linked by c
+call c; variable v;
+Select v such that Uses (c, v) with "UsesOnly2" = c.procName
+u2
+5000
+7 - modifies: linked by r
+read r; variable v;
+Select r such that Modifies (r, v) with r.varName = "m1"
+5
+5000
+8 - uses: linked by pn
+print pn; variable v;
+Select pn such that Uses (pn, v) with "u2" = pn.varName
+8
+5000

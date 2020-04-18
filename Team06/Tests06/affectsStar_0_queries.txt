@@ -1,0 +1,75 @@
+1 - arg variant (a1, a2)
+assign a1, a2;
+Select a1 such that Affects* (a1, a2)
+1, 9, 14, 17, 19, 20
+5000
+2 - arg variant (a1, a2): select a2
+assign a1, a2;
+Select a2 such that Affects* (a1, a2)
+2, 12, 15, 18, 20, 21
+5000
+3 - arg variant (a1, _)
+assign a1;
+Select a1 such that Affects* (a1, _)
+1, 9, 14, 17, 19, 20
+5000
+4 - arg variant (_, a2)
+assign a2;
+Select a2 such that Affects* (_, a2)
+2, 12, 15, 18, 20, 21
+5000
+5 - arg variant (_, _)
+procedure p;
+Select p such that Affects* (_, _)
+SelectAffectsStar, AffectsStar1, AffectsStar2, AffectsStar3, AffectsStar4, AffectsStar5, ModifiesA
+5000
+6 - arg variant (1, _)
+assign a1;
+Select a1 such that Affects* (1, _)
+1, 2, 3, 9, 12, 13, 14, 15, 16, 17, 18, 19 ,20, 21, 22, 24, 25, 27, 29
+5000
+7 - arg variant (_, 1)
+
+Select BOOLEAN such that Affects* (_, 12)
+TRUE
+5000
+8 - arg variant (_, 1): nothing affects first statement
+
+Select BOOLEAN such that Affects* (_, 1)
+FALSE
+5000
+9 - arg variant (1, 1)
+
+Select BOOLEAN such that Affects* (1, 12)
+TRUE
+5000
+10 - arg variant (1, 1) => empty
+
+Select BOOLEAN such that Affects* (22, 24)
+FALSE
+5000
+11 - arg variant (a1, 1) + within containers
+assign a1;
+Select a1 such that Affects* (a1, 12)
+1, 9
+5000
+12 - arg variant (a1, 1) => empty
+assign a1;
+Select a1 such that Affects* (a1, 17)
+
+5000
+13 - arg variant (1, a2)
+assign a2;
+Select a2 such that Affects* (1, a2)
+2, 12
+5000
+14 - arg variant (1, a2) => empty
+assign a2;
+Select a2 such that Affects* (4, a2)
+
+5000
+15 - tuple test:
+assign a1, a2;
+Select <a1, a2> such that Affects* (a1, a2)
+1 2, 1 12, 9 12, 14 15, 17 18, 19 20, 19 21, 20 21
+5000

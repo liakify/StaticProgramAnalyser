@@ -1,3 +1,0 @@
-procedure SameName {
-  SameName = SameName;
-}

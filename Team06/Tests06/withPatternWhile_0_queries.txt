@@ -1,0 +1,40 @@
+1 - unrelated synonyms (true, true)
+while w1, w2; variable v;
+Select w2 with w1.stmt# = 1 pattern w2 (v, _)
+1, 2, 4
+5000
+2 - unrelated synonyms (true, false)
+while w1, w2; variable v;
+Select w1 with w1.stmt# = 1 pattern w2 ("notFound", _)
+
+5000
+3 - unrelated synonyms (false, true)
+while w1, w2; variable v;
+Select w2 with w1.stmt# = 5 pattern w2 (v, _)
+
+5000
+4 - unrelated synonyms (false, false)
+while w1, w2; variable v;
+Select w2 with w1.stmt# = 5 pattern w2 ("notFound", _)
+
+5000
+5 - related by w
+while w; variable v;
+Select v with w.stmt# = 1 pattern w (v, _)
+c1, nested1
+5000
+6 - related by w, limit pattern by v
+while w; variable v;
+Select v with w.stmt# = 1 pattern w ("notFound", _)
+
+5000
+7 - related by v
+while w; variable v;
+Select w with v.varName = "nested2" pattern w (v, _)
+2, 4
+5000
+8 - related by v, limit pattern by expression
+while w; variable v;
+Select w with v.varName = "nested2" pattern w ("c2", _)
+2
+5000

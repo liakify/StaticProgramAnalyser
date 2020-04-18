@@ -1,9 +1,0 @@
-procedure Calls1 {
-  call Calls2;
-  call Calls4; }
-procedure Calls2 {
-  call Calls3; }
-procedure Calls3 {
-  call Calls4 ; }
-procedure Calls4 {
-  print a; }

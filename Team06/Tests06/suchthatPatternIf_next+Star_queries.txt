@@ -1,0 +1,70 @@
+1 - Next, No relation with any synonym
+prog_line n1, n2, n3; if ifs; variable v;
+Select n3 such that Next(n1, n2) pattern ifs (v, _, _)
+1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30
+5000
+2 - Next, Connected Clauses
+read r; if ifs; variable v;
+Select r such that Next(ifs, r) pattern ifs (v, _, _)
+10, 11
+5000
+3 - Next, Connected Clauses: Select ifs
+read r; if ifs; variable v;
+Select ifs such that Next(ifs, r) pattern ifs (v, _, _)
+9
+5000
+4 - Next, Connected Clauses: Limiting pattern
+prog_line n; if ifs;
+Select n such that Next(ifs, n) pattern ifs ("c3", _, _)
+25, 26
+5000
+5 - Next, Connected Clauses: Limiting pattern, select ifs
+prog_line n; if ifs;
+Select ifs such that Next(ifs, n) pattern ifs ("c3", _, _)
+24
+5000
+6 - Next*, Connected Clauses
+read r; if ifs; variable v;
+Select r such that Next*(ifs, r) pattern ifs (v, _, _)
+10, 11, 30, 28
+5000
+7 - Next*, Connected Clauses: Incorrect pattern syntax
+read r; if ifs; variable v;
+Select r such that Next*(ifs, r) pattern ifs (v, _)
+
+5000
+8 - Next*, Connected Clauses: Select ifs
+read r; if ifs; variable v;
+Select ifs such that Next*(ifs, r) pattern ifs (v, _, _)
+6, 9, 12, 14, 19, 24
+5000
+9 - Next*, Connected Clauses: Limiting pattern
+prog_line n; if ifs;
+Select n such that Next*(ifs, n) pattern ifs ("c3", _, _)
+17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30
+5000
+10 - Next*, Connected Clauses: Limiting pattern, select ifs
+prog_line n; if ifs;
+Select ifs such that Next*(ifs, n) pattern ifs ("c3", _, _)
+24
+5000
+11 - Next, Next => empty
+prog_line n; if ifs; variable v;
+Select n such that Next(n, 1) pattern ifs (v, _, _)
+
+5000
+12 - Next, Pattern => empty
+prog_line n1, n2; if ifs;
+Select n1 such that Next(n1, n2) pattern ifs ("notFound", _, _)
+
+5000
+13 - Next*, Next* => empty
+prog_line n; if ifs; variable v;
+Select n such that Next*(n, 1) pattern ifs (v, _, _)
+
+5000
+14 - Next*, Pattern => empty
+prog_line n1, n2; if ifs;
+Select n1 such that Next(n1, n2) pattern ifs ("notFound", _, _)
+
+5000

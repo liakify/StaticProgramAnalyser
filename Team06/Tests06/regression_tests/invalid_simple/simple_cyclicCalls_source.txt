@@ -1,9 +1,0 @@
-procedure C1 {
-  call C2;
-}
-procedure C2 {
-  call C3;
-}
-procedure C3 {
-  call C1;
-}

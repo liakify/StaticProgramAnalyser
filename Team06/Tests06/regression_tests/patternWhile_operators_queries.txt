@@ -1,5 +1,0 @@
-1 - test all operators
-variable v; while w;
-Select v pattern w (v, _)
-a1, a2, b1, b2a, b2b, b2c, c1a, c1b, c1c, c2
-5000

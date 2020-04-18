@@ -1,8 +1,0 @@
-procedure Affects2 {
-	while (a < b) {
-		c = b + a;
-		d = c;
-		e = c;
-		if (d > 0) then {
-			a = e;  } else {
-			b = d; } } }

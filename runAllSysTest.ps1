@@ -12,14 +12,14 @@ $exe_path = $release_exe_path
 $source_suffix = '_source.txt'
 $query_suffix = '_queries.txt'
 $output_suffix = '_out.xml'
-$regression_test_path = '.\Team06\Tests06\regression_tests\'
+$regression_test_path = '.\Team06\Tests06\'
 
 $list_of_test_files = @(
   # SAMPLE FAILED TEST CASE (to verify that this works)
   # '..\modifies_0',
   
   # DO NOT MODIFY THE FOLLOWING IN ANY COMMITS
-  'valid_simple\simple_procNameEqualVarName'
+  'simple_procNameEqualVarName'
   'select_syn',
   'select_valid',
   'select_invalid',
@@ -95,37 +95,32 @@ $list_of_test_files = @(
   'nextStar_tle',
   'CallsStar_multipleCallsInOneProc',
   'mixed_0',
-  'invalid_chars_0'
-  
-  # STAGED TESTS
-  '..\performance600_single',
-  '..\performance600_chainedNext'
-  '..\intergroup_0'
-  '..\intragroup_0'
-  '..\intragroup_1'
-  
-  # TESTS BELOW CURRENTLY FAIL / TIMEOUT
-  # '..\performance600_runtimeCache'
-  # '..\performance600_chainedNextStar'
-  # '..\performance600_chainedAffects'
-  # '..\performance600_chainedAffectsStar'
-  # '..\performance600_nextStar+AffectsStar+Tuple'
-  # '..\performance600_shortcircuit_queries'
+  'invalid_chars_0',
+  'intergroup_0',
+  'intragroup_0',
+  'intragroup_1',
+  'performance600_single',
+  'performance600_chainedNext',
+  'performance600_runtimeCache',
+  'performance600_chainedAffects',
+  'performance600_nextStar+AffectsStar+Tuple',
+  'performance600_intragroupShortcircuit',
+  'performance600_intergroupShortcircuit'
 )
 
 $list_of_no_xml_tests = @(
-'invalid_simple\simple_CondAsFalse',
-'invalid_simple\simple_CondAsTrue',
-'invalid_simple\simple_cyclicCalls',
-'invalid_simple\simple_digitWithZero',
-'invalid_simple\simple_logicExprNoBracket',
-'invalid_simple\simple_logicExprNotInCond',
-'invalid_simple\simple_nonDigitConstant',
-'invalid_simple\simple_nonExistProcCall',
-'invalid_simple\simple_printTwoVariables',
-'invalid_simple\simple_printXPrintY',
-'invalid_simple\simple_procSameName',
-'invalid_simple\simple_selfCalls'
+# 'invalid_simple\simple_CondAsFalse',
+# 'invalid_simple\simple_CondAsTrue',
+# 'invalid_simple\simple_cyclicCalls',
+# 'invalid_simple\simple_digitWithZero',
+# 'invalid_simple\simple_logicExprNoBracket',
+# 'invalid_simple\simple_logicExprNotInCond',
+# 'invalid_simple\simple_nonDigitConstant',
+# 'invalid_simple\simple_nonExistProcCall',
+# 'invalid_simple\simple_printTwoVariables',
+# 'invalid_simple\simple_printXPrintY',
+# 'invalid_simple\simple_procSameName',
+# 'invalid_simple\simple_selfCalls'
 )
 
 # Determine which build type of the AutoTester executable to test

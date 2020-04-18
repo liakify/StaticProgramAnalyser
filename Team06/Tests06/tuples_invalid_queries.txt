@@ -1,0 +1,25 @@
+1 - invalid: Select BOOLEAN tuple
+
+Select <BOOLEAN>
+
+5000
+2 - invalid: Select INT tuple
+
+Select <1>
+
+5000
+3 - invalid: Select _ tuple
+
+Select <_>
+
+5000
+4 - invalid: Select IDENT tuple
+
+Select <"c">
+
+5000
+5 - invalid: Select syn, IDENT tuple
+stmt s;
+Select <s, "c">
+
+5000
